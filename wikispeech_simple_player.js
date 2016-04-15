@@ -47,9 +47,9 @@ function play(id) {
 	//locale = "en_US";
 	locale = "en";
 	//marytts voice
-	//voice = "cmu-slt-hsmm";
+	voice = "cmu-slt-hsmm";
 	//flite voice
-	voice = "cmu_slt_flite";
+	//voice = "cmu-slt-flite";
 	//synth = "marytts";
 	synth = "wikispeech";
     } else if (lang === "ar") {
