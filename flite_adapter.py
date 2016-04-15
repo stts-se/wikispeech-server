@@ -9,7 +9,7 @@ def synthesise(lang, voice, input):
 
     #send ssml to flite
     outfile = "tmp/flite_out"
-    cmd = u"../flite/flite -voice %s -psdur -ssml -t '%s' -o %s.wav > %s.timing" % (voice, ssml, outfile, outfile)
+    cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s.wav > %s.timing" % (voice, ssml, outfile, outfile)
     print cmd
     os.system(cmd)
 
