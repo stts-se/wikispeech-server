@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="sv">
+<p>
+<s>
+<phrase>
+<t accent="!H*" g2p_method="lexicon" ph="' h E j" pos="content">
+hej
+<syllable accent="!H*" ph="h E j" stress="1">
+<ph d="90" end="0.09" f0="(25,66)(50,66)(75,100)(100,102)" p="h"/>
+<ph d="95" end="0.185" f0="(5,102)(10,98)(15,97)(21,97)(26,96)(31,95)(36,94)(42,93)(47,92)(52,91)(57,91)(63,92)(68,92)(73,92)(78,92)(84,92)(89,91)(94,86)(100,81)" p="E"/>
+<ph d="145" end="0.33" f0="(10,64)(20,64)(30,64)(40,64)(50,64)(60,64)(70,63)(80,63)(90,62)(100,60)" p="j"/>
+</syllable>
+</t>
+<t accent="!H*" g2p_method="lexicon" ph="' h E j" pos="content">
+hej
+<syllable accent="!H*" ph="h E j" stress="1">
+<ph d="90" end="0.09" f0="(25,66)(50,66)(75,100)(100,102)" p="h"/>
+<ph d="95" end="0.185" f0="(5,102)(10,98)(15,97)(21,97)(26,96)(31,95)(36,94)(42,93)(47,92)(52,91)(57,91)(63,92)(68,92)(73,92)(78,92)(84,92)(89,91)(94,86)(100,81)" p="E"/>
+<ph d="145" end="0.33" f0="(10,64)(20,64)(30,64)(40,64)(50,64)(60,64)(70,63)(80,63)(90,62)(100,60)" p="j"/>
+</syllable>
+</t>
+<boundary breakindex="5" duration="1320" tone="L-L%"/>
+</phrase>
+</s>
+</p>
+</maryxml>

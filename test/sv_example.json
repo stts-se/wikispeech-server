@@ -1,0 +1,125 @@
+[
+	{
+	    "paragraph": [
+		{
+		    "sentence": [
+			{
+			    "phrase": [
+				{
+				    "token":{
+					"accent":"L+H*", 
+					"g2p_method":"userdict",  
+					"pos":"function",
+					"transcription": "&quot; d e:",
+					"orthography": "Det",
+					"syllables": [
+					    {"stress":"0",
+					     "transcription":"&quot; d e:",
+					     "phonemes": [
+						 {"symbol":"d"},
+						 {"symbol":"e:"}
+					     ]
+					    }
+					]
+				    }
+				},
+
+				{
+				    "token":{
+					"accent":"L+H*", 
+					"g2p_method":"userdict",  
+					"pos":"content",
+					"transcription": "' h {: r",
+					"orthography": "här",
+					"syllables": [
+					    {"accent":"L+H*", 
+					     "stress":"1",
+					     "transcription":"h {: r",
+					     
+					     "phonemes": [
+						 {"symbol":"h"},
+						 {"symbol":"{:"},
+						 {"symbol":"r"}
+					     ]
+					    }
+					]
+				    }
+				},
+
+				{
+				    "token":{
+					"accent":"L+H*", 
+					"g2p_method":"lexicon",  
+					"pos":"content",
+					"transcription": "' {: r",
+					"orthography": "är",
+					"syllables": [
+					    {"accent":"L+H*", 
+					     "stress":"1",
+					     "transcription":"' {: r",
+					     "phonemes": [
+						 {"symbol":"{:"},
+						 {"symbol":"r"}
+					     ]
+					    }
+					]
+				    }
+				},
+				
+				{
+				    "token":{
+					"g2p_method":"lexicon",  
+					"pos":"function",
+					"transcription": "' E t",
+					"orthography": "ett",
+					"syllables": [
+					    {"stress":"0",
+					     "transcription":"' E t",
+					     "phonemes": [
+						 {"symbol":"E"},
+						 {"symbol":"t"}
+					     ]
+					    }
+					]
+				    }
+				},
+				
+				{
+				    "token":{
+					"accent":"!H*", 
+					"g2p_method":"lexicon",  
+					"pos":"content",
+					"transcription": "' t E s t",
+					"orthography": "test",
+					"syllables": [
+					    {"accent":"L+H*", 
+					     "stress":"1",
+					     "transcription":"' t E s t",
+					     "phonemes": [
+						 {"symbol":"t"},
+						 {"symbol":"E"},
+						 {"symbol":"s"},
+						 {"symbol":"t"}
+					     ]
+					    }
+					]
+				    }
+				},
+				
+				{
+				    "token":{
+					"pos":"$PUNCT",
+					"orthography":"."
+				    }
+				},
+
+				{
+				    "boundary": {"breakindex":"5", "tone":"L-L%"}
+				}
+			    ]
+			}
+		    ]
+		}
+	    ]
+	}
+]

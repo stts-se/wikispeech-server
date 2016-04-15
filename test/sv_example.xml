@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="sv">
+<p>
+  <s>
+    <phrase>
+      <t accent="L+H*" g2p_method="userdict" ph="&quot; d e:" pos="content">
+	Det
+	<syllable ph="d e:">
+	  <ph p="d"/>
+	  <ph p="e:"/>
+	</syllable>
+      </t>
+      <t accent="L+H*" g2p_method="lexicon" ph="' h {: r" pos="content">
+	här
+	<syllable accent="L+H*" ph="h {: r" stress="1">
+	  <ph p="h"/>
+	  <ph p="{:"/>
+	  <ph p="r"/>
+	</syllable>
+      </t>
+      <t accent="L+H*" g2p_method="lexicon" ph="' {: r" pos="content">
+	är
+	<syllable accent="L+H*" ph="{: r" stress="1">
+	  <ph p="{:"/>
+	  <ph p="r"/>
+	</syllable>
+      </t>
+      <t g2p_method="lexicon" ph="' E t" pos="function">
+	ett
+	<syllable ph="E t" stress="1">
+	  <ph p="E"/>
+	  <ph p="t"/>
+	</syllable>
+      </t>
+      <t accent="!H*" g2p_method="lexicon" ph="' t E s t" pos="content">
+	test
+	<syllable accent="!H*" ph="t E s t" stress="1">
+	  <ph p="t"/>
+	  <ph p="E"/>
+	  <ph p="s"/>
+	  <ph p="t"/>
+	</syllable>
+      </t>
+      <t pos="$PUNCT">
+	.
+      </t>
+      <boundary breakindex="5" tone="L-L%"/>
+    </phrase>
+  </s>
+</p>
+</maryxml>

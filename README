@@ -1,0 +1,204 @@
+wikispeech_mockup
+=========================
+
+En första kladd för att testa, fundera och ev dema.
+python-flask till att börja med bara för att det känns enklast.
+
+
+========================
+förbered för test
+
+lexikon:
+export GOPATH=<sökväg till go-katalog, ex /home/harald/go>
+cd $GOPATH
+git clone om det behövs
+cd src/github.com/stts-se/pronlex/
+git pull
+cd lexserver
+go run ../createEmptyDB/createEmptyDB.go tmp.db
+go run ../addNSTLexToDB/addNSTLexToDB.go sv.se.nst tmp.db ~/git/wikimedia/langdata/svlex/sprakbanken_nstlex/swe030224NST.pron_utf8.txt
+mv tmp.db pronlex.db
+go run lexserver.go
+
+wikispeech_mockup:
+python wikispeech.py
+
+apache:
+Lägg till i config-fil (ex /etc/apache2/sites-enabled/000-default.conf)
+        ProxyPreserveHost On
+        ProxyPass         /wikispeech/  http://127.0.0.1:10000/wikispeech/
+        ProxyPassReverse  /wikispeech/  http://127.0.0.1:10000/wikispeech/
+        ProxyRequests     Off
+
+sudo apache2ctrl restart
+sudo ln -s ../wikispeech_mockup <apache doc root, ex /var/www/html/>
+
+========================
+test
+
+curl:
+curl "http://localhost:10000/wikispeech/?lang=sv&input=hej,+hej."
+
+browser:
+open url "http://localhost/wikispeech/"
+open url "http://localhost/wikispeech_mockup/test.html"
+
+
+
+===========================================
+Filer
+
+wikispeech.py
+
+voice_config.py
+tokeniser.py
+wikilex.py
+marytts_adapter.py
+flite_adapter.py
+
+wikispeech_simple_player.js
+test.html
+
+diverse test och exempel i test/
+
+
+
+============================================
+Anteckningar
+
+=========================
+wikispeech
+
+api för "standard"-användning.
+get (post om det är väldigt långa texter)
+argument: språk, input, input_type (default text), output_type (default json) (, röst, ...)
+returnerar: xml/json (tidkodning, audio src) 
+
+GET <host>/wikispeech?lang=<LANG>&input=TEST_EXAMPLE
+returnerar ett testexempel eller <LANG> not found
+
+Enligt uml:
+wikispeech <-> nlp
+wikispeech <-> synthesis
+wikispeech <-> recording
+Men jag gör inte så nu - utan istället
+wikispeech <-> textprocessing
+textprocessing <-> lexicon
+
+
+Konfigurering av språk
+kod + variantkod om det behövs
+textproc (lista? kan man vilja ha flera alternativ? ja, säkert..)
+röster (lista)
+
+Konfigurering av textproc
+språk + variantkod om det behövs
+komponenter (lista)
+tillåtna argument (ex uppmärkning? vad annars? varianter för uttal av okända ord, siffror osv?)
+input_format (lista)
+output_format (lista)
+
+Konfigurering av komponent
+språk (lista)
+typ (regexp, skript, microservice, vad mer? lexikon?)
+param (regexp: sträng eller fil, skript: sträng eller fil, microservice: url)
+input_format (lista)
+output_format (lista)
+
+Konfigurering av röst
+språk (lista (ex [nb, nn]))
+namn
+syntesmotor
+typ (program, server)
+param (program: kommando osv, server: url)
+tillåtna argument (ex hastighet)
+input_format (lista)
+output_format (lista)
+
+Listning:
+wikispeech ska kunna svara på vilka språk som stöds och vilka textproc+röster som finns för varje språk
+detaljer för textproc/synthesis kommer från resp.
+ex sv? {textproc:[wikitexproc_sv: {lang:sv, components:[marytts_preproc_sv, wikilex_sv, marytts_postlex_sv], wikitextproc_sv-FI]],
+        synthesis:[{lang:sv, name:marytts_sv_nst_hsmm, server:{url:'https://demo.morf.se/marytts'}},
+		   {lang:sv, name:espeak_sv, program:{command:'espeak -l sv'}}]}
+
+
+nlp
+
+Enligt uml:
+nlp <-> textprocessing
+nlp <-> lexicon
+
+(men inte klart för mig var lexikonet ska vara, det måste finnas plats för postprocessning också! Tycker kanske fortfarande att det är bättre att ha lexikonet som en - den enda nödvändiga? - i listan av komponenter)
+
+textprocessing
+
+api för "standard"-användning.
+get (post om det är väldigt långa texter)
+argument: språk, text, input_type (default text), output_type (default markup) (, röst, ...)
+returnerar: xml/json (tokens, phonemes) 
+
+sv_exempel.xml och sv_exempel.json ska stämma överens med varandra.
+
+
+Splitta upp textprocessing, så att den går i tre steg: 
+1) marytts preprocessing (tokenisering, preproc (siffror osv) Output Type = WORDS)
+2) lexikonslagning 
+3) marytts gpc + postlex (Input type PHONEMES, Output Type ALLOPHONES)
+
+Textprocessningen ska definieras av config, med en lista av komponenter.
+För svenska kanske ungefär så här till att börja med:
+text2paragraph, paragraph2sentence, sentence2phrase, phrase2token (mkt enkla och generella splittare). Hur gör man om det är html/ssml? Om det tex finns <p>-taggar, men inte mer, så ska man ju gå direkt till steget paragraph2sentence. Kan det här vara en enda tokeniserare? Hur göra med MWU? I marytts slår man ihop tokens igen med en omgivande "mtu"-tagg.
+end_paragraph: </p> || "\n\n"
+end_sentence: </s> || ". [A-Z]"
+end_phrase: </phrase> || " [(),;-]"
+end_token: </token> || " "
+
+remove any start tags (<p>, <s>, <phrase>, <token>..). Remove all remaining "<[^>*]>" ? Any tags that can not be used.
+
+phrase/token finns inte i ssml. break och prosody finns. say-as kan identifiera token.
+
+
+"""
+Token1 token2, token3 token4. Token5 token6.
+
+Token7.
+"""
+
+AND
+<p>
+<s>
+Token1 token2, token3 token4.
+</s>
+<s>Token5 token6.</s>
+</p>
+<p>
+Token7.
+</p>
+
+
+returns [par1:[sent1:[phrase1:[token1, token2]], phrase2:[token3,token4]], sent2:[phrase3:[token5, token6]], par2:[sent2:[phrase3:[token7]]]]
+
+numbers, acronyms, symbols (dessa och raden ovan kan vara i marytts till att börja med)
+lexLookup
+tagger, gpc, pauses (dessa kan vara i marytts till att börja med)
+
+komponenter som använder marytts ska ha ett gemensamt "skal" som gör om utt-objektet till maryxml, och tillbaka
+
+
+
+
+
+lexicon
+
+
+
+synthesis
+
+synthesis <-> marytts
+synthesis <-> flite
+
+
+recording
+
+recording <-> static files

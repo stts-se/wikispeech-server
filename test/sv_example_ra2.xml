@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="sv">
+<p>
+<s>
+<phrase>
+<t accent="!H*" g2p_method="lexicon" ph="' u: rd" pos="content">
+<syllable accent="!H*" ph="u: rd" stress="1">
+<ph d="160" end="0.16000001" f0="(3,101)(7,104)(11,105)(14,104)(18,103)(22,102)(25,101)(29,101)(33,101)(37,102)(40,101)(44,100)(48,98)(51,97)(55,95)(59,94)(62,92)(66,90)(70,88)(74,86)(77,84)(81,81)(85,77)(88,74)(92,71)(96,70)(100,68)" p="u:"/>
+<ph d="160" end="0.32000002" f0="(11,64)(22,64)(33,65)(44,65)(55,65)(66,65)(77,65)(88,65)(100,65)" p="rd"/>
+</syllable>
+Örd
+</t>
+<boundary breakindex="5" duration="1320" tone="L-L%"/>
+</phrase>
+</s>
+</p>
+</maryxml>

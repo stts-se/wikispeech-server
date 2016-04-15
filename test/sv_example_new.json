@@ -1,0 +1,121 @@
+{
+    "s": {
+        "phrase": {
+            "t": [
+                {
+                    "@accent": "L+H*", 
+                    "@g2p_method": "userdict", 
+                    "@ph": "\" d e:", 
+                    "@pos": "content", 
+                    "syllable": {
+                        "@ph": "d e:", 
+                        "ph": [
+                            {
+                                "@p": "d"
+                            }, 
+                            {
+                                "@p": "e:"
+                            }
+                        ]
+                    }, 
+                    "#text": "Det"
+                }, 
+                {
+                    "@accent": "L+H*", 
+                    "@g2p_method": "lexicon", 
+                    "@ph": "' h {: r", 
+                    "@pos": "content", 
+                    "syllable": {
+                        "@accent": "L+H*", 
+                        "@ph": "h {: r", 
+                        "@stress": "1", 
+                        "ph": [
+                            {
+                                "@p": "h"
+                            }, 
+                            {
+                                "@p": "{:"
+                            }, 
+                            {
+                                "@p": "r"
+                            }
+                        ]
+                    }, 
+                    "#text": "h\u00e4r"
+                }, 
+                {
+                    "@accent": "L+H*", 
+                    "@g2p_method": "lexicon", 
+                    "@ph": "' {: r", 
+                    "@pos": "content", 
+                    "syllable": {
+                        "@accent": "L+H*", 
+                        "@ph": "{: r", 
+                        "@stress": "1", 
+                        "ph": [
+                            {
+                                "@p": "{:"
+                            }, 
+                            {
+                                "@p": "r"
+                            }
+                        ]
+                    }, 
+                    "#text": "\u00e4r"
+                }, 
+                {
+                    "@g2p_method": "lexicon", 
+                    "@ph": "' E t", 
+                    "@pos": "function", 
+                    "syllable": {
+                        "@ph": "E t", 
+                        "@stress": "1", 
+                        "ph": [
+                            {
+                                "@p": "E"
+                            }, 
+                            {
+                                "@p": "t"
+                            }
+                        ]
+                    }, 
+                    "#text": "ett"
+                }, 
+                {
+                    "@accent": "!H*", 
+                    "@g2p_method": "lexicon", 
+                    "@ph": "' t E s t", 
+                    "@pos": "content", 
+                    "syllable": {
+                        "@accent": "!H*", 
+                        "@ph": "t E s t", 
+                        "@stress": "1", 
+                        "ph": [
+                            {
+                                "@p": "t"
+                            }, 
+                            {
+                                "@p": "E"
+                            }, 
+                            {
+                                "@p": "s"
+                            }, 
+                            {
+                                "@p": "t"
+                            }
+                        ]
+                    }, 
+                    "#text": "test"
+                }, 
+                {
+                    "@pos": "$PUNCT", 
+                    "#text": "."
+                }
+            ], 
+            "boundary": {
+                "@breakindex": "5", 
+                "@tone": "L-L%"
+            }
+        }
+    }
+}
