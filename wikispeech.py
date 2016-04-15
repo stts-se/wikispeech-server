@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 import sys
 import requests
-from flask import Flask, request, json
+from flask import Flask, request, json, Response
 
 from voice_config import textprocessor_configs, voices
 
@@ -47,7 +47,9 @@ def wikispeech():
         return "input_type %s not supported" % input_type
 
     if output_type == "json":
-        return json.dumps(synthesise(lang, voice_name, markup,"markup",output_type))
+        json_data = json.dumps(synthesise(lang, voice_name, markup,"markup",output_type))
+        return Response(json_data, mimetype='application/json')
+
     else:
         return "output_type %s not supported" % output_type
 
@@ -101,11 +103,13 @@ def getSupportedLanguages():
 
 @app.route('/wikispeech/textprocessing/languages', methods=["GET"])
 def list_tp_configs():
-    return json.dumps(textprocessor_configs)
+    json_data = json.dumps(textprocessor_configs)
+    return Response(json_data, mimetype='application/json')
 
 @app.route('/wikispeech/textprocessing/languages/<lang>', methods=["GET"])
 def return_tp_configs_by_language(lang):
-    return json.dumps(list_tp_configs_by_language(lang))
+    json_data = json.dumps(list_tp_configs_by_language(lang))
+    return Response(json_data, mimetype='application/json')
 
 def list_tp_configs_by_language(lang):
     l = []
@@ -122,7 +126,8 @@ def textprocessing():
     output_type = getParam("output_type", "json")
     input = getParam("input")
 
-    return json.dumps(textproc(lang,textprocessor_name, input))
+    json_data = json.dumps(textproc(lang,textprocessor_name, input))
+    return Response(json_data, mimetype='application/json')
 
 
 def textprocSupportedLanguages():
@@ -202,11 +207,13 @@ def textproc(lang, textprocessor_name, text):
 
 @app.route('/wikispeech/synthesis/voices', methods=["GET"])
 def list_voices():
-    return json.dumps(voices)
+    json_data = json.dumps(voices)
+    return Response(json_data, mimetype='application/json')
 
 @app.route('/wikispeech/synthesis/voices/<lang>', methods=["GET"])
 def return_voices_by_language(lang):
-    return json.dumps(list_voices_by_language(lang))
+    json_data = json.dumps(list_voices_by_language(lang))
+    return Response(json_data, mimetype='application/json')
 
 def list_voices_by_language(lang):
     v = []
@@ -238,7 +245,8 @@ def synthesis():
     if lang not in synthesisSupportedLanguages():
         return "synthesis does not support language %s" % lang
 
-    return json.dumps(synthesise(lang,voice_name,input,input_type,output_type))
+    json_data = json.dumps(synthesise(lang,voice_name,input,input_type,output_type))
+    return Response(json_data, mimetype='application/json')
 
 
 def synthesise(lang,voice_name,input,input_type,output_type):
