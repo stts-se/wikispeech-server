@@ -1,3 +1,5 @@
+
+
 function addPlayButtonToP() {
 
     var paragraphs = document.getElementsByTagName("p");
@@ -44,41 +46,38 @@ function play(id) {
 
 
     if (lang === "en") {
-	//locale = "en_US";
 	locale = "en";
-	//marytts voice
 	voice = "cmu-slt-hsmm";
-	//flite voice
-	//voice = "cmu-slt-flite";
-	//synth = "marytts";
 	synth = "wikispeech";
     } else if (lang === "ar") {
 	locale = "ar";
 	voice = "ar_nah-hsmm";
-	//synth = "marytts";
 	synth = "wikispeech";
     } else if (lang == "sv") {
 	locale = "sv";
 	voice = "stts_sv_nst-hsmm";
-	//synth = "marytts";
 	synth = "wikispeech";
-    } else if (lang == "hi") {
-	locale = "hi";
-        voice = "./cmu_indic_axb.flitevox"
-	//voice = "cmu_indic_sb_hin.flitevox";
-	synth = "flite";
-    } else if (lang == "mr") {
-	locale = "mr";
-	voice = "cmu_indic_aup_mr.flitevox";
-	synth = "flite";
-    } else if (lang == "ta") {
-	locale = "ta";
-	voice = "cmu_indic_sks_tamil.flitevox";
-	synth = "flite";
-    } else if (lang == "te") {
-	locale = "te";
-	voice = "cmu_indic_knr_tel.flitevox";
-	synth = "flite";
+
+
+
+    // } else if (lang == "hi") {
+    // 	locale = "hi";
+    //     voice = "./cmu_indic_axb.flitevox"
+    // 	//voice = "cmu_indic_sb_hin.flitevox";
+    // 	synth = "flite";
+    // } else if (lang == "mr") {
+    // 	locale = "mr";
+    // 	voice = "cmu_indic_aup_mr.flitevox";
+    // 	synth = "flite";
+    // } else if (lang == "ta") {
+    // 	locale = "ta";
+    // 	voice = "cmu_indic_sks_tamil.flitevox";
+    // 	synth = "flite";
+    // } else if (lang == "te") {
+    // 	locale = "te";
+    // 	voice = "cmu_indic_knr_tel.flitevox";
+    // 	synth = "flite";
+
     } else {
 	alert("ERROR: synthesis not supported for document language "+lang);
 	return;
@@ -92,127 +91,48 @@ function play(id) {
     console.log(text);
 
 
-    if ( synth == "marytts" ) {
 
-	//var url = "https://morf.se/marytts/process?INPUT_TYPE=TEXT&OUTPUT_TYPE=REALISED_ACOUSTPARAMS&LOCALE="+locale+"&VOICE="+voice+"&INPUT_TEXT="+encodeURIComponent(text);
-	var url = "https://demo.morf.se/marytts/process?INPUT_TYPE=TEXT&OUTPUT_TYPE=REALISED_ACOUSTPARAMS&LOCALE="+locale+"&INPUT_TEXT="+encodeURIComponent(text);
-	console.log(url);
-
-	var xhr = new XMLHttpRequest();
-	xhr.overrideMimeType('text/xml');
-	xhr.open("GET", url, true);
-	xhr.send();
-
-	xhr.onload = function() {
-	    var responseXML = xhr.responseXML;
-	    console.log(responseXML);
-
-	    addTimingInfo(container, responseXML);
+    //'localhost:10000/wikispeech/?lang=sv&input=hej+hej+din+gamla+babian.'
 
 
-	    var audio = document.createElement("audio");
-	    container.appendChild(audio);
+    //TODO set up and run demo server on morf.se
+    var url = "http://localhost/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
 
-	    audio.setAttribute("controls", "true");
-	    //audio.setAttribute("src", "https://morf.se/marytts/process?INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=sv&VOICE=stts_sv_nst-hsmm&INPUT_TEXT="+encodeURIComponent(text));
-            audio.setAttribute("src", "https://demo.morf.se/marytts/process?INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE="+locale+"&VOICE="+voice+"&INPUT_TEXT="+encodeURIComponent(text));
+    console.log("URL: "+url);
 
-	    connectTimingAndAudio(container,audio);
+    var xhr = new XMLHttpRequest();
+    xhr.overrideMimeType('text/json');
+    xhr.open("GET", url, true);
+    xhr.send();
+    
+    xhr.onload = function() {
+	var response = JSON.parse(xhr.responseText);
+	//var response = xhr.responseJSON;
+	console.log(response);
+	
+	addTimingInfoFromJson(container, response);
+	
+	
+	var audio = document.createElement("audio");
+	container.appendChild(audio);
+	
+	audio.setAttribute("controls", "true");
+	
+	audio.setAttribute("src", response.audio);
+	
+	
+	connectTimingAndAudio(container,audio);
+	
+	audio.play();
+	
+	
+    };
 
-	    audio.play();
-
-
-	};
-
-	xhr.onerror = function() {
+    xhr.onerror = function() {
 	    console.log('There was an error!');
-	};
-
-    } else if ( synth == "flite" ) {
-
-	//var url = "http://localhost/flite/"+locale+"?input="+encodeURIComponent(text);
-	var url = "https://morf.se/flite/"+locale+"?input="+encodeURIComponent(text);
-	console.log(url);
-
-	var xhr = new XMLHttpRequest();
-	xhr.overrideMimeType('text/json');
-	xhr.open("GET", url, true);
-	xhr.send();
-
-	xhr.onload = function() {
-	    var response = JSON.parse(xhr.responseText);
-	    //var response = xhr.responseJSON;
-	    console.log(response);
-
-	    addTimingInfoFromJson(container, response);
+    };
 
 
-	    var audio = document.createElement("audio");
-	    container.appendChild(audio);
-
-	    audio.setAttribute("controls", "true");
-
-	    audio.setAttribute("src", response.audio);
-
-
-	    connectTimingAndAudio(container,audio);
-
-	    audio.play();
-
-
-	};
-
-	xhr.onerror = function() {
-	    console.log('There was an error!');
-	};
-
-    } else if ( synth == "wikispeech" ) {
-
-	//var url = "http://localhost/flite/"+locale+"?input="+encodeURIComponent(text);
-	//var url = "https://morf.se/flite/"+locale+"?input="+encodeURIComponent(text);
-
-	//'localhost:10000/wikispeech/?lang=sv&input=hej+hej+din+gamla+babian.'
-	var url = "http://localhost/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
-
-	console.log("URL: "+url);
-
-	var xhr = new XMLHttpRequest();
-	xhr.overrideMimeType('text/json');
-	xhr.open("GET", url, true);
-	xhr.send();
-
-	xhr.onload = function() {
-	    var response = JSON.parse(xhr.responseText);
-	    //var response = xhr.responseJSON;
-	    console.log(response);
-
-	    addTimingInfoFromJson(container, response);
-
-
-	    var audio = document.createElement("audio");
-	    container.appendChild(audio);
-
-	    audio.setAttribute("controls", "true");
-
-	    audio.setAttribute("src", response.audio);
-
-
-	    connectTimingAndAudio(container,audio);
-
-	    audio.play();
-
-
-	};
-
-	xhr.onerror = function() {
-	    console.log('There was an error!');
-	};
-
-
-    } else {
-	alert("Synthesis mode "+synth+" not defined");
-	return;
-    }
 
 }
 
@@ -349,13 +269,14 @@ function addTimingInfo(container, xmlDoc) {
 }
 
 
+/**
+ * HB comes from https://github.com/westonruter/html5-audio-read-along
+ *
+ */
+
+
+
 function connectTimingAndAudio(root,audio){
-    /**
-     * HB gammalt som jag hittade någonstans..
-     *
-     */
-
-
     /**
      * Select next word (at audio.currentTime) when playing starts
      */

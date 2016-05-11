@@ -2,11 +2,15 @@
 import sys
 import requests
 from flask import Flask, request, json, Response
+from flask.ext.cors import CORS
 
 from voice_config import textprocessor_configs, voices
 
 
+
+
 app = Flask(__name__)
+CORS(app)
 
 ################################################################
 #
@@ -313,6 +317,7 @@ def getParam(param,default=None):
     if value == None:
         value = default
     return value
+
 
 
 
