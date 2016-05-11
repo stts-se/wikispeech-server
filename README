@@ -15,6 +15,7 @@ git clone om det behövs
 cd src/github.com/stts-se/pronlex/
 git pull
 cd lexserver
+go get
 go run ../createEmptyDB/createEmptyDB.go tmp.db
 go run ../addNSTLexToDB/addNSTLexToDB.go sv.se.nst tmp.db ~/git/wikimedia/langdata/svlex/sprakbanken_nstlex/swe030224NST.pron_utf8.txt
 mv tmp.db pronlex.db

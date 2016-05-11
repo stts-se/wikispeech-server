@@ -96,7 +96,8 @@ function play(id) {
 
 
     //TODO set up and run demo server on morf.se
-    var url = "http://localhost/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
+    //var url = "http://localhost/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
+    var url = "https://morf.se/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
 
     console.log("URL: "+url);
 
