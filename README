@@ -228,4 +228,8 @@ So for now it needs to be python3..
 Should check then to make sure that it is..
 If it isn't python3 there will be errors with long sentences. Catch those errors?
 
+No on closer testing it didn't actually work in python3 either!
+Thats good because it would have been really weird.
 
+Ok so the real question is why there seems to be a length limit in the marytts server on the length of the incoming xml.
+Especially when the request is a POST.

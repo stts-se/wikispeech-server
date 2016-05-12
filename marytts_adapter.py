@@ -123,6 +123,10 @@ def synthesise(lang,voice,input):
 
     print("REPLY: %s" % xml)
 
+    #Should raise an error if status is not OK
+    r.raise_for_status()
+
+
 
     output_tokens = maryxml2tokensET(xml)
 
