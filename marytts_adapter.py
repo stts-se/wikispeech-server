@@ -117,8 +117,11 @@ def synthesise(lang,voice,input):
               "INPUT_TEXT":maryxml}
     r = requests.post(url,params=params)
 
+    print("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
+
     xml = r.text.encode("utf-8")
-    #print("REPLY: %s" % xml)
+
+    print("REPLY: %s" % xml)
 
 
     output_tokens = maryxml2tokensET(xml)
@@ -186,7 +189,12 @@ def utt2json(utt):
     return json.dumps(utt)
 
 def maryxml2tokensET(maryxmlstring):
-    root = ET.fromstring(maryxmlstring)
+    try:
+        root = ET.fromstring(maryxmlstring)
+    except:
+        print("ERROR IN PARSING XML:\n%s" % maryxmlstring)
+        #raise with no argument re-raises the last exception
+        raise
     #root = doc.getroot()
     lang = root.attrib['{http://www.w3.org/XML/1998/namespace}lang']
     #lang = utt2["maryxml"]["@xml:lang"]

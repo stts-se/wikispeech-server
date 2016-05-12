@@ -183,7 +183,7 @@ def textproc(lang, textprocessor_name, text):
                 utt = process(utt)
             except:
                 utt = process(lang, utt)
-        print utt
+        print(utt)
 
     return utt
 

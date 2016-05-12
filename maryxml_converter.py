@@ -112,9 +112,11 @@ def utt2maryxml(lang, utt):
     for par in buildMaryxml(pars):
         maryxml.append(par)
 
-    print("utt2maryxml maryxml:\n%s\n%s" % (header,ET.tostring(maryxml)))
 
-    return header+ET.tostring(maryxml)
+    maryxmlstring = ET.tostring(maryxml, encoding="unicode")
+
+    print("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
+    return "%s%s" % (header,maryxmlstring)
 
     
 def buildMaryxml(items):
