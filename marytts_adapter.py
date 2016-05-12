@@ -2,7 +2,10 @@ import requests
 import tokeniser, maryxml_converter
 import xml.etree.ElementTree as ET
 
-url = 'https://demo.morf.se/marytts/process'
+
+#BUGFIX TODO
+#url = 'https://demo.morf.se/marytts/process'
+url = "http://morf.se:59125/process"
 
 def marytts_preproc(lang, text):
     if lang == "en":
@@ -111,9 +114,11 @@ def synthesise(lang,voice,input):
     #maryxml = utt2maryxml(input, lang)
     maryxml = maryxml_converter.utt2maryxml(lang, input)
     print("MARYXML: %s" % maryxml)
-        
+     
+    #BUGFIX TODO
     #url = 'https://demo.morf.se/marytts/process'
-    url = "%s/%s" % (voice["server"]["url"], "process")
+    #url = "%s/%s" % (voice["server"]["url"], "process")
+    url = "http://morf.se:59125/process"
 
     params = {"INPUT_TYPE":"ALLOPHONES",
               "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
