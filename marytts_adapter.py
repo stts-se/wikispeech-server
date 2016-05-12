@@ -74,8 +74,13 @@ def marytts_postproc(lang, utt):
         "LOCALE":locale,
         "INPUT_TEXT":xml
     }
-    r = requests.get(url, params=payload)
+    r = requests.post(url, params=payload)
     #print "CALLING MARYTTS: ", r.url
+
+    #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
+    r.raise_for_status()
+
+
     
     xml = r.text
     print("REPLY: %s" % xml)
@@ -123,7 +128,7 @@ def synthesise(lang,voice,input):
 
     print("REPLY: %s" % xml)
 
-    #Should raise an error if status is not OK
+    #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
     r.raise_for_status()
 
 
