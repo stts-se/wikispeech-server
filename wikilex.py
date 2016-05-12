@@ -204,6 +204,11 @@ def getLookupBySentence(lang,orth):
                             rest = ""
                     else:
                         print("ERROR: %s not in trans2maryttsMap" % rest)
+                        #After this error, skip one character and try again.
+                        #Or better to raise error?
+                        rest = rest[1:]
+
+
                 mary_fmt = " ".join(new_trans_list)
                     
 
@@ -266,7 +271,9 @@ trans2maryttsMap = {
     "r": "r", 
     "l": "l", 
     "s": "s", 
+    #Which of these is correct?
     "x": "S", 
+    "x\\": "S", 
     "h": "h", 
     "rl": "rl", 
     "l`": "rl", 
