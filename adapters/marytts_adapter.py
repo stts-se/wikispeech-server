@@ -1,5 +1,6 @@
 import requests
-import tokeniser, maryxml_converter
+import tokeniser
+from adapters.maryxml_converter import *
 import xml.etree.ElementTree as ET
 
 
@@ -26,8 +27,7 @@ def marytts_preproc(lang, text):
     
     xml = r.text
     #print "REPLY:", xml
-    #(utt,marylang) = maryxml2utt(xml)
-    (marylang, utt) = maryxml_converter.maryxml2utt(xml)
+    (marylang, utt) = maryxml2utt(xml)
 
     return utt
 
@@ -54,9 +54,7 @@ def marytts_preproc_tokenised(lang, utt):
     
     xml = r.text
     print("REPLY: %s" % xml)
-    import maryxml_converter
-    (marylang, utt) = maryxml_converter.maryxml2utt(xml)
-    #(utt,marylang) = maryxml2utt(xml)
+    (marylang, utt) = maryxml2utt(xml)
     print("marytts_preproc_tokenised returns %s" % utt)
     return utt
 
@@ -68,8 +66,7 @@ def marytts_postproc(lang, utt):
     else:
         locale = lang
 
-    #xml = utt2maryxml(utt, lang)
-    xml = maryxml_converter.utt2maryxml(lang, utt)
+    xml = utt2maryxml(lang, utt)
 
     payload = {
         "INPUT_TYPE":"PHONEMES",
@@ -87,8 +84,7 @@ def marytts_postproc(lang, utt):
     
     xml = r.text
     print("REPLY: %s" % xml)
-    #(utt,marylang) = maryxml2utt(xml)
-    (marylang, utt) = maryxml_converter.maryxml2utt(xml)
+    (marylang, utt) = maryxml2utt(xml)
     print("marytts_postproc returning: %s" % utt)
     return utt
 
@@ -111,8 +107,7 @@ def synthesise(lang,voice,input):
     else:
         locale = lang
 
-    #maryxml = utt2maryxml(input, lang)
-    maryxml = maryxml_converter.utt2maryxml(lang, input)
+    maryxml = utt2maryxml(lang, input)
     print("MARYXML: %s" % maryxml)
      
     #BUGFIX TODO
@@ -185,16 +180,16 @@ def addMaryHeader(utt,lang):
     }}
     return newutt
 
-def maryxml2utt(maryxmlstring):
-    utt = xmltodict.parse(maryxmlstring)
-    lang = utt["maryxml"]["@xml:lang"]
-    utt = dropMaryHeader(utt)
-    return (utt, lang)
+# def maryxml2utt(maryxmlstring):
+#     utt = xmltodict.parse(maryxmlstring)
+#     lang = utt["maryxml"]["@xml:lang"]
+#     utt = dropMaryHeader(utt)
+#     return (utt, lang)
 
-def utt2maryxml(utt, lang):
-    utt = addMaryHeader(utt,lang)
-    maryxmlstring = xmltodict.unparse(utt)
-    return maryxmlstring
+# def utt2maryxml(utt, lang):
+#     utt = addMaryHeader(utt,lang)
+#     maryxmlstring = xmltodict.unparse(utt)
+#     return maryxmlstring
 
 def json2utt(jsonstring):
     return json.loads(jsonstring)

@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 import sys
+from importlib import import_module
 import requests
 from flask import Flask, request, json, Response
 from flask.ext.cors import CORS
@@ -18,6 +19,13 @@ CORS(app)
 #
 # POST: curl -d "lang=en" -d "input=test." http://localhost:10000/wikispeech/
 # GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
+
+
+@app.route('/wikispeech/', methods=["OPTIONS"])
+def wikispeech_options():
+    return json.dumps(getSupportedLanguages())
+
+
 
 @app.route('/wikispeech/', methods=["GET", "POST"])
 def wikispeech():
@@ -170,7 +178,10 @@ def textproc(lang, textprocessor_name, text):
         print("COMPONENT: %s" % component_name)
 
         #Import the defined module and function
-        process = getattr(__import__(module_name), component_name)
+        mod = import_module(module_name)
+        #print(mod)
+        #print(dir(mod))
+        process = getattr(mod, component_name)
         print("PROCESS: %s" % process)
 
         #TODO clean this up to always use process(utt)
@@ -277,8 +288,18 @@ def synthesise(lang,voice_name,input,input_type,output_type):
     #print(voice)
 
     #Import the defined module and function
-    #TODO drop voice[engine] for voice[adapter], drop synthesise for voice[function]
-    process = getattr(__import__(voice["adapter"]), "synthesise")
+    #TODO drop synthesise for voice[function] (?)
+
+    mod = import_module(voice["adapter"])
+    print(mod)
+    print(dir(mod))
+    process = getattr(mod, "synthesise")
+    print("PROCESS: %s" % process)
+
+    #process = getattr(__import__(voice["adapter"]), "synthesise")
+
+
+
     (audio_url, output_tokens) = process(lang, voice, input)
     data = {
         "audio":audio_url,
@@ -319,10 +340,7 @@ def getParam(param,default=None):
     return value
 
 
-
-
-if __name__ == '__main__':
-
+def test_wikilex():
     sent = "apa"
     trans = {}
     trans["apa"] = '" A: - p a'
@@ -332,4 +350,32 @@ if __name__ == '__main__':
         if lex[word] != trans[word]:
             print("ERROR: word %s, found %s, expected %s" % (word, lex[word], trans[word]))
             sys.exit()
+
+
+def test_textproc():
+    sent = "apa"
+    trans = {}
+    trans["apa"] = '" A: - p a'
+    res = textproc("sv","default_textprocessor", sent)
+    print("%s --> %s" % (sent,res))
+
+def test_wikispeech():
+    sent = "apa"
+    trans = {}
+    trans["apa"] = '" A: - p a'
+    lang = "sv"
+    tmp = textproc(lang,"default_textprocessor", sent)
+    res = synthesise(lang,"default_voice",tmp,"markup","json")
+    print("%s --> %s" % (sent,res))
+
+
+if __name__ == '__main__':
+
+
+    print("RUNNING SELF-TESTS...")
+    test_wikilex()
+    test_textproc()
+    test_wikispeech()
+    print("ALL SELF-TESTS RUN SUCCESSFULLY")
+
     app.run(port=10000, debug=True)
