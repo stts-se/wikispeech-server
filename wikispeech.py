@@ -55,11 +55,18 @@ def wikispeech():
 
     if input_type == "text":
         markup = textproc(lang, textprocessor_name, input)
+        if type(markup) == type(""):
+            print("RETURNING MESSAGE: %s" % markup)
+            return markup
     else:
         return "input_type %s not supported" % input_type
 
     if output_type == "json":
-        json_data = json.dumps(synthesise(lang, voice_name, markup,"markup",output_type))
+        result = synthesise(lang, voice_name, markup,"markup",output_type)
+        if type(result) == type(""):
+            print("RETURNING MESSAGE: %s" % result)
+            return result
+        json_data = json.dumps(result)
         return Response(json_data, mimetype='application/json')
 
     else:
@@ -138,7 +145,12 @@ def textprocessing():
     output_type = getParam("output_type", "json")
     input = getParam("input")
 
-    json_data = json.dumps(textproc(lang,textprocessor_name, input))
+    markup = textproc(lang,textprocessor_name, input)
+    if type(markup) == type(""):
+        print("RETURNING MESSAGE: %s" % markup)
+        return markup
+
+    json_data = json.dumps(markup)
     return Response(json_data, mimetype='application/json')
 
 
@@ -159,7 +171,7 @@ def textproc(lang, textprocessor_name, text):
                 textprocessor = tp
                 break
         if textprocessor == None:
-            return "No textprocessor available for language %s" % lang
+            return "ERROR: No textprocessor available for language %s" % lang
     else:
         for tp in tp_configs:
             if tp["name"] == textprocessor_name:
@@ -262,7 +274,11 @@ def synthesis():
 
     #The input is a json string, needs to be a python dictionary
     input = json.loads(input)
-    json_data = json.dumps(synthesise(lang,voice_name,input,input_type,output_type))
+    result = synthesise(lang,voice_name,input,input_type,output_type)
+    if type(result) == type(""):
+        print("RETURNING MESSAGE: %s" % result)
+        return result
+    json_data = json.dumps(result)
     return Response(json_data, mimetype='application/json')
 
 
