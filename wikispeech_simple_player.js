@@ -45,58 +45,38 @@ function play(id) {
     console.log("LANG: "+lang);
 
 
+    //TODO Voice should be set by the user
     if (lang === "en") {
-	locale = "en";
 	voice = "cmu-slt-hsmm";
-	synth = "wikispeech";
     } else if (lang === "ar") {
-	locale = "ar";
 	voice = "ar_nah-hsmm";
-	synth = "wikispeech";
     } else if (lang == "sv") {
-	locale = "sv";
 	voice = "stts_sv_nst-hsmm";
-	synth = "wikispeech";
 
 
 
     // } else if (lang == "hi") {
-    // 	locale = "hi";
     //     voice = "./cmu_indic_axb.flitevox"
-    // 	//voice = "cmu_indic_sb_hin.flitevox";
-    // 	synth = "flite";
     // } else if (lang == "mr") {
-    // 	locale = "mr";
     // 	voice = "cmu_indic_aup_mr.flitevox";
-    // 	synth = "flite";
     // } else if (lang == "ta") {
-    // 	locale = "ta";
     // 	voice = "cmu_indic_sks_tamil.flitevox";
-    // 	synth = "flite";
     // } else if (lang == "te") {
-    // 	locale = "te";
     // 	voice = "cmu_indic_knr_tel.flitevox";
-    // 	synth = "flite";
 
     } else {
 	alert("ERROR: synthesis not supported for document language "+lang);
 	return;
     }
 
-    console.log("Locale: "+locale);
+    console.log("Lang: "+locale);
     console.log("Voice: "+voice);
-    console.log("Synth: "+synth);
 
     var text = container.textContent.trim();
     console.log(text);
 
 
-
-    //'localhost:10000/wikispeech/?lang=sv&input=hej+hej+din+gamla+babian.'
-
-
-    //TODO set up and run demo server on morf.se
-    //var url = "http://localhost/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
+    //TODO Url of wikispeech server should probably be set elsewhere
     var url = "https://morf.se/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
 
     console.log("URL: "+url);
@@ -190,6 +170,7 @@ function addTimingInfoFromJson(container, info) {
 }
 
 
+//Not used any more
 function addTimingInfo(container, xmlDoc) {
 
     var useOriginalText = true;
