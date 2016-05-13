@@ -7,20 +7,20 @@ def synthesise(lang, voice, input):
     #convert utt to ssml
     ssml = utt2phonemics(input)
     #ssml = utt2ssml(input)
-    print ssml
+    print(ssml)
 
     ssml = ssml.replace('"','\\"')
 
     #send ssml to espeak and print pho file
     outfile = "tmp/espeak_out"
     cmd = u"espeak -v %s --pho \"%s\" > %s.pho" % (mbrola_voice, ssml, outfile)
-    print cmd
+    print(cmd)
     os.system(cmd)
 
     #send ssml to espeak and generate wav file (should be possible to do both things at once but apparently not?)
     outfile = "tmp/espeak_out"
     cmd = u"espeak -v %s \"%s\" -w %s.wav" % (voice, ssml, outfile)
-    print cmd
+    print(cmd)
     os.system(cmd)
 
 
@@ -28,7 +28,8 @@ def synthesise(lang, voice, input):
     #read pho file
 
 
-
+    #TODO this doesn't work..
+    #BETTER: read the pho into list of durations, then loop over words in input, add durations for each word
 
     infh = open(outfile+".pho")
     segments = infh.readlines()
@@ -42,7 +43,7 @@ def synthesise(lang, voice, input):
         if segment == "":
             words.append((prevword, str(float(prevwordend)+addtime) ))
             next
-        #print segment
+        print(segment)
         m = re.search("^(\S+)\t([0-9]+)", segment)
         symbol = m.group(1)
         duration = float(m.group(2))
@@ -83,10 +84,10 @@ def synthesise(lang, voice, input):
     return (audio_url, words)
 
 def utt2ssml(item):
-    print item
+    print(item)
     if item["tag"] == "t":
         word = item["text"]
-        if item.has_key("ph"):
+        if "ph" in item:
             phns = map2espeak(item["ph"])
             ssml = """<phoneme ph="%s">%s</phoneme>""" % (phns, word)
         else:
@@ -101,10 +102,10 @@ def utt2ssml(item):
     return ssml
 
 def utt2phonemics(item):
-    print item
+    print(item)
     if item["tag"] == "t":
         word = item["text"]
-        if item.has_key("ph"):
+        if "ph" in item:
             phns = map2espeak(item["ph"])
             phonemics = "[[%s]]" % phns.replace(" ","")
             #ssml = """<phoneme ph="%s">%s</phoneme>""" % (phns, word)
@@ -175,7 +176,10 @@ flitemap["XX"] = "h#"
 flitemap["XX"] = "brth"
 
 espeakmap = {
-    "@U":"oU"
+    "@U":"oU",
+
+    "{:":"E",
+    "{":"E"
 }
 
 def map2espeak(phonestring):
@@ -186,16 +190,17 @@ def map2espeak(phonestring):
     phones = phonestring.split(" ")
     espeakphones = []
     for phone in phones:
-        if espeakmap.has_key(phone):
+        if phone in espeakmap:
             espeakphone = espeakmap[phone]
         else:
             espeakphone = phone
         espeakphones.append(espeakphone)
     espeak = " ".join(espeakphones)
     #move accents to following vowel
-    espeak = re.sub(r"' (.+)(@|oU)", r"\1 ' \2", espeak)
+    espeak = re.sub(r"' (.+)(@|oU|e|E)", r"\1 ' \2", espeak)
+    espeak = re.sub(r"\" (.+)(@|oU|e|E)", r"\1 ' \2", espeak)
 
-    print "MAPPED %s TO %s" % (phonestring, espeak)
+    print("MAPPED %s TO %s" % (phonestring, espeak))
 
 
     return espeak
@@ -208,7 +213,7 @@ if __name__ == "__main__":
     voice = {"espeak_voice":"mb-en1"}
 
     (audio_url, tokens) = synthesise(lang, voice, input)
-    print audio_url
+    print(audio_url)
 
 
     pho = """

@@ -260,6 +260,8 @@ def synthesis():
     if lang not in synthesisSupportedLanguages():
         return "synthesis does not support language %s" % lang
 
+    #The input is a json string, needs to be a python dictionary
+    input = json.loads(input)
     json_data = json.dumps(synthesise(lang,voice_name,input,input_type,output_type))
     return Response(json_data, mimetype='application/json')
 
@@ -267,6 +269,7 @@ def synthesis():
 def synthesise(lang,voice_name,input,input_type,output_type):
     if input_type != "markup":
         return "Synthesis cannot handle input_type %s" % input_type
+
 
     
     voices = list_voices_by_language(lang)
@@ -332,6 +335,8 @@ def getParam(param,default=None):
     if request.method == "GET":
         value = request.args.get(param)
     elif request.method == "POST":
+        #print(request)
+        #print(request.form)
         if param in request.form:
             value = request.form[param]
     print("VALUE: %s" % value)

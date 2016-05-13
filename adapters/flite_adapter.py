@@ -5,12 +5,12 @@ def synthesise(lang, voice, input):
     voice = voice["flite_voice"]
     #convert utt to ssml
     ssml = utt2ssml(input)
-    print ssml
+    print(ssml)
 
     #send ssml to flite
     outfile = "tmp/flite_out"
     cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s.wav > %s.timing" % (voice, ssml, outfile, outfile)
-    print cmd
+    print(cmd)
     os.system(cmd)
 
 
@@ -25,7 +25,7 @@ def synthesise(lang, voice, input):
     words = []
     addtime = 0
     for segment in segments:
-        #print segment
+        #print(segment)
         (symbol,endtime,word) = segment.split("|")
         if prevword == "0":
             prevword = "sil"
@@ -63,10 +63,10 @@ def synthesise(lang, voice, input):
     return (audio_url, words)
 
 def utt2ssml(item):
-    print item
+    print(item)
     if item["tag"] == "t":
         word = item["text"]
-        if item.has_key("ph"):
+        if "ph" in item:
             phns = map2flite(item["ph"])
             ssml = """<phoneme ph="%s">%s</phoneme>""" % (phns, word)
         else:
@@ -142,7 +142,7 @@ def map2flite(phonestring):
     phones = phonestring.split(" ")
     flitephones = []
     for phone in phones:
-        if flitemap.has_key(phone):
+        if phone in flitemap:
             flitephone = flitemap[phone]
         else:
             flitephone = phone
@@ -152,7 +152,7 @@ def map2flite(phonestring):
     flite = re.sub(r"1 (.+)(aa|ae|ah|ao|aw|ax|axr|ay|eh|ih|iy|ow|oy|uh|uw)", r"\1\2 1", flite)
     flite = re.sub(" 1", "1", flite)
 
-    print "MAPPED %s TO %s" % (phonestring, flite)
+    print("MAPPED %s TO %s" % (phonestring, flite))
 
 
     return flite
@@ -165,4 +165,4 @@ if __name__ == "__main__":
     voice = "slt"
 
     (audio_url, tokens) = synthesise(lang, voice, input)
-    print audio_url
+    print(audio_url)
