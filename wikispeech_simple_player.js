@@ -77,7 +77,8 @@ function play(id) {
 
 
     //TODO Url of wikispeech server should probably be set elsewhere
-    var url = "https://morf.se/wikispeech/?lang="+locale+"&voice="+voice+"&input="+encodeURIComponent(text);
+    //TODO change to POST request (what if the text is very long..)
+    var url = "https://morf.se/wikispeech/?lang="+lang+"&voice="+voice+"&input="+encodeURIComponent(text);
 
     console.log("URL: "+url);
 
