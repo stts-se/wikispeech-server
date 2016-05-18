@@ -1,5 +1,11 @@
 
 
+
+
+ws_host = "https://morf.se/wikispeech";
+
+
+
 function addPlayButtonToP() {
 
     var paragraphs = document.getElementsByTagName("p");
@@ -76,9 +82,8 @@ function play(id) {
     console.log(text);
 
 
-    //TODO Url of wikispeech server should probably be set elsewhere
     //TODO change to POST request (what if the text is very long..)
-    var url = "https://morf.se/wikispeech/?lang="+lang+"&voice="+voice+"&input="+encodeURIComponent(text);
+    var url = ws_host+"/?lang="+lang+"&voice="+voice+"&input="+encodeURIComponent(text);
 
     console.log("URL: "+url);
 

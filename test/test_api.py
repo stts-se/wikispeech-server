@@ -1,6 +1,18 @@
 import sys, requests
 import json
 
+####################################
+#
+#  These tests require a running wikispeech.py server:
+#
+#  python3 wikispeech.py
+#
+#  python3 test/test_api.py
+#
+
+
+
+
 i = 0
 def test_done():
     global i
@@ -52,13 +64,13 @@ test_done()
 ## curl "http://localhost:10000/wikispeech/?lang=en&input=test."
 ## Expects json with audio_url and token list
 
-payload = {
+parameters = {
     "input":"test.",
     "lang":"sv"
 }
 
 ## GET
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.json()
 #print(res)
 assert ( type(res) == type({}) )
@@ -68,7 +80,7 @@ test_done()
 
 
 ## POST
-r = requests.post("%s" % (host), data=payload)
+r = requests.post("%s" % (host), data=parameters)
 res = r.json()
 #print(res)
 assert ( type(res) == type({}) )
@@ -81,13 +93,13 @@ test_done()
 #Input can be "TEST_EXAMPLE" + lang
 ## curl "http://localhost:10000/wikispeech/?lang=en&input=TEST_EXAMPLE"
 #TODO only defined for english. If not defined returns a message string instead
-payload = {
+parameters = {
     "input":"TEST_EXAMPLE",
     "lang":"en"
 }
 
 ## GET
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.json()
 #print(res)
 assert ( type(res) == type({}) )
@@ -99,7 +111,7 @@ test_done()
 #1.5
 #textprocessor arg can be set, returns message if it isn't defined
 ## curl "http://localhost:10000/wikispeech/?lang=sv&input=test.&textprocessor=a_textprocessor_that_is_not_defined"
-payload = {
+parameters = {
     "input":"test.",
     "lang":"sv",
     "textprocessor":"a_textprocessor_that_is_not_defined"
@@ -107,7 +119,7 @@ payload = {
 
 ## GET
 
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.text
 #print(res)
 assert ( type(res) == type("") )
@@ -119,14 +131,14 @@ test_done()
 #1.6
 #voice arg can be set, returns message if the voice isn't defined
 ## curl "http://localhost:10000/wikispeech/?lang=sv&input=test.&voice=a_voice_that_is_not_defined"
-payload = {
+parameters = {
     "input":"test.",
     "lang":"sv",
     "voice":"a_voice_that_is_not_defined"
 }
 
 ## GET
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.text
 #print(res)
 assert ( type(res) == type("") )
@@ -192,12 +204,12 @@ test_done()
 # GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=en&input=test."
 # returns json markup
 
-payload = {
+parameters = {
     "lang":"en",
     "input":"test."
 }
 
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.json()
 assert ( type(res) == type({}) )
 
@@ -210,13 +222,13 @@ test_done()
 # textprocessor can be an argument, returns message if not defined
 # GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=en&input=test.&textprocessor=undefined"
 
-payload = {
+parameters = {
     "lang":"en",
     "input":"test.",
     "textprocessor":"undefined"
 }
 
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.text
 assert ( type(res) == type("") )
 
@@ -283,13 +295,13 @@ test_done()
 # returns json, with "audio" url and "tokens" list
 markup = {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"accent": "!H*", "children": [{"p": "t", "tag": "ph"}, {"p": "E", "tag": "ph"}, {"p": "s", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "t E s t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' t E s t", "pos": "NN", "tag": "t", "text": "test"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
 
-payload = {
+parameters = {
     "lang":"en",
     "input":json.dumps(markup)
 }
 
 
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.json()
 assert ( type(res) == type({}) )
 
@@ -304,15 +316,14 @@ test_done()
 # GET:  curl "http://localhost:10000/wikispeech/synthesis/?lang=en&input=\{\}&voice=undefined"
 # voice can be an argument, returns message if not defined
 
-#TODO this also fails
 
-payload = {
+parameters = {
     "lang":"en",
     "input":json.dumps(markup),
     "voice":"undefined"
 }
 
-r = requests.get("%s" % (host), params=payload)
+r = requests.get("%s" % (host), params=parameters)
 res = r.text
 assert ( type(res) == type("") )
 

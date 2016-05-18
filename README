@@ -223,13 +223,7 @@ This url seems to be the limit length, add one more character and we get parse e
 
 https://morf.se/wikispeech/?lang=sv&voice=stts_sv_nst-hsmm&input=Senast%20utvalda%20artiklar%3A%20Historiska%20mord%20och%20avr%C3%A4ttningar%20i%20Stockholm%20%E2%80%93%20Maxtaxa%20inom%20skolbarnsomsorgen%20och%20f%C3%B6rskoleverksamheten%20i%20Sverigelala
 
-Solved in really weird way by switching to python3
-So for now it needs to be python3..
-Should check then to make sure that it is..
-If it isn't python3 there will be errors with long sentences. Catch those errors?
+There seems to be a length limit in the apache server when forwarding to marytts server.
+Surprising and not nice, especially when the request is a POST.
 
-No on closer testing it didn't actually work in python3 either!
-Thats good because it would have been really weird.
-
-Ok so the real question is why there seems to be a length limit in the marytts server on the length of the incoming xml.
-Especially when the request is a POST.
+Now works by using marytts at http://morf.se:59125 rather than at https://demo.morf.se/marytts
