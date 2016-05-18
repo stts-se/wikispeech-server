@@ -308,7 +308,7 @@ test_done()
 
 payload = {
     "lang":"en",
-    "input":markup,
+    "input":json.dumps(markup),
     "voice":"undefined"
 }
 
