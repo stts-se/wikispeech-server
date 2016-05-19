@@ -1,0 +1,5 @@
+sudo apt-get install graphviz
+
+java -jar plantuml.jar -tsvg *puml
+
+firefox basic.svg

@@ -1,0 +1,61 @@
+@startuml
+
+title
+Overview of extended client functionality
+(light blue have an expanded diagram)
+end title
+
+component "Client\n(Browser javascript/other http client)" as Client
+
+component Wikispeech
+
+component Textprocessing #lightblue
+url of Textprocessing is [[textprocessing2.svg]]
+
+component Lexicon #lightblue
+url of Lexicon is [[Lexicon.svg]]
+
+component Synthesis
+
+
+interface WikispeechApi #lightblue
+note left: Basic functionality: [[basic.svg]]
+'note left: Client sends text/html/markup
+
+interface TextprocessingApi
+interface LexiconApi
+interface SynthesisApi
+interface RecordingApi
+database Recordings
+
+Client <--> WikispeechApi
+url of WikispeechApi is [[WikispeechApi.svg]]
+'note right: Client receives markup
+
+WikispeechApi -- Wikispeech
+
+Wikispeech <--> TextprocessingApi
+': "Send text/html\nReceive linguistic markup"
+TextprocessingApi -- Textprocessing
+
+Wikispeech <--> SynthesisApi
+': "Send linguistic markup\nReceive speech markup"
+SynthesisApi -- Synthesis
+
+Wikispeech <--> RecordingApi
+RecordingApi -- Recordings
+
+Textprocessing <--> LexiconApi
+
+LexiconApi -- Lexicon
+
+Client <..> LexiconApi
+Client <..> TextprocessingApi
+Client <..> SynthesisApi
+Client <..> RecordingApi
+
+SynthesisApi .. RecordingApi
+SynthesisApi .. TextprocessingApi
+
+
+@enduml

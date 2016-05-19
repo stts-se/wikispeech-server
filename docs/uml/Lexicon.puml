@@ -1,0 +1,29 @@
+@startuml
+
+interface LexiconApi
+interface GraphemeRulesApi
+interface CompoundsApi
+interface MorphologyApi
+
+component Lexicon
+component GraphemeRules
+component Compounds
+component Morphology
+database LexiconDB
+
+LexiconApi -- Lexicon
+Lexicon <--> LexiconDBApi
+Lexicon <--> CompoundsApi
+Lexicon <--> MorphologyApi
+Lexicon <--> GraphemeRulesApi
+
+LexiconDBApi -- LexiconDB
+CompoundsApi -- Compounds
+MorphologyApi -- Morphology
+GraphemeRulesApi -- GraphemeRules
+
+Compounds <--> LexiconDBApi
+Morphology <--> LexiconDBApi
+
+
+@enduml

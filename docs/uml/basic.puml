@@ -1,0 +1,59 @@
+@startuml
+
+title
+Wikispeech: basic functionality
+end title
+
+component "Client\n(Browser javascript/other http client)" as Client
+
+component "1. Wikispeech" as Wikispeech
+'component "2. NLP" as NLP
+component "2. Textprocessing" as Textprocessing #lightblue
+url of Textprocessing is [[textprocessing2.svg]]
+
+component "3. Lexicon" as Lexicon #lightblue
+url of Lexicon is [[Lexicon.svg]]
+
+component "4. Synthesis" as Synthesis
+component "5. Recordings" as Recordings
+
+
+interface WikispeechApi #lightblue
+url of WikispeechApi is [[WikispeechApi.svg]]
+'note left: Extended functionality: [[extended.svg]]
+'note left: Client sends text/html/markup
+
+'interface NlpApi
+interface TextprocessingApi
+interface LexiconApi
+interface SynthesisApi
+interface RecordingApi
+'database Recordings
+
+Client -- WikispeechApi : "Send text/html/textId\nReceive audio+markup"
+'note right: Client receives markup
+
+WikispeechApi -- Wikispeech
+
+'Wikispeech <--> NlpApi : "Send text/html\nReceive linguistic markup"
+'NlpApi -- NLP
+
+Wikispeech <--> TextprocessingApi : "Send text/html\nReceive linguistic markup"
+
+
+
+Wikispeech <--> SynthesisApi : "Send linguistic markup\nReceive audio+speech markup"
+SynthesisApi -- Synthesis
+
+Wikispeech <--> RecordingApi : "Send text id\nReceive audio+speech markup"
+RecordingApi -- Recordings
+
+'NLP <--> TextprocessingApi
+'NLP <--> LexiconApi
+
+TextprocessingApi -- Textprocessing
+Textprocessing <--> LexiconApi
+LexiconApi -- Lexicon
+
+
+@enduml

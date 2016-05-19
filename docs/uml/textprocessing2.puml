@@ -1,0 +1,147 @@
+@startuml
+
+title
+Textprocessing:
+component and example
+end title
+
+class TextprocessingComponentManager {
+    <TextprocessingComponent>List components
+    --
+    String output = process(String input) 
+    (sends input to each component in list)
+}
+note right: Example of component list in [[textprocessing2_001.svg]]
+
+
+class TextprocessingComponent {
+    String name
+    String description
+    String input_type (e.g. markup with tokenisation)
+    String output_type (e.g. markup with prosody)
+    rules (e.g. regexp rewrite rules, or whatever)
+    --
+    String output process(String input)
+    (modifies the input in some way)
+}
+
+class Example_TextprocessingComponent {
+    name = "pos tagger"
+    description = "adds postags to some tokens"
+    input_type = "token"
+    output_type = "pos"
+    rules = "IN if word == 'hej': RG if word /^[0-9]+$/;"
+    --
+    String output process(String input)
+    ..
+    input = "hej 123"
+    output = "hej/IN 123/RG"
+}
+note right: Contents should ideally be completely userdefined
+
+TextprocessingComponentManager -- TextprocessingComponent
+TextprocessingComponent -- Example_TextprocessingComponent
+
+@enduml
+
+@startuml
+
+title
+Textprocessing:
+example list of components
+end title
+
+
+class TextprocessingComponent#1 {
+    name = "MultiWordUnits"
+    description = "Tokenises multiword units in text"
+    input_type = "sentence"
+    output_type = "token"
+    rules = "mark token if sentence contains 'vita huset'"
+    --
+    input = "vita huset har 1 234 rum"
+    ..
+    output = "<t>vita huset</t>har 1 234 rum"
+}
+
+class TextprocessingComponent#2 {
+    name = "numbers"
+    description = "Tokenises numbers in text"
+    input_type = "sentence"
+    output_type = "token"
+    rules = "mark token if sentence contains [0-9]+"
+    --
+    input = "<t>vita huset</t> har 1 234 rum"
+    ..
+    output = "<t>vita huset</t>har <t>1 234</t> rum"
+}
+
+class TextprocessingComponent#3 {
+    name = "default tokeniser"
+    description = "splits untokenised text into tokens"
+    input_type = "sentence"
+    output_type = "token"
+    rules = "mark token if sentence contains whitespace"
+    --
+    input = "<t>vita huset</t>har <t>1 234</t> rum"
+    ..
+    output = "<t>vita huset</t>\n<t>har</t>\n<t>1 234</t>\n<t>rum</t>"
+}
+
+class TextprocessingComponent#4 {
+    name = "pos tagger"
+    description = "adds postags to some tokens"
+    input_type = "token"
+    output_type = "pos"
+    rules = "IN if word == 'hej': RG if word /^[0-9]+$/; etc"
+    --
+    input = "<t>vita huset</t>\n<t>har</t>\n<t>1 234</t>\n<t>rum</t>"
+    ..
+    output = "<t pos='NN'>vita huset</t>\n<t pos='VB'>har</t>\n<t pos='RG'>1 234</t>\n<t pos='NN'>rum</t>"
+}
+class TextprocessingComponent#5 {
+    name = "number pronunciation"
+    description = "adds transcription to number tokens"
+    input_type = "token"
+    output_type = "transcription"
+    rules = "'e t u s e n' if /^1[0-9][0-9][0-9]$/ etc"
+    --
+    input = "<t pos='NN'>vita huset</t>\n<t pos='VB'>har</t>\n<t pos='RG'>1 234</t>\n<t pos='NN'>rum</t>"
+    ..
+    output = "<t pos='NN' >vita huset</t>\n<t pos='VB'>har</t>\n<t pos='RG' transcription='e t u s e n t v å h u n d r a t r e t i o f y r a'>1 234</t>\n<t pos='NN'>rum</t>"
+}
+
+class TextprocessingComponent#6 {
+    name = "lexicon lookup"
+    description = "adds transcription to tokens"
+    input_type = "token"
+    output_type = "transcription"
+    rules = "lookup untranscribed tokens in lexicon"
+    --
+    input = "<t pos='NN'>vita huset</t>\n<t pos='VB'>har</t>\n<t pos='RG' transcription='e t u s e n t v å h u n d r a t r e t i o f y r a'>1 234</t>\n<t pos='NN'>rum</t>"
+    ..
+    output = "<t pos='NN' >vita huset</t>\n<t pos='VB' transcription='h a r'>har</t>\n<t pos='RG' transcription='e t u s e n t v å h u n d r a t r e t i o f y r a'>1 234</t>\n<t pos='NN' transcription='r u m'>rum</t>"
+}
+
+class TextprocessingComponent#7 {
+    name = "lts rules"
+    description = "adds transcription to any untranscribed tokens"
+    input_type = "token"
+    output_type = "transcription"
+    rules = "v -> v etc"
+    --
+    input = "<t pos='NN'>vita huset</t>\n<t pos='VB' transcription='h a r'>har</t>\n<t pos='RG' transcription='e t u s e n t v å h u n d r a t r e t i o f y r a'>1 234</t>\n<t pos='NN' transcription='r u m'>rum</t>"
+    ..
+    output = "<t pos='NN' transcription='v i t a h u s e t'>vita huset</t>\n<t pos='VB' transcription='h a r'>har</t>\n<t pos='RG' transcription='e t u s e n t v å h u n d r a t r e t i o f y r a'>1 234</t>\n<t pos='NN' transcription='r u m'>rum</t>"
+}
+
+"TextprocessingComponent#1" --> "TextprocessingComponent#2"
+"TextprocessingComponent#2" --> "TextprocessingComponent#3"
+"TextprocessingComponent#3" --> "TextprocessingComponent#4"
+"TextprocessingComponent#4" --> "TextprocessingComponent#5"
+"TextprocessingComponent#5" --> "TextprocessingComponent#6"
+"TextprocessingComponent#6" --> "TextprocessingComponent#7"
+
+
+@enduml
+

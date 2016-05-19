@@ -1,0 +1,46 @@
+@startuml
+
+title
+Validation of transcription
+end title
+
+class Entry <<C, class>> {
+ Lexicon entry with one or more transcriptions
+ ==   
+ -string
+ -language
+ -transcriptions [...]
+ -part-of-speech
+}
+
+
+class Validator <<C, class>> {
+ Validates a lexicon entry
+ ==   
+ +validate(Entry): ValidationResult
+ -validationRules [...]
+}
+
+class ValidationRule <<C, class>> {
+ Validates a lexicon entry
+ ==   
+ +validate(Entry): ValidationMessage
+}
+
+class ValidationResult <<C, class>> {
+ Contains zero or more validation messages
+ ==   
+ -messages [...]
+}
+
+class ValidationMessage <<C, class>> {
+ Text explaining validation error
+ ==   
+ -message
+ -validation type
+}
+
+Validator -- "1..*" ValidationRule
+ValidationResult -- "0..*" ValidationMessage
+
+@enduml

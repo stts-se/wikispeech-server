@@ -12,6 +12,50 @@
 
 <h2><a href="api.md">API</a></h2>
 
+<h2>Introduction</h2>
+
+<p>
+The code, tests, examples and documentation in wikispeech_mockup is an initial illustration of how a wikispeech server can be implemented.
+</p>
+
+<p>
+The code contains a simple web server, written in python with the flask extension, that implements the three urls wikispeech, wikispeech/textprocessing, and wikispeech/synthesis.
+</p>
+
+<p>
+It is intended to run as a standalone server. Later it may be rewritten, for example in php if it will be used as a mediawiki extension.
+</p>
+
+<p>
+The wikispeech route takes text and language as arguments, and passes the text to textprocessing and synthesis. The returned json contains an audio url and a list of tokens with timing information, to be used by the player. The textprocessing route returns json markup. The synthesis route takes language and json markup as arguments.
+</p>
+
+<p>
+The recording api illustrated in the diagram below is not implemented. Its function is to allow for recordings to be played back in the same way as synthesis, with timing markup. It can easily be added, and at least as a simple example probably should be. TODO
+</p>
+
+<img src="uml/basic.svg" alt="basic wikispeech uml"  height="500" width="500"> 
+
+<h2>Voice Configuration</h2>
+
+<p>
+Textprocessing and synthesis is defined in a configuration file, currently as python . At a later stage this will be editable by users, so should be shifted to some database instead, and corresponding routes added to the apis. The configuration is very simple and needs to be expanded as the needs arise.
+</p>
+
+<p>
+Textprocessing is defined 
+
+
+
+
+<h2>Textprocessing</h2>
+
+<img src="uml/textprocessing2.svg" alt="textprocessing uml"  height="500" width="500"> 
+<br/>
+<img src="uml/textprocessing2_001.svg" alt="textprocessing uml" height="1000"> 
+
+<h2>Synthesis</h2>
+
 <h2><a href="notes.md">Notes</a></h2>
 
 
@@ -19,5 +63,5 @@
 
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Wed May 18 10:17:07 CEST 2016 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Thu May 19 09:25:22 CEST 2016 <!-- hhmts end -->
 </body> </html>

@@ -1,0 +1,10 @@
+@startuml
+
+class WikispeechApi {
+
+GET param=text, returns synthesis audio and markup
+GET param=textId, returns recording audio and markup
+
+}
+
+@enduml

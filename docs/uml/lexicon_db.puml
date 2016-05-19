@@ -1,0 +1,136 @@
+@startuml
+
+title
+Lexicon database
+end title
+
+class SurfaceForm <<T, table>> {
+ Non-normalised text token
+ ==   
+ string unique indexed
+ fk: entryId
+}
+
+note right: Association table SurfaceForm2Entry
+
+/'
+class NormalisedToken <<T, table>> {
+ Normalised text token
+ ==   
+ string
+}
+'/
+
+class Entry <<T, table>> {
+ Lexikon entry
+ ==   
+ string indexed
+ fk: normalisedTokenId
+ word_parts
+ language
+ part-of-speech
+ label
+ composite index: string+language
+}
+
+class AudioFile <<T, table>> {
+ Recording of user's 
+ pronunciation of entry
+ ==
+ user_id		
+ Binary data or pointer to file
+}
+
+class Lemma <<T, table>> {
+ Lemma form
+ ==   
+ string unique indexed
+ word_parts
+}
+
+
+class Editor <<T, table>> {
+ Identifies who and when
+ ==   
+ editor_id
+ timestamp
+}
+
+
+class Comment <<T, table>> {
+ Free text comment
+ ==   
+ text
+ timestamp
+}
+
+class CommentType <<T, table>> {
+ Names of types of comments
+ ==   
+ problematic | variant | 
+ invalid | ...
+}
+
+
+
+class EntryType <<T, sequence>> {
+ Defines type of entry
+ == 
+ fk: entryId
+ fullWord | morpheme | 
+ compoundpart | number |
+ acronym | abbreviation | 
+ ...
+}
+
+
+class Transcription <<T, table>> {
+ Transkription of a word
+ ==   
+ string
+ fk: entryId
+ mark_up_code   
+ language
+ ordering
+ label
+}
+
+class Status <<T, table>> {
+ Quality status 
+ ==   
+ unverified | verified |
+ valid | invalid | ...
+}
+note right: Status might be inferred by number of editors, etc
+
+
+class PhonemeSymbol <<T, table>> {
+ Defines valid phonetic 
+ symbols for a language
+ 
+ ==   
+ 
+ symbol_string
+ ipa_symbol
+ symbol_type: phoneme|consonant
+              |vowel|stress
+              |delimiter|...
+ language_name
+}
+
+/' Token "0..*" -- "1" NormalisedToken '/
+
+SurfaceForm "0..*" -- "0..*" Entry
+Entry "1" -- "1..*" EntryType
+Entry "1" -- "1..*" Transcription
+Entry "1..*" -- "0..1" Lemma
+Entry "1" -- "1..*" Editor
+Entry  -- "0..*" Comment
+Entry "1" -- "0..*" AudioFile
+Comment "1" -- "1" Editor
+Comment "1" -- "0..1" CommentType
+Transcription "1" -- "1" Editor
+Transcription "1" -- "1" Status
+Transcription  "1" -- "0..1" Comment
+
+@enduml

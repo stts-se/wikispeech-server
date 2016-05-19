@@ -1,0 +1,68 @@
+@startuml
+
+title
+Textprocessing Components
+end title
+
+
+package Input {
+    component InputHandler
+    package InputHandlers {
+    component Encoding
+    component Language
+    component "Headers, notes, etc"
+}
+}
+
+package Tokenisation {
+component Tokeniser
+package Tokenisers {
+component "Multi-word Units"
+component Numbers
+component "Special characters"
+component Abbreviations
+component MathML
+component "Other markup"
+}
+}
+
+package Prosody {
+component ProsodyHandler
+package ProsodyComponents {
+component "Pos-tagging"
+component Punctuation
+component Chunker
+component Syntax
+component "Intonation, phrase type"
+component "semantics?"
+}
+}
+
+package Normalisation {
+component Normaliser
+package Normalisers {
+component "Numbers (Finnish!)"
+component Names
+component Abbreviations
+component "Vocalisation (Arabic!)"
+}
+}
+
+package Phonetisation {
+component Phonetiser
+package Phonetisers {
+component UserLexicon
+component Lexicon
+component "LTS Rules"
+component Disambiguation
+component "Post-lexical rules, sandhi"
+}
+}
+
+InputHandler -> Tokeniser
+Tokeniser -> ProsodyHandler
+ProsodyHandler -> Normaliser
+Normaliser --> Phonetiser
+
+
+@enduml
