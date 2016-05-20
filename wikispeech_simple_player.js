@@ -58,7 +58,7 @@ function play(id) {
 	voice = "ar_nah-hsmm";
     } else if (lang == "sv") {
 	voice = "stts_sv_nst-hsmm";
-    } else if (lang == "no") {
+    } else if (lang == "nb") {
 	voice = "stts_no_nst-hsmm";
 
 
