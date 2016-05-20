@@ -377,14 +377,14 @@ def test_textproc():
     sent = "apa"
     trans = {}
     trans["apa"] = '" A: - p a'
-    res = textproc("sv","default_textprocessor", sent)
+    res = textproc("nb","default_textprocessor", sent)
     print("%s --> %s" % (sent,res))
 
 def test_wikispeech():
     sent = "apa"
     trans = {}
     trans["apa"] = '" A: - p a'
-    lang = "sv"
+    lang = "nb"
     tmp = textproc(lang,"default_textprocessor", sent)
     res = synthesise(lang,"default_voice",tmp,"markup","json")
     print("%s --> %s" % (sent,res))

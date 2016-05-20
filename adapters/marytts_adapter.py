@@ -11,6 +11,8 @@ url = "http://morf.se:59125/process"
 def marytts_preproc(lang, text):
     if lang == "en":
         locale = "en_US"
+    elif lang == "nb":
+        locale = "no"
     else:
         locale = lang
 
@@ -23,7 +25,7 @@ def marytts_preproc(lang, text):
     }
     #Using output_type PHONEMES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
     r = requests.get(url, params=payload)
-    #print "CALLING MARYTTS: ", r.url
+    print("CALLING MARYTTS: %s" % r.url)
     
     xml = r.text
     #print "REPLY:", xml
@@ -63,10 +65,16 @@ def marytts_preproc_tokenised(lang, utt):
 def marytts_postproc(lang, utt):
     if lang == "en":
         locale = "en_US"
+        xmllang = "en"
+    elif lang == "nb":
+        locale = "no"
+        xmllang = "no"
     else:
         locale = lang
+        xmllang = lang
 
-    xml = utt2maryxml(lang, utt)
+    #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
+    xml = utt2maryxml(xmllang, utt)
 
     payload = {
         "INPUT_TYPE":"PHONEMES",
@@ -75,7 +83,7 @@ def marytts_postproc(lang, utt):
         "INPUT_TEXT":xml
     }
     r = requests.post(url, params=payload)
-    #print "CALLING MARYTTS: ", r.url
+    print("CALLING MARYTTS: %s" % r.url)
 
     #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
     r.raise_for_status()
@@ -102,12 +110,18 @@ def marytts_postproc(lang, utt):
 
 def synthesise(lang,voice,input):
 
+    if lang == "nb":
+        xmllang = "no"
+    else:
+        xmllang = lang
+
     if "marytts_locale" in voice:
         locale = voice["marytts_locale"]
     else:
         locale = lang
 
-    maryxml = utt2maryxml(lang, input)
+    #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
+    maryxml = utt2maryxml(xmllang, input)
     print("MARYXML: %s" % maryxml)
      
     #BUGFIX TODO

@@ -18,7 +18,7 @@ voices = [
     {"lang":"sv", "name":"espeak_mbrola_sv1", "engine":"espeak", "adapter":"adapters.espeak_adapter", "espeak_mbrola_voice":"mb-sw1", "espeak_voice":"mb-sw1", "program":{"command":'espeak -v mb-sw1'}}
     ,
 
-    {"lang":"nb", "name":"stts_no_nst-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}}
+    {"lang":"nb", "name":"stts_no_nst-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "marytts_locale":"no", "server":{"url":'https://demo.morf.se/marytts'}}
     ,
 
     {"lang":"en", "name":"dfki-spike-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}, "marytts_locale":"en_US"}
