@@ -2,7 +2,7 @@
 import sys
 from importlib import import_module
 import requests
-from flask import Flask, request, json, Response
+from flask import Flask, request, json, Response, make_response
 from flask.ext.cors import CORS
 
 from voice_config import textprocessor_configs, voices
@@ -23,7 +23,32 @@ CORS(app)
 
 @app.route('/wikispeech/', methods=["OPTIONS"])
 def wikispeech_options():
-    return json.dumps(getSupportedLanguages())
+
+    options = {
+        "GET|POST": {
+            "description": "Get speech from text",
+            "parameters": {
+                "input": {
+                    "type": "string",
+                    "description": "The text to be synthesised",
+                    "required": True,
+                    "default": None
+                },
+                "lang": {
+                    "type": "string",
+                    "description": "2-letter code for textprocessing and synthesis language",
+                    "required": True,
+                    "allowed": getSupportedLanguages(),
+                    "default": None
+                }
+            }
+        }
+    }
+                
+
+    resp = make_response(json.dumps(options))
+    resp.headers["Allow"] = "OPTIONS, GET, POST"
+    return resp
 
 
 
@@ -145,13 +170,19 @@ def textprocessing():
     output_type = getParam("output_type", "json")
     input = getParam("input")
 
-    markup = textproc(lang,textprocessor_name, input)
-    if type(markup) == type(""):
-        print("RETURNING MESSAGE: %s" % markup)
-        return markup
+    if input_type == "text":
+        markup = textproc(lang,textprocessor_name, input)
+        if type(markup) == type(""):
+            print("RETURNING MESSAGE: %s" % markup)
+            return markup
+    else:
+        return "input_type %s not supported" % input_type
 
-    json_data = json.dumps(markup)
-    return Response(json_data, mimetype='application/json')
+    if output_type == "json":
+        json_data = json.dumps(markup)
+        return Response(json_data, mimetype='application/json')
+    else:
+        return "output_type %s not supported" % output_type
 
 
 def textprocSupportedLanguages():

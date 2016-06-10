@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import sys, requests
 import json
 
@@ -142,11 +144,12 @@ r = requests.get("%s" % (host), params=parameters)
 res = r.text
 #print(res)
 assert ( type(res) == type("") )
-expected = "ERROR: voice a_voice_that_is_not_defined not defined for language sv."
+expected = "ERROR: voice %s not defined for language %s." % (parameters["voice"], parameters["lang"])
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
 
-#input and output formats can be redefined, but currently only input_format=text and output_format=json are allowed so no point in testing
+#input and output types can be redefined, but currently only input_typetext and output_type=json are allowed so no point in testing
+
 
 
 #2) textprocessing api
@@ -236,6 +239,53 @@ expected = "ERROR: Textprocessor undefined not defined for language en"
 
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
+
+#Starting test of ssml input
+#2.7
+#input_type can be set to ssml
+#the textprocessing will then use the ssml (to begin with phoneme, break, perhaps some say-as) to build the output json
+#First full ssml. Later ssml chunks?
+# GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=sv&input_type=ssml&input=<SSML>"
+
+ssml = """
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                 http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
+       xml:lang="sv">
+
+  Det här är ett test av <phoneme alphabet="sampa" ph="b a - b I - ' A: n">SSML</phoneme>
+
+</speak>
+"""
+
+parameters = {
+    "input":ssml,
+    "lang":"sv",
+    "input_type":"ssml"
+}
+
+## GET
+r = requests.get("%s" % (host), params=parameters)
+
+#This test succeeds now
+res = r.text
+print(res)
+assert ( type(res) == type("") )
+expected = "input_type ssml not supported"
+
+#This is what we want
+#res = r.json()
+#print(res)
+#assert ( type(res) == type([]) )
+#expected = {"children": [{"children": [{"children": [{"children": [{"accent": "L+H*", "children": [{"children": [{"p": "d", "tag": "ph"}, {"p": "e:", "tag": "ph"}], "ph": "d e:", "tag": "syllable"}], "g2p_method": "userdict", "ph": "\" d e:", "pos": "content", "tag": "t", "text": "Det"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "r", "tag": "ph"}, {"p": "h", "tag": "ph"}], "ph": "r h", "stress": "1", "tag": "syllable"}], "g2p_method": "rules", "ph": "' r h", "pos": "content", "tag": "t", "text": "h\u00c3\u00a4r"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "r", "tag": "ph"}], "ph": "r", "stress": "1", "tag": "syllable"}], "g2p_method": "rules", "ph": "' r", "pos": "content", "tag": "t", "text": "\u00c3\u00a4r"}, {"children": [{"children": [{"p": "E", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "E t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' E t", "pos": "function", "tag": "t", "text": "ett"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "t", "tag": "ph"}, {"p": "E", "tag": "ph"}, {"p": "s", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "t E s t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' t E s t", "pos": "content", "tag": "t", "text": "test"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "A:", "tag": "ph"}, {"p": "v", "tag": "ph"}], "ph": "A: v", "stress": "1", "tag": "syllable"}], "g2p_method": "rules", "ph": "' A: v", "pos": "content", "tag": "t", "text": "av"}, {"accent": "!H*", "children": [{"children": [{"p": "b", "tag": "ph"}, {"p": "a", "tag": "ph"}], "ph": "b a", "tag": "syllable"}, {"children": [{"p": "b", "tag": "ph"}, {"p": "I", "tag": "ph"}], "ph": "b I", "tag": "syllable"}, {"accent": "!H*", "children": [{"p": "A:", "tag": "ph"}, {"p": "n", "tag": "ph"}], "ph": "A: n", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "b a - b I - ' A: n", "pos": "content", "tag": "t", "text": "babian"}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
+
+
+assert ( res == expected ), "%s != %s" % (res, expected)
+test_done()
+
+
 
 
 #3) synthesis api
