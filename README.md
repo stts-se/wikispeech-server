@@ -31,6 +31,5 @@ chromium-browser test.html
 
 Documentation:
 
-started in docs
+started in https://github.com/stts-se/wikispeech_mockup/wiki
 
-chromium-browser docs/index.html 
