@@ -2,7 +2,7 @@
 import sys
 from importlib import import_module
 import requests
-from flask import Flask, request, json, Response, make_response
+from flask import Flask, request, json, Response, make_response, render_template
 from flask.ext.cors import CORS
 
 from voice_config import textprocessor_configs, voices
@@ -73,7 +73,8 @@ def wikispeech():
         #no
         #hostname = app.config["SERVER_NAME"]
         hostname = request.url_root
-        return getUsageText(hostname, supported_languages)
+        return render_template("usage.html", server=hostname, languages=supported_languages)
+        #return getUsageText(hostname, supported_languages)
     if lang not in supported_languages:
         return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
 
