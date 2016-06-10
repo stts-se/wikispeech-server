@@ -3,7 +3,9 @@ import sys
 from importlib import import_module
 import requests
 from flask import Flask, request, json, Response, make_response, render_template
-from flask.ext.cors import CORS
+#deprecated. but will the new work at office and morf.se?
+#from flask.ext.cors import CORS
+from flask_cors import CORS
 
 from voice_config import textprocessor_configs, voices
 
@@ -40,8 +42,49 @@ def wikispeech_options():
                     "required": True,
                     "allowed": getSupportedLanguages(),
                     "default": None
+                },
+                "textprocessor": {
+                    "type": "string",
+                    "description": "name of a defined wikispeech textprocessor for this language",
+                    "required": False,
+                    "default": "The default textprocessor for this language"
+                },
+                "voice": {
+                    "type": "string",
+                    "description": "name of a defined wikispeech voice for this language",
+                    "required": False,
+                    "default": "The default voice for this language"
+                },
+                "input_type": {
+                    "type": "string",
+                    "description": "the type of the input, for instance with or without markup",
+                    "required": False,
+                    "allowed": "text",
+                    "default": "text"
+                },
+                "ouput_type": {
+                    "type": "string",
+                    "description": "the type of the output, for instance with or without timing information",
+                    "required": False,
+                    "allowed": "json",
+                    "default": "json"
+                }                
+            },
+            "examples": [
+                {
+                    "input": "Det här är ett test",
+                    "lang": "sv"
+                },
+                {
+                    "input": "Det här är ett test",
+                    "lang": "sv",
+                    "textprocessor": "wikitextproc_sv",
+                    "voice": "stts_sv_nst-hsmm",
+                    "input_type": "text",
+                    "output_type": "json"
                 }
-            }
+            ]
+            
         }
     }
                 
