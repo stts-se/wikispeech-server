@@ -36,7 +36,7 @@ def wikispeech_options():
                 },
                 "lang": {
                     "type": "string",
-                    "description": "2-letter code for textprocessing and synthesis language",
+                    "description": "ISO 639-1 two-letter code for textprocessing and synthesis language",
                     "required": True,
                     "allowed": getSupportedLanguages(),
                     "default": None
@@ -47,6 +47,7 @@ def wikispeech_options():
                 
 
     resp = make_response(json.dumps(options))
+    resp.headers["Content-type"] = "application/json"
     resp.headers["Allow"] = "OPTIONS, GET, POST"
     return resp
 
@@ -69,7 +70,10 @@ def wikispeech():
 
     supported_languages = getSupportedLanguages()
     if not lang or not input:
-        return getUsageText(supported_languages)
+        #no
+        #hostname = app.config["SERVER_NAME"]
+        hostname = request.url_root
+        return getUsageText(hostname, supported_languages)
     if lang not in supported_languages:
         return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
 
@@ -98,14 +102,14 @@ def wikispeech():
         return "output_type %s not supported" % output_type
 
 
-def getUsageText(supported_languages):
+def getUsageText(server, supported_languages):
     text = """
 
 USAGE: wikispeech/?lang=LANG&input=TEXT
 <br>
 Supported languages are: %s
 <br>
-EXAMPLE: <a href='http://localhost/wikispeech/?lang=sv&input=Det här är ett test'>http://localhost/wikispeech/?lang=sv&input=Det här är ett test</a>
+EXAMPLE: <a href='%swikispeech/?lang=sv&input=Det här är ett test'>%s/wikispeech/?lang=sv&input=Det här är ett test</a>
 <hr>
 Other things to try:
 <br>
@@ -118,7 +122,7 @@ Other things to try:
 <a href='http://localhost/wikispeech/synthesis/voices/sv'>http://localhost/wikispeech/synthesis/voices/sv</a>
 <br>
 
-""" % (supported_languages)
+""" % (supported_languages, server, server)
     return text
 
 
