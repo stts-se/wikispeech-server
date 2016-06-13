@@ -40,7 +40,7 @@ def getWikispeechOptions():
                 "allowed": "text",
                 "default": "text"
             },
-            "ouput_type": {
+            "output_type": {
                 "type": "string",
                 "description": "the type of the output, for instance with or without timing information",
                 "required": False,
@@ -107,7 +107,7 @@ def getTextprocessingOptions():
                     "allowed": "text",
                     "default": "text"
                 },
-                "ouput_type": {
+                "output_type": {
                     "type": "string",
                     "description": "the type of the output. Only json implemented so meaningless at the moment",
                     "required": False,
