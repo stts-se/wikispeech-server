@@ -41,7 +41,7 @@ expected_langs = ["sv", "nb", "en", "ar"]
 
 r = requests.options(host)
 res = r.json()
-langs = res["GET|POST"]["parameters"]["lang"]["allowed"]
+langs = res["GET"]["parameters"]["lang"]["allowed"]
 
 assert (type(res) == type({}))
 #assert ( res == expected ) , "%s and %s are not equal" % (expected, res)
@@ -161,12 +161,12 @@ host = "http://localhost:10000/wikispeech/textprocessing/"
 
 # 2.1
 # OPTIONS:  curl -X OPTIONS "http://localhost:10000/wikispeech/textprocessing/"
-# TODO Currently nothing. Should return list of allowed parameters?
+
 
 r = requests.options("%s" % (host))
-res = r.text
-expected = ""
-assert ( res == expected ), "%s != %s" % (res, expected)
+res = r.json()
+expected = {}
+assert ( type(res) == type(expected) ), "%s != %s" % (res, expected)
 test_done()
 
 # 2.2
@@ -297,12 +297,12 @@ host = "http://localhost:10000/wikispeech/synthesis/"
 
 # 3.1
 # OPTIONS:  curl -X OPTIONS "http://localhost:10000/wikispeech/synthesis/"
-# TODO Currently nothing. Should return list of allowed parameters?
+
 
 r = requests.options("%s" % (host))
-res = r.text
-expected = ""
-assert ( res == expected ), "%s != %s" % (res, expected)
+res = r.json()
+expected = {}
+assert ( type(res) == type(expected) ), "%s != %s" % (res, expected)
 test_done()
 
 # 3.2

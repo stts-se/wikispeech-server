@@ -6,7 +6,7 @@ host = "http://localhost:10000/wikispeech/"
 
 r = requests.options(host)
 api_info = r.json()
-supported_languages = api_info["GET|POST"]["parameters"]["lang"]["allowed"]
+supported_languages = api_info["GET"]["parameters"]["lang"]["allowed"]
 
 
 def test_default_settings():
