@@ -34,15 +34,18 @@ host = "http://localhost:10000/wikispeech/"
 #1.1
 ## OPTIONS <host>
 ## curl -X OPTIONS "http://localhost:10000/wikispeech/
-## Expects list of languages
-## TODO also return textprocessor and voice names for each language 
-expected = ["sv", "nb", "en", "ar"]
+## Expects description of call and parameters
+
+#expected is rather long and will change depending on configuration
+expected_langs = ["sv", "nb", "en", "ar"]
 
 r = requests.options(host)
 res = r.json()
+langs = res["GET|POST"]["parameters"]["lang"]["allowed"]
 
-assert (type(res) == type([]))
-assert ( res == expected ) , "%s and %s are not equal" % (expected, res)
+assert (type(res) == type({}))
+#assert ( res == expected ) , "%s and %s are not equal" % (expected, res)
+assert ( langs == expected_langs ) , "%s and %s are not equal" % (expected_langs, langs)
 test_done()
 
 #1.2
