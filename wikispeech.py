@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
-import sys, os
+import sys, os, re
+from tempfile import NamedTemporaryFile
 from importlib import import_module
 import requests
 from flask import Flask, request, json, Response, make_response, render_template
@@ -384,17 +385,26 @@ def saveAndConvertAudio(audio_url):
 
     tmpdir = "tmp"
     tmpfilename = "apa"
-    tmpwav = "%s/%s.wav" % (tmpdir, tmpfilename)
-    tmpopus = "%s/%s.opus" % (tmpdir, tmpfilename)
+    #tmpwav = "%s/%s.wav" % (tmpdir, tmpfilename)
+    fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
+    tmpwav = fh.name    
 
-    fh = open(tmpwav, "wb")
+    #tmpopus = "%s/%s.opus" % (tmpdir, tmpfilename)
+    tmpopus = "%s.opus" % tmpwav
+
+    #fh = open(tmpwav, "wb")
     fh.write(audio_data)
     fh.close()
 
     convertcmd = "opusenc %s %s" % (tmpwav, tmpopus)
+    print("convertcmd: %s" % convertcmd)
     os.system(convertcmd)
 
-    return tmpopus
+    opus_url_suffix = re.sub("^.*/%s/" % tmpdir, "%s/" % tmpdir, tmpopus)
+    print(opus_url_suffix)
+
+    #return tmpopus
+    return opus_url_suffix
 
 
 def getTestExample(lang):
