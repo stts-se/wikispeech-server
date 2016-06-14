@@ -1,12 +1,18 @@
 
 
 
-
+//Default, if the html does not set ws_host 
 ws_host = "https://morf.se/wikispeech";
+
+//Default, if getSupportedLanguages fails
+supported_languages = ["sv"];
 
 
 
 function addPlayButtonToP() {
+
+    getSupportedLanguages();
+
 
     var paragraphs = document.getElementsByTagName("p");
     for(i=0; i<paragraphs.length; i++) {
@@ -27,6 +33,27 @@ function addPlayButtonToP() {
 
 }
 
+function getSupportedLanguages() {
+
+    var url = ws_host+"/languages";
+    console.log("Getting supported_languages from "+url);
+
+    var xhr = new XMLHttpRequest();
+    xhr.overrideMimeType('text/json');
+    xhr.open("GET", url, true);
+    xhr.send();
+    
+    xhr.onload = function() {
+	var response = JSON.parse(xhr.responseText);
+	console.log("supported_languages: "+response)
+	supported_languages = response
+    }
+
+    xhr.onerror = function() {
+	    console.log('ERROR: Unable to get supported languages from '+url);
+    };
+}
+
 
 function play(id) {
 
@@ -39,8 +66,6 @@ function play(id) {
     //else
     //var container = document.getElementById(id);
 
-    var locale;
-    var voice;
 
     var lang;
     if ( container.hasAttribute("lang") ) {
@@ -48,44 +73,24 @@ function play(id) {
     } else {
 	lang = document.documentElement.lang;
     }
+
     console.log("LANG: "+lang);
+    console.log("SUPPORTED_LANGUAGES: "+supported_languages);
 
-
-    //TODO Voice should be set by the user
-    if (lang === "en") {
-	voice = "cmu-slt-hsmm";
-    } else if (lang === "ar") {
-	voice = "ar_nah-hsmm";
-    } else if (lang == "sv") {
-	voice = "stts_sv_nst-hsmm";
-    } else if (lang == "nb") {
-	voice = "stts_no_nst-hsmm";
-
-
-
-    // } else if (lang == "hi") {
-    //     voice = "./cmu_indic_axb.flitevox"
-    // } else if (lang == "mr") {
-    // 	voice = "cmu_indic_aup_mr.flitevox";
-    // } else if (lang == "ta") {
-    // 	voice = "cmu_indic_sks_tamil.flitevox";
-    // } else if (lang == "te") {
-    // 	voice = "cmu_indic_knr_tel.flitevox";
-
-    } else {
+    if ( supported_languages.indexOf(lang) < 0 ) {
 	alert("ERROR: synthesis not supported for document language "+lang);
 	return;
     }
 
-    console.log("Lang: "+locale);
-    console.log("Voice: "+voice);
+    console.log("Lang: "+lang);
 
     var text = container.textContent.trim();
     console.log(text);
 
 
     //TODO change to POST request (what if the text is very long..)
-    var url = ws_host+"/?lang="+lang+"&voice="+voice+"&input="+encodeURIComponent(text);
+    //var url = ws_host+"/?lang="+lang+"&voice="+voice+"&input="+encodeURIComponent(text);
+    var url = ws_host+"/?lang="+lang+"&input="+encodeURIComponent(text);
 
     console.log("URL: "+url);
 

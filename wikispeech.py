@@ -34,6 +34,11 @@ def wikispeech_options():
 
 
 
+@app.route('/wikispeech/languages', methods=["GET"])
+def list_languages():
+    json_data = json.dumps(getSupportedLanguages())
+    return Response(json_data, mimetype='application/json')
+
 @app.route('/wikispeech/', methods=["GET", "POST"])
 def wikispeech():
 
