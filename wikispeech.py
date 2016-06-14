@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import sys
+import sys, os
 from importlib import import_module
 import requests
 from flask import Flask, request, json, Response, make_response, render_template
@@ -347,6 +347,13 @@ def synthesise(lang,voice_name,input,input_type,output_type):
 
 
     (audio_url, output_tokens) = process(lang, voice, input)
+
+    #Get audio from synthesiser, convert to opus, save locally, return url
+    opus_audio = saveAndConvertAudio(audio_url)
+    hostname = "http://localhost/wikispeech_mockup"
+    audio_url = "%s/%s" % (hostname,opus_audio)
+    print("audio_url: %s" % audio_url)
+
     data = {
         "audio":audio_url,
         "tokens":output_tokens
@@ -361,6 +368,29 @@ def synthesise(lang,voice_name,input,input_type,output_type):
 #
 # various stuff
 #
+
+
+def saveAndConvertAudio(audio_url):
+
+    r = requests.get(audio_url)
+    print(r.headers['content-type'])
+
+    audio_data = r.content
+
+    tmpdir = "tmp"
+    tmpfilename = "apa"
+    tmpwav = "%s/%s.wav" % (tmpdir, tmpfilename)
+    tmpopus = "%s/%s.opus" % (tmpdir, tmpfilename)
+
+    fh = open(tmpwav, "wb")
+    fh.write(audio_data)
+    fh.close()
+
+    convertcmd = "opusenc %s %s" % (tmpwav, tmpopus)
+    os.system(convertcmd)
+
+    return tmpopus
+
 
 def getTestExample(lang):
     if lang == "en":
