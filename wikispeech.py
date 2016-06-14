@@ -355,7 +355,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #Get audio from synthesiser, convert to opus, save locally, return url
     opus_audio = saveAndConvertAudio(audio_url)
     #hostname = "http://localhost/wikispeech_mockup"
-    audio_url = "%s/wikispeech_mocupt/%s" % (hostname,opus_audio)
+    audio_url = "%s/wikispeech_mockup/%s" % (hostname,opus_audio)
     print("audio_url: %s" % audio_url)
 
     data = {
