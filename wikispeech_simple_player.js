@@ -78,7 +78,7 @@ function play(id) {
     console.log("SUPPORTED_LANGUAGES: "+supported_languages);
 
     if ( supported_languages.indexOf(lang) < 0 ) {
-	alert("ERROR: synthesis not supported for document language "+lang);
+	alert("ERROR: synthesis not supported for language "+lang);
 	return;
     }
 
