@@ -57,8 +57,9 @@ def wikispeech():
     print("WIKISPEECH CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input))
 
     supported_languages = getSupportedLanguages()
+    hostname = request.url_root
+
     if not lang or not input:
-        hostname = request.url_root
         return render_template("usage.html", server=hostname, languages=supported_languages)
     if lang not in supported_languages:
         return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
