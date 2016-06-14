@@ -41,6 +41,8 @@ def list_languages():
 
 @app.route('/wikispeech/', methods=["GET", "POST"])
 def wikispeech():
+    global hostname
+
 
     lang = getParam("lang")
     input_type = getParam("input_type", "text")
@@ -75,7 +77,7 @@ def wikispeech():
         return "input_type %s not supported" % input_type
 
     if output_type == "json":
-        result = synthesise(lang, voice_name, markup,"markup",output_type)
+        result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname)
         if type(result) == type(""):
             print("RETURNING MESSAGE: %s" % result)
             return result
@@ -287,6 +289,7 @@ def synthesis_options():
 
 @app.route('/wikispeech/synthesis/', methods=["GET","POST"])
 def synthesis():
+    hostname = request.url_root
 
     lang = getParam("lang")
     input = getParam("input")
@@ -301,7 +304,7 @@ def synthesis():
 
     #The input is a json string, needs to be a python dictionary
     input = json.loads(input)
-    result = synthesise(lang,voice_name,input,input_type,output_type)
+    result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname)
     if type(result) == type(""):
         print("RETURNING MESSAGE: %s" % result)
         return result
@@ -309,7 +312,8 @@ def synthesis():
     return Response(json_data, mimetype='application/json')
 
 
-def synthesise(lang,voice_name,input,input_type,output_type):
+def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/"):
+
     if input_type != "markup":
         return "Synthesis cannot handle input_type %s" % input_type
 
@@ -350,8 +354,8 @@ def synthesise(lang,voice_name,input,input_type,output_type):
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     opus_audio = saveAndConvertAudio(audio_url)
-    hostname = "http://localhost/wikispeech_mockup"
-    audio_url = "%s/%s" % (hostname,opus_audio)
+    #hostname = "http://localhost/wikispeech_mockup"
+    audio_url = "%s/wikispeech_mocupt/%s" % (hostname,opus_audio)
     print("audio_url: %s" % audio_url)
 
     data = {
