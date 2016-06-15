@@ -74,7 +74,15 @@ function play(id) {
 	lang = document.documentElement.lang;
     }
 
+    var input_type;
+    if ( container.hasAttribute("class") ) {
+	input_type = container.getAttribute("class");
+    } else {
+	input_type = "text";
+    }
+
     console.log("LANG: "+lang);
+    console.log("INPUT_TYPE: "+input_type);
     console.log("SUPPORTED_LANGUAGES: "+supported_languages);
 
     if ( supported_languages.indexOf(lang) < 0 ) {
@@ -84,20 +92,26 @@ function play(id) {
 
     console.log("Lang: "+lang);
 
-    var text = container.textContent.trim();
+    if ( input_type == "ssml" ) {
+	text = container.getElementsByTagName("speak")[0].outerHTML;
+    } else {
+	var text = container.textContent.trim();
+    }
     console.log(text);
 
 
-    //TODO change to POST request (what if the text is very long..)
-    //var url = ws_host+"/?lang="+lang+"&voice="+voice+"&input="+encodeURIComponent(text);
-    var url = ws_host+"/?lang="+lang+"&input="+encodeURIComponent(text);
+
+    var url = ws_host+"/";
+    var params = "lang="+lang+"&input_type="+input_type+"&input="+encodeURIComponent(text);
+
 
     console.log("URL: "+url);
 
     var xhr = new XMLHttpRequest();
     xhr.overrideMimeType('text/json');
-    xhr.open("GET", url, true);
-    xhr.send();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send(params);
     
     xhr.onload = function() {
 	var response = JSON.parse(xhr.responseText);

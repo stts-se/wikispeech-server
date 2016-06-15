@@ -88,7 +88,12 @@ def lexLookup(lang,utt):
                         print("SKIPPING %s" % t)
                         #tokenlist.append(t)
                 elif child["tag"] == "t":
-                    tokenlist.append(child)
+
+                    #SSML
+                    #If there are transcriptions (from marytts) that have no g2p_method, they came from ssml input and should not be overwritten! 
+                    #if "g2p_method" in child and child["g2p_method"] in ["rules","lexicon"]:
+                    if "g2p_method" in child:
+                        tokenlist.append(child)
         
 
     #wordByWord or sentenceBySentence

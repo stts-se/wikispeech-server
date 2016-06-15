@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 #url = 'https://demo.morf.se/marytts/process'
 url = "http://morf.se:59125/process"
 
-def marytts_preproc(lang, text):
+def marytts_preproc(lang, text, input_type="text"):
     if lang == "en":
         locale = "en_US"
     elif lang == "nb":
@@ -16,12 +16,18 @@ def marytts_preproc(lang, text):
     else:
         locale = lang
 
+    if input_type == "ssml":
+        mary_input_type = "SSML"
+    else:
+        mary_input_type = "TEXT"
+        
+
     payload = {
-        "INPUT_TYPE":"TEXT",
-        #"OUTPUT_TYPE":"WORDS",
-        "OUTPUT_TYPE":"PHONEMES",
-        "LOCALE":locale,
-        "INPUT_TEXT":text
+        "INPUT_TYPE": mary_input_type,
+        #"OUTPUT_TYPE": "WORDS",
+        "OUTPUT_TYPE": "PHONEMES",
+        "LOCALE": locale,
+        "INPUT_TEXT": text
     }
     #Using output_type PHONEMES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
     r = requests.get(url, params=payload)

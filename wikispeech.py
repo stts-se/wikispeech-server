@@ -70,8 +70,8 @@ def wikispeech():
         return json.dumps(getTestExample(lang))
 
 
-    if input_type == "text":
-        markup = textproc(lang, textprocessor_name, input)
+    if input_type in ["text","ssml"]:
+        markup = textproc(lang, textprocessor_name, input, input_type=input_type)
         if type(markup) == type(""):
             print("RETURNING MESSAGE: %s" % markup)
             return markup
@@ -156,8 +156,8 @@ def textprocessing():
     output_type = getParam("output_type", "json")
     input = getParam("input")
 
-    if input_type == "text":
-        markup = textproc(lang,textprocessor_name, input)
+    if input_type in ["text","ssml"]:
+        markup = textproc(lang,textprocessor_name, input, input_type=input_type)
         if type(markup) == type(""):
             print("RETURNING MESSAGE: %s" % markup)
             return markup
@@ -178,7 +178,7 @@ def textprocSupportedLanguages():
             supported_languages.append(t["lang"])
     return supported_languages
 
-def textproc(lang, textprocessor_name, text):
+def textproc(lang, textprocessor_name, text, input_type="text"):
 
     tp_configs = list_tp_configs_by_language(lang)
     textprocessor = None
@@ -217,7 +217,7 @@ def textproc(lang, textprocessor_name, text):
         if component_name == "tokenise":
             utt = process(text)
         elif component_name == "marytts_preproc":
-            utt = process(lang,text)
+            utt = process(lang,text, input_type=input_type)
         else:
             try:
                 utt = process(utt)

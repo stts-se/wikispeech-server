@@ -37,7 +37,7 @@ def getWikispeechOptions():
                 "type": "string",
                 "description": "the type of the input, for instance with or without markup",
                 "required": False,
-                "allowed": "text",
+                "allowed": ["text", "ssml"],
                 "default": "text"
             },
             "output_type": {
@@ -104,7 +104,7 @@ def getTextprocessingOptions():
                     "type": "string",
                     "description": "the type of the input, for instance with or without markup",
                     "required": False,
-                    "allowed": "text",
+                    "allowed": ["text", "ssml"],
                     "default": "text"
                 },
                 "output_type": {

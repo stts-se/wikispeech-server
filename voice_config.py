@@ -1,7 +1,9 @@
 
 
 textprocessor_configs = [
-    {"name":"wikitextproc_sv", "lang":"sv", "components":[("tokeniser","tokenise"), ("adapters.marytts_adapter","marytts_preproc_tokenised"), ("wikilex","lexLookup"), ("adapters.marytts_adapter","marytts_postproc")]}
+    #{"name":"wikitextproc_sv", "lang":"sv", "components":[("tokeniser","tokenise"), ("adapters.marytts_adapter","marytts_preproc_tokenised"), ("wikilex","lexLookup"), ("adapters.marytts_adapter","marytts_postproc")]}
+    #,
+    {"name":"wikitextproc_sv", "lang":"sv", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup"), ("adapters.marytts_adapter","marytts_postproc")]}
     ,
     {"name":"wikitextproc_nb", "lang":"nb", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("adapters.marytts_adapter", "marytts_postproc")]}
     ,
