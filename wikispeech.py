@@ -355,10 +355,13 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     (audio_url, output_tokens) = process(lang, voice, input)
 
     #Get audio from synthesiser, convert to opus, save locally, return url
+    #TODO return wav url also? Or client's choice? 
     opus_audio = saveAndConvertAudio(audio_url)
-    #hostname = "http://localhost/wikispeech_mockup"
+    if "localhost:10000" in hostname:
+        hostname = "http://localhost"
     audio_url = "%s/wikispeech_mockup/%s" % (hostname,opus_audio)
     print("audio_url: %s" % audio_url)
+
 
     data = {
         "audio":audio_url,

@@ -106,19 +106,27 @@ function play(id) {
 	
 	addTimingInfoFromJson(container, response);
 	
-	
+	//using regular html5 audio
 	var audio = document.createElement("audio");
 	container.appendChild(audio);
+	//using video.js or one html5 audio element
+	//var audio = document.getElementById("audio_player");
 	
 	audio.setAttribute("controls", "true");
 	
+	//using regular html5 audio
 	audio.setAttribute("src", response.audio);
+	//using video.js
+	//audio.firstChild.setAttribute("src", response.audio);
 	
-	
+	//doesn't work yet with video.js, the text and audio are not connected
 	connectTimingAndAudio(container,audio);
 	
+	//using regular html5 audio
 	audio.play();
-	
+	//using video.js
+	//var myPlayer = videojs('audio_player');	
+	//myPlayer.play();
 	
     };
 
@@ -132,6 +140,13 @@ function play(id) {
 
 function addTimingInfoFromJson(container, info) {
 
+    //Something like this is needed if using one player
+    //var speakButton = container.lastChild;
+    //console.log("speakButton: "+speakButton);
+    //clearOldTimingInfo();
+
+    //when true: doesn't actually use the original text, but replaces it with the tokens from the wikispeech server
+    //when false: appends the new tokens after the original text. Doesn't highlight correctly!
     var useOriginalText = true;
     if (useOriginalText) {
 	var words = container.textContent.split(" ");
@@ -180,11 +195,28 @@ function addTimingInfoFromJson(container, info) {
 	}
 	starttime = endtime;
     }
+
+    //Something like this is needed if using one player
+    //container.appendChild(speakButton);
+
+}
+
+//This is not enough to stop highlighting taking place in many places, if one player is used and one text is synthesised after another. Also remove class=token?
+function clearOldTimingInfo() {
+    var tokens = document.getElementsByClassName("token");
+    var i;
+    for (i = 0; i < tokens.length; i++) {
+	tokens[i].removeAttribute("data-dur");
+	tokens[i].removeAttribute("data-begin");
+	tokens[i].removeAttribute("data-timeindex");
+    }
+
 }
 
 
 //Not used any more
 function addTimingInfo(container, xmlDoc) {
+
 
     var useOriginalText = true;
     if (useOriginalText) {
@@ -261,6 +293,8 @@ function addTimingInfo(container, xmlDoc) {
 
 	starttime = starttime+pause_dur;
     }
+
+
 }
 
 
