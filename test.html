@@ -129,6 +129,47 @@ The title of the movie is: La vita è bella, (Life is beautiful), which is direc
 </speak>
 </p>
 
+<hr>
+<h5>Normal text</h5>
+
+<p lang="sv">
+Fartyget byggdes 1959 i Portugal på Estaleiros Navais de Viana do Castelo, och levererades till [[Färöarna]] under namnet Vágbingur. Under 20 års tid tjänstgjorde det som fiskefartyg på nordatlanten innan fartyget 1981 såldes till Göteborg, då i namnet Bjarnoy II.
+</p>
+<h5>SSML markup</h5>
+<p lang="sv" class="ssml">
+<?xml version="1.0" encoding="utf-8"?>
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                   http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
+         xml:lang="sv">
+Fartyget byggdes 
+<sub alias="nittonhundra-femtionio">1959</sub> 
+i 
+<phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
+på 
+<phoneme alphabet="x-sampa" ph="e s - t a - ' l e j - r O s">Estaleiros</phoneme> 
+<phoneme alphabet="x-sampa" ph="n a - ' v a j s">Navais</phoneme> 
+<phoneme alphabet="x-sampa" ph="' d e">de</phoneme> 
+<phoneme alphabet="x-sampa" ph="v I - ' a - n a">Viana</phoneme> 
+<phoneme alphabet="x-sampa" ph="' d O">do</phoneme> 
+<phoneme alphabet="x-sampa" ph="k a s - ' t e - l O">Castelo</phoneme>
+, och levererades till Färöarna under namnet 
+<phoneme alphabet="x-sampa" ph="' v A: k - b I N - k u0 r">Vágbingur</phoneme>
+. Under 20 års tid tjänstgjorde det som fiskefartyg på 
+<sub alias="nord-atlanten">nordatlanten</sub> 
+innan fartyget 
+<sub alias="nittonhundra-åttioett">1981</sub> 
+såldes till
+<phoneme alphabet="x-sampa" ph="j 2 - t e - ' b O r j">Göteborg</phoneme>, då i namnet 
+<phoneme alphabet="x-sampa" ph="&quot; b j A: rn - % 2 j">Bjarnoy</phoneme> 
+<sub alias="två">II</sub>
+.
+</speak>
+</p>
+
+
+
 <!-- arabic ssml doesn't seem to work.. -->
 <!--
 <hr>
@@ -165,5 +206,5 @@ The title of the movie is: La vita è bella, (Life is beautiful), which is direc
 <audio id="audio_player"></audio>
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Wed Jun 15 15:39:17 CEST 2016 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Wed Jun 15 16:08:14 CEST 2016 <!-- hhmts end -->
 </body> </html>
