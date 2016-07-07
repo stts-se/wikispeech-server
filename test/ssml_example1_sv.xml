@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                   http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
+         xml:lang="sv">
+  
+  Filmen heter: 
+  <phoneme alphabet="x-sampa"
+    ph="' l a ' v i: - t a ' E ' b E - l a"> 
+  La vita è bella </phoneme>, 
+  <!-- The IPA pronunciation is ˈlɑ ˈviːɾə ˈʔeɪ ˈbɛlə -->
+  (Livet är underbart), 
+  och regisseras av 
+  <phoneme alphabet="x-sampa"
+    ph="r O - ' b E r - t O - b E - ' n I n - j I"> 
+  Roberto Benigni </phoneme>
+  <!-- The IPA pronunciation is ɹəˈbɛːɹɾoʊ bɛˈniːnji -->
+
+</speak>

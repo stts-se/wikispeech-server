@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                   http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
+         xml:lang="ar">
+  
+  <phoneme alphabet="x-sampa" ph="' i0 - l a">
+إلى
+  </phoneme> 
+  <phoneme alphabet="x-sampa" ph="' a l - m a m - l a - k a"> 
+المملكة  
+  </phoneme> 
+  <phoneme alphabet="x-sampa" ph="' a l - m a - g r I0 - b ii0 - y a"> 
+المغربية  
+  </phoneme>.
+
+</speak>

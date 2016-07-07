@@ -111,10 +111,15 @@ def marytts_postproc(lang, utt):
 
 
 
+def synthesise(lang,voice,input, presynth=False):
+    if presynth:
+        return synthesise_json(lang,voice,input)
+    else:
+        return synthesise_old(lang,voice,input)
 
 
 
-def synthesise(lang,voice,input):
+def synthesise_old(lang,voice,input):
 
     if lang == "nb":
         xmllang = "no"
@@ -167,6 +172,54 @@ def synthesise(lang,voice,input):
     #As it is it will be synthesised again when the audio tag is put on page
     audio_r = requests.get(url,params=params)
     audio_url = audio_r.url
+
+    #print("runMarytts AUDIO_URL: %s" % audio_url)
+
+    return (audio_url, output_tokens)
+
+
+def synthesise_json(lang,voice,input):
+
+    if lang == "nb":
+        xmllang = "no"
+    else:
+        xmllang = lang
+
+    if "marytts_locale" in voice:
+        locale = voice["marytts_locale"]
+    else:
+        locale = lang
+
+    #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
+    maryxml = utt2maryxml(xmllang, input)
+    print("MARYXML: %s" % maryxml)
+     
+    #BUGFIX TODO
+    #url = 'https://demo.morf.se/marytts/process'
+    #url = "%s/%s" % (voice["server"]["url"], "process")
+
+    #url = "http://morf.se:59125/process"
+    url = "http://localhost:59125/process"
+    
+
+    params = {"INPUT_TYPE":"ALLOPHONES",
+              "OUTPUT_TYPE":"WIKISPEECH_JSON",
+              "LOCALE":locale,
+              "VOICE":voice["name"],
+              "INPUT_TEXT":maryxml}
+    r = requests.post(url,params=params)
+
+    print("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
+
+    json = r.json()
+
+    print("REPLY: %s" % json)
+
+    #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
+    r.raise_for_status()
+
+    audio_url = json["audio"]
+    output_tokens = json["tokens"]
 
     #print("runMarytts AUDIO_URL: %s" % audio_url)
 

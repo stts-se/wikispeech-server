@@ -48,6 +48,15 @@ def wikispeech():
     lang = getParam("lang")
     input_type = getParam("input_type", "text")
     output_type = getParam("output_type", "json")
+
+    #For use with synthesis only
+    presynth = getParam("presynth", False)
+    if presynth == "True":
+        presynth = True
+    else:
+        presynth = False
+
+
     input = getParam("input")
 
     textprocessor_name = getParam("textprocessor", "default_textprocessor")
@@ -79,7 +88,7 @@ def wikispeech():
         return "input_type %s not supported" % input_type
 
     if output_type == "json":
-        result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname)
+        result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname, presynth=presynth)
         if type(result) == type(""):
             print("RETURNING MESSAGE: %s" % result)
             return result
@@ -298,6 +307,11 @@ def synthesis():
     voice_name = getParam("voice", "default_voice")
     input_type = getParam("input_type", "markup")
     output_type = getParam("output_type", "json")
+    presynth = getParam("presynth", False)
+    if presynth == "True":
+        presynth = True
+    else:
+        presynth=False
 
     #print "SYNTHESIS CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input)
 
@@ -306,7 +320,7 @@ def synthesis():
 
     #The input is a json string, needs to be a python dictionary
     input = json.loads(input)
-    result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname)
+    result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname,presynth=presynth)
     if type(result) == type(""):
         print("RETURNING MESSAGE: %s" % result)
         return result
@@ -314,7 +328,11 @@ def synthesis():
     return Response(json_data, mimetype='application/json')
 
 
-def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/"):
+def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/", presynth=False):
+
+    #presynth for use with marytts WIKISPEECH_JSON output type
+    #presynth = True
+
 
     if input_type != "markup":
         return "Synthesis cannot handle input_type %s" % input_type
@@ -337,6 +355,8 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
             return "ERROR: voice %s not defined for language %s." % (voice_name, lang)
 
 
+
+
     #print(voice)
 
     #Import the defined module and function
@@ -352,11 +372,11 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
 
 
-    (audio_url, output_tokens) = process(lang, voice, input)
+    (audio_url, output_tokens) = process(lang, voice, input, presynth=presynth)
 
     #Get audio from synthesiser, convert to opus, save locally, return url
-    #TODO return wav url also? Or client's choice? 
-    opus_audio = saveAndConvertAudio(audio_url)
+    #TODO return wav url also? Or client's choice?
+    opus_audio = saveAndConvertAudio(audio_url, presynth)
     if "localhost:10000" in hostname:
         hostname = "http://localhost"
     audio_url = "%s/wikispeech_mockup/%s" % (hostname,opus_audio)
@@ -379,25 +399,43 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 #
 
 
-def saveAndConvertAudio(audio_url):
+def saveAndConvertAudio(audio_url,presynth=False):
 
-    r = requests.get(audio_url)
-    print(r.headers['content-type'])
-
-    audio_data = r.content
+    print("PRESYNTH: %s, type: %s" % (presynth, type(presynth)) )
 
     tmpdir = "tmp"
-    tmpfilename = "apa"
+    #tmpfilename = "apa"
     #tmpwav = "%s/%s.wav" % (tmpdir, tmpfilename)
     fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
     tmpwav = fh.name    
+    
+    if presynth:
+        fh.close()
+        #The "url" is actually a filename at this point
+        cmd = "mv %s %s" % (audio_url, tmpwav)
+        print(cmd)
+        os.system(cmd)
 
+    else:
+
+        r = requests.get(audio_url)
+        print(r.headers['content-type'])
+
+        audio_data = r.content
+
+        tmpdir = "tmp"
+        #tmpfilename = "apa"
+        #tmpwav = "%s/%s.wav" % (tmpdir, tmpfilename)
+        fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
+        tmpwav = fh.name    
+
+        #fh = open(tmpwav, "wb")
+        fh.write(audio_data)
+        fh.close()
+
+    #tmpwav is now the synthesised wav file
     #tmpopus = "%s/%s.opus" % (tmpdir, tmpfilename)
     tmpopus = "%s.opus" % tmpwav
-
-    #fh = open(tmpwav, "wb")
-    fh.write(audio_data)
-    fh.close()
 
     convertcmd = "opusenc %s %s" % (tmpwav, tmpopus)
     print("convertcmd: %s" % convertcmd)
@@ -459,7 +497,7 @@ def test_wikispeech():
     sent = "apa"
     trans = {}
     trans["apa"] = '" A: - p a'
-    lang = "nb"
+    lang = "sv"
     tmp = textproc(lang,"default_textprocessor", sent)
     res = synthesise(lang,"default_voice",tmp,"markup","json")
     print("%s --> %s" % (sent,res))
