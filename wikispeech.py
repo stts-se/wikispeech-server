@@ -495,10 +495,17 @@ def test_wikilex():
         sys.exit()
         
     for word in sent.split(" "):
-        if lex[word] != trans[word]:
-            print("ERROR: word %s, found %s, expected %s" % (word, lex[word], trans[word]))
+        try:
+            if lex[word] != trans[word]:
+                print("ERROR: lexicon lookup test failure")
+                print("ERROR: word %s, found %s, expected %s" % (word, lex[word], trans[word]))
+                sys.exit()
+        except KeyError:
+            print("ERROR: lexicon lookup test failure")
+            print("ERROR: word %s not found, expected %s" % (word, trans[word]))
             sys.exit()
-
+            
+                
     print("SUCCESS: lexicon lookup test")
 
 
