@@ -113,7 +113,7 @@ def utt2maryxml(lang, utt):
         maryxml.append(par)
 
 
-    maryxmlstring = ET.tostring(maryxml, encoding="unicode")
+    maryxmlstring = ET.tostring(maryxml, encoding="utf-8")
 
     print("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
     return "%s%s" % (header,maryxmlstring)

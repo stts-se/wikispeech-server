@@ -5,8 +5,10 @@ import xml.etree.ElementTree as ET
 
 
 #BUGFIX TODO
+#configure elsewhere
 #url = 'https://demo.morf.se/marytts/process'
-url = "http://morf.se:59125/process"
+#url = "http://morf.se:59125/process"
+url = "http://localhost:59125/process"
 
 def marytts_preproc(lang, text, input_type="text"):
     if lang == "en":
@@ -138,7 +140,7 @@ def synthesise_old(lang,voice,input):
     #BUGFIX TODO
     #url = 'https://demo.morf.se/marytts/process'
     #url = "%s/%s" % (voice["server"]["url"], "process")
-    url = "http://morf.se:59125/process"
+    #url = "http://morf.se:59125/process"
 
     params = {"INPUT_TYPE":"ALLOPHONES",
               "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
@@ -199,7 +201,7 @@ def synthesise_json(lang,voice,input):
     #url = "%s/%s" % (voice["server"]["url"], "process")
 
     #url = "http://morf.se:59125/process"
-    url = "http://localhost:59125/process"
+    #url = "http://localhost:59125/process"
     
 
     params = {"INPUT_TYPE":"ALLOPHONES",

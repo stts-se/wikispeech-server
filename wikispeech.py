@@ -418,6 +418,7 @@ def saveAndConvertAudio(audio_url,presynth=False):
 
     else:
 
+        print("audio_url:\n%s" % audio_url)
         r = requests.get(audio_url)
         print(r.headers['content-type'])
 
@@ -479,28 +480,87 @@ def test_wikilex():
     trans = {}
     trans["apa"] = '" A: - p a'
     import wikilex
-    lex = wikilex.getLookupBySentence("sv", sent)
+    try:
+        lex = wikilex.getLookupBySentence("sv", sent)
+    except:
+        print("Failed to do lexicon lookup.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+
+        import traceback
+        print("Stacktrace:")
+        traceback.print_tb(sys.exc_info()[2])
+        print("END stacktrace")
+
+        print("ERROR: lexicon lookup test failure")
+        print("Is the lexserver running?")
+        sys.exit()
+        
     for word in sent.split(" "):
         if lex[word] != trans[word]:
             print("ERROR: word %s, found %s, expected %s" % (word, lex[word], trans[word]))
             sys.exit()
+
+    print("SUCCESS: lexicon lookup test")
 
 
 def test_textproc():
     sent = "apa"
     trans = {}
     trans["apa"] = '" A: - p a'
-    res = textproc("nb","default_textprocessor", sent)
-    print("%s --> %s" % (sent,res))
+    try:
+        res = textproc("sv","default_textprocessor", sent)
+    except:
+        print("Failed to do textprocessing.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
 
+        import traceback
+        print("Stacktrace:")
+        traceback.print_tb(sys.exc_info()[2])
+        print("END stacktrace")
+
+        print("ERROR: textprocessing test failure")
+        print("Is the marytts server running?")
+        sys.exit()
+        
+        
+    #TODO Better with exception than return value
+    if type(res) == type("") and res.startswith("ERROR:"):
+        print("Failed to do textprocessing")
+        print(res)
+        print("ERROR: textprocessing test failure")
+        sys.exit()
+        
+    print("%s --> %s" % (sent,res))
+    print("SUCCESS: textprocessing test")
+
+    
 def test_wikispeech():
     sent = "apa"
     trans = {}
     trans["apa"] = '" A: - p a'
     lang = "sv"
-    tmp = textproc(lang,"default_textprocessor", sent)
-    res = synthesise(lang,"default_voice",tmp,"markup","json")
+    try:
+        tmp = textproc(lang,"default_textprocessor", sent)
+        res = synthesise(lang,"default_voice",tmp,"markup","json")
+    except:
+        print("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+
+        import traceback
+        print("Stacktrace:")
+        traceback.print_tb(sys.exc_info()[2])
+        print("END stacktrace")
+
+        print("ERROR: wikispeech test failure")
+        print("Is the marytts server running?")
+        sys.exit()
+
+    #TODO Better with exception than return value
+    if type(res) == type("") and res.startswith("No voice available"):
+        print("Failed to do wikispeech test")
+        print(res)
+        print("ERROR: wikispeech test failure")
+        sys.exit()
+        
     print("%s --> %s" % (sent,res))
+    print("SUCCESS: wikispeech test")
 
 
 if __name__ == '__main__':
