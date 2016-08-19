@@ -113,7 +113,12 @@ def utt2maryxml(lang, utt):
         maryxml.append(par)
 
 
-    maryxmlstring = ET.tostring(maryxml, encoding="utf-8")
+    if sys.version_info.major == 2:
+        #This works in python2.7
+        maryxmlstring = ET.tostring(maryxml, encoding="utf-8")
+    else:
+        #This works in python3
+        maryxmlstring = ET.tostring(maryxml, encoding="unicode")
 
     print("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
     return "%s%s" % (header,maryxmlstring)
