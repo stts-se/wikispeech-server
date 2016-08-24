@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Wikispeech workflow demo</title>
+  <meta name="description" content="Edit, synthesise, listen loop">
+  <!-- responsivetabs -->
+  <link rel="stylesheet" href="ext/responsivetabs/css/font-awesome.css">
+  <link rel="stylesheet" href="ext/responsivetabs/css/style.css">
+
+  <!-- Trumbowyg editor -->
+<!--  <link rel="stylesheet" href="ext/Trumbowyg-master/css/main.css">-->
+  <link rel="stylesheet" href="ext/Trumbowyg-master/dist/ui/trumbowyg.css">
+
+
+</head>
+
+
+<body>
+  <h1></h1>
+  <main>
+
+    <div id="tabs" class="c-tabs no-js">
+      <div class="c-tabs-nav">
+	<a href="#" class="c-tabs-nav__link is-active"><span>Input</span></a>
+	<a href="#" class="c-tabs-nav__link"><span>Synthesis</span></a>
+	<a href="#" class="c-tabs-nav__link"><span>Lexicon</span></a>    
+	<a href="#" class="c-tabs-nav__link"><span>Lexicon Entry Editor</span></a>    
+      </div>
+  
+      <div class="c-tab is-active">
+	<div class="c-tab__content">
+	  <h2>Input</h2>
+	  <p>Edit html here, then synthesise or lookup words.</p>
+	  <input type="button" onclick="alert('Synthesise');" value="Synthesise"></input>
+	  <input type="button" onclick="alert('Lookup words');" value="Lookup words"></input>
+	  
+	  <div id="editor">
+
+	    <!-- some sample text to start with, remove after testing! -->
+	    <p>
+	      Fartyget byggdes 
+	      <sub alias="nittonhundra-femtionio">1959</sub> 
+	      i 
+	      <phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
+	      på 
+	      <phoneme alphabet="x-sampa" ph="e s - t a - ' l e j - r O s">Estaleiros</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="n a - ' v a j s">Navais</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="' d e">de</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="v I - ' a - n a">Viana</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="' d O">do</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="k a s - ' t e - l O">Castelo</phoneme>
+	      , och levererades till Färöarna under namnet 
+	      <phoneme alphabet="x-sampa" ph="' v A: k - b I N - k u0 r">Vágbingur</phoneme>
+	      . Under 20 års tid tjänstgjorde det som fiskefartyg på 
+	      <sub alias="nord-atlanten">nordatlanten</sub> 
+	      innan fartyget 
+	      <sub alias="nittonhundra-åttioett">1981</sub> 
+	      såldes till Göteborg, då i namnet 
+	      <phoneme alphabet="x-sampa" ph="&quot; b j A: rn - % 2 j">Bjarnoy</phoneme> 
+	      <sub alias="två">II</sub>
+	      .
+	    </p>
+	    <!-- end of sample text -->
+
+          </div>
+
+
+	</div>	
+      </div>
+      
+      <div class="c-tab">
+	<div class="c-tab__content">
+	  <h2>Synthesis</h2>
+
+	  <div>
+	    <span contenteditable>Fartyget byggdes 1959 i Portugal på Estaleiros Navais de Viana do Castelo , och levererades till Färöarna under namnet Vágbingur.</span>
+	    <audio controls></audio>
+	    <input type="button" value="Synthesise"></input>
+	  </div>
+
+	  <div>
+	    <span>Under 20 års tid tjänstgjorde det som fiskefartyg på nordatlanten innan fartyget 1981 såldes till Göteborg, då i namnet Bjarnoy II .</span>
+	    <audio controls></audio>
+	    <input type="button" value="Synthesise">
+	  </div>
+
+	</div>
+      </div>
+      
+      <div class="c-tab">
+	<div class="c-tab__content">
+	  <h2>Lexicon</h2>
+
+	  <div>
+	    <span id="word1">Fartyget</span>
+	    <input type="button" value="Listen">
+	    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word1')[0].innerHTML);">
+	  </div>
+
+	  <div>
+	    <span id="word2">byggdes</span>
+	    <input type="button" value="Listen">
+	    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word2')[0].innerHTML);">
+	  </div>
+
+	  <div>
+	    <span id="word3">1959</span>
+	    <input type="button" value="Listen">
+	    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word3')[0].innerHTML);">
+	  </div>
+
+	</div>
+      </div>
+
+      <div class="c-tab">
+	<div class="c-tab__content">
+	  <h2>Lexicon entry editor</h2>
+	  <p>
+	    The lexicon entry editor displays editable and uneditable information for the lexicon entry. Uses json schema. Validation of fields. 
+	  </p>
+	  <div>
+	    <input type="text" id="search_term">
+	    <input type="button" value="search" onclick="searchLexicon($('#search_term').val());">
+	  </div>
+	  <hr/>
+    
+	  <div id="editor_holder"></div>
+	  
+	</div>
+      </div>
+
+
+    </div>
+    
+  </main>
+  <hr>
+  <address></address>
+  <!-- hhmts start -->Last modified: Wed Aug 24 14:58:13 CEST 2016 <!-- hhmts end -->
+  
+  <script src="ext/responsivetabs/js/tabs.js"></script>
+  <script>
+    var myTabs = tabs({
+    el: '#tabs',
+    tabNavigationLinks: '.c-tabs-nav__link',
+    tabContentContainers: '.c-tab'
+    });
+    
+    myTabs.init();
+    myTabs.goToTab(3);
+  </script>
+
+  <script src="ext/jquery/jquery-3.1.0.min.js"></script>-->
+  <script src="ext/Trumbowyg-master/dist/trumbowyg.js"></script>
+  <script>
+    /** Default editor configuration **/
+    $('#editor').trumbowyg();
+  </script>
+
+  <script src="ext/json-editor/jsoneditor.js"></script>
+  <script src="ext/json-editor/initialise.js"></script>
+  <script type="text/javascript">
+
+function searchLexicon(search_term) {
+    console.log("Searching lexicon for: " + search_term);
+
+    var params = {
+	"lexicons": "sv.se.nst",
+	"words": search_term
+    }
+    
+    $.get(
+        'http://localhost/lexlookup',
+        params,
+        function(response) {
+	    console.log(response);
+	    editor.setValue(response);
+        }
+    );
+
+}
+    
+  </script>
+  
+
+</body>
+</html>
