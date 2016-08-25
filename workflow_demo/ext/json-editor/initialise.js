@@ -115,7 +115,7 @@ var starting_value = [
     }
 ];
     
-var editor = new JSONEditor(document.getElementById('editor_holder'),{
+var entry_editor = new JSONEditor(document.getElementById('entry_editor_holder'),{
 
     startval: starting_value,
     schema: lex_schema
