@@ -175,7 +175,7 @@ function addTimingInfoFromJson(container, info) {
     console.log("tokens");
     console.log(tokens);
 
-    txt = tokens[1][0].trim();
+    //txt = tokens[1][0].trim();
     //console.log(txt);
 
     var starttime = 0;
@@ -186,8 +186,14 @@ function addTimingInfoFromJson(container, info) {
 	token = tokens[i];
 	console.log(token);
 
-	txt = token[0].trim();
-	endtime = token[1];
+	txt = token.orth.trim();
+
+	if ( token.hasOwnProperty("expanded") ) {
+	    txt = txt + " ("+token.expanded+")";
+	}
+
+	
+	endtime = token.endtime;
 	token_duration = endtime-starttime;
 	
 	console.log("TOKEN: " + txt);

@@ -299,9 +299,10 @@ def maryxml2tokensET(maryxmlstring):
                 #print "PHRASE:", phrase
                 for child in phrase:
                     #print "CHILD:", child.tag
+                    expanded = None
                     if child.tag == "{http://mary.dfki.de/2002/MaryXML}t":
                         #orth = child.text.strip()
-                        orth = "".join(child.itertext()).strip()
+                        orth = "".join(child.itertext()).strip()                        
                         #print "ORTH:", orth
                         tokendur = 0
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
@@ -310,12 +311,16 @@ def maryxml2tokensET(maryxmlstring):
                             tokendur += int(ph.attrib['d'])
 
                         endtime += tokendur
-                        endtime_seconds = endtime/1000.0
-                        token = (orth,endtime_seconds)
+                        #endtime_seconds = endtime/1000.0
+                        #token = (orth,endtime_seconds)
                     elif child.tag == "{http://mary.dfki.de/2002/MaryXML}mtu":
-                        #orth = child.text.strip()
-                        orth = "".join(child.itertext()).strip()
-                        #print "ORTH:", orth
+                        print(child.attrib)
+                        #The expanded words of the mtu
+                        expanded = "".join(child.itertext()).strip()
+                        #The original orthography
+                        #TODO return both
+                        orth = child.attrib["orig"]
+                        print("ORTH:", orth)
                         tokendur = 0
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
                             #print ph.attrib
@@ -323,8 +328,8 @@ def maryxml2tokensET(maryxmlstring):
                             tokendur += int(ph.attrib['d'])
 
                         endtime += tokendur
-                        endtime_seconds = endtime/1000.0
-                        token = (orth,endtime_seconds)
+                        #endtime_seconds = endtime/1000.0
+                        #token = (orth,endtime_seconds)
                     elif child.tag == "{http://mary.dfki.de/2002/MaryXML}boundary":
                         orth = "PAUSE"
                         orth = ""
@@ -332,8 +337,16 @@ def maryxml2tokensET(maryxmlstring):
                         #print child.attrib
                         #endtime += child.attrib['{http://mary.dfki.de/2002/MaryXML}duration']
                         endtime += int(child.attrib['duration'])
-                        endtime_seconds = endtime/1000.0
-                        token = (orth,endtime_seconds)
+                        #endtime_seconds = endtime/1000.0
+                        #token = (orth,endtime_seconds)
+
+                    orth = re.sub("\s+", " ", orth)
+                    endtime_seconds = endtime/1000.0
+                    token = {"orth":orth,"endtime":endtime_seconds}
+                    if expanded:
+                        expanded = re.sub("\s+", " ", expanded)
+                        token["expanded"] = expanded
+                    
                     sentence.append(token)
                     output_tokens.append(token)
     #print utt
