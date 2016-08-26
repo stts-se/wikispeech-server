@@ -104,24 +104,30 @@ window.onload = function() {
 	<div class="c-tab__content">
 	  <h2>Lexicon</h2>
 
-	  <div>
-	    <span id="word1">Fartyget</span>
-	    <input type="button" value="Listen">
-	    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word1')[0].innerHTML);">
-	  </div>
+	  <div id="lexicon_container">
 
-	  <div>
-	    <span id="word2">byggdes</span>
-	    <input type="button" value="Listen">
-	    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word2')[0].innerHTML);">
-	  </div>
 
-	  <div>
-	    <span id="word3">1959</span>
-	    <input type="button" value="Listen">
-	    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word3')[0].innerHTML);">
-	  </div>
+	    <!-- Initial content for testing -->
+	    <div>
+	      <span id="word1">Fartyget</span>
+	      <input type="button" value="Listen">
+	      <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word1')[0].innerHTML);">
+	    </div>
+	    
+	    <div>
+	      <span id="word2">byggdes</span>
+	      <input type="button" value="Listen">
+	      <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word2')[0].innerHTML);">
+	    </div>
+	    
+	    <div>
+	      <span id="word3">1959</span>
+	      <input type="button" value="Listen">
+	      <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word3')[0].innerHTML);">
+	    </div>
+	    <!-- END Initial content for testing -->
 
+	  </div>
 	</div>
       </div>
 
@@ -148,7 +154,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Thu Aug 25 15:26:27 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Fri Aug 26 15:26:09 CEST 2016 <!-- hhmts end -->
   
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
@@ -218,9 +224,11 @@ function tokeniseHtmlText() {
 
 	    if (response.tag === "utt") {
 		console.log("Found utt");
-		var sentences = getSentenceAndTokens(response);
-		console.log(sentences);
-		addSentencesToSynthesisTab(sentences);
+		var data = getSentenceAndTokens(response);
+		console.log(data.sentences);
+		console.log(data.words);
+		addSentencesToSynthesisTab(data.sentences);
+		addWordsToLexiconTab(data.words);
 	    } else {
 		console.log("ERROR: response is not an utt");
 	    }
@@ -232,7 +240,7 @@ function tokeniseHtmlText() {
 function getSentenceAndTokens(utt) {
 
     var sentencelist = [];
-    var words = {}
+    var words = {};
     
     var paragraphs = utt.children;
     for ( i=0; i<paragraphs.length; i++ ) {
@@ -255,9 +263,9 @@ function getSentenceAndTokens(utt) {
 			    var orth = token.text;
 			    tokenlist.push(orth);
 			    if (orth in words) {
-				words.orth += 1;
+				words[orth] += 1;
 			    } else {
-				words.orth = 1;
+				words[orth] = 1;
 			    }
 			} else if ( token.tag === "mtu" ) {
 			    console.log(token);
@@ -271,10 +279,10 @@ function getSentenceAndTokens(utt) {
 		    }
 		}
 	    }
-	    sentencelist.push({tokens:tokenlist, words: words});
+	    sentencelist.push({tokens:tokenlist});
 	}
     }
-    return sentencelist;
+    return {sentences:sentencelist, words: words};
 }
 
 
@@ -305,12 +313,55 @@ function addSentencesToSynthesisTab(sentences) {
 
 	p.appendChild(playButton);
 
+    }	    
+}
+
+function addWordsToLexiconTab(words) {
+    var lexicon_container = document.getElementById("lexicon_container");
+    console.log(lexicon_container);
+    lexicon_container.innerHTML = "";
+
+    var sorted_wordlist = Object.keys(words).sort();
+    console.log(sorted_wordlist);
+
+    for ( i=0; i<sorted_wordlist.length; i++ ) {
+	var word = sorted_wordlist[i];
+	if ( !word.match(/^[.,?!]+$/) ) {
+	    console.log("Adding word: "+word);
+
+	    var word_id = "word_"+i;
+
+	    
+	    var div = document.createElement("div");
+	    var span = document.createElement("span");
+	    span.setAttribute("id",word_id);
+	    
+	    var t = document.createTextNode(word);
+	    span.appendChild(t);
+            div.appendChild(span);
+
+	    var listen_button = document.createElement("input");
+	    listen_button.setAttribute("type","button");
+	    listen_button.setAttribute("value","listen");
+	    div.appendChild(listen_button);
+	    
+	    var edit_button = document.createElement("input");
+	    edit_button.setAttribute("type","button");
+	    edit_button.setAttribute("value","edit");
+	    edit_button.setAttribute("onclick", "myTabs.goToTab(3);searchLexicon($('#"+word_id+"')[0].innerHTML);");
+	    div.appendChild(edit_button);
+
+	    lexicon_container.appendChild(div);
+
+
+	} else {
+	    console.log("Ignoring: "+word);
+	}
     }
-	
-    
 }
 
 
+//HB not used but leaving it here anyway for now..
 function findNodes(id, currentNode) {
     var i,
         currentChild,
