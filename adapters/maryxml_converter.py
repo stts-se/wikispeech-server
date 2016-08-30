@@ -50,6 +50,26 @@ def maryxml2utt(maryxml):
         utt["children"] = buildUtt(ps)
     return (lang, utt)
 
+def maryxml2utt_normalised(maryxml):
+    (lang, maryxml) = dropHeader(maryxml)
+    #lang = "sv"
+
+    print(maryxml)
+
+    root = ET.fromstring(maryxml.encode('utf-8'))
+    #root = ET.fromstring(maryxml)
+    ps = root.findall(".//p")
+    
+    #is this even needed? Only for verbosity
+    utt = {"tag":"utt"}
+    #utt = {}
+    
+    if len(ps) > 0:
+        utt["paragraphs"] = buildUtt_normalised(ps, "paragraph", "sentences")
+
+    print(utt)
+    return (lang, utt)
+
 
 def dropHeader(maryxml):
     lang = None
@@ -70,6 +90,46 @@ def buildUtt(elements):
         node = {"tag":tag}
         if len(element) > 0:
             node["children"] = buildUtt(element)
+
+        #print element.attrib
+        for attr in element.attrib.keys():
+            #print "ATTR: %s" % attr
+            node[attr] = element.attrib[attr]
+
+        text = getText(element)
+        text = text.strip()
+        if text != "":
+            #print "TEXT: %s" % text
+            node["text"] = text
+
+        nodelist.append(node)
+    return nodelist
+
+def buildUtt_normalised(elements, tag, children_tag):
+    nodelist = []
+    for element in elements:
+        #tag = element.tag
+
+        #special cases for prosody and mtu
+
+        #is this even needed? Only for verbosity
+        node = {"tag":tag}
+        #node = {}
+        
+        if len(element) > 0:
+            if tag == "paragraph":
+                tag2 = "sentence"
+                children_tag2 = "phrases"
+            if tag == "sentence":
+                tag2 = "phrase"
+                children_tag2 = "tokens"
+
+            print(tag)
+            print(ET.tostring(element))
+            print(tag2)
+            print(children_tag2)
+            
+            node[children_tag] = buildUtt_normalised(element, tag2, children_tag2)
 
         #print element.attrib
         for attr in element.attrib.keys():
@@ -123,8 +183,52 @@ def utt2maryxml(lang, utt):
     print("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
     return "%s%s" % (header,maryxmlstring)
 
+def utt2maryxml_normalised(lang, utt):
+    header = '<?xml version="1.0" encoding="UTF-8"?>'
+
+    #<maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="%s">' % lang
+
+    maryxml = ET.Element("maryxml")
+
+    maryxml.attrib["xmlns"] = "http://mary.dfki.de/2002/MaryXML"
+    maryxml.attrib["xmlns:xsi"] = "http://www.w3.org/2001/XMLSchema-instance"
+    maryxml.attrib["version"] = "0.5"
+    maryxml.attrib["xml:lang"] = lang
+
+    pars = utt["paragraphs"]
+    for par in buildMaryxml_normalised(pars):
+        maryxml.append(par)
+
+
+    if sys.version_info.major == 2:
+        #This works in python2.7
+        maryxmlstring = ET.tostring(maryxml, encoding="utf-8")
+    else:
+        #This works in python3
+        maryxmlstring = ET.tostring(maryxml, encoding="unicode")
+
+    print("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
+    return "%s%s" % (header,maryxmlstring)
+
     
 def buildMaryxml(items):
+    elementlist = []
+    for item in items:
+        element = ET.Element(item["tag"])
+        if "children" in item:
+            for child in buildMaryxml(item["children"]):
+                element.append(child)
+        if "text" in item:
+            element.text = item["text"]
+
+        for key in item.keys():
+            if not key in ["tag","children","text"]:
+                element.attrib[key] = item[key]
+
+        elementlist.append(element)
+    return elementlist
+ 
+def buildMaryxml_normalised(items):
     elementlist = []
     for item in items:
         element = ET.Element(item["tag"])
@@ -177,8 +281,8 @@ Hej
         ]
     }
     
-    (lang, utt2) = maryxml2utt(maryxml)
-    maryxml2 = utt2maryxml(lang, utt2)
+    (lang, utt2) = maryxml2utt_normalised(maryxml)
+    maryxml2 = utt2maryxml_normalised(lang, utt2)
     if utt != utt2:
         print("ERROR")
         print(utt)
