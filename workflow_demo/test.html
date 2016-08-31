@@ -46,8 +46,9 @@ window.onload = function() {
 
 	    <!-- some sample text to start with, remove after testing! -->
 	    <p>
+	      <ssml:s>
 	      Fartyget byggdes 
-	      <sub alias="nittonhundra-femtionio">1959</sub> 
+	      <ssml:sub alias="nittonhundra-femtionio">1959</ssml:sub> 
 	      i 
 	      <phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
 	      på 
@@ -59,14 +60,18 @@ window.onload = function() {
 	      <phoneme alphabet="x-sampa" ph="k a s - ' t e - l O">Castelo</phoneme>
 	      , och levererades till Färöarna under namnet 
 	      <phoneme alphabet="x-sampa" ph="' v A: k - b I N - k u0 r">Vágbingur</phoneme>
-	      . Under 20 års tid tjänstgjorde det som fiskefartyg på 
-	      <sub alias="nord-atlanten">nordatlanten</sub> 
+	      .
+	      </ssml:s>
+	      <ssml:s>
+	      Under 20 års tid tjänstgjorde det som fiskefartyg på 
+	      <ssml:sub alias="nord-atlanten">nordatlanten</ssml:sub> 
 	      innan fartyget 
-	      <sub alias="nittonhundra-åttioett">1981</sub> 
+	      <ssml:sub alias="nittonhundra-åttioett">1981</ssml:sub> 
 	      såldes till Göteborg, då i namnet 
 	      <phoneme alphabet="x-sampa" ph="&quot; b j A: rn - % 2 j">Bjarnoy</phoneme> 
-	      <sub alias="två">II</sub>
+	      <ssml:sub alias="två">II</ssml:sub>
 	      .
+	      </ssml:s>
 	    </p>
 	    <!-- end of sample text -->
 
@@ -154,7 +159,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Wed Aug 31 11:42:14 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Wed Aug 31 12:53:21 CEST 2016 <!-- hhmts end -->
   
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
@@ -206,10 +211,11 @@ function tokeniseHtmlText() {
     var ssml_header = '<?xml version="1.0" encoding="UTF-8" ?>\n<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"\n  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n  xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"\nxml:lang="sv">\n';
     var ssml_footer = "</speak>";
 
-    //var extra_temporary_empty_paragraph = "<p>Hej.</p>";
-    var extra_temporary_empty_paragraph = "";
-    
-    var ssml = ssml_header+html+extra_temporary_empty_paragraph+ssml_footer;
+    //Because s and sub have html meanings, they are prefixed with "ssml:"
+    var ssml_content = html.replace(/ssml:/g, "")
+
+
+    var ssml = ssml_header+ssml_content+ssml_footer;
     
     console.log("Tokenising:\n"+ssml);
 
@@ -230,7 +236,8 @@ function tokeniseHtmlText() {
 		var data = getSentenceAndTokens(response);
 		console.log(data.sentences);
 		console.log(data.words);
-		addSentencesToSynthesisTab(data.sentences);
+		//addSentencesToSynthesisTab(data.sentences);
+		addHtmlSentencesToSynthesisTab();
 		addWordsToLexiconTab(data.words);
 	    } else {
 		console.log("ERROR: response is not an utt");
@@ -258,7 +265,7 @@ function getSentenceAndTokens(utt) {
 		var tokens = ph.tokens;
 		for ( m=0; m<tokens.length; m++ ) {
 		    var token = tokens[m];
-		    console.log(token);
+		    //console.log(token);
 		    var orth = token.token_orth;
 		    tokenlist.push(orth);
 		    if (orth in words) {
@@ -274,7 +281,58 @@ function getSentenceAndTokens(utt) {
     return {sentences:sentencelist, words: words};
 }
 
+function addHtmlSentencesToSynthesisTab() {
+    var html_editor = document.getElementById('html_editor');
+    console.log(html_editor);
+    var sentences = html_editor.getElementsByTagName("ssml:s");
 
+    var synthesis_container = document.getElementById("synthesis_container");
+    console.log(synthesis_container);
+    synthesis_container.innerHTML = "";
+    console.log("SENTENCES: ");
+    console.log(sentences);
+
+    for ( i=0; i<sentences.length; i++ ) {
+	var s = sentences[i];
+	var clone = s.cloneNode(true);
+	console.log("SENTENCE: ");
+	console.log(clone);
+	
+	var p = document.createElement("p");
+	var speak = document.createElement("speak");
+
+	//NOTE hardcoded language
+	speak.setAttribute("xml:lang", "sv");
+	
+	speak.setAttribute("version","1.0");
+	speak.setAttribute("xmlns", "http://www.w3.org/2001/10/synthesis");
+	speak.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+	speak.setAttribute("xsi:schemalocation", "http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd");
+
+	p.appendChild(speak);           
+	speak.innerHTML = clone.innerHTML;
+	synthesis_container.appendChild(p);
+
+	p.setAttribute("class", "ssml");
+	
+	var id = "sentence_nr_"+i;
+	p.setAttribute("id",id);
+
+	var lang = "sv";
+	p.setAttribute("lang", lang);
+   
+	var playButton = document.createElement("input");
+	playButton.setAttribute("type", "button");
+	playButton.setAttribute("value", "Speak");
+	playButton.setAttribute("onclick", "play("+id+");");
+
+	p.appendChild(playButton);
+
+    }	    
+
+
+}
+    
 function addSentencesToSynthesisTab(sentences) {
     var synthesis_container = document.getElementById("synthesis_container");
     console.log(synthesis_container);
@@ -307,16 +365,16 @@ function addSentencesToSynthesisTab(sentences) {
 
 function addWordsToLexiconTab(words) {
     var lexicon_container = document.getElementById("lexicon_container");
-    console.log(lexicon_container);
+    //console.log(lexicon_container);
     lexicon_container.innerHTML = "";
 
     var sorted_wordlist = Object.keys(words).sort();
-    console.log(sorted_wordlist);
+    //console.log(sorted_wordlist);
 
     for ( i=0; i<sorted_wordlist.length; i++ ) {
 	var word = sorted_wordlist[i];
 	if ( !word.match(/^[.,?!]+$/) ) {
-	    console.log("Adding word: "+word);
+	    //console.log("Adding word: "+word);
 
 	    var word_id = "word_"+i;
 

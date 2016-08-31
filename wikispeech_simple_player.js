@@ -94,6 +94,8 @@ function play(id) {
 
     if ( input_type == "ssml" ) {
 	text = container.getElementsByTagName("speak")[0].outerHTML;
+	//Because s and sub have meanings in html, they need to be prefixed with "ssml:"
+	text = text.replace(/ssml:/g, "");
     } else {
 	var text = container.textContent.trim();
     }
