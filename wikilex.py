@@ -64,6 +64,54 @@ def lexLookup_worksNotWithPyTokeniser(lang,utt):
 
 def lexLookup(lang,utt):
     print("lexLookup: %s" % utt)
+
+    tokenlist = []
+
+    for p in utt["paragraphs"]:
+        for s in p["sentences"]:
+            for phr in s["phrases"]:
+                for token in phr["tokens"]:
+                    if "mtu" in token and token["mtu"] == True:
+                        for word in token["words"]:
+                            print("SKIPPING %s" % word)
+                    else:
+
+                        #SSML
+                        #If there are transcriptions (from marytts) that have no g2p_method, they came from ssml input and should not be overwritten! 
+                        #if "g2p_method" in child and child["g2p_method"] in ["rules","lexicon"]:
+                        for word in token["words"]:
+                            if "g2p_method" in word:
+                                tokenlist.append(word)
+        
+
+        #get transcriptions for the entire sentence
+        orthlist = []
+        for t in tokenlist:
+            orth = t["orth"]
+            orthlist.append(orth)
+
+        responseDict = getLookupBySentence(lang, " ".join(orthlist))
+        if responseDict:
+
+            for t in tokenlist:
+                orth = t["orth"]
+
+                if orth.lower() in responseDict:
+                    ph = responseDict[orth.lower()]
+                    #print(ph)
+                    t["ph"] = ph
+                    #print(t)
+                else:
+                    print("No trans for %s" % orth)
+
+
+    return utt
+
+
+
+
+def lexLookupOLD(lang,utt):
+    print("lexLookup: %s" % utt)
     #print("utt[s]: %s" % utt["s"])
 
 

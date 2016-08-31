@@ -4,27 +4,28 @@ import xml.etree.ElementTree as ET
 
 #test1: no 'prosody', no 'mtu'
 
-m_test1 = """<?xml version="1.0" encoding="UTF-8"?><maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="sv">
+m_test1 = """<?xml version="1.0" encoding="UTF-8"?>
+<maryxml version="0.5" xml:lang="sv" xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <p>
 <s>
 <phrase>
 <t accent="L+H*" g2p_method="lexicon" ph="' h E j" pos="content">
 hej
 <syllable accent="L+H*" ph="h E j" stress="1">
-<ph p="h"/>
-<ph p="E"/>
-<ph p="j"/>
+<ph p="h" />
+<ph p="E" />
+<ph p="j" />
 </syllable>
 </t>
 <t accent="!H*" g2p_method="lexicon" ph="' h E j" pos="content">
 hej
 <syllable accent="!H*" ph="h E j" stress="1">
-<ph p="h"/>
-<ph p="E"/>
-<ph p="j"/>
+<ph p="h" />
+<ph p="E" />
+<ph p="j" />
 </syllable>
 </t>
-<boundary breakindex="5" tone="L-L%"/>
+<boundary breakindex="5" tone="L-L%" />
 </phrase>
 </s>
 </p>
@@ -98,7 +99,8 @@ w_test1 = {
 
 
 #test2: 'prosody', no 'mtu'
-m_test2 = """<?xml version="1.0" encoding="UTF-8"?><maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="sv">
+m_test2 = """<?xml version="1.0" encoding="UTF-8"?>
+<maryxml version="0.5" xml:lang="sv" xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <p>
 <s>
 <prosody pitch="+5%" range="+20%">
@@ -223,7 +225,8 @@ w_test2 = {
 
 
 #test3: no 'prosody', but 'mtu'
-m_test3 = """<?xml version="1.0" encoding="UTF-8"?><maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="sv">
+m_test3 = """<?xml version="1.0" encoding="UTF-8"?>
+<maryxml version="0.5" xml:lang="sv" xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <p>
 <s>
 <phrase>
@@ -284,6 +287,7 @@ w_test3 = {
                     },
                     {
                         "token_orth": "12",
+                        "mtu": True,
                         "words": [
                         {
                             "orth": "tolv",
@@ -319,7 +323,8 @@ w_test3 = {
                                 
 
 #test4: 'prosody' and 'mtu'
-m_test4 = """<?xml version="1.0" encoding="UTF-8"?><maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="sv">
+m_test4 = """<?xml version="1.0" encoding="UTF-8"?>
+<maryxml version="0.5" xml:lang="sv" xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <p>
 <s>
 <prosody pitch="+5%" range="+20%">
@@ -413,6 +418,7 @@ w_test4 = {
                     "tokens": [                        
                         {
                             "token_orth": "12",
+                            "mtu": True,
                             "words": [
                                 {
                                     "orth": "tolv",
@@ -452,6 +458,209 @@ w_test4 = {
             ]
             }
         ]
+        }
+    ]
+}
+
+#test5: English. no 'prosody' but long 'mtu'
+
+m_test5 = """<?xml version="1.0" encoding="UTF-8"?>
+<maryxml version="0.5" xml:lang="en" xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<p>
+<s>
+<phrase>
+<t accent="!H*" g2p_method="lexicon" ph="h @ - ' l @U" pos="UH">
+Hello
+<syllable ph="h @">
+<ph p="h"/>
+<ph p="@"/>
+</syllable>
+<syllable accent="!H*" ph="l @U" stress="1">
+<ph p="l"/>
+<ph p="@U"/>
+</syllable>
+</t>
+<t pos=".">
+,
+</t>
+<mtu orig="112">
+<t g2p_method="lexicon" ph="' w V n" pos=",">
+one
+<syllable ph="w V n" stress="1">
+<ph p="w"/>
+<ph p="V"/>
+<ph p="n"/>
+</syllable>
+</t>
+<t g2p_method="lexicon" ph="' h V n - d r @ d" pos="CD">
+hundred
+<syllable ph="h V n" stress="1">
+<ph p="h"/>
+<ph p="V"/>
+<ph p="n"/>
+</syllable>
+<syllable ph="d r @ d">
+<ph p="d"/>
+<ph p="r"/>
+<ph p="@"/>
+<ph p="d"/>
+</syllable>
+</t>
+<t g2p_method="lexicon" ph="' t w E l v" pos="CD">
+twelve
+<syllable ph="t w E l v" stress="1">
+<ph p="t"/>
+<ph p="w"/>
+<ph p="E"/>
+<ph p="l"/>
+<ph p="v"/>
+</syllable>
+</t>
+</mtu>
+<t pos=".">
+.
+</t>
+<boundary breakindex="5" tone="L-L%"/>
+</phrase>
+</s>
+</p>
+</maryxml>
+"""
+
+
+
+w_test5 = {
+    "lang": "en",
+    "paragraphs": [
+        {
+            "sentences": [
+            {
+                "phrases": [
+                    {
+                        "tokens": [
+                            {
+                                "token_orth": "Hello",
+                                "words": [
+                                    {
+                                        "orth": "Hello",
+                                        "accent": "!H*",
+                                        "g2p_method": "lexicon",
+                                        "pos": "UH",
+                                        "ph": "h @ - ' l @U",
+                                        "syllables": [
+                                            {
+                                                "ph": "h @",
+                                                "phonemes": [
+                                                    {"symbol": "h"},
+                                                    {"symbol": "@"}
+                                                ]
+                                            },
+                                            {
+                                                "accent": "!H*",
+                                                "ph": "l @U",
+                                                "stress": "1",
+                                                "phonemes": [
+                                                    {"symbol": "l"},
+                                                    {"symbol": "@U"}
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "token_orth": ",",
+                                "words": [
+                                    {
+                                        "orth": ",",
+                                        "pos": "."
+                                    }
+                                ]
+                            },
+                            {
+                                "token_orth": "112",
+                                "mtu": True,
+                                "words": [
+                                    {
+                                        "orth": "one",
+                                        "g2p_method": "lexicon",
+                                        "pos": ",",
+                                        "ph": "' w V n",
+                                        "syllables": [
+                                            {
+                                                "ph": "w V n",
+                                                "stress": "1",
+                                                "phonemes": [
+                                                    {"symbol": "w"},
+                                                    {"symbol": "V"},
+                                                    {"symbol": "n"}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "orth": "hundred",
+                                        "g2p_method": "lexicon",
+                                        "pos": "CD",
+                                        "ph": "' h V n - d r @ d",
+                                        "syllables": [
+                                            {
+                                                "ph": "h V n",
+                                                "stress": "1",
+                                                "phonemes": [
+                                                    {"symbol": "h"},
+                                                    {"symbol": "V"},
+                                                    {"symbol": "n"}
+                                                ]
+                                            },
+                                            {
+                                                "ph": "d r @ d",
+                                                "phonemes": [
+                                                    {"symbol": "d"},
+                                                    {"symbol": "r"},
+                                                    {"symbol": "@"},
+                                                    {"symbol": "d"}
+                                                ]
+                                            }
+                                            
+                                        ]
+                                    },
+                                    {
+                                        "orth": "twelve",
+                                        "g2p_method": "lexicon",
+                                        "pos": "CD",
+                                        "ph": "' t w E l v",
+                                        "syllables": [
+                                            {
+                                                "ph": "t w E l v",
+                                                "stress": "1",
+                                                "phonemes": [
+                                                    {"symbol": "t"},
+                                                    {"symbol": "w"},
+                                                    {"symbol": "E"},
+                                                    {"symbol": "l"},
+                                                    {"symbol": "v"}
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "token_orth": ".",
+                                "words": [
+                                    {
+                                        "orth": ".",
+                                        "pos": "."
+                                    }
+                                ]
+                            }                            
+                        ],
+                        "boundary": {"breakindex": "5", "tone": "L-L%"}
+                    }
+                ]
+            }
+            ]
         }
     ]
 }
@@ -540,6 +749,7 @@ def buildPhrase(phrase_element):
             mtu_element = phrase_child
             words = []
             token = {
+                "mtu": True,
                 "words": words
             }
             tokens.append(token)
@@ -615,17 +825,21 @@ def addIfExists(addTo, element, attribute, prefix=""):
 def dropHeader(maryxml):
     lang = None
     maryxml = maryxml.replace("\n","")
-    m = re.match("<\?xml .+ xml:lang=\"([^\"]*)\">\n*(.*)$", maryxml)
+    m = re.match("<\?xml .+xml:lang=\"([^\"]*)\"[^>]*>(.*)$", maryxml)
     if m:
         lang = m.group(1)
         maryxml = m.group(2)
         if not maryxml.startswith("<maryxml"):
             maryxml = "<maryxml>"+maryxml
-
+    #print(lang)
+    #print(maryxml)
+    #sys.exit()
     return (lang,maryxml)
 
 def ws2mary(utterance):
 
+    #print(utterance)
+    
     lang = utterance["lang"]
 
     header = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -651,24 +865,49 @@ def ws2mary(utterance):
             for phrase in phrases:
                 phrase_element = ET.Element("phrase")
 
-                sentence_element.append(phrase_element)
+                #add prosody element if necessary
+                if "prosody_range" in phrase or "prosody_pitch" in phrase:
+                    prosody_element = ET.Element("prosody")
+                    prosody_element = addToElementIfExists(prosody_element, phrase, "prosody_range", drop_prefix="prosody_")
+                    prosody_element = addToElementIfExists(prosody_element, phrase, "prosody_pitch", drop_prefix="prosody_")
+                    sentence_element.append(prosody_element)
+                    prosody_element.append(phrase_element)
+                else:                    
+                    sentence_element.append(phrase_element)
+
                 tokens = phrase["tokens"]
                 for token in tokens:
-                    token_element = ET.Element("t")
-                    token_element.text = token["token_orth"]
 
-
-                    phrase_element.append(token_element)
                     words = token["words"]
+
+                    #add mtu element if necessary
+                    if "mtu" in token and token["mtu"] == True:
+                        mtu_element = ET.Element("mtu")
+                        phrase_element.append(mtu_element)
+                        mtu_element.attrib["orig"] = token["token_orth"]
+                        token_parent = mtu_element
+                    else:
+                        token_parent = phrase_element
+                        
+
                     for word in words:
+                        #each word creates one token_element
+                        token_element = ET.Element("t")
+
+                        token_element.text = word["orth"]
                         
                         token_element = addToElementIfExists(token_element, word, "accent")
                         token_element = addToElementIfExists(token_element, word, "g2p_method")
                         token_element = addToElementIfExists(token_element, word, "pos")
                         token_element = addToElementIfExists(token_element, word, "ph")
                         
-
-                        syllables = word["syllables"]
+                        if "syllables" in word:
+                            #normal word
+                            syllables = word["syllables"]
+                        else:
+                            #punctuation
+                            syllables = []
+                            
                         for syllable in syllables:
                             syllable_element = ET.Element("syllable")
 
@@ -683,6 +922,8 @@ def ws2mary(utterance):
                                 phoneme_element.attrib["p"] = phoneme["symbol"]
                                 syllable_element.append(phoneme_element)
 
+                        #each word creates one token_element
+                        token_parent.append(token_element)
 
                 if "boundary" in phrase:
                     boundary_element = ET.Element("boundary")
@@ -741,24 +982,80 @@ class TestM2Ws(unittest.TestCase):
         #print(w_test4)
         self.assertEqual(u, w_test4)
 
+    def test5(self):
+        u = mary2ws(m_test5)
+        #print("")
+        #print(u)
+        #print(w_test5)
+        self.assertEqual(u, w_test5)
+
 class TestWs2M(unittest.TestCase):
 
     def test1(self):
-        m = ws2mary(w_test1)
+        m1 = ws2mary(w_test1)
+        #m1 = re.sub('" />', '"/>', m1)
 
-        m1 = re.sub("\n", "", m_test1)
-        print()
-        print(m1)
-        m = re.sub("\" \/", "\"/", m)
-        print(m)
+        m2 = re.sub("\n","",m_test1)
 
-        d1 = ET.fromstring(m1)
-        d2 = ET.fromstring(m)
-        self.assertEqual(d1, d2)
+        #print()
+        #print(m1)
+        #print(m2)
+        self.assertEqual(m1, m2)
+        
+    def test2(self):
+        m1 = ws2mary(w_test2)
+        m1 = re.sub('" />', '"/>', m1)
+
+        m2 = re.sub("\n","",m_test2)
+
+        #print("")
+        #print(m1)
+        #print(m2)
+        self.assertEqual(m1, m2)
+        
+    def test3(self):
+        m1 = ws2mary(w_test3)
+        m1 = re.sub('" />', '"/>', m1)
+
+        m2 = re.sub("\n","",m_test3)
+
+        #print("")
+        #print(m1)
+        #print(m2)
+        self.assertEqual(m1, m2)
+        
+    def test4(self):
+        m1 = ws2mary(w_test4)
+        m1 = re.sub('" />', '"/>', m1)
+
+        m2 = re.sub("\n","",m_test4)
+
+        #print("")
+        #print(m1)
+        #print(m2)
+        self.assertEqual(m1, m2)
+        
+    def test5(self):
+        m1 = ws2mary(w_test5)
+        m1 = re.sub('" />', '"/>', m1)
+
+        m2 = re.sub("\n","",m_test5)
+
+        #print("")
+        #print(m1)
+        #print(m2)
+        self.assertEqual(m1, m2)
+        
 
 
+def maryxml2utt(xml):    
+    utt =  mary2ws(xml)
+    lang = utt["lang"]
+    return (lang, utt)
 
-
+def utt2maryxml(lang, utt):
+    xml = ws2mary(utt)
+    return xml
 
 if __name__ == '__main__':
     unittest.main()

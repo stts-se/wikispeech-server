@@ -1,6 +1,7 @@
 import requests
 import tokeniser
-from adapters.maryxml_converter import *
+#from adapters.maryxml_converter import *
+from adapters.new_maryxml_converter import *
 import xml.etree.ElementTree as ET
 
 
@@ -27,7 +28,8 @@ def marytts_preproc(lang, text, input_type="text"):
     payload = {
         "INPUT_TYPE": mary_input_type,
         #"OUTPUT_TYPE": "WORDS",
-        "OUTPUT_TYPE": "PHONEMES",
+        #"OUTPUT_TYPE": "PHONEMES",
+        "OUTPUT_TYPE": "ALLOPHONES",
         "LOCALE": locale,
         "INPUT_TEXT": text
     }
