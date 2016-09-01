@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Wikispeech workflow demo</title>
   <meta name="description" content="Edit, synthesise, listen loop">
+
+  <!-- jquery css for columns -->
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
   <!-- responsivetabs -->
   <link rel="stylesheet" href="ext/responsivetabs/css/font-awesome.css">
   <link rel="stylesheet" href="ext/responsivetabs/css/style.css">
@@ -109,33 +113,59 @@ window.onload = function() {
 	<div class="c-tab__content">
 	  <h2>Lexicon</h2>
 
-	  <div id="lexicon_container">
-
-
-	    <!-- Initial content for testing -->
-	    <div>
-	      <span id="word1">Fartyget</span>
-	      <input type="button" value="Listen">
-	      <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word1')[0].innerHTML);">
+	  <div data-role="main" class="ui-content">
+	    <div class="ui-grid-a">
+	      <div class="ui-block-a">
+		<h3>Known words</h3>
+		<div id="known_words_container">
+		  <!--
+		  <a href="#" class="ui-btn ui-corner-all ui-shadow">First Column Button</a><br>
+		  <span>First Column: This is some text. This is some text. This is some text. This is some text. This is some text.</span>
+		  -->
+		  <!-- Initial content for testing -->
+		  <div>
+		    <span id="word1" style="display: inline-block; width: 10em;">Fartyget</span>
+		    <span>
+		      <input type="button" value="Listen">
+		      <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word1')[0].innerHTML);">
+		    </span>
+		  </div>
+		  
+		  <div>
+		    <span id="word2">byggdes</span>
+		    <input type="button" value="Listen">
+		    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word2')[0].innerHTML);">
+		  </div>
+		</div>
+	      </div>
+	      
+	      <div class="ui-block-b">
+		<h3>Unknown words</h3>
+		<div id="unknown_words_container">
+		  <!--
+		  <a href="#" class="ui-btn ui-corner-all ui-shadow">Second Column Button</a><br>
+		  <span>Second Column: This is some text. This is some text. This is some text. This is some text.</span>
+		  -->
+		  <!-- Initial content for testing -->	    
+		  <div>
+		    <span id="word3">1959</span>
+		    <input type="button" value="Listen">
+		    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word3')[0].innerHTML);">
+		  </div>
+		  <!-- END Initial content for testing -->
+		  
+		</div>
+	      </div>
 	    </div>
 	    
-	    <div>
-	      <span id="word2">byggdes</span>
-	      <input type="button" value="Listen">
-	      <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word2')[0].innerHTML);">
-	    </div>
-	    
-	    <div>
-	      <span id="word3">1959</span>
-	      <input type="button" value="Listen">
-	      <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#word3')[0].innerHTML);">
-	    </div>
-	    <!-- END Initial content for testing -->
+	    <div id="lexicon_container">
 
+
+
+	    </div>
 	  </div>
 	</div>
       </div>
-
       <div class="c-tab">
 	<div class="c-tab__content">
 	  <h2>Lexicon entry editor</h2>
@@ -149,7 +179,8 @@ window.onload = function() {
 	  <hr/>
     
 	  <div id="entry_editor_holder"></div>
-	  
+
+
 	</div>
       </div>
 
@@ -203,6 +234,42 @@ function searchLexicon(search_term) {
 
 }
 
+function wordInLex(word, div, trans) {
+    console.log("Searching lexicon for: " + word);
+
+    var known_words_container = document.getElementById("known_words_container");
+    var unknown_words_container = document.getElementById("unknown_words_container");
+
+    var params = {
+	"lexicons": "sv.se.nst",
+	"words": word
+    }
+    
+    $.get(
+        'http://localhost/lexlookup',
+        params,
+        function(response) {
+	    console.log(response);
+	    if ( response == null ) {
+		console.log("Adding to unknown_words: "+word);
+		var transcription = "NONE";
+		trans.innerHTML = transcription;
+		unknown_words_container.appendChild(div)
+	    } else {
+		console.log("Adding to known_words: "+word);
+
+		var transcription = response[0].transcriptions[0].strn;
+		//var transcription = "' A . p a";
+		trans.innerHTML = transcription;
+
+		known_words_container.appendChild(div)
+	    }
+        }
+    );
+
+}
+
+
 function tokeniseHtmlText() {
     var html_editor = document.getElementById('html_editor');
     console.log(html_editor);
@@ -211,6 +278,9 @@ function tokeniseHtmlText() {
     var ssml_header = '<?xml version="1.0" encoding="UTF-8" ?>\n<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"\n  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n  xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"\nxml:lang="sv">\n';
     var ssml_footer = "</speak>";
 
+
+    //if ( "ssml:s" in html ) {
+	
     //Because s and sub have html meanings, they are prefixed with "ssml:"
     var ssml_content = html.replace(/ssml:/g, "")
 
@@ -364,9 +434,11 @@ function addSentencesToSynthesisTab(sentences) {
 }
 
 function addWordsToLexiconTab(words) {
-    var lexicon_container = document.getElementById("lexicon_container");
-    //console.log(lexicon_container);
-    lexicon_container.innerHTML = "";
+    var known_words_container = document.getElementById("known_words_container");
+    var unknown_words_container = document.getElementById("unknown_words_container");
+
+    known_words_container.innerHTML = "";
+    unknown_words_container.innerHTML = "";
 
     var sorted_wordlist = Object.keys(words).sort();
     //console.log(sorted_wordlist);
@@ -378,28 +450,49 @@ function addWordsToLexiconTab(words) {
 
 	    var word_id = "word_"+i;
 
-	    
+	    //<div data-role="main" class="ui-content">
+	    //<div class="ui-grid-a">
+	    //<div class="ui-block-a">
+					 
 	    var div = document.createElement("div");
 	    var span = document.createElement("span");
+
 	    span.setAttribute("id",word_id);
-	    
+	    span.setAttribute("style", "display: inline-block; width: 10em;");
+
+	    var trans = document.createElement("span");
+	    trans.setAttribute("id","trans_"+i);
+	    trans.setAttribute("style", "display: inline-block; width: 10em;");
+
 	    var t = document.createTextNode(word);
 	    span.appendChild(t);
             div.appendChild(span);
+	    div.appendChild(trans);
+	    
+	    var buttons = document.createElement("span");
 
 	    var listen_button = document.createElement("input");
 	    listen_button.setAttribute("type","button");
 	    listen_button.setAttribute("value","listen");
-	    div.appendChild(listen_button);
+	    listen_button.setAttribute("onclick", "playTranscription($('#trans_"+i+"'));");
+	    buttons.appendChild(listen_button);
 	    
 	    var edit_button = document.createElement("input");
 	    edit_button.setAttribute("type","button");
 	    edit_button.setAttribute("value","edit");
 	    edit_button.setAttribute("onclick", "myTabs.goToTab(3);searchLexicon($('#"+word_id+"')[0].innerHTML);");
-	    div.appendChild(edit_button);
+	    buttons.appendChild(edit_button);
 
-	    lexicon_container.appendChild(div);
+	    div.appendChild(buttons);
 
+	    wordInLex(word, div, trans);
+	    //if ( wordInLex(word) ) {
+		//console.log("Adding word %s to known_words" % word);
+		//known_words_container.appendChild(div);
+	    //} else {
+		//console.log("Adding word %s to unknown_words" % word);
+		//unknown_words_container.appendChild(div);
+	    //}
 
 	} else {
 	    console.log("Ignoring: "+word);
@@ -407,6 +500,18 @@ function addWordsToLexiconTab(words) {
     }
 }
 
+
+function playTranscription(t) {
+    console.log(t);
+    var trans = t[0].innerHTML;
+    console.log(trans);
+    alert("playTranscription "+trans+" not yet implemented");
+}
+
+
+//function wordInLex(word) {
+//    return false;
+//}
 
 //HB not used but leaving it here anyway for now..
 function findNodes(id, currentNode) {
