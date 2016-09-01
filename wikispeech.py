@@ -547,6 +547,18 @@ def test_wikispeech():
     try:
         tmp = textproc(lang,"default_textprocessor", sent)
         res = synthesise(lang,"default_voice",tmp,"markup","json")
+    except FileNotFoundError:
+        print("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+
+        import traceback
+        print("Stacktrace:")
+        traceback.print_tb(sys.exc_info()[2])
+        print("END stacktrace")
+
+        print("ERROR: wikispeech test failure")
+        print("Is there a writeable 'tmp' directory in wikispeech_mockup?")
+        sys.exit()
+        
     except:
         print("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
 
