@@ -190,7 +190,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Wed Aug 31 12:53:21 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Thu Sep  1 16:11:30 CEST 2016 <!-- hhmts end -->
   
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
@@ -269,6 +269,54 @@ function wordInLex(word, div, trans) {
 
 }
 
+function wordsInLex(sorted_wordlist) {
+    var words = sorted_wordlist.join();
+    console.log("Searching lexicon for: " + words);
+
+    var known_words_container = document.getElementById("known_words_container");
+    var unknown_words_container = document.getElementById("unknown_words_container");
+
+    var params = {
+	"lexicons": "sv.se.nst",
+	"words": words
+    }
+    
+    $.get(
+        'http://localhost/lexlookup',
+        params,
+        function(response) {
+	    console.log(response);
+	    for (i=0; i<sorted_wordlist.length; i += 1) {
+		var div = document.getElementById("entry_"+i);
+		var trans = document.getElementById("trans_"+i);
+		for (j=0; j<response.length; j += 1) {
+		    var found = false;
+		    var word = sorted_wordlist[i];
+		    if ( response[j].strn == word ) {
+			console.log("Adding to known_words: "+word);
+			var transcription = response[j].transcriptions[0].strn;
+
+			trans.innerHTML = transcription;
+
+			known_words_container.appendChild(div);
+			found = true;
+		    }
+		}
+		if ( found = false ) {
+		    console.log("Adding to unknown_words: "+word);
+		    
+		    var transcription = "NONE";
+		    trans.innerHTML = transcription;
+		    
+		    unknown_words_container.appendChild(div)
+
+		}
+	    }
+        }
+    );
+
+}
+
 
 function tokeniseHtmlText() {
     var html_editor = document.getElementById('html_editor');
@@ -337,6 +385,7 @@ function getSentenceAndTokens(utt) {
 		    var token = tokens[m];
 		    //console.log(token);
 		    var orth = token.token_orth;
+		    orth = orth.toLowerCase();
 		    tokenlist.push(orth);
 		    if (orth in words) {
 			words[orth] += 1;
@@ -455,6 +504,7 @@ function addWordsToLexiconTab(words) {
 	    //<div class="ui-block-a">
 					 
 	    var div = document.createElement("div");
+	    div.setAttribute("id","entry_"+i);
 	    var span = document.createElement("span");
 
 	    span.setAttribute("id",word_id);
@@ -484,20 +534,16 @@ function addWordsToLexiconTab(words) {
 	    buttons.appendChild(edit_button);
 
 	    div.appendChild(buttons);
+	    unknown_words_container.appendChild(div);
 
-	    wordInLex(word, div, trans);
-	    //if ( wordInLex(word) ) {
-		//console.log("Adding word %s to known_words" % word);
-		//known_words_container.appendChild(div);
-	    //} else {
-		//console.log("Adding word %s to unknown_words" % word);
-		//unknown_words_container.appendChild(div);
-	    //}
 
 	} else {
 	    console.log("Ignoring: "+word);
 	}
     }
+    wordsInLex(sorted_wordlist);
+
+
 }
 
 
