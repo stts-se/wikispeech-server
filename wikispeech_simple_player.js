@@ -108,6 +108,7 @@ function play(id) {
 
 
     console.log("URL: "+url);
+    console.log("params: "+"lang="+lang+"&input_type="+input_type+"&input="+text);
 
     var xhr = new XMLHttpRequest();
     xhr.overrideMimeType('text/json');
@@ -127,7 +128,8 @@ function play(id) {
 	container.appendChild(audio);
 	//using video.js or one html5 audio element
 	//var audio = document.getElementById("audio_player");
-	
+
+
 	audio.setAttribute("controls", "true");
 	
 	//using regular html5 audio

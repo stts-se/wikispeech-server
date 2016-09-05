@@ -324,6 +324,8 @@ trans2maryttsMap = {
     "r": "r", 
     "l": "l", 
     "s": "s", 
+    # ??????????????????
+    "s'": "C", 
     #Which of these is correct?
     "x": "S", 
     "x\\": "S", 

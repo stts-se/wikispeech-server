@@ -334,9 +334,12 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #presynth = True
 
 
-    if input_type != "markup":
+    #if input_type not in ["markup","transcription"]:
+    if input_type not in ["markup"]:
         return "Synthesis cannot handle input_type %s" % input_type
 
+    ##if input_type == "transcription":
+        
 
     
     voices = list_voices_by_language(lang)
@@ -365,7 +368,9 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     mod = import_module(voice["adapter"])
     print(mod)
     print(dir(mod))
+
     process = getattr(mod, "synthesise")
+    
     print("PROCESS: %s" % process)
 
     #process = getattr(__import__(voice["adapter"]), "synthesise")
