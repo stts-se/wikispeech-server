@@ -49,9 +49,9 @@ window.onload = function() {
 	  <div id="html_editor">
 
 	    <!-- some sample text to start with, remove after testing! -->
-	    <p>
+	    <p><br>
 	      <ssml:s>
-	      Fartyget byggdes 
+	      Fartyget byggdes <br>
 	      <ssml:sub alias="nittonhundra-femtionio">1959</ssml:sub> 
 	      i 
 	      <phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
@@ -190,7 +190,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Thu Sep  1 16:11:30 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Mon Sep  5 13:48:52 CEST 2016 <!-- hhmts end -->
   
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
@@ -278,6 +278,7 @@ function wordsInLex(sorted_wordlist) {
 
     var params = {
 	"lexicons": "sv.se.nst",
+	"pagelength": 2*words.length,
 	"words": words
     }
     
@@ -294,8 +295,9 @@ function wordsInLex(sorted_wordlist) {
 		    var word = sorted_wordlist[i];
 		    if ( response[j].strn == word ) {
 			console.log("Adding to known_words: "+word);
-			var transcription = response[j].transcriptions[0].strn;
 
+			//Replace transcription predicted by synthesiser with transcription from lexlookup (or leave it..)
+			var transcription = response[j].transcriptions[0].strn;
 			trans.innerHTML = transcription;
 
 			known_words_container.appendChild(div);
@@ -326,13 +328,8 @@ function tokeniseHtmlText() {
     var ssml_header = '<?xml version="1.0" encoding="UTF-8" ?>\n<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"\n  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n  xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"\nxml:lang="sv">\n';
     var ssml_footer = "</speak>";
 
-
-    //if ( "ssml:s" in html ) {
-	
-    //Because s and sub have html meanings, they are prefixed with "ssml:"
-    var ssml_content = html.replace(/ssml:/g, "")
-
-
+    var ssml_content = filterToSSML(html);
+    
     var ssml = ssml_header+ssml_content+ssml_footer;
     
     console.log("Tokenising:\n"+ssml);
@@ -356,7 +353,7 @@ function tokeniseHtmlText() {
 		console.log(data.words);
 		//addSentencesToSynthesisTab(data.sentences);
 		addHtmlSentencesToSynthesisTab();
-		addWordsToLexiconTab(data.words);
+		addWordsToLexiconTab(data.words, data.transcriptions);
 	    } else {
 		console.log("ERROR: response is not an utt");
 	    }
@@ -364,11 +361,27 @@ function tokeniseHtmlText() {
     );
 }
 
+function filterToSSML(html) {
+    //Because s and sub have html meanings, they are prefixed with "ssml:"
+    var ssml_content = html.replace(/ssml:/g, "")
+
+    //&nbsp; breaks marytts ssml parser.
+    //Declare the entity?
+    ssml_content = ssml_content.replace(/&nbsp;/g, " ")
+
+    //remove unclosed br tags (even closed come out wrong)
+    //ssml_content = ssml_content.replace(/<br>/g, "<br/>")
+    ssml_content = ssml_content.replace(/<br>/g, " ")
+
+    return ssml_content;
+    
+}
 
 function getSentenceAndTokens(utt) {
 
     var sentencelist = [];
     var words = {};
+    var transcriptions = {};
     
     var paragraphs = utt.paragraphs;
     for ( i=0; i<paragraphs.length; i++ ) {
@@ -391,30 +404,58 @@ function getSentenceAndTokens(utt) {
 			words[orth] += 1;
 		    } else {
 			words[orth] = 1;
+			var trans = getTranscription(token);
+			transcriptions[orth] = trans;
 		    }
 		}
 	    }
 	    sentencelist.push({tokens:tokenlist});
 	}
     }
-    return {sentences:sentencelist, words: words};
+    return {sentences:sentencelist, words: words, transcriptions: transcriptions};
 }
+
+function getTranscription(token) {
+    var trans = "";
+    var words = token.words;
+    for ( i=0; i<words.length; i++ ) {
+	var w = words[i];
+	trans = trans+w.ph;
+    }
+    return trans;
+}
+
 
 function addHtmlSentencesToSynthesisTab() {
     var html_editor = document.getElementById('html_editor');
     console.log(html_editor);
-    var sentences = html_editor.getElementsByTagName("ssml:s");
 
     var synthesis_container = document.getElementById("synthesis_container");
     console.log(synthesis_container);
     synthesis_container.innerHTML = "";
-    console.log("SENTENCES: ");
-    console.log(sentences);
 
-    for ( i=0; i<sentences.length; i++ ) {
-	var s = sentences[i];
-	var clone = s.cloneNode(true);
-	console.log("SENTENCE: ");
+    var text_chunks;
+
+    //Use ssml:s tags if they exist
+    text_chunks = html_editor.getElementsByTagName("ssml:s");
+    //If there are no sentences, use p tags instead
+    if ( text_chunks.length == 0 ) {
+	text_chunks = html_editor.getElementsByTagName("p");
+	//If there are no p tags, use entire text (?)
+	if ( text_chunks.length == 0 ) {
+	    text_chunks = [html_editor.innerHTML];
+	}
+    }
+
+
+    console.log("TEXT CHUNKS: ");
+    console.log(text_chunks);
+
+
+    for ( i=0; i<text_chunks.length; i++ ) {
+	var t = text_chunks[i];
+	var clone = t.cloneNode(true);
+	console.log("TEXT CHUNK: ");
 	console.log(clone);
 	
 	var p = document.createElement("p");
@@ -428,8 +469,14 @@ function addHtmlSentencesToSynthesisTab() {
 	speak.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	speak.setAttribute("xsi:schemalocation", "http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd");
 
-	p.appendChild(speak);           
-	speak.innerHTML = clone.innerHTML;
+	p.appendChild(speak);
+
+	var html = clone.innerHTML;
+	console.log("HTML: "+html);
+	var filtered = filterToSSML(html);
+	console.log("Filtered: "+filtered);
+	speak.innerHTML = filtered;
+	
 	synthesis_container.appendChild(p);
 
 	p.setAttribute("class", "ssml");
@@ -482,7 +529,7 @@ function addSentencesToSynthesisTab(sentences) {
     }	    
 }
 
-function addWordsToLexiconTab(words) {
+function addWordsToLexiconTab(words, transcriptions) {
     var known_words_container = document.getElementById("known_words_container");
     var unknown_words_container = document.getElementById("unknown_words_container");
 
@@ -505,18 +552,39 @@ function addWordsToLexiconTab(words) {
 					 
 	    var div = document.createElement("div");
 	    div.setAttribute("id","entry_"+i);
+	    
 	    var span = document.createElement("span");
-
 	    span.setAttribute("id",word_id);
 	    span.setAttribute("style", "display: inline-block; width: 10em;");
+	    var w = document.createTextNode(word);
+	    span.appendChild(w);
+            div.appendChild(span);
 
+	    //Add transcription predicted by synthesiser 
 	    var trans = document.createElement("span");
 	    trans.setAttribute("id","trans_"+i);
-	    trans.setAttribute("style", "display: inline-block; width: 10em;");
+	    trans.setAttribute("style", "display: inline-block; width: 30em;");
+	    trans.setAttribute("class", "ssml");
+	    trans.setAttribute("lang", "sv");
 
-	    var t = document.createTextNode(word);
-	    span.appendChild(t);
-            div.appendChild(span);
+	    var speak = document.createElement("speak");
+
+	    //NOTE hardcoded language
+	    speak.setAttribute("xml:lang", "sv");
+	
+	    speak.setAttribute("version","1.0");
+	    speak.setAttribute("xmlns", "http://www.w3.org/2001/10/synthesis");
+	    speak.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+	    speak.setAttribute("xsi:schemalocation", "http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd");
+
+	    var transcription = transcriptions[word];
+	    transcription = transcription.replace(/"/g, "&quot;");
+	    var ssml = "<p><phoneme alphabet=\"x-sampa\" ph=\""+transcription+"\">"+transcription+"</phoneme></p>";
+	    //var ssml = "<p><phoneme alphabet=\"x-sampa\" ph=\""+transcription+"\">BABIAN</phoneme></p>";
+	    //var t = document.createTextNode(ssml);
+	    //speak.appendChild(t);
+	    speak.innerHTML = ssml;
+	    trans.appendChild(speak);
 	    div.appendChild(trans);
 	    
 	    var buttons = document.createElement("span");
@@ -524,7 +592,8 @@ function addWordsToLexiconTab(words) {
 	    var listen_button = document.createElement("input");
 	    listen_button.setAttribute("type","button");
 	    listen_button.setAttribute("value","listen");
-	    listen_button.setAttribute("onclick", "playTranscription($('#trans_"+i+"'));");
+	    listen_button.setAttribute("onclick", "play($('#trans_"+i+"')[0]);");
+	    //listen_button.setAttribute("onclick", "playTranscription($('#trans_"+i+"'));");
 	    buttons.appendChild(listen_button);
 	    
 	    var edit_button = document.createElement("input");
