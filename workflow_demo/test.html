@@ -190,7 +190,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Mon Sep  5 13:48:52 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Mon Sep  5 14:13:52 CEST 2016 <!-- hhmts end -->
   
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
@@ -219,7 +219,7 @@ function searchLexicon(search_term) {
     console.log("Searching lexicon for: " + search_term);
 
     var params = {
-	"lexicons": "sv.se.nst",
+	"lexicons": "sv-se.nst",
 	"words": search_term
     }
     
@@ -241,7 +241,7 @@ function wordInLex(word, div, trans) {
     var unknown_words_container = document.getElementById("unknown_words_container");
 
     var params = {
-	"lexicons": "sv.se.nst",
+	"lexicons": "sv-se.nst",
 	"words": word
     }
     
@@ -277,7 +277,7 @@ function wordsInLex(sorted_wordlist) {
     var unknown_words_container = document.getElementById("unknown_words_container");
 
     var params = {
-	"lexicons": "sv.se.nst",
+	"lexicons": "sv-se.nst",
 	"pagelength": 2*words.length,
 	"words": words
     }
