@@ -1,8 +1,20 @@
-import requests
-import tokeniser
+import requests, json
+#import tokeniser
 #from adapters.maryxml_converter import *
-from adapters.new_maryxml_converter import *
+try:
+    from adapters.new_maryxml_converter_with_mapper import *
+except:
+    #If running as __main__
+    from new_maryxml_converter_with_mapper import *
+    
 import xml.etree.ElementTree as ET
+
+try:
+    #Python 3
+    from urllib.parse import quote_plus
+except:
+    #Python 2
+    from urllib import quote_plus
 
 
 #BUGFIX TODO
@@ -23,17 +35,19 @@ def marytts_preproc(lang, text, input_type="text"):
         mary_input_type = "SSML"
     else:
         mary_input_type = "TEXT"
-        
+
+    if input_type == "ssml":
+        text = mapSsmlTranscriptionsToMary(text, lang)
 
     payload = {
         "INPUT_TYPE": mary_input_type,
         #"OUTPUT_TYPE": "WORDS",
-        #"OUTPUT_TYPE": "PHONEMES",
-        "OUTPUT_TYPE": "ALLOPHONES",
+        "OUTPUT_TYPE": "INTONATION",
+        #"OUTPUT_TYPE": "ALLOPHONES",
         "LOCALE": locale,
         "INPUT_TEXT": text
     }
-    #Using output_type PHONEMES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
+    #Using output_type PHONEMES/INTONATION/ALLOPHONES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
     r = requests.get(url, params=payload)
     print("CALLING MARYTTS: %s" % r.url)
     
@@ -87,7 +101,8 @@ def marytts_postproc(lang, utt):
     xml = utt2maryxml(xmllang, utt)
 
     payload = {
-        "INPUT_TYPE":"PHONEMES",
+        #"INPUT_TYPE":"PHONEMES",
+        "INPUT_TYPE":"INTONATION",
         "OUTPUT_TYPE":"ALLOPHONES",
         "LOCALE":locale,
         "INPUT_TEXT":xml
@@ -144,11 +159,14 @@ def synthesise_old(lang,voice,input):
     #url = "%s/%s" % (voice["server"]["url"], "process")
     #url = "http://morf.se:59125/process"
 
-    params = {"INPUT_TYPE":"ALLOPHONES",
-              "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
-              "LOCALE":locale,
-              "VOICE":voice["name"],
-              "INPUT_TEXT":maryxml}
+    params = {
+        "INPUT_TYPE":"INTONATION",
+        #"INPUT_TYPE":"ALLOPHONES",
+        "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
+        "LOCALE":locale,
+        "VOICE":voice["name"],
+        "INPUT_TEXT":maryxml
+    }
     r = requests.post(url,params=params)
 
     print("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
@@ -166,12 +184,15 @@ def synthesise_old(lang,voice,input):
 
 
 
-    params = {"INPUT_TYPE":"ALLOPHONES",
-              "OUTPUT_TYPE":"AUDIO",
-              "AUDIO":"WAVE_FILE",
-              "LOCALE":lang,
-              "VOICE":voice["name"],
-              "INPUT_TEXT":maryxml}
+    params = {
+        "INPUT_TYPE":"INTONATION",
+        #"INPUT_TYPE":"ALLOPHONES",
+        "OUTPUT_TYPE":"AUDIO",
+        "AUDIO":"WAVE_FILE",
+        "LOCALE":lang,
+        "VOICE":voice["name"],
+        "INPUT_TEXT":maryxml
+    }
     #actually synthesising it here so should be no problem saving the audio and returning link to that rather than the marytts synthesising url
     #As it is it will be synthesised again when the audio tag is put on page
     audio_r = requests.get(url,params=params)
@@ -231,9 +252,40 @@ def synthesise_json(lang,voice,input):
 
 
 
+def mapSsmlTranscriptionsToMary(ssml, lang):
+    phoneme_elements = re.findall("(<phoneme [^>]+>)", ssml)
+    for element in phoneme_elements:
+        #print(element)
+        trans = re.findall("ph=\"(.+)\">", element)[0]
+        #print(trans)
+        mary_trans = mapperMapToMary(trans.replace("&quot;","\""), lang)
+        #print(mary_trans)
+        ssml = re.sub(trans, mary_trans.replace("\"", "&quot;"), ssml)
+    #print("MAPPED SSML: %s" % ssml)
+    return ssml
 
+        
 
+# def mapperMapToMary(trans):
+#     #TODO
+#     #Configure elsewhere
+#     #get symbol set names
+#     url = "http://localhost:8787/mapper/map?from=sv-se_ws-sampa&to=sv-se_sampa_mary&trans=%s" % quote_plus(trans)
 
+#     r = requests.get(url)
+#     print(r.url)
+#     response = r.text
+#     print("RESPONSE: %s" % response)
+#     #try:
+#     response_json = json.loads(response)
+#     print("RESPONSE_JSON: %s" % response_json)
+#     new_trans = response_json["Result"]
+#     print("NEW TRANS: %s" % new_trans)
+#     return new_trans
+#     #except:
+#     #    e = sys.exc_info()[0]
+#     #    print("ERROR: unable to get mapper result (%s). Response was: %s" % (e, response))
+#     #    return None
 
 
 
@@ -412,3 +464,70 @@ def maryxml2uttET(maryxmlstring):
             print("SENTENCE: %s" % sentence)
     print("UTT: %s" % utt)
     return (utt, lang)
+
+
+import unittest
+
+class TestMapSsml(unittest.TestCase):
+
+    def test1(self):
+        ws_ssml = """
+<p>
+    <s>
+    Fartyget byggdes <br>
+    <sub alias="nittonhundra-femtionio">1959</sub> 
+    i 
+    <phoneme alphabet="x-sampa" ph="\" p O . rt u0 . g a l">Portugal</phoneme> 
+    på 
+    <phoneme alphabet="x-sampa" ph="E s . t a . \" l E j . r O s">Estaleiros</phoneme> 
+    <phoneme alphabet="x-sampa" ph="n a . \" v a j s">Navais</phoneme> 
+    <phoneme alphabet="x-sampa" ph="\" d E">de</phoneme> 
+    <phoneme alphabet="x-sampa" ph="v I . \" a . n a">Viana</phoneme> 
+    <phoneme alphabet="x-sampa" ph="\" d O">do</phoneme> 
+    <phoneme alphabet="x-sampa" ph="k a s . \" t E . l O">Castelo</phoneme>
+    , och levererades till Färöarna under namnet 
+    <phoneme alphabet="x-sampa" ph="\" v A: k . b I N . k u0 r">Vágbingur</phoneme>
+    .
+    </s>
+</p>
+"""
+        mary_ssml = """
+<p>
+    <s>
+    Fartyget byggdes <br>
+    <sub alias="nittonhundra-femtionio">1959</sub> 
+    i 
+    <phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
+    på 
+    <phoneme alphabet="x-sampa" ph="E s - t a - ' l E j - r O s">Estaleiros</phoneme> 
+    <phoneme alphabet="x-sampa" ph="n a - ' v a j s">Navais</phoneme> 
+    <phoneme alphabet="x-sampa" ph="' d E">de</phoneme> 
+    <phoneme alphabet="x-sampa" ph="v I - ' a - n a">Viana</phoneme> 
+    <phoneme alphabet="x-sampa" ph="' d O">do</phoneme> 
+    <phoneme alphabet="x-sampa" ph="k a s - ' t E - l O">Castelo</phoneme>
+    , och levererades till Färöarna under namnet 
+    <phoneme alphabet="x-sampa" ph="' v A: k - b I N - k u0 r">Vágbingur</phoneme>
+    .
+    </s>
+</p>
+"""
+        mapped = mapSsmlTranscriptionsToMary(ws_ssml, "sv")
+        self.assertEqual(mapped, mary_ssml)
+
+
+class TestPreproc(unittest.TestCase):
+
+    def test1(self):
+        input_text = "Ett öra."
+        expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'tone': 'L-L%', 'breakindex': '5'}, 'tokens': [{'words': [{'pos': 'content', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'g2p_method': 'lexicon'}], 'token_orth': 'Ett'}, {'words': [{'pos': 'content', 'trans': '"" 2: . r a', 'orth': 'öra', 'accent': '!H*', 'g2p_method': 'lexicon'}], 'token_orth': 'öra'}, {'words': [{'pos': '$PUNCT', 'orth': '.'}], 'token_orth': '.'}]}]}]}], 'lang': 'sv'}
+
+        result = marytts_preproc("sv", input_text)
+        print(result)
+        self.assertEqual(expected, result)
+
+        
+
+if __name__ == "__main__":
+    unittest.main()
+
+

@@ -1,5 +1,12 @@
-import requests, json
+import sys, requests, json
 
+try:
+    #Python 3
+    from urllib.parse import quote_plus
+except:
+    #Python 2
+    from urllib import quote_plus
+    
 #cd ~/go/src/github.com/stts-se/pronlex/
 #git pull
 #cd lexserver
@@ -99,7 +106,7 @@ def lexLookup(lang,utt):
                 if orth.lower() in responseDict:
                     ph = responseDict[orth.lower()]
                     #print(ph)
-                    t["ph"] = ph
+                    t["trans"] = ph
                     #print(t)
                 else:
                     print("No trans for %s" % orth)
@@ -194,7 +201,8 @@ def getLookupBySentence(lang,orth):
 
         #localhost:8181/llookup/
         #url = "http://localhost:8181/llookup/%s" % orth.lower()
-        url = "http://localhost:8787/lexlookup?lexicons=sv.se.nst&words=%s" % orth.lower()
+        #url = "http://localhost:8787/lexlookup?lexicons=sv.se.nst&words=%s" % orth.lower()
+        url = "http://localhost:8787/lexicon/lookup?lexicons=sv-se.nst&words=%s" % orth.lower()
         r = requests.get(url)
         print(r.url)
         response = r.text
@@ -202,81 +210,106 @@ def getLookupBySentence(lang,orth):
 
         try:
             response_json = json.loads(response)
-            mary_fmt_dict = {}
+            trans_dict = {}
 
             #with straight list response:
             if type(response_json) == type([]):
                 for response_item in response_json:
                     response_orth = response_item["strn"]
                     first_trans = response_item["transcriptions"][0]["strn"]
+
+                    print("ORTH: %s, TRANS: %s" % (response_orth,first_trans))
+                    
+                    #only add the first reading
+                    if not response_orth in trans_dict:
+                        trans_dict[response_orth] = first_trans
+
             else:
                 #with dictionary response:
                 for response_orth in response_json:
                     response_item = response_json[response_orth]
                     first_trans = response_item[0]["transcriptions"][0]["strn"]
 
-
-            print(first_trans)
-
-            # " -> ', "" -> ", . -> -
-            #mary_fmt = first_trans.replace('""',"#")
-            #mary_fmt = mary_fmt.replace('"',"'")
-            #mary_fmt = mary_fmt.replace('#',"\"")
-            #with llookup
-            #mary_fmt = mary_fmt.replace('.',"-")
-            
-            #with lexlookup
-            #mary_fmt = mary_fmt.replace('$',"-")
-            
-            if " " in first_trans:
-                new_trans_list = []
-                for symbol in first_trans.split(" "):
-                    new_trans_list.append(trans2maryttsMap[symbol])
-                    mary_fmt = " ".join(new_trans_list)
+                    print("ORTH: %s, TRANS: %s" % (response_orth,first_trans))
                     
-            else:
-                #read first two characters, see if they match key, otherwise see if first char matches key otherwise error
-                rest = first_trans
-                new_trans_list = []
-                while rest != "":
-                    print(rest)
-                    #print(rest[:2])
-                    if rest[:2] in trans2maryttsMap:
-                        print("Found %s, mapping to %s" % (rest[:2], trans2maryttsMap[rest[:2]]))
-                        new_trans_list.append(trans2maryttsMap[rest[:2]])
-                        if len(rest) > 2:
-                            rest = rest[2:]
-                        else:
-                            rest = ""
-                    elif rest[0] in trans2maryttsMap:
-                        print("Found %s, mapping to %s" % (rest[0], trans2maryttsMap[rest[0]]))
-                        new_trans_list.append(trans2maryttsMap[rest[0]])
-                        if len(rest) > 1:
-                            rest = rest[1:]
-                        else:
-                            rest = ""
-                    else:
-                        print("ERROR: %s not in trans2maryttsMap" % rest)
-                        #After this error, skip one character and try again.
-                        #Or better to raise error?
-                        rest = rest[1:]
+                    trans_dict[response_orth] = first_trans
 
-
-                mary_fmt = " ".join(new_trans_list)
-                    
-
-
-                print("%s: %s -> %s" % (response_orth, first_trans, mary_fmt))
-                mary_fmt_dict[response_orth] = mary_fmt
-
-            return mary_fmt_dict
+            return trans_dict
         except:
-            print("NO MATCH: "+response)
+            e = sys.exc_info()[0]
+            print("NO MATCH (%s): %s" % (e,response))
+            raise
     
     if orth == "test":
         return "' t I s t"
 
     return None
+
+
+def mapperMapToMary(trans):
+    url = "http://localhost:8787/mapper/map?from=sv-se_ws-sampa&to=sv-se_sampa_mary&trans=%s" % quote_plus(trans)
+
+    r = requests.get(url)
+    print(r.url)
+    response = r.text
+    print("RESPONSE: %s" % response)
+    try:
+        response_json = json.loads(response)
+        print("RESPONSE_JSON: %s" % response_json)
+        new_trans = response_json["Result"]
+        print("NEW TRANS: %s" % new_trans)
+        return new_trans
+    except:
+        e = sys.exc_info()[0]
+        print("ERROR: unable to get mapper result (%s). Response was: %s" % (e, response))
+        return None
+        
+def localMapToMary(first_trans):
+    # " -> ', "" -> ", . -> -
+    #mary_fmt = first_trans.replace('""',"#")
+    #mary_fmt = mary_fmt.replace('"',"'")
+    #mary_fmt = mary_fmt.replace('#',"\"")
+    #with llookup
+    #mary_fmt = mary_fmt.replace('.',"-")
+    
+    #with lexlookup
+    #mary_fmt = mary_fmt.replace('$',"-")
+    
+    new_trans_list = []
+    if " " in first_trans:
+        for symbol in first_trans.split(" "):
+            new_trans_list.append(trans2maryttsMap[symbol])
+            
+    else:
+        #read first two characters, see if they match key, otherwise see if first char matches key otherwise error
+        rest = first_trans
+        while rest != "":
+            print(rest)
+            #print(rest[:2])
+            if rest[:2] in trans2maryttsMap:
+                print("Found %s, mapping to %s" % (rest[:2], trans2maryttsMap[rest[:2]]))
+                new_trans_list.append(trans2maryttsMap[rest[:2]])
+                if len(rest) > 2:
+                    rest = rest[2:]
+                else:
+                    rest = ""
+            elif rest[0] in trans2maryttsMap:
+                print("Found %s, mapping to %s" % (rest[0], trans2maryttsMap[rest[0]]))
+                new_trans_list.append(trans2maryttsMap[rest[0]])
+                if len(rest) > 1:
+                    rest = rest[1:]
+                else:
+                    rest = ""
+            else:
+                print("ERROR: %s not in trans2maryttsMap" % rest)
+                #After this error, skip one character and try again.
+                #Or better to raise error?
+                rest = rest[1:]
+
+
+    mary_fmt = " ".join(new_trans_list)
+    return mary_fmt
+
 
 
 trans2maryttsMap = {
@@ -295,7 +328,7 @@ trans2maryttsMap = {
     "Y": "Y", 
     "e:": "e:", 
     "e": "e", 
-    "2:": "9:", 
+    "2:": "2:", 
     "9": "9", 
     "o:": "o:", 
     "O": "O", 

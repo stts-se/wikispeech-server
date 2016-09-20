@@ -54,16 +54,16 @@ window.onload = function() {
 	      Fartyget byggdes <br>
 	      <ssml:sub alias="nittonhundra-femtionio">1959</ssml:sub> 
 	      i 
-	      <phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
+	      <phoneme alphabet="x-sampa" ph='" p O . rt u0 . g a l'>Portugal</phoneme> 
 	      på 
-	      <phoneme alphabet="x-sampa" ph="e s - t a - ' l e j - r O s">Estaleiros</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="n a - ' v a j s">Navais</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="' d e">de</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="v I - ' a - n a">Viana</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="' d O">do</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="k a s - ' t e - l O">Castelo</phoneme>
+	      <phoneme alphabet="x-sampa" ph="E s . t a . &quot; l E j . r O s">Estaleiros</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="n a . &quot; v a j s">Navais</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="&quot; d E">de</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="v I . &quot; a . n a">Viana</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="&quot; d O">do</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="k a s . &quot; t E . l O">Castelo</phoneme>
 	      , och levererades till Färöarna under namnet 
-	      <phoneme alphabet="x-sampa" ph="' v A: k - b I N - k u0 r">Vágbingur</phoneme>
+	      <phoneme alphabet="x-sampa" ph="&quot; v A: k . b I N . k u0 r">Vágbingur</phoneme>
 	      .
 	      </ssml:s>
 	      <ssml:s>
@@ -72,7 +72,7 @@ window.onload = function() {
 	      innan fartyget 
 	      <ssml:sub alias="nittonhundra-åttioett">1981</ssml:sub> 
 	      såldes till Göteborg, då i namnet 
-	      <phoneme alphabet="x-sampa" ph="&quot; b j A: rn - % 2 j">Bjarnoy</phoneme> 
+	      <phoneme alphabet="x-sampa" ph="&quot;&quot; b j A: rn . % 9 j">Bjarnoy</phoneme> 
 	      <ssml:sub alias="två">II</ssml:sub>
 	      .
 	      </ssml:s>
@@ -190,7 +190,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Mon Sep  5 14:13:52 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Mon Sep 19 13:56:29 CEST 2016 <!-- hhmts end -->
   
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
@@ -224,7 +224,7 @@ function searchLexicon(search_term) {
     }
     
     $.get(
-        'http://localhost/lexlookup',
+        'http://localhost/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -246,7 +246,7 @@ function wordInLex(word, div, trans) {
     }
     
     $.get(
-        'http://localhost/lexlookup',
+        'http://localhost/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -283,38 +283,45 @@ function wordsInLex(sorted_wordlist) {
     }
     
     $.get(
-        'http://localhost/lexlookup',
+        'http://localhost/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
-	    for (i=0; i<sorted_wordlist.length; i += 1) {
+	    for (i=1; i<sorted_wordlist.length; i += 1) {
 		var div = document.getElementById("entry_"+i);
 		var trans = document.getElementById("trans_"+i);
-		for (j=0; j<response.length; j += 1) {
-		    var found = false;
-		    var word = sorted_wordlist[i];
-		    if ( response[j].strn == word ) {
-			console.log("Adding to known_words: "+word);
+		if ( trans != null ) {
+		    var speak = trans.getElementsByTagName("speak")[0];
+		    for (j=0; j<response.length; j += 1) {
+			var found = false;
+			var word = sorted_wordlist[i];
+			if ( response[j].strn == word ) {
+			    console.log("Adding to known_words: "+word);
+			    
+			    //Replace transcription predicted by synthesiser with transcription from lexlookup (or leave it..)
+			    var transcription = response[j].transcriptions[0].strn.trim();
+			    console.log(transcription);
+			    transcription = transcription.replace(/"/g, "&quot;");
+			    //speak.innerHTML = "<p><phoneme alphabet=\"x-sampa\" ph=\""+transcription+"\">"+transcription+"</phoneme></p>";
+			    speak.innerHTML = '<p><phoneme alphabet="x-sampa" ph="'+transcription+'">'+transcription+'</phoneme></p>';
+			    console.log(speak);
 
-			//Replace transcription predicted by synthesiser with transcription from lexlookup (or leave it..)
-			var transcription = response[j].transcriptions[0].strn;
+			    known_words_container.appendChild(div);
+			    found = true;
+			}
+		    }
+		    if ( found = false ) {
+			console.log("Adding to unknown_words: "+word);
+			
+			var transcription = "NONE";
 			trans.innerHTML = transcription;
-
-			known_words_container.appendChild(div);
-			found = true;
+			
+			unknown_words_container.appendChild(div)
+			
 		    }
 		}
-		if ( found = false ) {
-		    console.log("Adding to unknown_words: "+word);
-		    
-		    var transcription = "NONE";
-		    trans.innerHTML = transcription;
-		    
-		    unknown_words_container.appendChild(div)
-
-		}
-	    }
-        }
+            }
+	}
     );
 
 }
@@ -420,7 +427,7 @@ function getTranscription(token) {
     var words = token.words;
     for ( i=0; i<words.length; i++ ) {
 	var w = words[i];
-	trans = trans+w.ph;
+	trans = trans+w.trans;
     }
     return trans;
 }

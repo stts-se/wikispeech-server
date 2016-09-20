@@ -481,12 +481,15 @@ def getParam(param,default=None):
 
 
 def test_wikilex():
-    sent = "apa"
+    sent = "apa hund färöarna"
     trans = {}
-    trans["apa"] = '" A: - p a'
+    trans["apa"] = '"" A: . p a'
+    trans["hund"] = '" h u0 n d'
+    trans["färöarna"] = '"" f E: . % r 2: . a . rn a'
     import wikilex
     try:
         lex = wikilex.getLookupBySentence("sv", sent)
+        print("LEX: %s" % lex)
     except:
         print("Failed to do lexicon lookup.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
 
