@@ -17,6 +17,14 @@
 <!--  <link rel="stylesheet" href="ext/Trumbowyg-master/css/main.css">-->
   <link rel="stylesheet" href="ext/Trumbowyg-master/dist/ui/trumbowyg.css">
 
+<script type="text/javascript" src="ext/sorttable.js"></script>
+<style>
+tr.selected{
+    background: white;
+}
+</style>
+
+
 <script type="text/javascript" src="../wikispeech_simple_player.js"></script>
 <script type="text/javascript">
 window.onload = function() {
@@ -37,6 +45,7 @@ window.onload = function() {
 	<a href="#" class="c-tabs-nav__link is-active"><span>Input</span></a>
 	<a href="#" class="c-tabs-nav__link"><span>Synthesis</span></a>
 	<a href="#" class="c-tabs-nav__link"><span>Lexicon</span></a>    
+	<a href="#" class="c-tabs-nav__link"><span>Lexicon new version</span></a>    
 	<a href="#" class="c-tabs-nav__link"><span>Lexicon Entry Editor</span></a>    
       </div>
   
@@ -166,6 +175,79 @@ window.onload = function() {
 	  </div>
 	</div>
       </div>
+
+      <div class="c-tab">
+	<div class="c-tab__content">
+	  <h2>Lexicon new version</h2>
+
+	  <div data-role="main" class="ui-content">
+	    <div class="ui-grid-a">
+	      <div class="ui-block-a">
+		<h3>Words sortable table</h3>
+
+		<table id="words_table" class="sortable">
+		  <tr>
+		    <th>Word</th>
+		    <th>Transcription</th> 
+		    <th>In lex</th>
+		    <th>In ssml</th>
+		    <th>Autotrans</th>
+		    <th>Listen</th>
+		  </tr>
+		  <tr class="selected">
+		    <td>fartyget</td>
+		    <td>f a rt y g e t</td>
+		    <td><input type="checkbox" value="in_lex" checked></td>
+		    <td><input type="checkbox" value="in_ssml"></td>
+		    <td><input type="checkbox" value="autotrans"></td>
+		    <td><input type="button" value="Listen"></td>
+		  </tr>
+		  <tr>
+		    <td>byggdes</td>
+		    <td>b y g d e s</td>
+		    <td><input type="checkbox" value="in_lex"></td>
+		    <td><input type="checkbox" value="in_ssml"></td>
+		    <td><input type="checkbox" value="autotrans" checked></td>
+		    <td><input type="button" value="Listen"></td>
+		  </tr>
+		  <tr>
+		    <td>1959</td>
+		    <td>z t r a n s</td>
+		    <td><input type="checkbox" value="in_lex" checked></td>
+		    <td><input type="checkbox" value="in_ssml" checked></td>
+		    <td><input type="checkbox" value="autotrans"></td>
+		    <td><input type="button" value="Listen"></td>
+		  </tr>
+		</table>
+	      </div>
+	      
+	      <div class="ui-block-b">
+		<h3>Detail of selected word</h3>
+		<div id="selected_word_detail">
+		  <!-- Initial content for testing -->	    
+		  <div>
+		    <span id="selected_word">1959</span>
+		    <span id="selected_trans">t e s t</span>
+		    <input type="button" value="Listen">
+		    <input type="button" value="Edit" onclick="myTabs.goToTab(4);searchLexicon($('#selected_word')[0].innerHTML);">
+		  </div>
+		  <!-- END Initial content for testing -->
+		  
+		</div>
+	      </div>
+	    </div>
+	    
+	    <div id="lexicon_container">
+
+
+
+	    </div>
+	  </div>
+	</div>
+      </div>
+
+
+
       <div class="c-tab">
 	<div class="c-tab__content">
 	  <h2>Lexicon entry editor</h2>
@@ -190,8 +272,8 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Mon Sep 19 13:56:29 CEST 2016 <!-- hhmts end -->
-  
+  <!-- hhmts start -->Last modified: Tue Sep 20 15:35:15 CEST 2016 <!-- hhmts end -->
+
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
     var myTabs = tabs({
@@ -201,7 +283,7 @@ window.onload = function() {
     });
     
     myTabs.init();
-    //myTabs.goToTab(3);
+    myTabs.goToTab(3);
   </script>
 
   <script src="ext/jquery/jquery-3.1.0.min.js"></script>-->
@@ -215,6 +297,20 @@ window.onload = function() {
   <script src="ext/json-editor/initialise.js"></script>
   <script type="text/javascript">
 
+
+    /* Lexicon table TODO not on click of header*/
+    $("#words_table tr").click(function(){
+    $(this).addClass('selected').siblings().removeClass('selected');    
+    var orth=$(this).find('td:eq(0)').html();
+    //alert(value);
+    $("#selected_word").html(orth);
+    var trans=$(this).find('td:eq(1)').html();
+    //alert(value);
+    $("#selected_trans").html(trans);
+});
+
+
+    
 function searchLexicon(search_term) {
     console.log("Searching lexicon for: " + search_term);
 
