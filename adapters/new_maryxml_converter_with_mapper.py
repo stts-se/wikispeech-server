@@ -657,6 +657,7 @@ def buildWord(token_element, lang):
         "orth": orth
     }
     word = addIfExists(word, token_element, "accent")
+    #g2p_method can be rules, lexicon, or not there if there is sampa in input
     word = addIfExists(word, token_element, "g2p_method")
     word = addIfExists(word, token_element, "pos")
     #word = addIfExists(word, token_element, "ph")
