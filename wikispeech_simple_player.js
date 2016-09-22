@@ -7,6 +7,9 @@ ws_host = "https://morf.se/wikispeech";
 //Default, if getSupportedLanguages fails
 supported_languages = ["sv"];
 
+//can be set to false from js if no controls or 'play-along' is wanted
+var useOriginalText = true;
+var showControls = true;
 
 
 function addPlayButtonToP() {
@@ -121,24 +124,25 @@ function play(id) {
 	//var response = xhr.responseJSON;
 	console.log(response);
 	
-	addTimingInfoFromJson(container, response);
 	
 	//using regular html5 audio
 	var audio = document.createElement("audio");
 	container.appendChild(audio);
 	//using video.js or one html5 audio element
 	//var audio = document.getElementById("audio_player");
-
-
-	audio.setAttribute("controls", "true");
-	
 	//using regular html5 audio
 	audio.setAttribute("src", response.audio);
 	//using video.js
 	//audio.firstChild.setAttribute("src", response.audio);
+
+	if (showControls) {
+	    addTimingInfoFromJson(container, response);
+	    audio.setAttribute("controls", "true");
+	    //doesn't work yet with video.js, the text and audio are not connected
+	    connectTimingAndAudio(container,audio);
 	
-	//doesn't work yet with video.js, the text and audio are not connected
-	connectTimingAndAudio(container,audio);
+	}
+	
 	
 	//using regular html5 audio
 	audio.play();
@@ -156,6 +160,8 @@ function play(id) {
 
 }
 
+
+
 function addTimingInfoFromJson(container, info) {
 
     //Something like this is needed if using one player
@@ -165,7 +171,7 @@ function addTimingInfoFromJson(container, info) {
 
     //when true: doesn't actually use the original text, but replaces it with the tokens from the wikispeech server
     //when false: appends the new tokens after the original text. Doesn't highlight correctly!
-    var useOriginalText = true;
+    //var useOriginalText = true;
     if (useOriginalText) {
 	var words = container.textContent.split(" ");
 	container.innerHTML = "";

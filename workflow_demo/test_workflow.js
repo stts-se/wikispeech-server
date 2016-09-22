@@ -44,11 +44,27 @@ function displaySelected(orth) {
 	    row.appendChild(nr)
 	    
 	    var trans = document.createElement("td");
-	    trans.appendChild(makeSSMLTranscription(entry["transcriptions"][0]["strn"]));
+
+	    trans.setAttribute("id","selected_trans_"+i);
+	    //trans.setAttribute("style", "display: inline-block; width: 30em;");
+	    trans.setAttribute("class", "ssml");
+	    //TODO remove hardcoded language
+	    trans.setAttribute("lang", "sv");
+	    trans.setAttribute("contenteditable",true);
+	    trans.setAttribute("style", "background-color:lightgreen;");
+	    
+	    //trans.appendChild(makeSSMLTranscription(entry["transcriptions"][0]["strn"]));
+	    trans.innerHTML = entry["transcriptions"][0]["strn"];
 	    row.appendChild(trans)
 	    
 	    var listen = document.createElement("td");
-	    listen.innerHTML = '<input type="button" value="Listen">';
+	    var listen_button = document.createElement("input");
+	    listen_button.setAttribute("type","button");
+	    listen_button.setAttribute("value","listen");
+	    //listen_button.setAttribute("onclick", "useOriginalText = false; showControls = false; play($('#selected_trans_"+i+"')[0]);");
+	    listen_button.setAttribute("onclick", "playTranscription($('#selected_trans_"+i+"')[0]);");
+	    //listen_button.setAttribute("onclick", "playTranscription(selected_trans_"+i+");");
+	    listen.appendChild(listen_button);
 	    row.appendChild(listen)
 
 	    var lang = document.createElement("td");
@@ -383,39 +399,31 @@ function addWordsToLexiconTab(words) {
 	    tr.appendChild(trans);
 	    
 	    //4
-	    var td = document.createElement("td");
-	    var in_lex = document.createElement("input");
-	    in_lex.setAttribute("type","checkbox");
-	    in_lex.setAttribute("value","in_lex");
-	    td.appendChild(in_lex);
-	    tr.appendChild(td);
+	    var in_lex = document.createElement("td");
+	    tr.appendChild(in_lex);
+	    //var in_lex = document.createElement("input");
+	    //in_lex.setAttribute("type","checkbox");
+	    //in_lex.setAttribute("value","in_lex");
+	    //td.appendChild(in_lex);
+	    //tr.appendChild(td);
 	    
 	    //5
-	    var td = document.createElement("td");
-	    var in_ssml = document.createElement("input");
-	    in_ssml.setAttribute("type","checkbox");
-	    in_ssml.setAttribute("value","in_ssml");
-
+	    var in_ssml = document.createElement("td");
 	    if ( word.hasOwnProperty("in_ssml") && word.in_ssml == true) {
-		in_ssml.setAttribute("checked","true");
+		in_ssml.innerHTML = "T";
 	    }
-	    td.appendChild(in_ssml);
-	    tr.appendChild(td);
+	    tr.appendChild(in_ssml);
 
 	    //6
-	    var td = document.createElement("td");
-	    var multiple = document.createElement("input");
-	    multiple.setAttribute("type","checkbox");
-	    multiple.setAttribute("value","multiple");
-	    td.appendChild(multiple);
-	    tr.appendChild(td);
+	    var multiple = document.createElement("td");
+	    tr.appendChild(multiple);
 
 	    //7
 	    var td = document.createElement("td");
 	    var listen_button = document.createElement("input");
 	    listen_button.setAttribute("type","button");
 	    listen_button.setAttribute("value","listen");
-	    listen_button.setAttribute("onclick", "play($('#trans_"+i+"')[0]);");
+	    listen_button.setAttribute("onclick", "useOriginalText = false; showControls = false; play($('#trans_"+i+"')[0]);");
 	    //listen_button.setAttribute("onclick", "playTranscription($('#trans_"+i+"'));");
 	    td.appendChild(listen_button);
 	    tr.appendChild(td);
@@ -439,15 +447,61 @@ function addWordsToLexiconTab(words) {
 
 
 
-/* Not used - is there any point in no using simple_player.play? */
+
 function playTranscription(t) {
+    //var t = $('#'+id)[0];
     console.log(t);
-    var trans = t[0].innerHTML;
+    var trans = t.innerHTML;
     console.log(trans);
-    alert("playTranscription "+trans+" not yet implemented");
+    //alert("playTranscription "+trans+" not yet implemented");
+
+
+    var word = "dummy";
+    var entry = {
+	"strn": word,
+	"wordParts": word,
+	"transcriptions":[
+	    {
+		"strn": trans
+	    }
+	]
+    };
+    
+    var params = {
+	"symbolsetname": "sv-se_ws-sampa",
+	"entry": JSON.stringify(entry)
+    }
+
+
+    console.log(params);
+    
+    $.get(
+        'http://localhost/ws_service/validation/validateentry',
+        params,
+        function(response) {
+	    console.log(response);
+	    if ( response["entryValidations"] == null ) {
+
+		t.setAttribute("style", "background-color:lightgreen;");
+
+		ssml = makeSSMLTranscription(trans);
+		container = document.createElement("p");
+		//TODO hardcoded language
+		container.setAttribute("lang", "sv");
+		container.setAttribute("class", "ssml");
+		container.appendChild(ssml);
+		//globals for player
+		useOriginalText = false;
+		showControls = false;
+		play(container);
+	    } else {
+		alert("Invalid transcription: "+trans+"<br>Message: "+JSON.stringify(response["entryValidations"]));
+		t.setAttribute("style", "background-color:red;");
+		
+	    }
+	}
+    );
 }
-
-
 
   
 /* Searches for one word/re, used in lexicon editor */
@@ -461,7 +515,7 @@ function searchLexicon(search_term) {
     }
     
     $.get(
-        'http://localhost/lexicon/lookup',
+        'http://localhost/ws_service/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -484,7 +538,7 @@ function wordInLex(word, div, trans) {
     }
     
     $.get(
-        'http://localhost/lexicon/lookup',
+        'http://localhost/ws_service/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -523,7 +577,7 @@ function wordsInLex(words) {
     }
     
     $.get(
-        'http://localhost/lexicon/lookup',
+        'http://localhost/ws_service/lexicon/lookup',
         params,
         function(response) {
 
@@ -551,10 +605,12 @@ function wordsInLex(words) {
 
 		var tr = document.getElementById("entry_"+i);
 
-		var in_lex = tr.getElementsByTagName("td")[3].getElementsByTagName("input")[0];
+		//var in_lex = tr.getElementsByTagName("td")[3].getElementsByTagName("input")[0];
+		var in_lex = tr.getElementsByTagName("td")[3];
 		//console.log(in_lex);
 
-		var multiple = tr.getElementsByTagName("td")[5].getElementsByTagName("input")[0];
+		//var multiple = tr.getElementsByTagName("td")[5].getElementsByTagName("input")[0];
+		var multiple = tr.getElementsByTagName("td")[5];
 		
 
 		var found = false;
@@ -565,9 +621,13 @@ function wordsInLex(words) {
 		    console.log(entries[word]);
 		    
 		    
-		    in_lex.setAttribute("checked", true);
+		    //in_lex.setAttribute("checked", true);
+		    //if ( entries[word].length > 1 ) {
+			//multiple.setAttribute("checked", true);
+		    //}
+		    in_lex.innerHTML = "T";
 		    if ( entries[word].length > 1 ) {
-			multiple.setAttribute("checked", true);
+			multiple.innerHTML = "T";
 		    }
 		    
 		    found = true;
