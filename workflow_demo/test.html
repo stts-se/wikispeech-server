@@ -55,38 +55,6 @@ window.onload = function() {
 	  <input type="button" onclick="myTabs.goToTab(2);tokeniseHtmlText();" value="Tokenise"></input>
 	  
 	  <div id="html_editor">
-
-	    <!-- some sample text to start with, remove after testing! -->
-	    <p><br>
-	      <ssml:s>
-	      Fartyget byggdes <br>
-	      <ssml:sub alias="nittonhundra-femtionio">1959</ssml:sub> 
-	      i 
-	      <phoneme alphabet="x-sampa" ph='" p O . rt u0 . g a l'>Portugal</phoneme> 
-	      på 
-	      <phoneme alphabet="x-sampa" ph="E s . t a . &quot; l E j . r O s">Estaleiros</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="n a . &quot; v a j s">Navais</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="&quot; d E">de</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="v I . &quot; a . n a">Viana</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="&quot; d O">do</phoneme> 
-	      <phoneme alphabet="x-sampa" ph="k a s . &quot; t E . l O">Castelo</phoneme>
-	      , och levererades till Färöarna under namnet 
-	      <phoneme alphabet="x-sampa" ph="&quot; v A: k . b I N . k u0 r">Vágbingur</phoneme>
-	      .
-	      </ssml:s>
-	      <ssml:s>
-	      Under 20 års tid tjänstgjorde det som fiskefartyg på 
-	      <ssml:sub alias="nord-atlanten">nordatlanten</ssml:sub> 
-	      innan fartyget 
-	      <ssml:sub alias="nittonhundra-åttioett">1981</ssml:sub> 
-	      såldes till Göteborg, då i namnet 
-	      <phoneme alphabet="x-sampa" ph="&quot;&quot; b j A: rn . % 9 j">Bjarnoy</phoneme> 
-	      <ssml:sub alias="två">II</ssml:sub>
-	      .
-	      </ssml:s>
-	    </p>
-	    <!-- end of sample text -->
-
           </div>
 
 
@@ -98,21 +66,6 @@ window.onload = function() {
 	  <h2>Synthesis</h2>
 
 	  <div id="synthesis_container">
-
-	    <!-- Initial content for testing -->
-	    <div>
-	      <span contenteditable>Fartyget byggdes 1959 i Portugal på Estaleiros Navais de Viana do Castelo , och levererades till Färöarna under namnet Vágbingur.</span>
-	      <audio controls></audio>
-	      <input type="button" value="Synthesise"></input>
-	    </div>
-	    
-	    <div>
-	      <span>Under 20 års tid tjänstgjorde det som fiskefartyg på nordatlanten innan fartyget 1981 såldes till Göteborg, då i namnet Bjarnoy II .</span>
-	      <audio controls></audio>
-	      <input type="button" value="Synthesise">
-	    </div>
-	    <!-- END Initial content for testing -->
-
 	  </div>
 	</div>
       </div>
@@ -126,7 +79,7 @@ window.onload = function() {
 	    <div class="ui-grid-a">
 	      <div class="ui-block-a" style="overflow-y:scroll; height:50em;">
 		<h3>Words sortable table</h3>
-
+		
 		<table id="words_table" class="sortable">
 		  <thead>
 		    <tr>
@@ -140,33 +93,6 @@ window.onload = function() {
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr class="selected">
-		      <td>fartyget</td>
-		      <td>1</td>
-		      <td>f a rt y g e t</td>
-		      <td><input type="checkbox" value="in_lex" checked></td>
-		      <td><input type="checkbox" value="in_ssml"></td>
-		      <td><input type="checkbox" value="multiple"></td>
-		      <td><input type="button" value="Listen"></td>
-		    </tr>
-		    <tr>
-		      <td>byggdes</td>
-		      <td>2</td>
-		      <td>b y g d e s</td>
-		      <td><input type="checkbox" value="in_lex"></td>
-		      <td><input type="checkbox" value="in_ssml"></td>
-		      <td><input type="checkbox" value="multiple" checked></td>
-		      <td><input type="button" value="Listen"></td>
-		    </tr>
-		    <tr>
-		      <td>1959</td>
-		      <td>1</td>
-		      <td>z t r a n s</td>
-		      <td><input type="checkbox" value="in_lex" checked></td>
-		      <td><input type="checkbox" value="in_ssml" checked></td>
-		      <td><input type="checkbox" value="multiple"></td>
-		      <td><input type="button" value="Listen"></td>
-		    </tr>
 		  </tbody>
 		</table>
 	      </div>
@@ -174,11 +100,11 @@ window.onload = function() {
 	      <div class="ui-block-b">
 		<h3>Detail of selected word</h3>
 		<div id="selected_word_detail">
-		  <!-- Initial content for testing -->	    
 		  <div>
-		    <span id="selected_word" style="display: inline-block; width: 30em;">1959</span>
-		    <input type="button" value="Edit" onclick="myTabs.goToTab(3);searchLexicon($('#selected_word')[0].innerHTML);">
+		    <h4 id="selected_word" style="display: inline-block; width: 30em;"></h4>
+		    <input type="button" value="Open in Entry editor" onclick="myTabs.goToTab(3);searchLexicon($('#selected_word')[0].innerHTML);">
 		    <div>
+		      <h4>Lexicon entries</h4>
 		      <table>
 			<thead>
 			  <tr>
@@ -191,42 +117,37 @@ window.onload = function() {
 			  </tr>
 			</thead>
 			<tbody id="selected_table">
-			  <tr>
-			    <td>1</td>
-			    <td><span id="selected_trans">t e s t</span></td>
-			    <td><input type="button" value="Listen"></td>
-			    <td>sv-SE</td>
-			    <td>NN</td>
-			    <td><input type="checkbox" value="preferred" checked></td>
-			  </tr>
-			  <tr>
-			    <td>2</td>
-			    <td style="background-color: lightgreen;"><span id="selected_trans">t A s t</span></td>
-			    <td><input type="button" value="Listen"></td>
-			    <td>sv-SE</td>
-			    <td>NN</td>
-			    <td><input type="checkbox" value="preferred" ></td>
-			  </tr>
 			</tbody>
 		      </table>
+		      <h4>SSML transcription</h4>		      
+		      <div id="ssml_transcription" contenteditable="true" onkeyup="makeSSMLReplacementString();"></div>
+		      <input type="button" value="listen" onclick="playSSML($('#ssml_transcription')[0]);">
+		      <h4>SSML replacement string</h4>		      
+		      <div id="ssml_replacement"></div>
+		      <h4>Autotrans</h4>		      
+		      <div id="autotrans"></div>
+		      <h4>Validation</h4>
+		      <table>
+			<thead>
+			  <tr>
+			    <th>id</th>
+			    <th>level</th>
+			    <th>ruleName</th>
+			    <th style="width: 30em;">Message</th>
+			    <th>timestamp</th>
+			  </tr>
+			</thead>
+			<tbody id="validation"></tbody>
+		      </table>
 		    </div>
-		    <!-- END Initial content for testing -->
-		    
 		  </div>
 		</div>
-	      </div>
-	      
-	      <div id="lexicon_container">
-		
-		
-		
 	      </div>
 	    </div>
 	  </div>
 	</div>
+
       </div>
-
-
       <div class="c-tab">
 	<div class="c-tab__content">
 	  <h2>Lexicon entry editor</h2>
@@ -238,7 +159,11 @@ window.onload = function() {
 	    <input type="button" value="search" onclick="searchLexicon($('#search_term').val());">
 	  </div>
 	  <hr/>
-    
+	  <div>
+	    <input type="button" value="Update Lexicon" onclick="updateEntries();">	    
+	  </div>
+	  <hr/>
+	  
 	  <div id="entry_editor_holder"></div>
 
 
@@ -251,7 +176,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Thu Sep 22 13:13:31 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Fri Sep 23 15:50:40 CEST 2016 <!-- hhmts end -->
 
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
@@ -262,7 +187,6 @@ window.onload = function() {
     });
     
     myTabs.init();
-    //myTabs.goToTab(3);
   </script>
 
   <script src="ext/jquery/jquery-3.1.0.min.js"></script>-->
@@ -276,7 +200,7 @@ window.onload = function() {
   <script src="ext/json-editor/initialise.js"></script>
 
   <script src="test_workflow.js"></script>
-
+  <script src="add_testdata.js"></script>
 
 </body>
 </html>

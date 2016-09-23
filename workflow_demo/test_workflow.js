@@ -4,14 +4,13 @@
 function setupLexiconTable() {
     $("#words_table tbody tr").click(function(){
 	$(this).addClass('selected').siblings().removeClass('selected');    
-	var orth=$(this).find('td:eq(0)').html();
 	//alert(orth);
 	//$("#selected_word").html(orth);
 	//var trans=$(this).find('td:eq(1)').html();
 	//alert(value);
 	//$("#selected_trans").html(trans);
 
-	displaySelected(orth);
+	displaySelected(this);
     });
 }
 
@@ -21,20 +20,71 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 });
 
 
-function displaySelected(orth) {
-    console.log("Displaying selected: "+orth);
+function makeSSMLReplacementString() {
+    var orth = $('#selected_word').html();
+    var ssml = $('#ssml_transcription').html();
+    console.log(ssml);
+    var trans_string = ssml.replace(/^.*<p><phoneme .+>(.+)<\/phoneme><\/p>.*$/,"$1");
+    trans_string = trans_string.replace(/"/g, "&quot;");
+    trans_string = trans_string.replace(/&nbsp;/g, " ");
+
+
+    console.log(trans_string);
+    var new_ssml = ssml.replace(/ph="[^"]+"/, "ph=\""+trans_string+"\""); 
+    console.log(new_ssml);
+    //Problem here, when replacement is done focus is lost
+    $('#ssml_transcription').html(new_ssml);
+
+    
+
+    phoneme_string = "<p><phoneme alphabet=\"x-sampa\" ph=\""+trans_string+"\">"+orth+"</phoneme></p>";
+    console.log(phoneme_string);
+    
+    $("#ssml_replacement").text(phoneme_string);
+}
+
+function displaySelected(row) {
+    console.log("Displaying selected: "+row);
+
+    $("#ssml_transcription").html("");
+    $("#ssml_replacement").html("");
+    $("#autotrans").html("");
+
+
+    
+    var orth=$(row).find('td:eq(0)').html();
     $("#selected_word").html(orth);
 
+    var trans=$(row).find('td:eq(2)')[0];
+    var in_lex=$(row).find('td:eq(3)').html();
+    var in_ssml=$(row).find('td:eq(4)').html();
+
+    console.log(trans);
+    var phoneme_string = trans.innerHTML.replace(/^.*<p>(<phoneme.+>).+<\/phoneme><\/p>.*$/,"$1");
+    phoneme_string = phoneme_string+orth+"</phoneme></p>";
+    console.log(phoneme_string);
+    
+    if ( in_ssml === "T" ) {
+	var ssml_transcription = document.getElementById("ssml_transcription");
+	var clone = trans.cloneNode(true);
+	ssml_transcription.appendChild(clone);
+	$("#ssml_replacement").text(phoneme_string);
+
+    } else if ( in_lex !== "T" ) {
+	$("#autotrans").html(trans);
+    }
+
+
+
+    //If the word was found in lexicon
     var selected_table = document.getElementById("selected_table")
     selected_table.innerHTML = "";
+    entry_list = entries[orth];
+    console.log(entry_list);
+    if ( entry_list != null ) {
 
-    word = entries[orth];
-    console.log(word);
-
-    if ( word != null ) {
-
-	for (i=0; i<word.length; i++) {
-	    var entry = word[i];
+	for (i=0; i<entry_list.length; i++) {
+	    var entry = entry_list[i];
 	    console.log(entry);
 	    
 	    var row = document.createElement("tr");
@@ -55,6 +105,7 @@ function displaySelected(orth) {
 	    
 	    //trans.appendChild(makeSSMLTranscription(entry["transcriptions"][0]["strn"]));
 	    trans.innerHTML = entry["transcriptions"][0]["strn"];
+	    trans.setAttribute("onkeyup","validateTranscription($('#selected_trans_"+i+"')[0]);");
 	    row.appendChild(trans)
 	    
 	    var listen = document.createElement("td");
@@ -338,6 +389,16 @@ function addWordsToLexiconTab(words) {
     words_table_tbody.innerHTML = "";
 
     var sorted_wordlist = Object.keys(words).sort();
+
+    //remove punctuation
+    for (var i=sorted_wordlist.length-1; i>=0; i--) {
+	if (sorted_wordlist[i].match(/^[.,?!]+$/)) {
+            sorted_wordlist.splice(i, 1);
+            // break;       //<-- Uncomment  if only the first term has to be removed
+	}
+    }
+
+    
     console.log(sorted_wordlist);
 
     for ( i=0; i<sorted_wordlist.length; i++ ) {
@@ -443,9 +504,88 @@ function addWordsToLexiconTab(words) {
     //See if the words are found in lexicon, update table accordingly
     //Better to look up all words first..
     wordsInLex(words);
+
+    
 }
 
 
+function validateTranscription(t) {
+    console.log(t);
+    var trans = t.innerText;
+    console.log(trans);
+    
+    var word = "dummy";
+    var entry = {
+	"strn": word,
+	"wordParts": word,
+	"transcriptions":[
+	    {
+		"strn": trans
+	    }
+	]
+    };
+
+    //TODO hardcoded language
+    var params = {
+	"symbolsetname": "sv-se_ws-sampa",
+	"entry": JSON.stringify(entry)
+    }
+
+    //TODO hardcoded url
+    $.get(
+        'http://localhost/ws_service/validation/validateentry',
+        params,
+        function(response) {
+	    console.log(response);
+	    var container = $('#validation')[0];
+	    container.innerHTML = "";
+
+	    if ( response["entryValidations"] == null ) {
+
+		t.setAttribute("style", "background-color:lightgreen;");
+
+	    } else {
+
+		displayValidationResult(response["entryValidations"], container, t);
+		
+	    }
+	}
+    );
+}
+
+function displayValidationResult(messages, container, transcription_field) {
+		
+    //{"id":0,"level":"Fatal","ruleName":"SymbolSet","Message":"Invalid transcription symbol ' g' in /\"\" b  g . d e s/","timestamp":""}
+		
+    for (i=0; i < messages.length; i++) {
+	var msg = messages[i];
+	console.log(msg);
+	var row = document.createElement("tr");
+	
+	var cell1 = document.createElement("td");
+	cell1.innerHTML = msg["id"];
+	row.appendChild(cell1);
+	
+	var cell2 = document.createElement("td");
+	cell2.innerHTML = msg["level"];
+	row.appendChild(cell2);
+	
+	var cell3 = document.createElement("td");
+	cell3.innerHTML = msg["ruleName"];
+	row.appendChild(cell3);
+	
+	var cell4 = document.createElement("td");
+	cell4.innerHTML = msg["Message"];
+	row.appendChild(cell4);
+	
+	var cell5 = document.createElement("td");
+	cell5.innerHTML = msg["timestamp"];
+	row.appendChild(cell5);
+	
+	container.appendChild(row);
+    }    		    
+    transcription_field.setAttribute("style", "background-color:pink;");
+}
 
 
 function playTranscription(t) {
@@ -466,7 +606,8 @@ function playTranscription(t) {
 	    }
 	]
     };
-    
+
+    //TODO hardcoded language
     var params = {
 	"symbolsetname": "sv-se_ws-sampa",
 	"entry": JSON.stringify(entry)
@@ -474,38 +615,48 @@ function playTranscription(t) {
 
 
     console.log(params);
-    
+
+    //TODO hardcoded url
     $.get(
         'http://localhost/ws_service/validation/validateentry',
         params,
         function(response) {
 	    console.log(response);
+	    var validation_container = $('#validation')[0];
+	    validation_container.innerHTML = "";
+
 	    if ( response["entryValidations"] == null ) {
 
 		t.setAttribute("style", "background-color:lightgreen;");
 
 		ssml = makeSSMLTranscription(trans);
-		container = document.createElement("p");
-		//TODO hardcoded language
-		container.setAttribute("lang", "sv");
-		container.setAttribute("class", "ssml");
-		container.appendChild(ssml);
-		//globals for player
-		useOriginalText = false;
-		showControls = false;
-		play(container);
+		//Actually play only after validation
+		playSSML(ssml);
+		
 	    } else {
-		alert("Invalid transcription: "+trans+"<br>Message: "+JSON.stringify(response["entryValidations"]));
-		t.setAttribute("style", "background-color:red;");
+
+		displayValidationResult(response["entryValidations"], validation_container, t);
 		
 	    }
 	}
     );
 }
 
+function playSSML(ssml) {
+    clone = ssml.cloneNode(true);
+    container = document.createElement("p");
+    //TODO hardcoded language
+    container.setAttribute("lang", "sv");
+    container.setAttribute("class", "ssml");
+    container.appendChild(clone);
+    //globals for player
+    useOriginalText = false;
+    showControls = false;
+    play(container);
+}
   
 /* Searches for one word/re, used in lexicon editor */
-/* TODO Remove hardcoded lexicon name */
+/* TODO Remove hardcoded lexicon name and url*/
 function searchLexicon(search_term) {
     console.log("Searching lexicon for: " + search_term);
 
@@ -575,7 +726,8 @@ function wordsInLex(words) {
 	"pagelength": 2*wordlist.length,
 	"words": words_to_lookup
     }
-    
+
+    //TODO hardcoded url
     $.get(
         'http://localhost/ws_service/lexicon/lookup',
         params,
@@ -594,9 +746,16 @@ function wordsInLex(words) {
 	    }
 	    
 
+	    //remove punctuation
+	    for (var i=wordlist.length-1; i>=0; i--) {
+		if (wordlist[i].match(/^[.,?!]+$/)) {
+		    wordlist.splice(i, 1);
+		    // break;       //<-- Uncomment  if only the first term has to be removed
+		}
+	    }
 	    
 	    //console.log(response);
-	    for (i=1; i<wordlist.length; i += 1) {
+	    for (i=0; i<wordlist.length; i += 1) {
 		var word = wordlist[i];
 		if ( word.match(/^[.,?!]+$/) ) {
 		    console.log("ignoring: "+word);
@@ -636,7 +795,57 @@ function wordsInLex(words) {
 		    console.log(word+" not found in lex");
 		}
 	    }
+	    //select the first row
+	    var row = document.getElementById("entry_0");
+	    $(row).addClass("selected");
+	    displaySelected(row);
+
+
         }
     );
 
 }
+
+
+function updateEntries() {
+    var entries = entry_editor.getValue();
+    console.log(entries);
+
+    for (i=0; i<entries.length; i += 1) {
+
+	var entry = entries[i];
+	console.log(entry);
+	var entry_string = JSON.stringify(entry);
+	console.log(entry_string);
+	
+	var params = {
+	    //"entry": encodeURIComponent(entry_string)
+	    //"entry": entry
+	    "entry": entry_string
+	};
+
+
+	$.ajax({
+	    url: 'http://localhost/ws_service/lexicon/updateentry',
+	    data: params,
+	    type: "GET",
+	    contentType: "application/json",
+	    dataType: 'json',
+	    
+	    success: function(response) {
+		console.log(response);
+	    }
+	});
+	
+	/*
+	  $.get(
+            'http://localhost/ws_service/lexicon/updateentry',
+            params,
+            function(response) {
+		console.log(response);
+	    }
+	);
+	*/
+    }
+}
+	
