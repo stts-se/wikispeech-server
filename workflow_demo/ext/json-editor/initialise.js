@@ -25,7 +25,7 @@ var lex_schema = {
 		properties: {
 		    id: { type: "integer" },
 		    strn: { type: "string" },
-		    reading: { type: "integer" },
+		    reading: { type: "string" },
 		    paradigm: { type: "string" }
 		}
 	    },

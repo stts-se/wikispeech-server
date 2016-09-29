@@ -1,8 +1,8 @@
 #Lexicon service
 
-#export GOPATH=/home/harald/go
-#cd $GOPATH/src/github.com/stts-se/pronlex/lexserver
-#sh ./lexserver.sh &
+export GOPATH=/home/harald/go
+cd $GOPATH/src/github.com/stts-se/pronlex/lexserver
+sh ./lexserver.sh &
 
 #Arabic vocalisation service
 export GIT=/home/harald/git

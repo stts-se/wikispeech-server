@@ -71,7 +71,8 @@ function displaySelected(row) {
 	$("#ssml_replacement").text(phoneme_string);
 
     } else if ( in_lex !== "T" ) {
-	$("#autotrans").html(trans);
+	var clone = trans.cloneNode(true);
+	$("#autotrans").html(clone);
     }
 
 
@@ -79,9 +80,9 @@ function displaySelected(row) {
     //If the word was found in lexicon
     var selected_table = document.getElementById("selected_table")
     selected_table.innerHTML = "";
-    entry_list = entries[orth];
-    console.log(entry_list);
-    if ( entry_list != null ) {
+    if ( orth in global_entries ) {
+	entry_list = global_entries[orth];
+	console.log(entry_list);
 
 	for (i=0; i<entry_list.length; i++) {
 	    var entry = entry_list[i];
@@ -735,13 +736,13 @@ function wordsInLex(words) {
 
 	    //response is a list of entries, first convert it to hash with orth as key
 	    //GLOBAL for later use
-	    entries = {};
+	    global_entries = {};
 	    for (i=1; i<response.length; i += 1) {
 		var entry = response[i];
-		if ( entry.strn in entries ) {
-		    entries[entry.strn].push(entry);
+		if ( entry.strn in global_entries ) {
+		    global_entries[entry.strn].push(entry);
 		} else {
-		    entries[entry.strn] = [entry];
+		    global_entries[entry.strn] = [entry];
 		}
 	    }
 	    
@@ -775,9 +776,9 @@ function wordsInLex(words) {
 		var found = false;
 		var word = wordlist[i];
 		
-		if ( word in entries ) {
+		if ( word in global_entries ) {
 		    console.log("Adding to known_words: "+word);
-		    console.log(entries[word]);
+		    console.log(global_entries[word]);
 		    
 		    
 		    //in_lex.setAttribute("checked", true);
@@ -785,7 +786,7 @@ function wordsInLex(words) {
 			//multiple.setAttribute("checked", true);
 		    //}
 		    in_lex.innerHTML = "T";
-		    if ( entries[word].length > 1 ) {
+		    if ( global_entries[word].length > 1 ) {
 			multiple.innerHTML = "T";
 		    }
 		    
@@ -798,6 +799,8 @@ function wordsInLex(words) {
 	    //select the first row
 	    var row = document.getElementById("entry_0");
 	    $(row).addClass("selected");
+
+	    //TODO This goes wrong..
 	    displaySelected(row);
 
 
@@ -814,38 +817,141 @@ function updateEntries() {
     for (i=0; i<entries.length; i += 1) {
 
 	var entry = entries[i];
-	console.log(entry);
-	var entry_string = JSON.stringify(entry);
-	console.log(entry_string);
-	
-	var params = {
-	    //"entry": encodeURIComponent(entry_string)
-	    //"entry": entry
-	    "entry": entry_string
-	};
 
+	updateEntry(entry);
 
-	$.ajax({
-	    url: 'http://localhost/ws_service/lexicon/updateentry',
-	    data: params,
-	    type: "GET",
-	    contentType: "application/json",
-	    dataType: 'json',
-	    
-	    success: function(response) {
-		console.log(response);
-	    }
-	});
-	
-	/*
-	  $.get(
-            'http://localhost/ws_service/lexicon/updateentry',
-            params,
-            function(response) {
-		console.log(response);
-	    }
-	);
-	*/
     }
+
 }
+
+function updateEntry(entry) {
+    console.log(entry);
+
+
+    console.log(entry["lemma"]["reading"]);
+
+
+    
+    var entry_string = JSON.stringify(entry);
+    console.log(entry_string);
+    
+    var params = {
+	//"entry": encodeURIComponent(entry_string)
+	//"entry": entry
+	"entry": entry_string
+    };
+    //console.log(JSON.stringify(params));
+    
+    $.ajax({
+	//url: 'http://localhost/ws_service/lexicon/updateentry',
+	url: 'http://localhost/ws_service/lexicon/updateentry?entry='+entry_string,
+	//data: params,
+	type: "GET",
+	contentType: "application/json",
+	dataType: 'json',
 	
+	success: function(response) {
+	    console.log(response);
+	}
+    });
+    
+    /*	
+	$.get(
+        'http://localhost/ws_service/lexicon/updateentry',
+        params,
+        function(response) {
+	console.log(response);
+	}
+	);
+    */
+}
+
+	
+function testUpdateEntry() {
+
+    var entry =  {
+	"id": 365544,
+	"lexiconId": 1,
+	"strn": "huvud-",
+	"language": "SWE",
+	"partOfSpeech": " ",
+	"wordParts": "hund",
+	"lemma": {
+	    "id": 0,
+	    "strn": "",
+	    "reading": "",
+	    "paradigm": ""
+	},
+	"transcriptions": [
+	    {
+		"id": 929606,
+		"entryId": 365544,
+		"strn": "\"h A n d",
+		"language": "SWE",
+		"sources": [ ]
+	    }
+	],
+	"status": {
+	    "id": 365544,
+	    "name": "imported",
+	    "source": "nst",
+	    "timestamp": "2016-09-16T07:45:36Z",
+	    "current": true
+	},
+	"entryValidations": [ ]
+    };
+   
+    updateEntry(entry);
+
+    //This fails
+    var entry2 = {
+	"id":161631,
+	"lexiconId":1,
+	"strn":"byggdes",
+	"language":"SWE",
+	"partOfSpeech":"JJ%20SIN|DEF|GEN|MAS|POS",
+	"wordParts":"byggdes",
+	"lemma":{
+	    "id":18639,
+	    "strn":"byggd",
+	    "reading":0,
+	    "paradigm":"3v-ombordanst%C3%A4lld"
+	},
+	"transcriptions":[
+	    {
+		"id":167058,
+		"entryId":161631,
+		"strn":"\"\"%20b%20Y%20g%20.%20d%20e%20s",
+		"language":"SWE"
+	    }
+	]
+    };
+
+    //Trying to remove things to see what fails
+    //reading:0 seems to be 
+    var entry3 = {
+	"id":161631,
+	"lexiconId":1,
+	"strn":"byggdes",
+	"language":"SWE",
+	"partOfSpeech":"JJ",
+	"wordParts":"byggdes",
+	"lemma":{
+	    "id":18639,
+	    "strn":"byggd",
+	    "reading":"",
+	    "paradigm":""
+	},
+	"transcriptions":[
+	    {
+		"id":167058,
+		"entryId":161631,
+		"strn":"\"\" b Y g . d e s",
+		"language":"SWE"
+	    }
+	]
+    };
+
+    updateEntry(entry3);
+    
+}
