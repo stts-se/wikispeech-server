@@ -10,15 +10,14 @@ var lex_schema = {
             language: {
               type: "string",
               enum: [
-                "SWE",
-                "ENG",
-                "ARA",
-                "NOB"
+                "sv-se",
+                "en-us",
+                "ar",
+                "no-nb"
               ]
             },
-            partOfSpeech: {
-              type: "string"
-            },
+            partOfSpeech: { type: "string" },
+            morphology: { type: "string" },
             wordParts: {type: "string" },
 	    lemma: {
 		type: "object",
@@ -43,10 +42,10 @@ var lex_schema = {
 			language: {
 			    type: "string",
 			    enum: [
-				"SWE",
-				"ENG",
-				"ARA",
-				"NOB"
+				"sv-se",
+				"en-us",
+				"ar",
+				"no-nb"
 			    ]
 			},
 			sources: { type: "array" }
@@ -79,8 +78,9 @@ var starting_value = [
 	id: 75346,
 	lexiconId: 1,
 	strn: "apa",
-	language: "SWE",
-	partOfSpeech: "NN SIN|IND|NOM|UTR",
+	language: "sv-se",
+	partOfSpeech: "NN",
+	morphology: "SIN|IND|NOM|UTR",
 	wordParts: "apa",
 	lemma: {
 	    id: 8881,
@@ -93,14 +93,14 @@ var starting_value = [
 		id: 80713,
 		entryId: 75346,
 		strn: "\"\"A:$pa",
-		language: "SWE",
+		language: "sv-se",
 		sources: [ ]
 	    },
 	    {
 		id: 80714,
 		entryId: 75347,
 		strn: "\"\"a$pA:",
-		language: "SWE",
+		language: "sv-se",
 		sources: [ ]
 	    }
 	],
