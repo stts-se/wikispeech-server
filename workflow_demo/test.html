@@ -52,7 +52,7 @@ window.onload = function() {
 	<div class="c-tab__content">
 	  <h2>Input</h2>
 	  <p>Edit html here, then synthesise or lookup words.</p>
-	  <input type="button" onclick="myTabs.goToTab(2);tokeniseHtmlText();" value="Tokenise"></input>
+	  <input type="button" onclick="myTabs.goToTab(2);tokeniseHtmlText();" value="Start"></input>
 	  
 	  <div id="html_editor">
           </div>
@@ -120,7 +120,8 @@ window.onload = function() {
 			</tbody>
 		      </table>
 		      <h4>SSML transcription</h4>		      
-		      <div id="ssml_transcription" contenteditable="true" onkeyup="makeSSMLReplacementString();"></div>
+		      <input type="text" id="ssml_transcription_input" class="makeSSML" contenteditable="true" onkeyup="makeSSMLReplacementString();"></input>
+		    <!-- <div id="ssml_transcription" class="makeSSML" contenteditable="true" onkeyup="makeSSMLReplacementString();"></div>-->
 		      <input type="button" value="listen" onclick="playSSML($('#ssml_transcription')[0]);">
 		      <h4>SSML replacement string</h4>		      
 		      <div id="ssml_replacement"></div>
@@ -176,7 +177,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Fri Sep 23 15:50:40 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Wed Oct  5 13:50:23 CEST 2016 <!-- hhmts end -->
 
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>

@@ -19,10 +19,78 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
     setupLexiconTable();
 });
 
+//$(".makeSSML").on('input', function(){
+$("#ssml_transcription_div").on('input', function(){
 
-function makeSSMLReplacementString() {
-    var orth = $('#selected_word').html();
-    var ssml = $('#ssml_transcription').html();
+
+    console.log(this);
+    console.log(this.innerHTML);
+    
+    // store current positions in variables
+    var start = this.selectionStart,
+        end = this.selectionEnd;
+
+    //for div?
+    //var carPos = getCaretPosition(this);
+    
+    //this.value = this.value.toLowerCase();
+    this.innerHTML = makeSSMLReplacementString(this.innerHTML);
+
+    // restore from variables...
+    this.setSelectionRange(start, end);
+
+
+});
+
+$("#ssml_transcription_input").on('input', function(){
+
+    var orth = $('#selected_word').text();
+
+    console.log(this);
+    console.log(this.value);
+    console.log(this.innerText);
+
+    validateTranscription(this);
+    
+    // store current positions in variables
+    var start = this.selectionStart,
+        end = this.selectionEnd;
+
+    this.value = makeSSMLReplacementString(this.value, orth);
+
+    // restore from variables...
+    this.setSelectionRange(start, end);
+
+
+});
+
+//In case we still want to use editable div, something like this is needed..
+function getCaretPosition(element) {
+    var caretOffset = 0;
+    if (w3) {
+        var range = window.getSelection().getRangeAt(0);
+        var preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(element);
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+        caretOffset = preCaretRange.toString().length;
+    } else if (ie) {
+        var textRange = document.selection.createRange();
+        var preCaretTextRange = document.body.createTextRange();
+        preCaretTextRange.moveToElementText(element);
+        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+        caretOffset = preCaretTextRange.text.length;
+    }
+    return caretOffset;
+}
+
+
+
+function makeSSMLReplacementString(ssml, orth) {
+    //var orth = "dummy";
+
+    //var ssml = $('#ssml_transcription').html();
+    //var ssml = $(this).html();
+    //var ssml = container.html();
     console.log(ssml);
     var trans_string = ssml.replace(/^.*<p><phoneme .+>(.+)<\/phoneme><\/p>.*$/,"$1");
     trans_string = trans_string.replace(/"/g, "&quot;");
@@ -31,26 +99,28 @@ function makeSSMLReplacementString() {
 
     console.log(trans_string);
     var new_ssml = ssml.replace(/ph="[^"]+"/, "ph=\""+trans_string+"\""); 
+    var new_ssml = new_ssml.replace(/>[^<]+<\/phoneme/, ">"+trans_string+"<\/phoneme"); 
     console.log(new_ssml);
-    //Problem here, when replacement is done focus is lost
-    $('#ssml_transcription').html(new_ssml);
-
-    
-
-    phoneme_string = "<p><phoneme alphabet=\"x-sampa\" ph=\""+trans_string+"\">"+orth+"</phoneme></p>";
+        
+    //phoneme_string = "<p><phoneme alphabet=\"x-sampa\" ph=\""+trans_string+"\">"+orth+"</phoneme></p>";
+    phoneme_string = "<phoneme alphabet=\"x-sampa\" ph=\""+trans_string+"\">"+orth+"</phoneme>";
     console.log(phoneme_string);
-    
     $("#ssml_replacement").text(phoneme_string);
+
+    return new_ssml;
 }
 
 function displaySelected(row) {
     console.log("Displaying selected: "+row);
 
-    $("#ssml_transcription").html("");
+    //$("#ssml_transcription").html("");
+
     $("#ssml_replacement").html("");
     $("#autotrans").html("");
 
-
+    var ssml_transcription_input = document.getElementById("ssml_transcription_input");
+    ssml_transcription_input.value = "";
+    
     
     var orth=$(row).find('td:eq(0)').html();
     $("#selected_word").html(orth);
@@ -61,14 +131,18 @@ function displaySelected(row) {
 
     console.log(trans);
     var phoneme_string = trans.innerHTML.replace(/^.*<p>(<phoneme.+>).+<\/phoneme><\/p>.*$/,"$1");
-    phoneme_string = phoneme_string+orth+"</phoneme></p>";
+    phoneme_string = phoneme_string+orth+"</phoneme>";
     console.log(phoneme_string);
+    $("#ssml_replacement").text(phoneme_string);
     
     if ( in_ssml === "T" ) {
-	var ssml_transcription = document.getElementById("ssml_transcription");
+	//var ssml_transcription = document.getElementById("ssml_transcription");
+	//var clone = trans.cloneNode(true);
+	//ssml_transcription.appendChild(clone);
+
+	//var ssml_transcription_input = document.getElementById("ssml_transcription_input");
 	var clone = trans.cloneNode(true);
-	ssml_transcription.appendChild(clone);
-	$("#ssml_replacement").text(phoneme_string);
+	ssml_transcription_input.value = clone.innerText;
 
     } else if ( in_lex !== "T" ) {
 	var clone = trans.cloneNode(true);
