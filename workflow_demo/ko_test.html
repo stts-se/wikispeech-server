@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+
+<script type="text/javascript" src="ext/knockout-3.4.0.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.5/knockout.mapping.js"></script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+ 
+<script type="text/javascript">
+
+
+
+
+function EntriesViewModel() {
+    var self = this;
+    self.entries = ko.observableArray([]);
+   
+    self.searchLexicon = function () {
+
+	var search_term = document.getElementById("search_input").value;
+	if (search_term == "") {
+	    search_term = "apa, babian";
+	}
+
+
+	console.log(search_term);
+
+	var params = {
+	    "lexicons": "sv-se.nst",
+	    "words": search_term
+	}
+	
+	$.ajax({
+	    dataType: "json",
+	    url: "http://localhost/ws_service/lexicon/lookup",
+	    data: params,
+	    success: function(response) {
+		console.log(response);
+		//ko.mapping.fromJS(response, {}, self.entries);    
+		//console.log( "self.entries array: "+   ko.toJSON( self.entries ) );
+		ko.mapping.fromJS(response, {}, self.entries);    
+		console.log( "self.entries array: "+   ko.toJSON( self.entries ) );
+	    }
+	});
+
+    }
+
+    
+}
+    
+document.addEventListener('DOMContentLoaded', function() {
+    ko.applyBindings(new EntriesViewModel());
+});
+
+
+
+</script>
+
+
+</head>
+
+<h1></h1>
+
+<form id="search" data-bind="submit: searchLexicon">
+  <input id="search_input" type="text" placeholder="Type a word"></input>
+  <button type="submit">Search</button>
+</form>    
+
+
+<!-- Den här syns inte och används inte. Men ta bort den och "default-sökningen "slutar fungera.. -->
+<!--
+<div style="visibility:hidden" id="search" data-bind="submit: searchLexicon">
+  <input id="search_input2" type="text" placeholder="Type a word" />
+  <input type="button" value="Search" data-bind="click: searchLexicon();"/>
+</div>    
+-->
+
+<hr>
+
+<div id="list_view">
+  <table>
+    <thead><tr>
+      <th>Id</th><th>Orth</th><th>Transcription 1</th>
+    </tr></thead>
+    <tbody data-bind="foreach: entries">
+      <tr>
+	<td data-bind="text: id"></td>
+	<td data-bind="text: strn"></td>
+	<td><input type="text" data-bind="value: transcriptions()[0].strn"/></td>
+      </tr>    
+    </tbody>
+  </table>
+</div>
+
+<hr>
+    
+<div id="entry_view">
+  <!-- ko if: entries()[0] -->
+  <div data-bind="text: entries()[0].id"></div>
+  <div data-bind="text: entries()[0].strn"></div>
+  <div data-bind="text: entries()[0].lemma.strn"></div>
+  <div data-bind="text: entries()[0].partOfSpeech"></div>
+  <div data-bind="text: entries()[0].morphology"></div>
+  <div data-bind="text: entries()[0].transcriptions()[0].id"></div>
+  <div><input type="text" data-bind="value: entries()[0].transcriptions()[0].strn"/></div>
+  <!-- /ko -->
+</div>
+
+<hr>
+<address></address>
+<!-- hhmts start -->Last modified: Fri Oct 14 10:03:32 CEST 2016 <!-- hhmts end -->
+</body> </html>
