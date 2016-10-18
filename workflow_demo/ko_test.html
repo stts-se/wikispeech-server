@@ -8,26 +8,68 @@
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.5/knockout.mapping.js"></script>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
- 
+<script type="text/javascript" src="ext/sorttable.js"></script>
+
+<script type="text/javascript" src="../wikispeech_simple_player.js"></script>
+<script type="text/javascript">
+window.onload = function() {
+ ws_host = "http://localhost:10000/wikispeech";
+};
+</script>
+
+<!--
+TODO
+OK word list of words from text, entries are child nodes
+OK display only first transcription
+OK sortable table
+OK display selected
+OK show initially selected in table
+TODO (half works.. Now they are in different cells) connect displayed transcription to first entry transcription
+TODO validation (check input parameters, they have changed..)
+OK ? play transcription
+make ssml string
+-->
+
+
 <script type="text/javascript">
 
-
+//The word list will be created from the input text
+word_list = [{"index":0, "orth":"apa", "freq":14, "inSsml":false, "transcription": "\" A: . p a", "inLex":false, "multiple":false, "lex_entries":[]},{"index":1, "orth":"babian", "freq":2, "inSsml":true, transcription:"\" k a . l e", "inLex":false, "multiple":false, "lex_entries":[]}];
 
 
 function EntriesViewModel() {
+    console.log("in EntriesViewModel");
     var self = this;
     self.entries = ko.observableArray([]);
-   
-    self.searchLexicon = function () {
 
-	var search_term = document.getElementById("search_input").value;
-	if (search_term == "") {
-	    search_term = "apa, babian";
+    self.selectedIndex = ko.observable(0);
+    self.selected = ko.computed(function() {
+	var i = self.selectedIndex();
+	return self.entries()[i];
+    });
+    
+    self.searchLexicon = function (arg) {
+	console.log("in searchLexicon");
+	console.log(arg);
+	console.log(Array.isArray(arg));
+	//arg is the form when call is coming from form, but the wordlist itself when called initially below
+	if (Array.isArray(arg)) {	
+	    var search_term = word_list.map( function (word) { return word.orth } ).join(", ");
+	} else {
+	    var search_term = document.getElementById("search_input").value;
+
+	    //TODO instead complain if empty
+	    if (search_term == "") {
+		search_term = "hund, häst";
+	    }
+	    
+	    word_list = search_term.split(",").map( function (orth) { orth = orth.trim(); return {"orth":orth, "freq":0, inSsml:false, inLex: false, multiple:false, transcription:null, lex_entries:[]}; } );
 	}
+	console.log("Search term: /"+search_term+"/");
 
 
-	console.log(search_term);
 
+	self.entries([]);
 	var params = {
 	    "lexicons": "sv-se.nst",
 	    "words": search_term
@@ -38,18 +80,259 @@ function EntriesViewModel() {
 	    url: "http://localhost/ws_service/lexicon/lookup",
 	    data: params,
 	    success: function(response) {
-		console.log(response);
-		//ko.mapping.fromJS(response, {}, self.entries);    
-		//console.log( "self.entries array: "+   ko.toJSON( self.entries ) );
-		ko.mapping.fromJS(response, {}, self.entries);    
-		console.log( "self.entries array: "+   ko.toJSON( self.entries ) );
+		console.log("Response: "+JSON.stringify(response));
+		if (response == null) {
+		    alert("Word "+search_term+" not found in "+params.lexicons);
+		} else {
+		    for (var i = 0, len = word_list.length; i < len; i++) {
+			var word = word_list[i];
+			word["lex_entries"] = response.map( function (entry) { if ( entry.strn == word.orth ) { return entry } } );
+			//because the map function returns null values
+			word["lex_entries"] = word["lex_entries"].filter(function(val) { return val != undefined; });	
+
+			if ( word["lex_entries"].length > 0 ) {
+			    word["inLex"] = true;
+			}
+			if ( word["lex_entries"].length > 1 ) {
+			    word["multiple"] = true;
+			}
+
+			//Transcription to display: If inSsml, show that. elsif inLex, show first transcription. Else show autotrans
+			//TODO doesn't quite work: shows the right transcription, but changes in either transcription doesn't cause update in the other
+			word["tableTranscription"] = ko.computed(function() {
+			    if ( !word["inSsml"] && word["inLex"] ) {
+				console.log("HAHAHAHAHAH");
+				return word["lex_entries"][0]["transcriptions"][0]["strn"];
+			    } else {
+				console.log("ÖÖÖÖÖÖÖÖÖÖÖ");
+				return word["transcription"];
+			    }
+			});
+
+
+			//To allow displaySelected
+			word["index"] = i;
+
+			console.log("Word: "+JSON.stringify(word));			
+		    }
+		    
+		    ko.mapping.fromJS(word_list, {}, self.entries);    
+		    console.log( "self.entries array: "+   ko.toJSON( self.entries ) );
+
+		}
 	    }
 	});
 
-    }
+    }; //END searchLexicon
+
+    //Do initial search on word_list
+    self.searchLexicon(word_list);
+
+
 
     
+    function displaySelected(tr) {
+	var index = tr.getElementsByTagName("td")[0].innerText;
+	self.selectedIndex(index);
+	
+    }
+
+    /* Lexicon table TODO not on click of header*/
+    function setupLexiconTable() {
+	$("#list_view tbody tr").click(function(){
+	    $(this).addClass('selected').siblings().removeClass('selected');    
+	    displaySelected(this);
+	});
+	//Initially show the first line as selected
+    	$("#list_view tbody tr").first().addClass('selected');
+    }
+
+    //make sure that the lexicon table is setup after loading words
+    $( document ).ajaxComplete(function( event, xhr, settings ) {
+	setupLexiconTable();
+    });
+    
 }
+
+function validateTranscription(node) {
+    console.log(node);
+    trans = node.value;
+    console.log(trans);
+    
+    var word = "dummy";
+    var entry = {
+	"strn": word,
+	"wordParts": word,
+	"transcriptions":[
+	    {
+		"strn": trans
+	    }
+	]
+    };
+
+    //TODO hardcoded language
+    var params = {
+	"symbolsetname": "sv-se_ws-sampa",
+	"entry": JSON.stringify(entry)
+    }
+
+    //TODO hardcoded url
+    $.ajax({
+	type: "GET",
+        url: 'http://localhost/ws_service/validation/validateentry',
+        data: params,
+        success: function(response) {
+	    console.log(response);
+	    var container = $('#validation')[0];
+	    container.innerHTML = "";
+
+	    if ( response["entryValidations"] == null ) {
+
+		t.setAttribute("style", "background-color:lightgreen;");
+
+	    } else {
+
+		displayValidationResult(response["entryValidations"], container, t);
+		
+	    }
+	},
+	error: function(response) {
+	    console.log(response.responseText);
+	    alert("Validation failed: "+response.responseText);
+	}
+    });
+}
+
+function displayValidationResult(messages, container, transcription_field) {
+		
+    //{"id":0,"level":"Fatal","ruleName":"SymbolSet","Message":"Invalid transcription symbol ' g' in /\"\" b  g . d e s/","timestamp":""}
+		
+    for (i=0; i < messages.length; i++) {
+	var msg = messages[i];
+	console.log(msg);
+	var row = document.createElement("tr");
+	
+	var cell1 = document.createElement("td");
+	cell1.innerHTML = msg["id"];
+	row.appendChild(cell1);
+	
+	var cell2 = document.createElement("td");
+	cell2.innerHTML = msg["level"];
+	row.appendChild(cell2);
+	
+	var cell3 = document.createElement("td");
+	cell3.innerHTML = msg["ruleName"];
+	row.appendChild(cell3);
+	
+	var cell4 = document.createElement("td");
+	cell4.innerHTML = msg["Message"];
+	row.appendChild(cell4);
+	
+	var cell5 = document.createElement("td");
+	cell5.innerHTML = msg["timestamp"];
+	row.appendChild(cell5);
+	
+	container.appendChild(row);
+    }    		    
+    transcription_field.setAttribute("style", "background-color:pink;");
+}
+
+
+function playTranscription(node) {
+    console.log(node);
+    trans = node.tableTranscription();
+    console.log(trans);
+    //alert("playTranscription "+trans+" not yet implemented");
+
+
+    var word = "dummy";
+    var entry = {
+	"strn": word,
+	"wordParts": word,
+	"transcriptions":[
+	    {
+		"strn": trans
+	    }
+	]
+    };
+
+    //TODO hardcoded language
+    var params = {
+	"symbolsetname": "sv-se_ws-sampa",
+	"entry": JSON.stringify(entry)
+    }
+
+
+    console.log(params);
+
+    //TODO hardcoded url
+    $.get(
+        'http://localhost/ws_service/validation/validateentry',
+        params,
+        function(response) {
+	    console.log(response);
+	    var validation_container = $('#validation')[0];
+	    validation_container.innerHTML = "";
+
+	    if ( response["entryValidations"] == null ) {
+
+		t.setAttribute("style", "background-color:lightgreen;");
+
+		ssml = makeSSMLTranscription(trans);
+		//Actually play only after validation
+		playSSML(ssml);
+		
+	    } else {
+
+		displayValidationResult(response["entryValidations"], validation_container, t);
+		
+	    }
+	}
+    );
+}
+
+function playTranscriptionNoValidation(node) {
+    console.log(node);
+    trans = node.tableTranscription();
+    console.log(trans);
+
+    ssml = makeSSMLTranscription(trans);
+    playSSML(ssml);
+		
+}
+
+function makeSSMLTranscription(transcription) {
+    var speak = document.createElement("speak");
+    
+    //NOTE hardcoded language
+    speak.setAttribute("xml:lang", "sv");
+	
+    speak.setAttribute("version","1.0");
+    speak.setAttribute("xmlns", "http://www.w3.org/2001/10/synthesis");
+    speak.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    speak.setAttribute("xsi:schemalocation", "http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd");
+    
+
+    transcription = transcription.replace(/"/g, "&quot;");  //"
+    var ssml = "<p><phoneme alphabet=\"x-sampa\" ph=\""+transcription+"\">"+transcription+"</phoneme></p>";
+    speak.innerHTML = ssml;
+
+    return speak;
+}
+
+function playSSML(ssml) {
+    clone = ssml.cloneNode(true);
+    container = document.createElement("p");
+    //TODO hardcoded language
+    container.setAttribute("lang", "sv");
+    container.setAttribute("class", "ssml");
+    container.appendChild(clone);
+    //globals for player
+    useOriginalText = false;
+    showControls = false;
+    play(container);
+}
+
     
 document.addEventListener('DOMContentLoaded', function() {
     ko.applyBindings(new EntriesViewModel());
@@ -59,6 +342,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
+<style>
+tr.selected{
+    background: lightgray;
+}
+</style>
 
 </head>
 
@@ -70,26 +358,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </form>    
 
 
-<!-- Den här syns inte och används inte. Men ta bort den och "default-sökningen "slutar fungera.. -->
-<!--
-<div style="visibility:hidden" id="search" data-bind="submit: searchLexicon">
-  <input id="search_input2" type="text" placeholder="Type a word" />
-  <input type="button" value="Search" data-bind="click: searchLexicon();"/>
-</div>    
--->
-
 <hr>
 
 <div id="list_view">
-  <table>
+  <table class="sortable">
     <thead><tr>
-      <th>Id</th><th>Orth</th><th>Transcription 1</th>
+    <th style="display:none">Index</th><th>Word</th><th>Freq</th><th>Transcription (auto/ssml)</th><th>Transcription (Lex)</th><th>In lex</th><th>In ssml</th><th>Multiple</th><th>Listen</th>
     </tr></thead>
     <tbody data-bind="foreach: entries">
       <tr>
-	<td data-bind="text: id"></td>
-	<td data-bind="text: strn"></td>
-	<td><input type="text" data-bind="value: transcriptions()[0].strn"/></td>
+	<td style="display:none" data-bind="text: index"></td>
+	<td data-bind="text: orth"></td>
+	<td data-bind="text: freq"></td>
+
+	<td><input type="text" data-bind="value: transcription" onkeydown="if (event.keyCode == 13) { validateTranscription(this); }" /></td>
+	<td><input type="text" data-bind="value: lex_entries()[0].transcriptions()[0].strn" onkeydown="if (event.keyCode == 13) { validateTranscription(this); }"/></td>
+
+	<td data-bind="text: inLex"></td>
+	<td data-bind="text: inSsml"></td>
+	<td data-bind="text: multiple"></td>
+	<td><input type="button" value="Listen" data-bind="click: playTranscriptionNoValidation"/></td>
       </tr>    
     </tbody>
   </table>
@@ -97,19 +385,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <hr>
     
-<div id="entry_view">
-  <!-- ko if: entries()[0] -->
-  <div data-bind="text: entries()[0].id"></div>
-  <div data-bind="text: entries()[0].strn"></div>
-  <div data-bind="text: entries()[0].lemma.strn"></div>
-  <div data-bind="text: entries()[0].partOfSpeech"></div>
-  <div data-bind="text: entries()[0].morphology"></div>
-  <div data-bind="text: entries()[0].transcriptions()[0].id"></div>
-  <div><input type="text" data-bind="value: entries()[0].transcriptions()[0].strn"/></div>
-  <!-- /ko -->
+<div id="entry_view" data-bind="foreach: selected">
+
+  <div data-bind="text: orth"></div>
+  <div data-bind="text: freq"></div>
+  <div data-bind="text: transcription"></div>
+
+  <div data-bind="foreach: lex_entries">
+    <div data-bind="text: lemma.strn"></div>
+    <div data-bind="text: partOfSpeech"></div>
+    <div data-bind="text: morphology"></div>
+
+    <div data-bind="foreach: transcriptions">
+      <div data-bind="text: id"></div>
+      <div><input type="text" data-bind="value: strn"/></div>
+    </div>
+
+  </div>
 </div>
 
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Fri Oct 14 10:03:32 CEST 2016 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Tue Oct 18 15:23:41 CEST 2016 <!-- hhmts end -->
 </body> </html>
