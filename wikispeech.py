@@ -92,6 +92,20 @@ def wikispeech():
         if type(result) == type(""):
             print("RETURNING MESSAGE: %s" % result)
             return result
+
+        #TODO
+        #The player being developed at wikimedia depends on the output matching input exactly
+        #phabricator T147547 
+        #Some special characters, like "—" (em-dash) aren't returned properly by the TTS-server. This breaks the token-to-HTML mapping, since it relies on finding the exact same strings in the HTML as the tokens orth values.
+        #Add a test for that here,
+        #And then require adapter components to conform to this?
+        #how, exactly ...
+        msg = checkInputAndOutputTokens(input,result["tokens"])
+        if msg:
+            result["message"] = msg
+
+
+
         json_data = json.dumps(result)
         return Response(json_data, mimetype='application/json')
 
@@ -204,7 +218,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
                 textprocessor = tp
                 break
         if textprocessor == None:
-            #TODO this doesn't return to browser when called from http://localhost/wikispeech
+            #example http://localhost/wikispeech/?lang=sv&input=test&textprocessor=undefined
             return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
 
 
@@ -393,6 +407,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
         "tokens":output_tokens
     }
 
+    
     return data
 
 
@@ -402,6 +417,37 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 #
 # various stuff
 #
+
+
+def checkInputAndOutputTokens(input_string,output_token_list):
+    msgs = []
+    for token in output_token_list:
+        print(token)
+        if token["orth"] not in input_string:
+            msgs.append("output token \"%s\" not found in input string \"%s\"" % (token["orth"], input_string))
+
+            
+    #attempt to correct ...
+    if len(msgs) > 0:
+        input_list = input_string.split(" ")
+        output_list = [elem for elem in output_token_list if elem["orth"] != ""]
+        if len(input_list) != len(output_list):
+            msgs.append("WARNING: Unable to correct output token list. Input contains %d tokens, output contains %d non-empty tokens." % (len(input_list), len(output_list)))
+        else:
+            i = 0
+            while i < len(input_list):
+                input_orth = input_list[i]
+                output_orth = output_token_list[i]["orth"]
+                if input_orth != output_orth:
+                    output_token_list[i]["orth"] = input_orth
+                    msgs.append("REPLACED: %s -> %s" % (output_orth, input_orth))
+                i += 1
+                                
+                        
+            
+    return msgs
+
+
 
 
 def saveAndConvertAudio(audio_url,presynth=False):

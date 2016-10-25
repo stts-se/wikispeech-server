@@ -219,7 +219,7 @@ r = requests.get("%s" % (host), params=parameters)
 res = r.json()
 assert ( type(res) == type({}) )
 
-expected = {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"accent": "!H*", "children": [{"p": "t", "tag": "ph"}, {"p": "E", "tag": "ph"}, {"p": "s", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "t E s t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' t E s t", "pos": "NN", "tag": "t", "text": "test"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
+expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'breakindex': '5', 'tone': 'L-L%'}, 'tokens': [{'token_orth': 'test', 'words': [{'accent': '!H*', 'g2p_method': 'lexicon', 'pos': 'NN', 'trans': "' t E s t", 'orth': 'test'}]}, {'token_orth': '.', 'words': [{'pos': '.', 'orth': '.'}]}]}]}]}], 'lang': 'en-US'}
 
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
@@ -250,18 +250,16 @@ test_done()
 #First full ssml. Later ssml chunks?
 # GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=sv&input_type=ssml&input=<SSML>"
 
-ssml = """
-<?xml version="1.0" encoding="ISO-8859-1"?>
+ssml = """<?xml version="1.0" encoding="ISO-8859-1"?>
 <speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
                  http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
        xml:lang="sv">
 
-  Det här är ett test av <phoneme alphabet="sampa" ph="b a - b I - ' A: n">SSML</phoneme>
+  Det här är ett test av <phoneme alphabet="x-sampa" ph="b a . b I . &quot; A: n">SSML</phoneme>
 
-</speak>
-"""
+</speak>"""
 
 parameters = {
     "input":ssml,
@@ -272,18 +270,12 @@ parameters = {
 ## GET
 r = requests.get("%s" % (host), params=parameters)
 
-#This test succeeds now
-res = r.text
-print(res)
-assert ( type(res) == type("") )
-expected = "input_type ssml not supported"
 
 #This is what we want
-#res = r.json()
-#print(res)
-#assert ( type(res) == type([]) )
-#expected = {"children": [{"children": [{"children": [{"children": [{"accent": "L+H*", "children": [{"children": [{"p": "d", "tag": "ph"}, {"p": "e:", "tag": "ph"}], "ph": "d e:", "tag": "syllable"}], "g2p_method": "userdict", "ph": "\" d e:", "pos": "content", "tag": "t", "text": "Det"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "r", "tag": "ph"}, {"p": "h", "tag": "ph"}], "ph": "r h", "stress": "1", "tag": "syllable"}], "g2p_method": "rules", "ph": "' r h", "pos": "content", "tag": "t", "text": "h\u00c3\u00a4r"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "r", "tag": "ph"}], "ph": "r", "stress": "1", "tag": "syllable"}], "g2p_method": "rules", "ph": "' r", "pos": "content", "tag": "t", "text": "\u00c3\u00a4r"}, {"children": [{"children": [{"p": "E", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "E t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' E t", "pos": "function", "tag": "t", "text": "ett"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "t", "tag": "ph"}, {"p": "E", "tag": "ph"}, {"p": "s", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "t E s t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' t E s t", "pos": "content", "tag": "t", "text": "test"}, {"accent": "L+H*", "children": [{"accent": "L+H*", "children": [{"p": "A:", "tag": "ph"}, {"p": "v", "tag": "ph"}], "ph": "A: v", "stress": "1", "tag": "syllable"}], "g2p_method": "rules", "ph": "' A: v", "pos": "content", "tag": "t", "text": "av"}, {"accent": "!H*", "children": [{"children": [{"p": "b", "tag": "ph"}, {"p": "a", "tag": "ph"}], "ph": "b a", "tag": "syllable"}, {"children": [{"p": "b", "tag": "ph"}, {"p": "I", "tag": "ph"}], "ph": "b I", "tag": "syllable"}, {"accent": "!H*", "children": [{"p": "A:", "tag": "ph"}, {"p": "n", "tag": "ph"}], "ph": "A: n", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "b a - b I - ' A: n", "pos": "content", "tag": "t", "text": "babian"}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
+res = r.json()
+assert ( type(res) == type({}) )
 
+expected = {"lang": "sv", "paragraphs": [{"sentences": [{"phrases": [{"boundary": {"breakindex": "5", "tone": "L-L%"}, "tokens": [{"token_orth": "Det", "words": [{"accent": "L+H*", "g2p_method": "userdict", "orth": "Det", "pos": "content", "trans": "\"\" d e:"}]}, {"token_orth": "h\u00e4r", "words": [{"accent": "L+H*", "g2p_method": "lexicon", "orth": "h\u00e4r", "pos": "content", "trans": "\" h E: r"}]}, {"token_orth": "\u00e4r", "words": [{"accent": "L+H*", "g2p_method": "lexicon", "orth": "\u00e4r", "pos": "content", "trans": "\" E: r"}]}, {"token_orth": "ett", "words": [{"g2p_method": "lexicon", "orth": "ett", "pos": "function", "trans": "\" E t"}]}, {"token_orth": "test", "words": [{"accent": "L+H*", "g2p_method": "lexicon", "orth": "test", "pos": "content", "trans": "\" t E s t"}]}, {"token_orth": "av", "words": [{"accent": "L+H*", "g2p_method": "rules", "orth": "av", "pos": "content", "trans": "\" A: v"}]}, {"token_orth": "SSML", "words": [{"accent": "!H*", "orth": "SSML", "pos": "content", "trans": "b a . b I . \" A: n"}]}]}]}]}]}
 
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
@@ -346,7 +338,10 @@ test_done()
 # 3.5
 # GET:  curl "http://localhost:10000/wikispeech/synthesis/?lang=en&input=test."
 # returns json, with "audio" url and "tokens" list
-markup = {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"accent": "!H*", "children": [{"p": "t", "tag": "ph"}, {"p": "E", "tag": "ph"}, {"p": "s", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "t E s t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' t E s t", "pos": "NN", "tag": "t", "text": "test"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
+
+markup = {"lang": "en-US", "paragraphs": [{"sentences": [{"phrases": [{"boundary": {"breakindex": "5", "tone": "L-L%"}, "tokens": [{"token_orth": "\"", "words": [{"orth": "\"", "pos": "."}]}, {"token_orth": "test", "words": [{"g2p_method": "lexicon", "orth": "test", "pos": "``", "trans": "' t E s t"}]}, {"token_orth": ".", "words": [{"orth": ".", "pos": "."}]}, {"token_orth": "\"", "words": [{"orth": "\"", "pos": "."}]}]}]}]}]}
+
+
 
 parameters = {
     "lang":"en",

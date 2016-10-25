@@ -119,6 +119,11 @@ function EntriesViewModel() {
 		    ko.mapping.fromJS(word_list, {}, self.entries);    
 		    console.log( "self.entries array: "+   ko.toJSON( self.entries ) );
 
+		    setupLexiconTable();
+
+    
+
+		    
 		}
 	    }
 	});
@@ -130,11 +135,11 @@ function EntriesViewModel() {
 
 
 
-    
+
+
     function displaySelected(tr) {
 	var index = tr.getElementsByTagName("td")[0].innerText;
-	self.selectedIndex(index);
-	
+	self.selectedIndex(index);	
     }
 
     /* Lexicon table TODO not on click of header*/
@@ -144,15 +149,50 @@ function EntriesViewModel() {
 	    displaySelected(this);
 	});
 	//Initially show the first line as selected
-    	$("#list_view tbody tr").first().addClass('selected');
+	$("#list_view tbody tr").first().addClass('selected');
+
+	$("#list_view tbody tr").keydown(function(e) {
+	    origin = $('.selected');
+	    switch(e.which) {
+            case 38: // up
+		origin.removeClass('selected').prev('tr').addClass('selected');
+		self.selectPrevious();
+		break;
+            case 40: // down
+		origin.removeClass('selected').next('tr').addClass('selected');
+		self.selectNext();
+		break;
+		
+            default: return; // exit this handler for other keys
+	    }
+	    e.preventDefault(); // prevent the default action (scroll / move caret)
+	});
+	
     }
 
-    //make sure that the lexicon table is setup after loading words
-    $( document ).ajaxComplete(function( event, xhr, settings ) {
-	setupLexiconTable();
-    });
+
+    self.selectPrevious = function () {
+        //var index = self.entries().indexOf(self.selected()) - 1;
+        //if (index < 0) index = 0;
+        //self.selectedResult(self.searchResults()[index]);
+	self.selectedIndex(self.selectedIndex()-1);
+    };
+    
+    self.selectNext = function () {
+        //var index = self.searchResults().indexOf(self.selectedResult()) + 1;
+        //if (index >= self.searchResults().length) index = self.searchResults().length - 1;
+        //self.selectedResult(self.searchResults()[index]);
+	self.selectedIndex(self.selectedIndex()+1);
+    };
+
+
+
+
     
 }
+
+
+
 
 function validateTranscription(node) {
     console.log(node);
@@ -186,13 +226,13 @@ function validateTranscription(node) {
 	    var container = $('#validation')[0];
 	    container.innerHTML = "";
 
-	    if ( response["entryValidations"] == null ) {
+	    if ( response["entryValidations"].length == 0 ) {
 
-		t.setAttribute("style", "background-color:lightgreen;");
+		node.setAttribute("style", "background-color:lightgreen;");
 
 	    } else {
 
-		displayValidationResult(response["entryValidations"], container, t);
+		displayValidationResult(response["entryValidations"], container, node);
 		
 	    }
 	},
@@ -234,13 +274,15 @@ function displayValidationResult(messages, container, transcription_field) {
 	
 	container.appendChild(row);
     }    		    
+    console.log(transcription_field);
     transcription_field.setAttribute("style", "background-color:pink;");
 }
 
 
 function playTranscription(node) {
     console.log(node);
-    trans = node.tableTranscription();
+    //trans = node.tableTranscription();
+    trans = node.value;
     console.log(trans);
     //alert("playTranscription "+trans+" not yet implemented");
 
@@ -274,9 +316,9 @@ function playTranscription(node) {
 	    var validation_container = $('#validation')[0];
 	    validation_container.innerHTML = "";
 
-	    if ( response["entryValidations"] == null ) {
+	    if ( response["entryValidations"].length == 0 ) {
 
-		t.setAttribute("style", "background-color:lightgreen;");
+		node.setAttribute("style", "background-color:lightgreen;");
 
 		ssml = makeSSMLTranscription(trans);
 		//Actually play only after validation
@@ -284,7 +326,7 @@ function playTranscription(node) {
 		
 	    } else {
 
-		displayValidationResult(response["entryValidations"], validation_container, t);
+		displayValidationResult(response["entryValidations"], validation_container, node);
 		
 	    }
 	}
@@ -362,29 +404,39 @@ tr.selected{
 
 <div id="list_view">
   <table class="sortable">
-    <thead><tr>
-    <th style="display:none">Index</th><th>Word</th><th>Freq</th><th>Transcription (auto/ssml)</th><th>Transcription (Lex)</th><th>In lex</th><th>In ssml</th><th>Multiple</th><th>Listen</th>
-    </tr></thead>
+    <thead>
+      <tr>
+	<th style="display:none">Index</th><th>Word</th><th>Freq</th><th>Transcription (auto/ssml)</th><th>Transcription (Lex)</th><th>In lex</th><th>In ssml</th><th>Multiple</th>
+	<!--<th>Listen</th>-->
+      </tr>
+    </thead>
     <tbody data-bind="foreach: entries">
       <tr>
 	<td style="display:none" data-bind="text: index"></td>
 	<td data-bind="text: orth"></td>
 	<td data-bind="text: freq"></td>
 
+	<!--
 	<td><input type="text" data-bind="value: transcription" onkeydown="if (event.keyCode == 13) { validateTranscription(this); }" /></td>
 	<td><input type="text" data-bind="value: lex_entries()[0].transcriptions()[0].strn" onkeydown="if (event.keyCode == 13) { validateTranscription(this); }"/></td>
+	-->
+	
+	<td><input type="text" data-bind="value: transcription" onkeydown="if (event.keyCode == 13) { playTranscription(this); }" /></td>
+	<td><input type="text" data-bind="value: lex_entries()[0].transcriptions()[0].strn" onkeydown="if (event.keyCode == 13) { playTranscription(this); }"/></td>
 
 	<td data-bind="text: inLex"></td>
 	<td data-bind="text: inSsml"></td>
 	<td data-bind="text: multiple"></td>
-	<td><input type="button" value="Listen" data-bind="click: playTranscriptionNoValidation"/></td>
+        <!-- works but unnecessary? <td><input type="button" value="Listen" data-bind="click: playTranscriptionNoValidation"/></td>-->
       </tr>    
     </tbody>
   </table>
 </div>
 
 <hr>
-    
+<div id="validation"></div>
+<hr>
+
 <div id="entry_view" data-bind="foreach: selected">
 
   <div data-bind="text: orth"></div>
@@ -398,7 +450,7 @@ tr.selected{
 
     <div data-bind="foreach: transcriptions">
       <div data-bind="text: id"></div>
-      <div><input type="text" data-bind="value: strn"/></div>
+      <div><input type="text" data-bind="value: strn" onkeydown="if (event.keyCode == 13) { playTranscription(this); }"/></div>
     </div>
 
   </div>
@@ -406,5 +458,5 @@ tr.selected{
 
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Tue Oct 18 15:23:41 CEST 2016 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Thu Oct 20 15:16:58 CEST 2016 <!-- hhmts end -->
 </body> </html>

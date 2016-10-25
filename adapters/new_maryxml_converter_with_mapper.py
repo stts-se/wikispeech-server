@@ -888,9 +888,13 @@ def mapperMapToMary(trans, lang):
     #print(r.url)
     response = r.text
     #print("RESPONSE: %s" % response)
-    #try:
-    response_json = json.loads(response)
-    #print("RESPONSE_JSON: %s" % response_json)
+    try:
+        response_json = json.loads(response)
+    except json.JSONDecodeError:
+        print("JSONDecodeError:")
+        print("RESPONSE: %s" % response)
+        raise
+        
     new_trans = response_json["Result"]
 
     #Special cases for Swedish pre-r allophones that are not handled by the mapper

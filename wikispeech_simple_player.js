@@ -172,8 +172,24 @@ function addTimingInfoFromJson(container, info) {
     //when true: doesn't actually use the original text, but replaces it with the tokens from the wikispeech server
     //when false: appends the new tokens after the original text. Doesn't highlight correctly!
     //var useOriginalText = true;
+
+    //var words = container.textContent.trim().split(" ");
+    var tmp = container.innerText.trim().split(/\s+/);
+    var words = [];
+    for(var i=0; i<tmp.length; i++) {    
+	var tmp_word = tmp[i];
+	var regexp = /^(.+)(,)$/;
+	if ( regexp.test(tmp_word) ) {
+	    var match = regexp.exec(tmp_word);	    
+	    console.log("word "+match[1]+" is followed by "+match[2]);
+	    words.push(match[1]);
+	    words.push(match[2]);
+	} else {
+	    words.push(tmp_word);
+	}
+    }
+	
     if (useOriginalText) {
-	var words = container.textContent.split(" ");
 	container.innerHTML = "";
     }
 
@@ -185,6 +201,20 @@ function addTimingInfoFromJson(container, info) {
     console.log("tokens");
     console.log(tokens);
 
+    //skip empty tokens, they just mark silence
+    var tmp_tokens = [];
+    for(var i=0; i<tokens.length; i++) {
+	token = tokens[i];
+	txt = token.orth.trim();	
+	if ( txt != "" ) {
+	    tmp_tokens.push(token);
+	}
+    }
+    tokens = tmp_tokens;
+
+
+
+    
     //txt = tokens[1][0].trim();
     //console.log(txt);
 
@@ -192,11 +222,15 @@ function addTimingInfoFromJson(container, info) {
     var endtime;
     var token_duration;
 
-    for(i=0; i<tokens.length; i++) {
+    for(var i=0; i<tokens.length; i++) {
 	token = tokens[i];
 	console.log(token);
 
-	txt = token.orth.trim();
+	//words are the old textContents, split on space..
+	word = words[i];
+	console.log(word);
+
+	txt = token.orth.trim();	
 
 	if ( token.hasOwnProperty("expanded") ) {
 	    txt = txt + " ("+token.expanded+")";
@@ -207,6 +241,7 @@ function addTimingInfoFromJson(container, info) {
 	token_duration = endtime-starttime;
 	
 	console.log("TOKEN: " + txt);
+	console.log("WORD : " + word);
 	console.log("token_duration");
 	console.log(token_duration);
 		
@@ -217,8 +252,10 @@ function addTimingInfoFromJson(container, info) {
 	    word_span.setAttribute("data-dur",token_duration);	    
 	    word_span.setAttribute("data-begin",starttime);	    
 	    word_span.setAttribute("data-timeindex",i);	    
-		
-	    word_span.appendChild(document.createTextNode(txt+" "));
+
+	    //Testing ...
+	    //word_span.appendChild(document.createTextNode(txt+" "));
+	    word_span.appendChild(document.createTextNode(word+" "));
 	    	
 	    console.log('Container: ' + container);
 	    container.appendChild(word_span);
