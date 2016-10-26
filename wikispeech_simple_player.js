@@ -11,7 +11,17 @@ supported_languages = ["sv"];
 var useOriginalText = true;
 var showControls = true;
 
+function toggleAudioControls() {
+    if ( document.getElementById("show_controls_checkbox") != null && document.getElementById("show_controls_checkbox").checked == false) {
+	console.log("hiding audio controls");
+	$('#synthesis_container audio').attr("style", "display: none");
+    } else {
+	console.log("showing audio controls");
+	$('#synthesis_container audio').attr("style", "display: block");
+    }
+}
 
+    
 function addPlayButtonToP() {
 
     getSupportedLanguages();
@@ -57,6 +67,22 @@ function getSupportedLanguages() {
     };
 }
 
+//maybe not needed at all..
+function filterToSSML(html) {
+    //Because s and sub have html meanings, they are prefixed with "ssml:"
+    var ssml_content = html.replace(/ssml:/g, "")
+
+    //&nbsp; breaks marytts ssml parser.
+    //Declare the entity?
+    ssml_content = ssml_content.replace(/&nbsp;/g, " ")
+
+    //remove unclosed br tags (even closed come out wrong)
+    //ssml_content = ssml_content.replace(/<br>/g, "<br/>")
+    ssml_content = ssml_content.replace(/<br>/g, " ")
+
+    return ssml_content;
+    
+}
 
 function play(id) {
 
@@ -127,28 +153,22 @@ function play(id) {
 	
 	//using regular html5 audio
 	var audio = document.createElement("audio");
-	container.appendChild(audio);
+
 	//using video.js or one html5 audio element
 	//var audio = document.getElementById("audio_player");
 	//using regular html5 audio
 	audio.setAttribute("src", response.audio);
-	//using video.js
-	//audio.firstChild.setAttribute("src", response.audio);
+
 
 	if (showControls) {
 	    addTimingInfoFromJson(container, response);
-	    audio.setAttribute("controls", "true");
-	    //doesn't work yet with video.js, the text and audio are not connected
 	    connectTimingAndAudio(container,audio);
-	
+	    audio.setAttribute("controls", "true");
+	    container.appendChild(audio);	
+	    toggleAudioControls();
 	}
-	
-	
-	//using regular html5 audio
+
 	audio.play();
-	//using video.js
-	//var myPlayer = videojs('audio_player');	
-	//myPlayer.play();
 	
     };
 
@@ -198,8 +218,8 @@ function addTimingInfoFromJson(container, info) {
 
     tokens = info.tokens;
 
-    console.log("tokens");
-    console.log(tokens);
+    //console.log("tokens");
+    //console.log(tokens);
 
     //skip empty tokens, they just mark silence
     var tmp_tokens = [];
@@ -228,7 +248,7 @@ function addTimingInfoFromJson(container, info) {
 
 	//words are the old textContents, split on space..
 	word = words[i];
-	console.log(word);
+	//console.log(word);
 
 	txt = token.orth.trim();	
 
@@ -240,10 +260,10 @@ function addTimingInfoFromJson(container, info) {
 	endtime = token.endtime;
 	token_duration = endtime-starttime;
 	
-	console.log("TOKEN: " + txt);
+	//console.log("TOKEN: " + txt);
 	console.log("WORD : " + word);
-	console.log("token_duration");
-	console.log(token_duration);
+	//console.log("token_duration");
+	//console.log(token_duration);
 		
 	if (txt !== null) {
 	    word_span = document.createElement("span");
@@ -255,9 +275,10 @@ function addTimingInfoFromJson(container, info) {
 
 	    //Testing ...
 	    //word_span.appendChild(document.createTextNode(txt+" "));
-	    word_span.appendChild(document.createTextNode(word+" "));
-	    	
-	    console.log('Container: ' + container);
+	    if (word !== undefined) {
+		word_span.appendChild(document.createTextNode(word+" "));
+	    }
+	    //console.log('Container: ' + container);
 	    container.appendChild(word_span);
 	}
 	starttime = endtime;
@@ -499,3 +520,5 @@ function connectTimingAndAudio(root,audio){
 	}
     }
 }
+
+

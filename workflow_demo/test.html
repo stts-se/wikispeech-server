@@ -29,7 +29,7 @@ tr.selected{
 <script type="text/javascript">
 window.onload = function() {
  ws_host = "http://localhost:10000/wikispeech";
- useOriginalText=false;
+ useOriginalText=true;
 };
 </script>
 
@@ -65,7 +65,9 @@ window.onload = function() {
       <div class="c-tab">
 	<div class="c-tab__content">
 	  <h2>Synthesis</h2>
-
+	  <div id="synthesis_controls">
+	    <label><input type="checkbox" id="show_controls_checkbox" onchange="toggleAudioControls();" checked>Show audio controls</label>
+	  </div>
 	  <div id="synthesis_container">
 	  </div>
 	</div>
@@ -178,7 +180,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Tue Oct 25 14:49:18 CEST 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Wed Oct 26 10:54:42 CEST 2016 <!-- hhmts end -->
 
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>

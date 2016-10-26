@@ -370,6 +370,7 @@ function addHtmlSentencesToSynthesisTab() {
 	if ( text_chunks.length == 0 ) {
 	    text_chunks = [html_editor.innerHTML];
 	}
+	
     }
 
 
@@ -377,7 +378,7 @@ function addHtmlSentencesToSynthesisTab() {
     //console.log(text_chunks);
 
 
-    for ( i=0; i<text_chunks.length; i++ ) {
+    for ( var i=0; i<text_chunks.length; i++ ) {
 	var t = text_chunks[i];
 	var clone = t.cloneNode(true);
 	//console.log("TEXT CHUNK: ");
@@ -398,9 +399,11 @@ function addHtmlSentencesToSynthesisTab() {
 
 	var html = clone.innerHTML;
 	//console.log("HTML: "+html);
-	var filtered = filterToSSML(html);
+	//var filtered = filterToSSML(html);
 	//console.log("Filtered: "+filtered);
-	speak.innerHTML = filtered;
+	//HB 161026 Display unfiltered, filter at synthesis time instead
+	//speak.innerHTML = filtered;
+	speak.innerHTML = html;
 	
 	synthesis_container.appendChild(p);
 
@@ -409,13 +412,14 @@ function addHtmlSentencesToSynthesisTab() {
 	var id = "sentence_nr_"+i;
 	p.setAttribute("id",id);
 
+	//TODO hardcoded language
 	var lang = "sv";
 	p.setAttribute("lang", lang);
    
 	var playButton = document.createElement("input");
 	playButton.setAttribute("type", "button");
 	playButton.setAttribute("value", "Speak");
-	playButton.setAttribute("onclick", "play("+id+");");
+	playButton.setAttribute("onclick", "console.log("+id+"); play("+id+");");
 
 	p.appendChild(playButton);
 
@@ -615,7 +619,7 @@ function validateTranscription(t) {
 	    var container = $('#validation')[0];
 	    container.innerHTML = "";
 
-	    if ( response["entryValidations"] == null ) {
+	    if ( response["entryValidations"].length == 0 ) {
 
 		t.setAttribute("style", "background-color:lightgreen;");
 
@@ -700,7 +704,7 @@ function playTranscription(t) {
 	    var validation_container = $('#validation')[0];
 	    validation_container.innerHTML = "";
 
-	    if ( response["entryValidations"] == null ) {
+	    if ( response["entryValidations"].length == 0 ) {
 
 		t.setAttribute("style", "background-color:lightgreen;");
 
@@ -1029,3 +1033,4 @@ function testUpdateEntry() {
     updateEntry(entry3);
     
 }
+

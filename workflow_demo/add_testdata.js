@@ -3,7 +3,7 @@
 
 var ssml1 = `<p><br>
 	      <ssml:s>
-	      Fartyget byggdes <br>
+	      Fartyget byggdes
 	      <ssml:sub alias='nittonhundra-femtionio'>1959</ssml:sub> 
 	      i 
 	      <phoneme alphabet='x-sampa' ph='&quot; p O . rt u0 . g a l'>Portugal</phoneme> 
