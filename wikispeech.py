@@ -441,15 +441,21 @@ def checkInputAndOutputTokens(input_string,output_token_list):
             msgs.append("output token list: %s" % output_list)
         else:
             i = 0
-            while i < len(input_list):
+            j = 0
+            while i < len(input_list) and j < len(output_token_list):
                 input_orth = input_list[i]
-                #output_orth = output_token_list[i]["orth"]
-                output_orth = output_list[i]
-                #print("%s\t%s" % (input_orth, output_orth))
-                if input_orth != output_orth:
-                    output_token_list[i]["orth"] = input_orth
-                    msgs.append("REPLACED: %s -> %s" % (output_orth, input_orth))
-                i += 1
+                output_orth = output_token_list[j]["orth"]
+                #output_orth = output_list[i]
+                if output_orth == "":
+                    j += 1
+                    print("skipping empty output token")
+                else:
+                    print("%s\t%s" % (input_orth, output_orth))
+                    if input_orth != output_orth:
+                        output_token_list[j]["orth"] = input_orth
+                        msgs.append("REPLACED: %s -> %s" % (output_orth, input_orth))
+                    i += 1
+                    j += 1
                                 
                         
             
