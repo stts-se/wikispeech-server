@@ -390,7 +390,8 @@ def maryxml2tokensET(maryxmlstring):
                         #print "ORTH:", orth
                         #print child.attrib
                         #endtime += child.attrib['{http://mary.dfki.de/2002/MaryXML}duration']
-                        endtime += int(child.attrib['duration'])
+                        if "duration" in child.attrib:
+                            endtime += int(child.attrib['duration'])
                         #endtime_seconds = endtime/1000.0
                         #token = (orth,endtime_seconds)
 
