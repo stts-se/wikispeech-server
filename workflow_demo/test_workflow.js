@@ -246,7 +246,7 @@ function tokeniseHtmlText() {
     
     var ssml = ssml_header+ssml_content+ssml_footer;
     
-    //console.log("Tokenising:\n"+ssml);
+    console.log("Tokenising:\n"+ssml);
 
     var params = {
 	"lang": "sv",
@@ -255,7 +255,8 @@ function tokeniseHtmlText() {
     }
     
     $.get(
-        'http://localhost/wikispeech/textprocessing',
+        //'http://localhost/wikispeech/textprocessing',
+        '/wikispeech/textprocessing/',
         params,
         function(response) {
 	    console.log(response);
@@ -612,7 +613,8 @@ function validateTranscription(t) {
 
     //TODO hardcoded url
     $.get(
-        'http://localhost/ws_service/validation/validateentry',
+        //'http://localhost/ws_service/validation/validateentry',
+        'https://morf.se/ws_service/validation/validateentry',
         params,
         function(response) {
 	    console.log(response);
@@ -697,7 +699,8 @@ function playTranscription(t) {
 
     //TODO hardcoded url
     $.get(
-        'http://localhost/ws_service/validation/validateentry',
+        //'http://localhost/ws_service/validation/validateentry',
+        'https://morf.se/ws_service/validation/validateentry',
         params,
         function(response) {
 	    console.log(response);
@@ -745,7 +748,8 @@ function searchLexicon(search_term) {
     }
     
     $.get(
-        'http://localhost/ws_service/lexicon/lookup',
+        //'http://localhost/ws_service/lexicon/lookup',
+        'https://morf.se/ws_service/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -808,7 +812,8 @@ function wordsInLex(words) {
 
     //TODO hardcoded url
     $.get(
-        'http://localhost/ws_service/lexicon/lookup',
+        //'http://localhost/ws_service/lexicon/lookup',
+        'https://morf.se/ws_service/lexicon/lookup',
         params,
         function(response) {
 
