@@ -429,15 +429,23 @@ def checkInputAndOutputTokens(input_string,output_token_list):
             
     #attempt to correct ...
     if len(msgs) > 0:
+        input_string = re.sub(r"\s*([,.?!\"()])\s*",r" \1 ", input_string)
+        input_string = re.sub(r"\s+", r" ", input_string)
+        input_string = input_string.strip()
+        
         input_list = input_string.split(" ")
-        output_list = [elem for elem in output_token_list if elem["orth"] != ""]
+        output_list = [elem["orth"] for elem in output_token_list if elem["orth"] != ""]
         if len(input_list) != len(output_list):
             msgs.append("WARNING: Unable to correct output token list. Input contains %d tokens, output contains %d non-empty tokens." % (len(input_list), len(output_list)))
+            msgs.append("input token list : %s" % input_list)
+            msgs.append("output token list: %s" % output_list)
         else:
             i = 0
             while i < len(input_list):
                 input_orth = input_list[i]
-                output_orth = output_token_list[i]["orth"]
+                #output_orth = output_token_list[i]["orth"]
+                output_orth = output_list[i]
+                #print("%s\t%s" % (input_orth, output_orth))
                 if input_orth != output_orth:
                     output_token_list[i]["orth"] = input_orth
                     msgs.append("REPLACED: %s -> %s" % (output_orth, input_orth))
