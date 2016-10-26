@@ -206,6 +206,10 @@ def getLookupBySentence(lang,orth):
         r = requests.get(url)
         print(r.url)
         response = r.text
+
+        if response == "null":
+            return {}
+
         print("RESPONSE: %s" % response)
 
         try:
