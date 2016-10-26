@@ -614,7 +614,7 @@ function validateTranscription(t) {
     //TODO hardcoded url
     $.get(
         //'http://localhost/ws_service/validation/validateentry',
-        'https://morf.se/ws_service/validation/validateentry',
+        '/ws_service/validation/validateentry',
         params,
         function(response) {
 	    console.log(response);
@@ -700,7 +700,7 @@ function playTranscription(t) {
     //TODO hardcoded url
     $.get(
         //'http://localhost/ws_service/validation/validateentry',
-        'https://morf.se/ws_service/validation/validateentry',
+        '/ws_service/validation/validateentry',
         params,
         function(response) {
 	    console.log(response);
@@ -749,7 +749,7 @@ function searchLexicon(search_term) {
     
     $.get(
         //'http://localhost/ws_service/lexicon/lookup',
-        'https://morf.se/ws_service/lexicon/lookup',
+        '/ws_service/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -813,7 +813,7 @@ function wordsInLex(words) {
     //TODO hardcoded url
     $.get(
         //'http://localhost/ws_service/lexicon/lookup',
-        'https://morf.se/ws_service/lexicon/lookup',
+        '/ws_service/lexicon/lookup',
         params,
         function(response) {
 
@@ -927,7 +927,7 @@ function updateEntry(entry) {
     
     $.ajax({
 	//url: 'http://localhost/ws_service/lexicon/updateentry',
-	url: 'http://localhost/ws_service/lexicon/updateentry?entry='+entry_string,
+	url: '/ws_service/lexicon/updateentry?entry='+entry_string,
 	//data: params,
 	type: "GET",
 	contentType: "application/json",
