@@ -584,6 +584,17 @@ def mary2ws(maryxml):
                     phrase = addIfExists(phrase, prosody_element, "range", prefix="prosody_")
 
                     phrases.append(phrase)
+                elif sentence_child.tag == "t":
+                    #This is a special case that happens (sometimes..) with single-word sentences
+                    #doesn't work, produces error in synthesis
+                    #TODO look at this again
+                    #It only happens with the word "Hon." ...
+                    phrase_element = ET.Element("phrase")
+                    phrase_element.append(sentence_child)
+                    phrase = buildPhrase(phrase_element, lang)
+
+                    phrases.append(phrase)
+
                 else:
                     print("ERROR: sentence child should not have tag %s" % sentence_child.tag)
                     
