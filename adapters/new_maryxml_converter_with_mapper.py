@@ -851,7 +851,8 @@ def mapperMapFromMary(trans, lang):
         return trans
 
     
-    url = "http://localhost/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    #url = "http://localhost/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    url = "https://morf.se/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
 
     r = requests.get(url)
     #print(r.url)
@@ -882,7 +883,8 @@ def mapperMapToMary(trans, lang):
         return trans
 
     
-    url = "http://localhost/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    #url = "http://localhost/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    url = "https://morf.se/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
 
     r = requests.get(url)
     #print(r.url)
