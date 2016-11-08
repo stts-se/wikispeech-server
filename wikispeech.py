@@ -545,7 +545,7 @@ def test_wikilex():
     trans = {}
     trans["apa"] = '"" A: . p a'
     trans["hund"] = '" h u0 n d'
-    trans["färöarna"] = '"" f E: . % r 2: . a . rn a'
+    trans["färöarna"] = '"" f {: . % r 2: . a . rn a'
     import wikilex
     try:
         lex = wikilex.getLookupBySentence("sv", sent)
