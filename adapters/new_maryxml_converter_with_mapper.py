@@ -11,8 +11,8 @@ except:
 
 
 #TODO hardcoded host name
-#host = "http://localhost"
-host = "https://morf.se"
+host = "http://localhost:8787"
+#host = "https://morf.se/ws_service"
     
 
     
@@ -868,11 +868,11 @@ def mapperMapFromMary(trans, lang):
         print("No marytts mapper defined for language %s" % lang)
         return trans
 
-    url = host+"/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    url = host+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
 
 
     r = requests.get(url)
-    #print(r.url)
+    print("MAPPER URL: "+r.url)
     response = r.text
     #print("RESPONSE: %s" % response)
     try:
@@ -902,7 +902,7 @@ def mapperMapToMary(trans, lang):
     
 
     #url = "https://morf.se/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
-    url = host+"/ws_service/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    url = host+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
     
     r = requests.get(url)
     #print(r.url)
