@@ -79,7 +79,7 @@ w_test1 = {
                                 "accent": "!H*",
                                 "g2p_method": "lexicon",
                                 "pos": "content",
-                                "trans": "\" h E: r"
+                                "trans": "\" h {: r"
                             }
                         ]
                     }
@@ -185,7 +185,7 @@ w_test2 = {
                                     "accent": "!H*",
                                     "g2p_method": "lexicon",
                                     "pos": "content",
-                                    "trans": "\" h E: r"
+                                    "trans": "\" h {: r"
                                 }
                             ]
                         }
@@ -253,7 +253,7 @@ w_test3 = {
                                 "accent": "L+H*",
                                 "g2p_method": "lexicon",
                                 "pos": "content",
-                                "trans": "\"\" 2: . r a"
+                                "trans": "\"\" 9: . r a"
                             }
                         ]
                     },
@@ -362,7 +362,7 @@ w_test4 = {
                                     "accent": "L+H*",
                                     "g2p_method": "lexicon",
                                     "pos": "content",
-                                    "trans": "\"\" 2: . r a"
+                                    "trans": "\"\" 9: . r a"
                                 }
                             ]
                         },
@@ -920,7 +920,7 @@ def mapperMapToMary(trans, lang):
     #Special cases for Swedish pre-r allophones that are not handled by the mapper (because mary uses an old version of the phoneme set that desn't distinguish between normal and r-coloured E/{ (always E) and 2/9 (always 9). This should change in mary later on.
     if lang == "sv":
         new_trans = re.sub("{( -)? ",r"E\1 ", new_trans)
-        new_trans = re.sub("2( -)? ",r"9\1 ", new_trans)
+        new_trans = re.sub("2(:? -) r? ",r"9\1 r", new_trans)
 
 
     print("NEW TRANS: %s" % new_trans)
