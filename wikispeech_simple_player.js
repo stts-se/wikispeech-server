@@ -12,12 +12,16 @@ var useOriginalText = true;
 var showControls = true;
 
 function toggleAudioControls() {
-    if ( document.getElementById("show_controls_checkbox") != null && document.getElementById("show_controls_checkbox").checked == false) {
-	console.log("hiding audio controls");
-	$('#synthesis_container audio').attr("style", "display: none");
+    if ( document.getElementById("show_controls_checkbox") != null ) {
+	if ( document.getElementById("show_controls_checkbox").checked == false) {
+	    console.log("hiding audio controls");
+	    $('#synthesis_container audio').attr("style", "display: none");
+	} else {
+	    console.log("showing audio controls");
+	    $('#synthesis_container audio').attr("style", "display: block");
+	}
     } else {
-	console.log("showing audio controls");
-	$('#synthesis_container audio').attr("style", "display: block");
+	return;
     }
 }
 
