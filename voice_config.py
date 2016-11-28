@@ -41,5 +41,5 @@ voices = [
     {"lang":"en", "name":"cmu-slt-flite", "engine":"flite", "adapter":"adapters.flite_adapter", "flite_voice":"slt"}
     ,
 
-    {"lang":"ar", "name":"ar_nah-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}}    
+    {"lang":"ar", "name":"ar-nah-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}}    
 ]
