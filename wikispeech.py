@@ -659,4 +659,4 @@ if __name__ == '__main__':
     test_wikispeech()
     print("ALL SELF-TESTS RUN SUCCESSFULLY")
 
-    app.run(port=10000, debug=True)
+    app.run(port=10000, debug=True, threaded=True)
