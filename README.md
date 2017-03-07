@@ -6,7 +6,9 @@ Initial tests of wikispeech api.
 
 Prerequisites:
 
-sudo apt-get install python-flask
+sudo apt install python-flask
+
+sudo apt install python3-pip
 
 sudo pip3 install flask-cors
 
