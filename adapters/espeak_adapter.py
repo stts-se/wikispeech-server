@@ -1,7 +1,7 @@
 import os, re
 
 
-def synthesise(lang, voice, input):
+def synthesise(lang, voice, input, presynth=False):
     mbrola_voice = voice["espeak_mbrola_voice"]
     voice = voice["espeak_voice"]
     #convert utt to ssml
@@ -101,8 +101,8 @@ def utt2ssml(item):
         ssml = " ".join(ssml_list)
     return ssml
 
-def utt2phonemics(item):
-    print(item)
+def utt2phonemicsOLD(item):
+    print("utt2phonemics: %s" % item)
     if item["tag"] == "t":
         word = item["text"]
         if "ph" in item:
@@ -120,6 +120,27 @@ def utt2phonemics(item):
         for child in item["children"]:
             phn_list.append(utt2phonemics(child))
         phonemics = " ".join(phn_list)
+    return phonemics
+
+def utt2phonemics(utterance):
+    phn_list = []
+    paragraphs = utterance["paragraphs"]
+    for paragraph in paragraphs:
+        sentences = paragraph["sentences"]
+        for sentence in sentences:
+            phrases = sentence["phrases"]
+            for phrase in phrases:
+                tokens = phrase["tokens"]
+                for token in tokens:
+                    words = token["words"]
+                    for word in words:
+                        if "trans" in word:
+                            ws_trans = word["trans"]
+                            print("WS_TRANS: %s" % ws_trans)
+                            espeak_trans = map2espeak(ws_trans)
+                            print("ESPEAK_TRANS: %s" % espeak_trans)
+                            phn_list.append(espeak_trans)
+    phonemics = "[["+" ".join(phn_list)+"]]"
     return phonemics
 
 #mary2flite
