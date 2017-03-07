@@ -215,28 +215,36 @@ def getLookupBySentence(lang,orth):
         try:
             response_json = json.loads(response)
             trans_dict = {}
-
+            
             #with straight list response:
             if type(response_json) == type([]):
                 for response_item in response_json:
-                    response_orth = response_item["strn"]
-                    first_trans = response_item["transcriptions"][0]["strn"]
-
-                    print("ORTH: %s, TRANS: %s" % (response_orth,first_trans))
-                    
-                    #only add the first reading
-                    if not response_orth in trans_dict:
-                        trans_dict[response_orth] = first_trans
+                    print("STATUS: %s" % response_item["status"]["name"])
+                    if not response_item["status"]["name"] == "delete":
+                        response_orth = response_item["strn"]
+                        first_trans = response_item["transcriptions"][0]["strn"]
+                        if response_item["preferred"] == True:
+                            print("ORTH: %s, PREFERRED TRANS: %s" % (response_orth,first_trans))
+                            trans_dict[response_orth] = first_trans
+                        else:
+                            #only add the first reading if none is preferred
+                            if not response_orth in trans_dict:
+                                print("ORTH: %s, FIRST TRANS: %s" % (response_orth,first_trans))
+                                trans_dict[response_orth] = first_trans
 
             else:
                 #with dictionary response:
                 for response_orth in response_json:
                     response_item = response_json[response_orth]
-                    first_trans = response_item[0]["transcriptions"][0]["strn"]
-
-                    print("ORTH: %s, TRANS: %s" % (response_orth,first_trans))
-                    
-                    trans_dict[response_orth] = first_trans
+                    if not response_item["status"]["name"] == "delete":
+                        first_trans = response_item[0]["transcriptions"][0]["strn"]
+                        print("ORTH: %s, TRANS: %s" % (response_orth,first_trans))
+                        if response_item["preferred"] == True:
+                            trans_dict[response_orth] = first_trans
+                        else:
+                            #only add the first reading if none is preferred
+                            if not response_orth in trans_dict:
+                                trans_dict[response_orth] = first_trans
 
             return trans_dict
         except:

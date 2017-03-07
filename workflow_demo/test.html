@@ -28,8 +28,9 @@ tr.selected{
 <script type="text/javascript" src="../wikispeech_simple_player.js"></script>
 <script type="text/javascript">
 window.onload = function() {
- //ws_host = "http://localhost/wikispeech";
- ws_host = "https://morf.se/wikispeech";
+ ws_hostname = "http://localhost";
+ //ws_hostname = "https://morf.se";
+ ws_host = ws_hostname+"/wikispeech";
  useOriginalText=true;
 };
 </script>
@@ -106,6 +107,7 @@ window.onload = function() {
 		<div id="selected_word_detail">
 		  <div>
 		    <h4 id="selected_word" style="display: inline-block; width: 30em;"></h4>
+		    <input type="button" value="Save" onclick="updateLexicon($('#selected_word')[0].innerHTML);">
 		    <input type="button" value="Open in Entry editor" onclick="myTabs.goToTab(3);searchLexicon($('#selected_word')[0].innerHTML);">
 		    <div>
 		      <h4>Lexicon entries</h4>
@@ -117,6 +119,7 @@ window.onload = function() {
 			    <th>Listen</th>
 			    <th>Language</th>
 			    <th>Pos</th>
+			    <th>wordParts</th>
 			    <th>Preferred</th>
 			  </tr>
 			</thead>
@@ -181,7 +184,7 @@ window.onload = function() {
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Tue Nov  8 13:18:52 CET 2016 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Tue Mar  7 12:55:31 CET 2017 <!-- hhmts end -->
 
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>

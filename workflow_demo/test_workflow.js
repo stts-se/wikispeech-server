@@ -158,59 +158,110 @@ function displaySelected(row) {
 	entry_list = global_entries[orth];
 	console.log(entry_list);
 
+	displayInSimpleEditor(entry_list,selected_table, orth);
+	    
+    }
+
+}
+
+
+function displayInSimpleEditor(entry_list, selected_table, orth) {
+
 	for (i=0; i<entry_list.length; i++) {
 	    var entry = entry_list[i];
 	    console.log(entry);
-	    
+
 	    var row = document.createElement("tr");
-	    
+
+	    //ENTRY NR
 	    var nr = document.createElement("td");
-	    nr.innerHTML = i;
+	    nr.innerHTML = i+1; //first is 0
 	    row.appendChild(nr)
-	    
+
+	    //ENTRY TRANSCRIPTION (only shows first)
 	    var trans = document.createElement("td");
 
 	    trans.setAttribute("id","selected_trans_"+i);
-	    //trans.setAttribute("style", "display: inline-block; width: 30em;");
 	    trans.setAttribute("class", "ssml");
 	    //TODO remove hardcoded language
 	    trans.setAttribute("lang", "sv");
 	    trans.setAttribute("contenteditable",true);
 	    trans.setAttribute("style", "background-color:lightgreen;");
 	    
-	    //trans.appendChild(makeSSMLTranscription(entry["transcriptions"][0]["strn"]));
 	    trans.innerHTML = entry["transcriptions"][0]["strn"];
-	    trans.setAttribute("onkeyup","validateTranscription($('#selected_trans_"+i+"')[0]);");
+	    trans.setAttribute("onkeyup","validateTranscription($('#selected_trans_"+i+"')[0]);");	    
 	    row.appendChild(trans)
 	    
+	    //LISTEN BUTTON
 	    var listen = document.createElement("td");
 	    var listen_button = document.createElement("input");
 	    listen_button.setAttribute("type","button");
 	    listen_button.setAttribute("value","listen");
-	    //listen_button.setAttribute("onclick", "useOriginalText = false; showControls = false; play($('#selected_trans_"+i+"')[0]);");
 	    listen_button.setAttribute("onclick", "playTranscription($('#selected_trans_"+i+"')[0]);");
-	    //listen_button.setAttribute("onclick", "playTranscription(selected_trans_"+i+");");
 	    listen.appendChild(listen_button);
 	    row.appendChild(listen)
 
+	    //ENTRY LANG
 	    var lang = document.createElement("td");
 	    lang.innerHTML = entry["language"];
 	    row.appendChild(lang)
-	    
+
+	    //ENTRY POS
 	    var pos = document.createElement("td");
 	    pos.innerHTML = entry["partOfSpeech"];
 	    row.appendChild(pos)
+
+	    //ENTRY WORDPARTS
+	    var parts = document.createElement("td");
+	    parts.innerHTML = entry["wordParts"];
+	    row.appendChild(parts)
 	    
-	    var pref = document.createElement("td");
-	    pref.innerHTML = '<input type="checkbox" value="preferred" >';
-	    row.appendChild(pref)
+	    //ENTRY PREFERRED
+	    var pref_td = document.createElement("td");
+	    var pref = document.createElement("input");
+	    //pref.type = "checkbox"
+	    pref.type = "radio";
+	    //Not sure if all three of these are needed really..
+	    pref.id = "preferred_"+i;
+	    pref.name = "preferred";
+	    pref.value = "preferred";
 	    
+	    console.log("entry['preferred']: "+entry["preferred"]);
+	    pref.checked = entry["preferred"];
+
+	    
+	    pref_td.appendChild(pref)
+	    row.appendChild(pref_td)
+
+
+
+	    //that's it
 	    selected_table.appendChild(row);
 	}
-
-    }
-
+    
 }
+
+function updateLexicon(orth) {
+    console.log("updateLexicon("+orth+")");
+    entry_list = global_entries[orth];
+    console.log(entry_list);
+    for (i=0; i<entry_list.length; i++) {
+	var entry = entry_list[i];
+	console.log(entry);
+	var newtrans = document.getElementById("selected_trans_"+i).innerHTML;
+	if ( newtrans !== entry["transcriptions"][0]["strn"] ) {
+	    console.log("UPDATING TRANS: "+entry["transcriptions"][0]["strn"]+" -> "+newtrans);
+	    entry["transcriptions"][0]["strn"] = newtrans;
+	}
+	var newpref = document.getElementById("preferred_"+i).checked;
+	if (newpref !== entry.preferred) {
+	    console.log("UPDATING PREF: "+entry.preferred+" -> "+newpref);
+	    entry.preferred = newpref;
+	}
+	updateEntry(entry);
+    }
+}
+
 
 function makeSSMLTranscription(transcription) {
     var speak = document.createElement("speak");
@@ -256,7 +307,7 @@ function tokeniseHtmlText() {
     
     $.get(
         //'http://localhost/wikispeech/textprocessing',
-        '/wikispeech/textprocessing/',
+        ws_host+'/textprocessing/',
         params,
         function(response) {
 	    console.log(response);
@@ -614,7 +665,7 @@ function validateTranscription(t) {
     //TODO hardcoded url
     $.get(
         //'http://localhost/ws_service/validation/validateentry',
-        '/ws_service/validation/validateentry',
+        ws_hostname+'/ws_service/validation/validateentry',
         params,
         function(response) {
 	    console.log(response);
@@ -700,7 +751,7 @@ function playTranscription(t) {
     //TODO hardcoded url
     $.get(
         //'http://localhost/ws_service/validation/validateentry',
-        '/ws_service/validation/validateentry',
+        ws_hostname+'/ws_service/validation/validateentry',
         params,
         function(response) {
 	    console.log(response);
@@ -736,7 +787,11 @@ function playSSML(ssml) {
     showControls = false;
     play(container);
 }
-  
+
+
+
+
+
 /* Searches for one word/re, used in lexicon editor */
 /* TODO Remove hardcoded lexicon name and url*/
 function searchLexicon(search_term) {
@@ -749,7 +804,7 @@ function searchLexicon(search_term) {
     
     $.get(
         //'http://localhost/ws_service/lexicon/lookup',
-        '/ws_service/lexicon/lookup',
+        ws_hostname+'/ws_service/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -813,7 +868,7 @@ function wordsInLex(words) {
     //TODO hardcoded url
     $.get(
         //'http://localhost/ws_service/lexicon/lookup',
-        '/ws_service/lexicon/lookup',
+        ws_hostname+'/ws_service/lexicon/lookup',
         params,
         function(response) {
 
@@ -822,6 +877,12 @@ function wordsInLex(words) {
 	    global_entries = {};
 	    for (i=1; i<response.length; i += 1) {
 		var entry = response[i];
+
+		//filter out entries with status:name=delete
+		if ( entry.status.name == "delete" ) {
+		    continue;
+		}
+		
 		if ( entry.strn in global_entries ) {
 		    global_entries[entry.strn].push(entry);
 		} else {
@@ -927,7 +988,7 @@ function updateEntry(entry) {
     
     $.ajax({
 	//url: 'http://localhost/ws_service/lexicon/updateentry',
-	url: '/ws_service/lexicon/updateentry?entry='+entry_string,
+	url: ws_hostname+'/ws_service/lexicon/updateentry?entry='+entry_string,
 	//data: params,
 	type: "GET",
 	contentType: "application/json",

@@ -61,7 +61,7 @@ var lex_schema = {
 		    id: { type: "integer" },
 		    name: {
 			type: "string",
-			enum: ["imported","unchecked", "ok"]		    
+			enum: ["imported","unchecked", "ok", "delete"]		    
 		    },
 		    source: { type: "string" },
 		    timestamp: { type: "string" },
