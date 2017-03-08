@@ -1,7 +1,7 @@
 import os, re
 
 
-def synthesise(lang, voice, input):
+def synthesise(lang, voice, input, presynth=False):
     voice = voice["flite_voice"]
     #convert utt to ssml
     ssml = utt2ssml(input)
@@ -25,7 +25,7 @@ def synthesise(lang, voice, input):
     words = []
     addtime = 0
     for segment in segments:
-        #print(segment)
+        print(segment)
         (symbol,endtime,word) = segment.split("|")
         if prevword == "0":
             prevword = "sil"
@@ -62,7 +62,7 @@ def synthesise(lang, voice, input):
     #return audio_url and tokens
     return (audio_url, words)
 
-def utt2ssml(item):
+def utt2ssmlOLD(item):
     print(item)
     if item["tag"] == "t":
         word = item["text"]
@@ -79,6 +79,36 @@ def utt2ssml(item):
             ssml_list.append(utt2ssml(child))
         ssml = " ".join(ssml_list)
     return ssml
+
+def utt2ssml(utterance):
+    print(utterance)
+    ssml_list = []
+    paragraphs = utterance["paragraphs"]    
+    for paragraph in paragraphs:
+        sentences = paragraph["sentences"]
+        for sentence in sentences:
+            phrases = sentence["phrases"]
+            for phrase in phrases:
+                tokens = phrase["tokens"]
+                for token in tokens:
+                    words = token["words"]
+                    for word in words:
+                        orth = word["orth"]
+                        if "trans" in word:
+                            ws_trans = word["trans"]
+                            print("WS_TRANS: %s" % ws_trans)
+                            flite_trans = map2flite(ws_trans)
+                            print("FLITE_TRANS: %s" % flite_trans)
+                            ssml = """<phoneme ph="%s">%s</phoneme>""" % (flite_trans, orth)
+                        else:
+                            ssml = orth
+                        ssml_list.append(ssml)
+                if "boundary" in phrase:
+                    ssml = "<break/>"
+                    ssml_list.append(ssml)
+    ssml = " ".join(ssml_list)
+    return ssml
+
 
 #mary2flite
 flitemap = {}
@@ -158,11 +188,47 @@ def map2flite(phonestring):
     return flite
 
 if __name__ == "__main__":
-    input = {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"accent": "!H*", "children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": "UH", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": ","}, {"children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": ",", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
+    #input = {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"accent": "!H*", "children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": "UH", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": ","}, {"children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": ",", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
 
+
+    input = {
+        "lang": "en-US",
+        "paragraphs": [
+            {
+                "sentences": [
+                    {
+                        "phrases": [
+                            {
+                                "boundary": {
+                                    "breakindex": "5",
+                                    "tone": "L-L%"
+                                },
+                                "tokens": [
+                                    {
+                                        "token_orth": "hello",
+                                        "words": [
+                                            {
+                                                "accent": "!H*",
+                                                "g2p_method": "lexicon",
+                                                "orth": "hello",
+                                                "pos": "UH",
+                                                "trans": "h @ - ' l @U"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    
 
     lang = "en"
-    voice = "slt"
+    voice = {"flite_voice":"slt"}
 
     (audio_url, tokens) = synthesise(lang, voice, input)
-    print(audio_url)
+    print("AUDIO URL: %s" % audio_url)
+    print("TOKENS: %s" % tokens)

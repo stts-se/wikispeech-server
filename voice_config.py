@@ -40,8 +40,8 @@ voices = [
     #,
 
     #TODO
-    #{"lang":"en", "name":"cmu-slt-flite", "engine":"flite", "adapter":"adapters.flite_adapter", "flite_voice":"slt"}
-    #,
+    {"lang":"en", "name":"cmu-slt-flite", "engine":"flite", "adapter":"adapters.flite_adapter", "flite_voice":"slt"}
+    ,
 
     {"lang":"ar", "name":"ar-nah-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}}    
 ]

@@ -227,12 +227,63 @@ def map2espeak(phonestring):
     return espeak
 
 if __name__ == "__main__":
-    input = {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"accent": "!H*", "children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": "UH", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": ","}, {"children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": ",", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
+    #input = {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"accent": "!H*", "children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": "UH", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": ","}, {"children": [{"children": [{"p": "h", "tag": "ph"}, {"p": "@", "tag": "ph"}], "ph": "h @", "tag": "syllable"}, {"children": [{"p": "l", "tag": "ph"}, {"p": "@U", "tag": "ph"}], "ph": "l @U", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "h @ - ' l @U", "pos": ",", "tag": "t", "text": "hello"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"}
 
 
-    lang = "en"
-    voice = {"espeak_voice":"mb-en1"}
+    #lang = "en"
+    #voice = {"espeak_voice":"mb-en1"}
 
+
+    input = {
+        "lang": "sv",
+        "paragraphs": [
+            {
+                "sentences": [
+                    {
+                        "phrases": [
+                            {
+                                "boundary": {
+                                    "breakindex": "5",
+                                    "tone": "L-L%"
+                                },
+                                "tokens": [
+                                    {
+                                        "token_orth": "Ett",
+                                        "words": [
+                                            {
+                                                "accent": "L+H*",
+                                                "g2p_method": "lexicon",
+                                                "orth": "Ett",
+                                                "pos": "content",
+                                                "trans": "\" E t"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "token_orth": "test",
+                                        "words": [
+                                            {
+                                                "accent": "!H*",
+                                                "g2p_method": "lexicon",
+                                                "orth": "test",
+                                                "pos": "content",
+                                                "trans": "\" t E s t"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+
+    lang = "sv"
+    voice = {"espeak_voice":"mb-sw1", "espeak_mbrola_voice":"mb-sw1"}
+
+    
     (audio_url, tokens) = synthesise(lang, voice, input)
     print(audio_url)
 
