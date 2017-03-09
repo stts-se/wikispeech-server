@@ -35,9 +35,10 @@ def synthesise(lang, voice, input, presynth=False):
         #print("endtime: %f" % float(endtime))
 
 
-        #if prevword and prevword != "sil" and word != prevword:
-        if prevword and word != prevword:
-            words.append((prevword, str(float(prevwordend)+addtime) ))
+        if prevword and prevword != "sil" and word != prevword:
+        #if prevword and word != prevword:
+            #words.append((prevword, str(float(prevwordend)+addtime) ))
+            words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
 
 
         if float(endtime) < float(prevwordend):            
@@ -52,9 +53,10 @@ def synthesise(lang, voice, input, presynth=False):
     #last word
     if prevword == "0":
         prevword = "sil"
-    #if prevword and prevword != "sil" and word != prevword:
-    if prevword and word != prevword:
-        words.append((prevword, str(float(prevwordend)+addtime) ))
+    if prevword and prevword != "sil" and word != prevword:
+    #if prevword and word != prevword:
+        #words.append((prevword, str(float(prevwordend)+addtime) ))
+        words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
 
     audio_url = "http://localhost/wikispeech_mockup/%s.wav" % outfile
 

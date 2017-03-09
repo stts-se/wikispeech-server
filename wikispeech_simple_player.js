@@ -135,13 +135,17 @@ function play(id) {
     console.log(text);
 
 
-
     var url = ws_host+"/";
     var params = "lang="+lang+"&input_type="+input_type+"&input="+encodeURIComponent(text);
 
-
+    //HB 9/3 testing to switch English voice
+    //if ( lang == "en") {
+	//params = params+"&voice=cmu-slt-flite";
+    //}
+    
     console.log("URL: "+url);
-    console.log("params: "+"lang="+lang+"&input_type="+input_type+"&input="+text);
+    //console.log("params: "+"lang="+lang+"&input_type="+input_type+"&input="+text);
+    console.log("params: "+params);
 
     var xhr = new XMLHttpRequest();
     xhr.overrideMimeType('text/json');
