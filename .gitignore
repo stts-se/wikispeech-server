@@ -1,1 +1,4 @@
 tmp/*
+dist/*
+wikispeech_mockup.egg-info/*
+wikispeech_mockup/tmp/*
