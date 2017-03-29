@@ -11,9 +11,18 @@ except:
 
 
 #TODO hardcoded host name
-host = "http://localhost:8787"
+#host = "http://localhost:8787"
 #host = "https://morf.se/ws_service"
-    
+
+import configparser
+import getpass
+user = getpass.getuser()
+
+config = configparser.SafeConfigParser()
+config.read("default.conf")
+config.read("%s.conf" % user)
+
+host = config.get("Lexicon", "host")   
 
     
 
@@ -864,6 +873,9 @@ def mapperMapFromMary(trans, lang):
     elif lang == "en":
         from_symbol_set = "en-us_sampa_mary"
         to_symbol_set = "en-us_cmu"
+    #elif lang == "en-US":
+    #    from_symbol_set = "en-us_sampa_mary"
+    #    to_symbol_set = "en-us_cmu"
     else:
         print("No marytts mapper defined for language %s" % lang)
         return trans
@@ -895,6 +907,9 @@ def mapperMapToMary(trans, lang):
     elif lang == "en":
         to_symbol_set = "en-us_sampa_mary"
         from_symbol_set = "en-us_cmu"
+    #elif lang == "en-US":
+    #    to_symbol_set = "en-us_sampa_mary"
+    #    from_symbol_set = "en-us_cmu"
     else:
         print("No marytts mapper defined for language %s" % lang)
         return trans
@@ -905,9 +920,9 @@ def mapperMapToMary(trans, lang):
     url = host+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
     
     r = requests.get(url)
-    #print(r.url)
+    print("MAPPER URL: %s" % r.url)
     response = r.text
-    #print("RESPONSE: %s" % response)
+    print("MAPPER RESPONSE: %s" % response)
     try:
         response_json = json.loads(response)
     except json.JSONDecodeError:
