@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd wikispeech_mockup
+python3 wikispeech.py
