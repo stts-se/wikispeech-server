@@ -121,3 +121,6 @@ Test:
 ```
 google-chrome http://localhost/wikispeech_mockup/test.html
 ```
+```
+google-chrome http://localhost/wikispeech_mockup/workflow_demo/test.html
+```
