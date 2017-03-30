@@ -10,19 +10,9 @@ except:
     from urllib import quote_plus
 
 
-#TODO hardcoded host name
-#host = "http://localhost:8787"
-#host = "https://morf.se/ws_service"
+import wikispeech_mockup.config as config
+host = config.config.get("Services", "lexicon")
 
-import configparser
-import getpass
-user = getpass.getuser()
-
-config = configparser.SafeConfigParser()
-config.read("default.conf")
-config.read("%s.conf" % user)
-
-host = config.get("Lexicon", "host")   
 
     
 

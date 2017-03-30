@@ -1,11 +1,14 @@
 import requests, json
 #import tokeniser
 #from adapters.maryxml_converter import *
-try:
-    from adapters.new_maryxml_converter_with_mapper import *
-except:
-    #If running as __main__
-    from new_maryxml_converter_with_mapper import *
+
+from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import *
+
+#try:
+#    from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import *
+#except:
+#    #If running as __main__
+#    from new_maryxml_converter_with_mapper import *
     
 import xml.etree.ElementTree as ET
 
@@ -21,7 +24,12 @@ except:
 #configure elsewhere
 #url = 'https://demo.morf.se/marytts/process'
 #url = "http://morf.se:59125/process"
-url = "http://localhost:59125/process"
+#url = "http://localhost:59125/process"
+
+import wikispeech_mockup.config as config
+url = config.config.get("Services", "marytts")
+
+
 
 def marytts_preproc(lang, text, input_type="text"):
     if lang == "en":

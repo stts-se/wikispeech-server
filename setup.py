@@ -7,11 +7,14 @@ setup(name='wikispeech_mockup',
       author='Harald Berthelsen',
       author_email='haraldberthelsen@gmail.com',
       license='MIT',
-      packages=['wikispeech_mockup'],
+      packages=[
+          'wikispeech_mockup',
+          'wikispeech_mockup.adapters',
+      ],
       install_requires=[
           'requests',
           'flask',
           'flask_cors',
       ],
-      scripts=['bin/wikispeech_server'],
+      scripts=['bin/wikispeech_server', 'bin/wikispeech'],
       zip_safe=False)

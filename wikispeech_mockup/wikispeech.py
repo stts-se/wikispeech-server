@@ -6,10 +6,10 @@ import requests
 from flask import Flask, request, json, Response, make_response, render_template
 from flask_cors import CORS
 
-from voice_config import textprocessor_configs, voices
-from options import *
-
-
+from wikispeech_mockup.voice_config import textprocessor_configs, voices
+#HB moved into this file: from wikispeech_mockup.options import *
+import wikispeech_mockup.wikilex as wikilex
+import wikispeech_mockup.config as config
 
 app = Flask(__name__)
 CORS(app)
@@ -230,7 +230,9 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         print("COMPONENT: %s" % component_name)
 
         #Import the defined module and function
-        mod = import_module(module_name)
+        #mod = import_module(module_name)
+        #HB testing
+        mod = import_module("wikispeech_mockup."+module_name)
         #print(mod)
         #print(dir(mod))
         process = getattr(mod, component_name)
@@ -379,7 +381,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #Import the defined module and function
     #TODO drop synthesise for voice[function] (?)
 
-    mod = import_module(voice["adapter"])
+    mod = import_module("wikispeech_mockup."+voice["adapter"])
     print(mod)
     print(dir(mod))
 
@@ -398,7 +400,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     opus_audio = saveAndConvertAudio(audio_url, presynth)
     if "localhost:10000" in hostname:
         hostname = "http://localhost"
-    audio_url = "%s/%s/%s" % (hostname,config.get("Audio settings","audio_url_prefix"),opus_audio)
+    audio_url = "%s/%s/%s" % (hostname,config.config.get("Audio settings","audio_url_prefix"),opus_audio)
     print("audio_url: %s" % audio_url)
 
 
@@ -465,10 +467,11 @@ def checkInputAndOutputTokens(input_string,output_token_list):
 
 
 def saveAndConvertAudio(audio_url,presynth=False):
+    global config
 
     print("PRESYNTH: %s, type: %s" % (presynth, type(presynth)) )
 
-    tmpdir = config.get("Audio settings","audio_tmpdir")
+    tmpdir = config.config.get("Audio settings","audio_tmpdir")
     print("TMPDIR: %s" % tmpdir)
     
     fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
@@ -539,13 +542,235 @@ def getParam(param,default=None):
     return value
 
 
+
+####################
+# OPTIONS
+#
+####################
+
+
+def getWikispeechOptions():
+
+    wikispeech_options = {
+        "GET": {
+            "description": "Get speech from text",
+            "parameters": {
+                "input": {
+                    "type": "string",
+                    "description": "The text to be synthesised",
+                    "required": True,
+                    "default": None
+                },
+            "lang": {
+                "type": "string",
+                "description": "ISO 639-1 two-letter code for textprocessing and synthesis language",
+                "required": True,
+                "allowed": getSupportedLanguages(),
+                "default": None
+            },
+            "textprocessor": {
+                "type": "string",
+                "description": "name of a defined wikispeech textprocessor for this language",
+                "required": False,
+                "default": "The default textprocessor for this language"
+            },
+            "voice": {
+                "type": "string",
+                "description": "name of a defined wikispeech voice for this language",
+                "required": False,
+                "default": "The default voice for this language"
+            },
+            "input_type": {
+                "type": "string",
+                "description": "the type of the input, for instance with or without markup",
+                "required": False,
+                "allowed": ["text", "ssml"],
+                "default": "text"
+            },
+            "output_type": {
+                "type": "string",
+                "description": "the type of the output, for instance with or without timing information",
+                "required": False,
+                "allowed": "json",
+                "default": "json"
+            }                
+        },
+        "examples": [
+            {
+                "input": "Det här är ett test",
+                "lang": "sv"
+            },
+            {
+                "input": "Det här är ett test",
+                "lang": "sv",
+                "textprocessor": "wikitextproc_sv",
+                "voice": "stts_sv_nst-hsmm",
+                "input_type": "text",
+                "output_type": "json"
+            }
+        ]
+            
+        }
+    }
+                
+
+    #Parameters for POST are the same as for GET. If they're not, "POST" needs to be defined separately!
+    wikispeech_options["POST"] = wikispeech_options["GET"]
+    return wikispeech_options
+
+
+
+
+
+def getTextprocessingOptions():
+
+    options = {
+        "GET": {
+            "description": "Get markup from text",
+            "parameters": {
+                "input": {
+                    "type": "string",
+                    "description": "The text to be processed",
+                    "required": True,
+                    "default": None
+                },
+                "lang": {
+                    "type": "string",
+                    "description": "ISO 639-1 two-letter code for textprocessing language",
+                    "required": True,
+                    "allowed": textprocSupportedLanguages(),
+                    "default": None
+                },
+                "textprocessor": {
+                    "type": "string",
+                    "description": "name of a defined wikispeech textprocessor for this language",
+                    "required": False,
+                    "default": "The default textprocessor for this language"
+                },
+                "input_type": {
+                    "type": "string",
+                    "description": "the type of the input, for instance with or without markup",
+                    "required": False,
+                    "allowed": ["text", "ssml"],
+                    "default": "text"
+                },
+                "output_type": {
+                    "type": "string",
+                    "description": "the type of the output. Only json implemented so meaningless at the moment",
+                    "required": False,
+                    "allowed": "json",
+                    "default": "json"
+                }                
+            },
+            "examples": [
+                {
+                    "input": "Det här är ett test",
+                    "lang": "sv"
+                },
+                {
+                    "input": "Det här är ett test",
+                    "lang": "sv",
+                    "textprocessor": "wikitextproc_sv",
+                    "input_type": "text",
+                    "output_type": "json"
+                }
+            ]
+            
+        }
+    }
+                
+
+    #Parameters for POST are the same as for GET. If they're not, "POST" needs to be defined separately!
+    options["POST"] = options["GET"]
+
+    return options
+
+
+
+def getSynthesisOptions():
+
+    options = {
+        "GET": {
+            "description": "Get speech from markup",
+            "parameters": {
+                "input": {
+                    "type": "string",
+                    "description": "The markup to be synthesised",
+                    "required": True,
+                    "default": None
+                },
+                "lang": {
+                    "type": "string",
+                    "description": "ISO 639-1 two-letter code for synthesis language",
+                    "required": True,
+                    "allowed": synthesisSupportedLanguages(),
+                    "default": None
+                },
+                "voice": {
+                    "type": "string",
+                    "description": "name of a defined wikispeech voice for this language",
+                    "required": False,
+                    "default": "The default voice for this language"
+                },
+                "input_type": {
+                    "type": "string",
+                    "description": "the type of the input. Only 'markup' implemented, so currently meaningless",
+                    "required": False,
+                    "allowed": "markup",
+                    "default": "markup"
+                },
+                "output_type": {
+                    "type": "string",
+                    "description": "the type of the output, for instance with or without timing information",
+                    "required": False,
+                    "allowed": "json",
+                    "default": "json"
+                }                
+            },
+            "examples": [
+                {
+                    "input": {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"accent": "!H*", "children": [{"p": "t", "tag": "ph"}, {"p": "E", "tag": "ph"}, {"p": "s", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "t E s t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' t E s t", "pos": "NN", "tag": "t", "text": "test"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"},
+                    "lang": "sv"
+                },
+                {
+                    "input": {"children": [{"children": [{"children": [{"children": [{"accent": "!H*", "children": [{"accent": "!H*", "children": [{"p": "t", "tag": "ph"}, {"p": "E", "tag": "ph"}, {"p": "s", "tag": "ph"}, {"p": "t", "tag": "ph"}], "ph": "t E s t", "stress": "1", "tag": "syllable"}], "g2p_method": "lexicon", "ph": "' t E s t", "pos": "NN", "tag": "t", "text": "test"}, {"pos": ".", "tag": "t", "text": "."}, {"breakindex": "5", "tag": "boundary", "tone": "L-L%"}], "tag": "phrase"}], "tag": "s"}], "tag": "p"}], "tag": "utt"},
+                    "lang": "sv",
+                    "voice": "stts_sv_nst-hsmm",
+                    "input_type": "markup",
+                    "output_type": "json"
+                }
+            ]
+            
+        }
+    }
+                
+
+    #Parameters for POST are the same as for GET. If they're not, "POST" needs to be defined separately!
+    options["POST"] = options["GET"]
+
+    return options
+
+
+
+
+#########################
+#
+# Tests
+#
+#########################
+
+
+
+
+
+
 def test_wikilex():
     sent = "apa hund färöarna"
     trans = {}
     trans["apa"] = '"" A: . p a'
     trans["hund"] = '" h u0 n d'
     trans["färöarna"] = '"" f {: . % r 2: . a . rn a'
-    import wikilex
+
     try:
         lex = wikilex.getLookupBySentence("sv", sent)
         print("LEX: %s" % lex)
@@ -623,7 +848,7 @@ def test_wikispeech():
         print("END stacktrace")
 
         print("ERROR: wikispeech test failure")
-        print("Is the audio_tmpdir %s correctly configured?" % config.get("Audio settings", "audio_tmpdir"))
+        print("Is the audio_tmpdir %s correctly configured?" % config.config.get("Audio settings", "audio_tmpdir"))
         sys.exit()
         
     except:
@@ -651,13 +876,6 @@ def test_wikispeech():
 
 if __name__ == '__main__':
 
-    import configparser
-    import getpass
-    user = getpass.getuser()
-    
-    config = configparser.SafeConfigParser()
-    config.read("default.conf")
-    config.read("%s.conf" % user)
 
 
     print("RUNNING SELF-TESTS...")

@@ -7,23 +7,8 @@ except:
     #Python 2
     from urllib import quote_plus
     
-#cd ~/go/src/github.com/stts-se/pronlex/
-#git pull
-#cd lexserver
-#go run ../createEmptyDB/createEmptyDB.go tmp.db
-#go run ../addNSTLexToDB/addNSTLexToDB.go sv.se.nst tmp.db ~/git/wikimedia/langdata/svlex/sprakbanken_nstlex/swe030224NST.pron_utf8.txt
-#mv tmp.db pronlex.db
-#go run lexserver.go
-
-import configparser
-import getpass
-user = getpass.getuser()
-
-config = configparser.SafeConfigParser()
-config.read("default.conf")
-config.read("%s.conf" % user)
-host = config.get("Lexicon", "host")   
-
+import wikispeech_mockup.config as config
+host = config.config.get("Services","lexicon")
 
 
 def lexLookup_worksNotWithPyTokeniser(lang,utt):
