@@ -17,4 +17,5 @@ setup(name='wikispeech_mockup',
           'flask_cors',
       ],
       scripts=['bin/wikispeech_server', 'bin/wikispeech'],
+      include_package_data=True,
       zip_safe=False)

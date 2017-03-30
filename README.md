@@ -101,12 +101,12 @@ To also display this page in the root directory (instead of apache default): $ c
 
 To access the wikispeech server through apache:
 Add something like this to your apache config file (for example "/etc/apache2/sites-enabled/000-default.conf") and restart
-apache (for example with "sudo apache2ctl restart")
+apache (for example with "sudo apache2ctl restart"). You may need to run "sudo a2enmod proxy" and  "sudo a2enmod proxy_http" first.
 
 ```
 ProxyPreserveHost On
-ProxyPass         /wikispeech/  http://127.0.0.1:10000/wikispeech/
-ProxyPassReverse  /wikispeech/  http://127.0.0.1:10000/wikispeech/
+ProxyPass         /wikispeech/  http://127.0.1.1:10000/wikispeech/
+ProxyPassReverse  /wikispeech/  http://127.0.1.1:10000/wikispeech/
 ProxyRequests     Off
 ```
 
