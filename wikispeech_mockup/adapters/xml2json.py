@@ -193,7 +193,7 @@ def main():
         file.write(out)
         file.close()
     else:
-        print out
+        print(out)
 
 if __name__ == "__main__":
     main()

@@ -89,13 +89,13 @@ if __name__ == "__main__":
     
     maryxmlstring = open("sv_example_ra2.xml").read()
     (utt2,lang) = maryxml2uttET(maryxmlstring)
-    print utt2
+    print(utt2)
     sys.exit()
 
     if utt1 != utt2:
-        print utt1
-        print "------------------------------------------------------------"
-        print utt2
+        print(utt1)
+        print("------------------------------------------------------------")
+        print(utt2)
 
 
 
@@ -103,8 +103,8 @@ if __name__ == "__main__":
 
     #They are not actually equal strings, but 'equal' xml, so need to parse them to test
     if xmltodict.parse(maryxmlstring) != xmltodict.parse(maryxmlstring2):
-        print maryxmlstring
-        print "------------------------------------------------------------"
-        print maryxmlstring2
+        print(maryxmlstring)
+        print("------------------------------------------------------------")
+        print(maryxmlstring2)
 
     #print utt2json(utt2)

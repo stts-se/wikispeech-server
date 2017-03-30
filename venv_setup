@@ -1,10 +1,13 @@
 python3 -m venv /media/bigdisk/ws_venv
 cd /media/bigdisk/ws_venv
+source ./bin/activate
+
 mkdir git
 cd git
 git clone https://github.com/stts-se/wikispeech_mockup.git
 cd wikispeech_mockup
 git checkout packaging
+mkdir wikispeech_mockup/tmp
 
 #should fail:
 python3 wikispeech_mockup/wikispeech.py
