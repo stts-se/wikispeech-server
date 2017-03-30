@@ -274,34 +274,6 @@ def mapSsmlTranscriptionsToMary(ssml, lang):
 
         
 
-# def mapperMapToMary(trans):
-#     #TODO
-#     #Configure elsewhere
-#     #get symbol set names
-#     url = "http://localhost:8787/mapper/map?from=sv-se_ws-sampa&to=sv-se_sampa_mary&trans=%s" % quote_plus(trans)
-
-#     r = requests.get(url)
-#     print(r.url)
-#     response = r.text
-#     print("RESPONSE: %s" % response)
-#     #try:
-#     response_json = json.loads(response)
-#     print("RESPONSE_JSON: %s" % response_json)
-#     new_trans = response_json["Result"]
-#     print("NEW TRANS: %s" % new_trans)
-#     return new_trans
-#     #except:
-#     #    e = sys.exc_info()[0]
-#     #    print("ERROR: unable to get mapper result (%s). Response was: %s" % (e, response))
-#     #    return None
-
-
-
-
-
-
-
-
 
 def dropMaryHeader(utt):
     utt = utt["maryxml"]["p"]

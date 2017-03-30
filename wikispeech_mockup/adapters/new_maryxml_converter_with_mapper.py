@@ -860,9 +860,9 @@ def mapperMapFromMary(trans, lang):
     if lang == "sv":
         from_symbol_set = "sv-se_sampa_mary"
         to_symbol_set = "sv-se_ws-sampa"
-    elif lang == "en":
-        from_symbol_set = "en-us_sampa_mary"
-        to_symbol_set = "en-us_cmu"
+    #elif lang == "en":
+    #    from_symbol_set = "en-us_sampa_mary"
+    #    to_symbol_set = "en-us_cmu"
     #elif lang == "en-US":
     #    from_symbol_set = "en-us_sampa_mary"
     #    to_symbol_set = "en-us_cmu"
@@ -894,9 +894,9 @@ def mapperMapToMary(trans, lang):
     if lang == "sv":
         to_symbol_set = "sv-se_sampa_mary"
         from_symbol_set = "sv-se_ws-sampa"
-    elif lang == "en":
-        to_symbol_set = "en-us_sampa_mary"
-        from_symbol_set = "en-us_cmu"
+    #elif lang == "en":
+    #    to_symbol_set = "en-us_sampa_mary"
+    #    from_symbol_set = "en-us_cmu"
     #elif lang == "en-US":
     #    to_symbol_set = "en-us_sampa_mary"
     #    from_symbol_set = "en-us_cmu"
