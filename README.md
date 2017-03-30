@@ -30,7 +30,7 @@ python3 wikispeech_mockup/wikispeech.py
 ## Configuration:
 
 For local configuration, make a copy of wikispeech_mockup/user-host_example.conf,
-name it <username>-<hostname>.conf, and edit it as needed.
+name it ```<username>-<hostname>.conf```, and edit it as needed.
 
 The usage examples will both test that the configuration is correct, and that a lexicon server and a marytts server are accessible.
 
