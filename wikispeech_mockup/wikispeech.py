@@ -11,8 +11,36 @@ from wikispeech_mockup.voice_config import textprocessor_configs, voices
 import wikispeech_mockup.wikilex as wikilex
 import wikispeech_mockup.config as config
 
+
+
+#################
+#
+# Test opusenc before anything else
+#
+################
+
+retval = os.system("opusenc -V")
+if retval != 0:
+    print("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
+    sys.exit(1)
+
+
+################
+#
+# Flask app
+#
+###############
+
 app = Flask(__name__)
 CORS(app)
+
+
+
+
+
+
+
+
 
 ################################################################
 #

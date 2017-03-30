@@ -4,5 +4,5 @@ user = getpass.getuser()
 
 
 config = configparser.SafeConfigParser()
-config.read("/media/bigdisk/git/wikispeech_mockup/wikispeech_mockup/default.conf")
+config.read("/home/harald/git/wikispeech_mockup/wikispeech_mockup/default.conf")
 config.read("%s.conf" % user)
