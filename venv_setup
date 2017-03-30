@@ -13,4 +13,10 @@ mkdir wikispeech_mockup/tmp
 python3 wikispeech_mockup/wikispeech.py
 
 python3 setup.py install
+#Need to run it twice, fails on flask the first time, WHY?
+python3 setup.py install
+
+#Now works:
 python3 wikispeech_mockup/wikispeech.py
+
+deactivate
