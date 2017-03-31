@@ -35,9 +35,49 @@ var ssml1 = `<p><br>
 var ssml2 = "<p><br><ssml:s>Fartyget byggdes i <phoneme alphabet='x-sampa' ph='&quot; p O . rt u0 . g a l'>Portugal</phoneme></ssml:s></p>";
 
 
-var html_editor = document.getElementById("html_editor");
-html_editor.innerHTML = ssml1;
+var en_ssml1 = `<p lang="en" class="ssml">
+    <br>
+    <ssml:s>
+    The title of the movie is: 
+    <phoneme alphabet="x-sampa" ph="' l A ' v i - t @ ' E ' b E - l A"> La vita è bella</phoneme>,
+(Life is beautiful), 
+which is directed by 
+    <phoneme alphabet="x-sampa" ph="r O - ' b r= - t O - b E - ' n I n - j i">Roberto Benigni</phoneme>.
+    </ssml:s>
+    </p>
+    `;
+
+
+
+var no_text = "Søderbergelektroden regnes som en banebrytende oppfinnelse med stor betydning for effektiv produksjon i metallurgisk industri. Spesielt etter andre verdenskrig ble Søderbergelektroden en viktig komponent i kraftkrevende industri i Norge. Lenge etter at Søderbergelektroden ble oppfunnet ble den nominert til Norges største ingeniørbragd."
+
+
+
+function addTestdata(lang) {
+    console.log("addTestdata("+lang+")");
+
+    var html_editor = document.getElementById("html_editor");
+    html_editor.innerHTML = "";
     
-myTabs.goToTab(2);
-tokeniseHtmlText();
+    if (lang === "sv") {
+	html_editor.innerHTML = ssml1;
+    }
+    if (lang === "en") {
+	html_editor.innerHTML = en_ssml1;
+    }
+    if (lang === "nb") {
+	html_editor.innerHTML = no_text;
+    }
+}
+
+var lang = "en";
+document.getElementById("language_selector").value = lang;
+addTestdata(lang);
+//myTabs.goToTab(2);
+
+ws_hostname = "http://localhost";
+//ws_hostname = "https://morf.se";
+ws_host = ws_hostname+"/wikispeech";
+
+tokeniseHtmlText(lang);
 

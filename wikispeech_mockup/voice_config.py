@@ -11,6 +11,7 @@ textprocessor_configs = [
     #,
     {"name":"wikitextproc_nb", "lang":"nb", "components":[("adapters.marytts_adapter", "marytts_preproc")]}
     ,
+
     #{"name":"wikitextproc_en", "lang":"en", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("adapters.marytts_adapter", "marytts_postproc")]}
     #,
     {"name":"wikitextproc_en", "lang":"en", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
@@ -30,6 +31,7 @@ voices = [
 
     {"lang":"nb", "name":"stts_no_nst-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "marytts_locale":"no", "server":{"url":'https://demo.morf.se/marytts'}}
     ,
+
 
     {"lang":"en", "name":"dfki-spike-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}, "marytts_locale":"en_US"}
     ,

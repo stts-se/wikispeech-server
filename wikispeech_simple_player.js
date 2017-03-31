@@ -6,6 +6,8 @@ ws_host = "https://morf.se/wikispeech";
 
 //Default, if getSupportedLanguages fails
 supported_languages = ["sv"];
+//getSupportedLanguages();
+
 
 //can be set to false from js if no controls or 'play-along' is wanted
 var useOriginalText = true;

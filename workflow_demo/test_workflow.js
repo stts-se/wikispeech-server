@@ -157,15 +157,15 @@ function displaySelected(row) {
     if ( orth in global_entries ) {
 	entry_list = global_entries[orth];
 	console.log(entry_list);
-
-	displayInSimpleEditor(entry_list,selected_table, orth);
+	var lang = document.getElementById("language_selector").value;
+	displayInSimpleEditor(entry_list,selected_table, orth, lang);
 	    
     }
 
 }
 
 
-function displayInSimpleEditor(entry_list, selected_table, orth) {
+function displayInSimpleEditor(entry_list, selected_table, orth, lang) {
 
 	for (i=0; i<entry_list.length; i++) {
 	    var entry = entry_list[i];
@@ -183,8 +183,13 @@ function displayInSimpleEditor(entry_list, selected_table, orth) {
 
 	    trans.setAttribute("id","selected_trans_"+i);
 	    trans.setAttribute("class", "ssml");
-	    //TODO remove hardcoded language
-	    trans.setAttribute("lang", "sv");
+
+	    var xmllang = lang;
+	    if ( lang == "en" ) {
+		xmllang = "en-US";
+	    }
+
+	    trans.setAttribute("lang", xmllang);
 	    trans.setAttribute("contenteditable",true);
 	    trans.setAttribute("style", "background-color:lightgreen;");
 	    
@@ -285,12 +290,17 @@ function makeSSMLTranscription(transcription) {
 /* Step 1 - send html/text/ssml to wikispeech for textprocessing */
 /* Called from Imput tab "tokenise" button */
 /* TODO remove hardcoded language */
-function tokeniseHtmlText() {
+function tokeniseHtmlText(lang) {
     var html_editor = document.getElementById('html_editor');
     //console.log(html_editor);
     var html = html_editor.innerHTML;
 
-    var ssml_header = '<?xml version="1.0" encoding="UTF-8" ?>\n<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"\n  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n  xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"\nxml:lang="sv">\n';
+    var xmllang = lang;
+    if ( lang == "en" ) {
+	xmllang = "en_US";
+    }
+    
+    var ssml_header = '<?xml version="1.0" encoding="UTF-8" ?>\n<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"\n  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n  xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"\nxml:lang="'+xmllang+'">\n';
     var ssml_footer = "</speak>";
 
     var ssml_content = filterToSSML(html);
@@ -300,7 +310,7 @@ function tokeniseHtmlText() {
     console.log("Tokenising:\n"+ssml);
 
     var params = {
-	"lang": "sv",
+	"lang": lang,
 	"input_type": "ssml",
 	"input": ssml
     }
@@ -315,10 +325,10 @@ function tokeniseHtmlText() {
 	    if (response.hasOwnProperty("paragraphs")) {
 		//console.log("Found utt");
 		////addSentencesToSynthesisTab(data.sentences);
-		addHtmlSentencesToSynthesisTab();
+		addHtmlSentencesToSynthesisTab(lang);
 		
 		var data = getSentenceAndTokens(response);
-		addWordsToLexiconTab(data.words);
+		addWordsToLexiconTab(data.words, lang);
 
 	    } else {
 		console.log("ERROR: response is not an utt");
@@ -403,7 +413,7 @@ function getTranscription(token) {
 
 /* Step 2, add sentences in synthesis tab */
 /* TODO Is this responsive enough? */
-function addHtmlSentencesToSynthesisTab() {
+function addHtmlSentencesToSynthesisTab(lang) {
     var html_editor = document.getElementById('html_editor');
     //console.log(html_editor);
 
@@ -439,8 +449,13 @@ function addHtmlSentencesToSynthesisTab() {
 	var p = document.createElement("p");
 	var speak = document.createElement("speak");
 
-	//NOTE hardcoded language
-	speak.setAttribute("xml:lang", "sv");
+	var xmllang = lang;
+	if ( lang == "en" ) {
+	    xmllang = "en-US";
+	}
+	    
+
+	speak.setAttribute("xml:lang", xmllang);
 	
 	speak.setAttribute("version","1.0");
 	speak.setAttribute("xmlns", "http://www.w3.org/2001/10/synthesis");
@@ -464,8 +479,6 @@ function addHtmlSentencesToSynthesisTab() {
 	var id = "sentence_nr_"+i;
 	p.setAttribute("id",id);
 
-	//TODO hardcoded language
-	var lang = "sv";
 	p.setAttribute("lang", lang);
    
 	var playButton = document.createElement("input");
@@ -514,7 +527,7 @@ function addSentencesToSynthesisTab(sentences) {
 
 /* Step 3, list words in lexicon tab */
 
-function addWordsToLexiconTab(words) {
+function addWordsToLexiconTab(words, lang) {
     var words_table = document.getElementById("words_table");
     var words_table_tbody = words_table.getElementsByTagName("tbody")[0];
     words_table_tbody.innerHTML = "";
@@ -567,13 +580,17 @@ function addWordsToLexiconTab(words) {
 	    trans.setAttribute("id","trans_"+i);
 	    //trans.setAttribute("style", "display: inline-block; width: 30em;");
 	    trans.setAttribute("class", "ssml");
-	    //TODO remove hardcoded language
-	    trans.setAttribute("lang", "sv");
+
+	    trans.setAttribute("lang", lang);
 
 	    var speak = document.createElement("speak");
 
-	    //NOTE hardcoded language
-	    speak.setAttribute("xml:lang", "sv");
+	    var xmllang = lang;
+	    if ( lang == "en" ) {
+		xmllang = "en-US";
+	    }
+
+	    speak.setAttribute("xml:lang", xmllang);
 	
 	    speak.setAttribute("version","1.0");
 	    speak.setAttribute("xmlns", "http://www.w3.org/2001/10/synthesis");
@@ -640,7 +657,7 @@ function addWordsToLexiconTab(words) {
 }
 
 
-function validateTranscription(t) {
+function validateTranscription(t, lang) {
     console.log(t);
     var trans = t.innerText;
     console.log(trans);
@@ -656,9 +673,19 @@ function validateTranscription(t) {
 	]
     };
 
-    //TODO hardcoded language
+    //TODO hardcoded symbolsets
+    if ( lang == "sv" ) {
+	var symbolset = "sv-se_ws-sampa";
+    }
+    else if ( lang == "en" ) {
+	var symbolset = "en-us_cmu";
+    } else {
+	console.log("WARNING: no symbolset defined for language "+lang);
+	return;
+    }
+    
     var params = {
-	"symbolsetname": "sv-se_ws-sampa",
+	"symbolsetname": symbolset,
 	"entry": JSON.stringify(entry)
     }
 
@@ -720,7 +747,7 @@ function displayValidationResult(messages, container, transcription_field) {
 }
 
 
-function playTranscription(t) {
+function playTranscription(t,lang) {
     //var t = $('#'+id)[0];
     console.log(t);
     var trans = t.innerHTML;
@@ -739,9 +766,19 @@ function playTranscription(t) {
 	]
     };
 
-    //TODO hardcoded language
+    //TODO hardcoded symbolsets
+    if ( lang == "sv" ) {
+	var symbolset = "sv-se_ws-sampa";
+    }
+    else if ( lang == "en" ) {
+	var symbolset = "en-us_cmu";
+    } else {
+	console.log("WARNING: no symbolset defined for language "+lang);
+	return;
+    }
+
     var params = {
-	"symbolsetname": "sv-se_ws-sampa",
+	"symbolsetname": symbolset,
 	"entry": JSON.stringify(entry)
     }
 
@@ -775,11 +812,11 @@ function playTranscription(t) {
     );
 }
 
-function playSSML(ssml) {
+function playSSML(ssml, lang) {
     clone = ssml.cloneNode(true);
     container = document.createElement("p");
-    //TODO hardcoded language
-    container.setAttribute("lang", "sv");
+
+    container.setAttribute("lang", lang);
     container.setAttribute("class", "ssml");
     container.appendChild(clone);
     //globals for player
@@ -794,11 +831,22 @@ function playSSML(ssml) {
 
 /* Searches for one word/re, used in lexicon editor */
 /* TODO Remove hardcoded lexicon name and url*/
-function searchLexicon(search_term) {
+function searchLexicon(search_term, lang) {
     console.log("Searching lexicon for: " + search_term);
 
+
+    if ( lang == "sv" ) {
+	var lexicons = "sv-se.nst";
+    } 
+    else if ( lang == "en" ) {
+	var lexicons = "en-us.cmu";
+    }
+    else {
+	console.log("WARNING: no lexicon defined for lang "+lang);
+    }
+
     var params = {
-	"lexicons": "sv-se.nst",
+	"lexicons": lexicons,
 	"words": search_term
     }
     
@@ -852,15 +900,24 @@ function wordInLex(word, div, trans) {
 
 
 
-function wordsInLex(words) {
+function wordsInLex(words, lang) {
     var wordlist = Object.keys(words).sort();
     var words_to_lookup = wordlist.join();
     
     //console.log("Searching lexicon for: " + words);
 
     //TODO hardcoded lexicon
+    if ( lang == "sv" ) {
+	var lexicons = "sv-se.nst";
+    } 
+    else if ( lang == "en" ) {
+	var lexicons = "en-us.cmu";
+    }
+    else {
+	console.log("WARNING: no lexicon defined for lang "+lang);
+    }
     var params = {
-	"lexicons": "sv-se.nst",
+	"lexicons": lexicons,
 	"pagelength": 2*wordlist.length,
 	"words": words_to_lookup
     }
