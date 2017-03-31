@@ -1,5 +1,10 @@
 # Server for wikispeech tts.
 
+## Prerequisite:
+```
+sudo apt-get install python3-setuptools
+```
+The setup.py script will also check for setuptools and exit with a message if it isn't found. 
 
 ## Install:
 ```
