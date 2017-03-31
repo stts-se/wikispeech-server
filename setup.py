@@ -15,12 +15,12 @@ setup(name='wikispeech_mockup',
       license='MIT',
       packages=[
           'wikispeech_mockup',
-          'wikispeech_mockup.adapters',
+          'wikispeech_mockup.adapters'
       ],
       install_requires=[
           'requests',
           'flask',
-          'flask_cors',
+          'flask_cors'
       ],
       scripts=['bin/wikispeech_server', 'bin/wikispeech'],
       include_package_data=True,
