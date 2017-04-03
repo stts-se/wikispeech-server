@@ -35,6 +35,13 @@ or, if installed to somewhere on your path:
 wikispeech
 ```
 
+or:
+
+```
+python3 bin/wikispeech
+```
+
+
 
 
 ## Configuration:
