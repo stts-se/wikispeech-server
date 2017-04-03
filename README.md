@@ -20,6 +20,8 @@ export PATH=$PATH:~/python3/bin
 python3 setup.py install --home=~/python3/
 ```
 
+NOTE There is still a problem with the flask package, that in some circumstances fails to install. Repeating "sudo python3 setup.py install" has worked for me.
+
 
 ## Usage:
 ```
