@@ -23,11 +23,11 @@ python3 setup.py install --home=~/python3/
 
 ## Usage:
 ```
+bin/wikispeech
+```
+or, if installed to somewhere on your path:
+```
 wikispeech
-```
-or
-```
-python3 wikispeech_mockup/wikispeech.py
 ```
 
 
@@ -50,14 +50,23 @@ python3 test/test_voice_configs.py
 ```
 (tests voice/server configurations)
 
+
 ```
 google-chrome test.html
 ```
 (may not work to load the audio, depends on setup)
 
 ```
-google-chrome http://localhost:10000/wikispeech/?lang=sv&input=Ett+test
+
+google-chrome "http://localhost:10000/wikispeech/"
 ```
+(for usage information)
+
+```
+google-chrome "http://localhost:10000/wikispeech/?lang=sv&input=Ett+test"
+```
+(example api call)
+
 
 ## Documentation:
 
