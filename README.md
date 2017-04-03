@@ -39,7 +39,7 @@ name it ```<username>-<hostname>.conf```, and edit it as needed.
 
 The usage examples will both test that the configuration is correct, and that a lexicon server and a marytts server are accessible.
 
-Test:
+## Test:
 ```
 python3 test/test_api.py
 ```
