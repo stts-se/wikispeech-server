@@ -22,7 +22,7 @@ setup(name='wikispeech_mockup',
           'flask',
           'flask_cors'
       ],
-      scripts=['bin/wikispeech_server', 'bin/wikispeech'],
+      scripts=['bin/wikispeech'],
       include_package_data=True,
       zip_safe=False)
 
