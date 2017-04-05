@@ -17,7 +17,7 @@ textprocessor_configs = [
     {"name":"wikitextproc_en", "lang":"en", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
     ,
     #{"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("adapters.marytts_adapter", "marytts_postproc")]}
-    {"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc")]}
+    {"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
 
 ]
 

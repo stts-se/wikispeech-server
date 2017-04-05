@@ -1,4 +1,4 @@
-import sys, requests, json
+import sys, requests, json, re
 
 try:
     #Python 3
@@ -44,12 +44,18 @@ def lexLookup_worksNotWithPyTokeniser(lang,utt):
         orthlist = []
         for t in tokenlist:
             orth = t["#text"]
+            if lang == "ar":
+                orth = re.sub("\u064F","",orth)
             orthlist.append(orth)
 
         responseDict = getLookupBySentence(lang, " ".join(orthlist))
 
         for t in tokenlist:
             orth = t["#text"]
+
+            if lang == "ar":
+                orth = re.sub("\u064F","",orth)
+
 
             if orth.lower() in responseDict:
                 ph = responseDict[orth.lower()]
@@ -88,6 +94,9 @@ def lexLookup(lang,utt):
         orthlist = []
         for t in tokenlist:
             orth = t["orth"]
+            if lang == "ar":
+                orth = re.sub("\u064F","",orth)
+
             orthlist.append(orth)
 
         responseDict = getLookupBySentence(lang, " ".join(orthlist))
@@ -95,11 +104,16 @@ def lexLookup(lang,utt):
 
             for t in tokenlist:
                 orth = t["orth"]
+                if lang == "ar":
+                    orth = re.sub("\u064F","",orth)
 
                 if orth.lower() in responseDict:
                     ph = responseDict[orth.lower()]
+                    #if lang == "ar":
+                    #    ph = re.sub("'","&apos;",ph)
                     #print(ph)
                     t["trans"] = ph
+                    t["g2p_method"] = "lexicon"
                     #print(t)
                 else:
                     print("No trans for %s" % orth)
@@ -184,13 +198,15 @@ def lexLookupOLD(lang,utt):
 
 
 def getLookupBySentence(lang,orth):
-    if lang in ["sv", "en"]:
+    if lang in ["sv", "en", "ar"]:
 
         if lang == "sv":
             lexicon = "sv-se.nst"
         elif lang == "en":
             lexicon = "en-us.cmu"
-
+        elif lang == "ar":
+            lexicon = "ar-test"
+            
         #url = "http://localhost:8787/lexicon/lookup?lexicons=%s&words=%s" % (lexicon, orth.lower())
         url = "%s/lexicon/lookup?lexicons=%s&words=%s" % (host, lexicon, orth.lower())
         r = requests.get(url)
