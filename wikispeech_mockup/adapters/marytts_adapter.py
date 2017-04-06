@@ -2,6 +2,7 @@ import requests, json
 #import tokeniser
 #from adapters.maryxml_converter import *
 
+import wikispeech_mockup.log as log
 from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import *
 
 #try:
@@ -57,10 +58,10 @@ def marytts_preproc(lang, text, input_type="text"):
     }
     #Using output_type PHONEMES/INTONATION/ALLOPHONES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
     r = requests.get(url, params=payload)
-    print("CALLING MARYTTS: %s" % r.url)
+    log.debug("CALLING MARYTTS: %s" % r.url)
     
     xml = r.text
-    #print "REPLY:", xml
+    #log.debug "REPLY:", xml
     (marylang, utt) = maryxml2utt(xml)
 
     return utt
@@ -84,12 +85,12 @@ def marytts_preproc_tokenised(lang, utt):
     }
     #Using output_type PHONEMES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
     r = requests.get(url, params=payload)
-    print("CALLING MARYTTS: %s" % r.url)
+    log.debug("CALLING MARYTTS: %s" % r.url)
     
     xml = r.text
-    print("REPLY: %s" % xml)
+    log.debug("REPLY: %s" % xml)
     (marylang, utt) = maryxml2utt(xml)
-    print("marytts_preproc_tokenised returns %s" % utt)
+    log.debug("marytts_preproc_tokenised returns %s" % utt)
     return utt
 
 
@@ -116,7 +117,7 @@ def marytts_postproc(lang, utt):
         "INPUT_TEXT":xml
     }
     r = requests.post(url, params=payload)
-    print("CALLING MARYTTS: %s" % r.url)
+    log.debug("CALLING MARYTTS: %s" % r.url)
 
     #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
     r.raise_for_status()
@@ -124,9 +125,9 @@ def marytts_postproc(lang, utt):
 
     
     xml = r.text
-    print("REPLY: %s" % xml)
+    log.debug("REPLY: %s" % xml)
     (marylang, utt) = maryxml2utt(xml)
-    print("marytts_postproc returning: %s" % utt)
+    log.debug("marytts_postproc returning: %s" % utt)
     return utt
 
 
@@ -160,7 +161,7 @@ def synthesise_old(lang,voice,input):
 
     #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
     maryxml = utt2maryxml(xmllang, input)
-    print("MARYXML: %s" % maryxml)
+    log.debug("MARYXML: %s" % maryxml)
      
     #BUGFIX TODO
     #url = 'https://demo.morf.se/marytts/process'
@@ -177,11 +178,11 @@ def synthesise_old(lang,voice,input):
     }
     r = requests.post(url,params=params)
 
-    print("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
+    log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
 
     xml = r.text.encode("utf-8")
 
-    print("REPLY: %s" % xml)
+    log.debug("REPLY: %s" % xml)
 
     #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
     r.raise_for_status()
@@ -206,7 +207,7 @@ def synthesise_old(lang,voice,input):
     audio_r = requests.get(url,params=params)
     audio_url = audio_r.url
 
-    #print("runMarytts AUDIO_URL: %s" % audio_url)
+    #log.debug("runMarytts AUDIO_URL: %s" % audio_url)
 
     return (audio_url, output_tokens)
 
@@ -225,7 +226,7 @@ def synthesise_json(lang,voice,input):
 
     #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
     maryxml = utt2maryxml(xmllang, input)
-    print("MARYXML: %s" % maryxml)
+    log.debug("MARYXML: %s" % maryxml)
      
     #BUGFIX TODO
     #url = 'https://demo.morf.se/marytts/process'
@@ -242,11 +243,11 @@ def synthesise_json(lang,voice,input):
               "INPUT_TEXT":maryxml}
     r = requests.post(url,params=params)
 
-    print("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
+    log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
 
     json = r.json()
 
-    print("REPLY: %s" % json)
+    log.debug("REPLY: %s" % json)
 
     #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
     r.raise_for_status()
@@ -254,7 +255,7 @@ def synthesise_json(lang,voice,input):
     audio_url = json["audio"]
     output_tokens = json["tokens"]
 
-    #print("runMarytts AUDIO_URL: %s" % audio_url)
+    #log.debug("runMarytts AUDIO_URL: %s" % audio_url)
 
     return (audio_url, output_tokens)
 
@@ -263,13 +264,13 @@ def synthesise_json(lang,voice,input):
 def mapSsmlTranscriptionsToMary(ssml, lang):
     phoneme_elements = re.findall("(<phoneme [^>]+>)", ssml)
     for element in phoneme_elements:
-        #print(element)
+        #log.debug(element)
         trans = re.findall("ph=\"(.+)\">", element)[0]
-        #print(trans)
+        #log.debug(trans)
         mary_trans = mapperMapToMary(trans.replace("&quot;","\""), lang)
-        #print(mary_trans)
+        #log.debug(mary_trans)
         ssml = re.sub(trans, mary_trans.replace("\"", "&quot;"), ssml)
-    #print("MAPPED SSML: %s" % ssml)
+    #log.debug("MAPPED SSML: %s" % ssml)
     return ssml
 
         
@@ -310,7 +311,7 @@ def maryxml2tokensET(maryxmlstring):
     try:
         root = ET.fromstring(maryxmlstring)
     except:
-        print("ERROR IN PARSING XML:\n%s" % maryxmlstring)
+        log.error("ERROR IN PARSING XML:\n%s" % maryxmlstring)
         #raise with no argument re-raises the last exception
         raise
     #root = doc.getroot()
@@ -327,20 +328,20 @@ def maryxml2tokensET(maryxmlstring):
         for s in ss:
             sentence = []
             paragraph.append(sentence)
-            #print "S:",s
+            #log.debug "S:",s
             phrases = s.findall(".//{http://mary.dfki.de/2002/MaryXML}phrase")
             for phrase in phrases:
-                #print "PHRASE:", phrase
+                #log.debug "PHRASE:", phrase
                 for child in phrase:
-                    #print "CHILD:", child.tag
+                    #log.debug "CHILD:", child.tag
                     expanded = None
                     if child.tag == "{http://mary.dfki.de/2002/MaryXML}t":
                         #orth = child.text.strip()
                         orth = "".join(child.itertext()).strip()                        
-                        #print "ORTH:", orth
+                        #log.debug "ORTH:", orth
                         tokendur = 0
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
-                            #print ph.attrib
+                            #log.debug ph.attrib
                             #tokendur += ph.attrib['{http://mary.dfki.de/2002/MaryXML}d']
                             tokendur += int(ph.attrib['d'])
 
@@ -348,16 +349,16 @@ def maryxml2tokensET(maryxmlstring):
                         #endtime_seconds = endtime/1000.0
                         #token = (orth,endtime_seconds)
                     elif child.tag == "{http://mary.dfki.de/2002/MaryXML}mtu":
-                        print(child.attrib)
+                        log.debug(child.attrib)
                         #The expanded words of the mtu
                         expanded = "".join(child.itertext()).strip()
                         #The original orthography
                         #TODO return both
                         orth = child.attrib["orig"]
-                        print("ORTH:", orth)
+                        log.debug("ORTH:", orth)
                         tokendur = 0
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
-                            #print ph.attrib
+                            #log.debug ph.attrib
                             #tokendur += ph.attrib['{http://mary.dfki.de/2002/MaryXML}d']
                             tokendur += int(ph.attrib['d'])
 
@@ -367,8 +368,8 @@ def maryxml2tokensET(maryxmlstring):
                     elif child.tag == "{http://mary.dfki.de/2002/MaryXML}boundary":
                         orth = "PAUSE"
                         orth = ""
-                        #print "ORTH:", orth
-                        #print child.attrib
+                        #log.debug "ORTH:", orth
+                        #log.debug child.attrib
                         #endtime += child.attrib['{http://mary.dfki.de/2002/MaryXML}duration']
                         if "duration" in child.attrib:
                             endtime += int(child.attrib['duration'])
@@ -384,30 +385,30 @@ def maryxml2tokensET(maryxmlstring):
                     
                     sentence.append(token)
                     output_tokens.append(token)
-    #print utt
+    #log.debug utt
     #return (output_tokens, lang)
     return output_tokens
 
 def maryxml2uttET(maryxmlstring):
-    print("MARYXMLSTRING: %s" % maryxmlstring)
+    log.debug("MARYXMLSTRING: %s" % maryxmlstring)
     root = ET.fromstring(maryxmlstring)
     #root = doc.getroot()
     lang = root.attrib['{http://www.w3.org/XML/1998/namespace}lang']
     #lang = utt2["maryxml"]["@xml:lang"]
-    print("ROOT: %s" % root)
+    log.debug("ROOT: %s" % root)
     ps = root.findall(".//{http://mary.dfki.de/2002/MaryXML}p")
     utt = []
     for p in ps:
-        print("P: %s" % p)
+        log.debug("P: %s" % p)
         #ss = p.findall(".//{http://mary.dfki.de/2002/MaryXML}s")
         ss = p.findall(".//{http://mary.dfki.de/2002/MaryXML}s")
-        print("SS: %s" % ss)
+        log.debug("SS: %s" % ss)
         paragraph = []
         utt.append(paragraph)
         for s in ss:
             sentence = []
             paragraph.append(sentence)
-            print("S: %s" % s)
+            log.debug("S: %s" % s)
             phrases = s.findall(".//{http://mary.dfki.de/2002/MaryXML}phrase")
 
             if len(phrases) == 0:
@@ -415,35 +416,35 @@ def maryxml2uttET(maryxmlstring):
 
 
             for phrase in phrases:
-                print("PHRASE: %s" % phrase)
+                log.debug("PHRASE: %s" % phrase)
                 for child in phrase:
-                    print("CHILD: %s" % child.tag)
+                    log.debug("CHILD: %s" % child.tag)
                     if child.tag == "{http://mary.dfki.de/2002/MaryXML}t":
                         #orth = child.text.strip()
                         orth = "".join(child.itertext()).strip()
-                        #print "ORTH:", orth
+                        #log.debug "ORTH:", orth
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
                             pass
                         token = orth
                     elif child.tag == "{http://mary.dfki.de/2002/MaryXML}mtu":
                         #orth = child.text.strip()
-                        print("MTU attrib: %s" % child.attrib)
+                        log.debug("MTU attrib: %s" % child.attrib)
                         #orth = child.attrib['{http://mary.dfki.de/2002/MaryXML}orig']
                         orth = child.attrib['orig']
-                        #print "ORTH:", orth
+                        #log.debug "ORTH:", orth
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
                             pass
                         token = orth
                     elif child.tag == "{http://mary.dfki.de/2002/MaryXML}boundary":
                         orth = "PAUSE"
                         orth = ""
-                        #print "ORTH:", orth
-                        #print child.attrib
+                        #log.debug "ORTH:", orth
+                        #log.debug child.attrib
                         #endtime += child.attrib['{http://mary.dfki.de/2002/MaryXML}duration']
                         token = orth
                     sentence.append(token)
-            print("SENTENCE: %s" % sentence)
-    print("UTT: %s" % utt)
+            log.debug("SENTENCE: %s" % sentence)
+    log.debug("UTT: %s" % utt)
     return (utt, lang)
 
 
@@ -503,7 +504,7 @@ class TestPreproc(unittest.TestCase):
         expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'tone': 'L-L%', 'breakindex': '5'}, 'tokens': [{'words': [{'pos': 'content', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'g2p_method': 'lexicon'}], 'token_orth': 'Ett'}, {'words': [{'pos': 'content', 'trans': '"" 2: . r a', 'orth': 'öra', 'accent': '!H*', 'g2p_method': 'lexicon'}], 'token_orth': 'öra'}, {'words': [{'pos': '$PUNCT', 'orth': '.'}], 'token_orth': '.'}]}]}]}], 'lang': 'sv'}
 
         result = marytts_preproc("sv", input_text)
-        print(result)
+        log.debug(result)
         self.assertEqual(expected, result)
 
         

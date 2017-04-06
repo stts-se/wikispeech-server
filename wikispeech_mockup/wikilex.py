@@ -8,12 +8,13 @@ except:
     from urllib import quote_plus
     
 import wikispeech_mockup.config as config
+import wikispeech_mockup.log as log
 host = config.config.get("Services","lexicon")
 
 
 def lexLookup_worksNotWithPyTokeniser(lang,utt):
-    print("lexLookup: %s" % utt)
-    #print("utt[s]: %s" % utt["s"])
+    log.debug("lexLookup: %s" % utt)
+    #log.debug("utt[s]: %s" % utt["s"])
 
     #Again - list if there are multiple sentences, otherwise OrderedDict
     tokenlist = []
@@ -30,14 +31,14 @@ def lexLookup_worksNotWithPyTokeniser(lang,utt):
 
     if wordByWord:
         for t in tokenlist:
-            #print(t)
+            #log.debug(t)
             orth = t["#text"]
-            #print(orth)
+            #log.debug(orth)
             ph = getLookup(lang, orth)
             if ph:
-                #print(ph)
+                #log.debug(ph)
                 t["@ph"] = ph
-                #print(t)
+                #log.debug(t)
 
     else:
         #get transcriptions for the entire sentence
@@ -59,17 +60,17 @@ def lexLookup_worksNotWithPyTokeniser(lang,utt):
 
             if orth.lower() in responseDict:
                 ph = responseDict[orth.lower()]
-                #print(ph)
+                #log.debug(ph)
                 t["@ph"] = ph
-                #print(t)
+                #log.debug(t)
             else:
-                print("No trans for %s" % orth)
+                log.debug("No trans for %s" % orth)
 
 
     return utt
 
 def lexLookup(lang,utt):
-    print("lexLookup: %s" % utt)
+    log.debug("lexLookup: %s" % utt)
 
     tokenlist = []
 
@@ -79,7 +80,7 @@ def lexLookup(lang,utt):
                 for token in phr["tokens"]:
                     if "mtu" in token and token["mtu"] == True:
                         for word in token["words"]:
-                            print("SKIPPING %s" % word)
+                            log.debug("SKIPPING %s" % word)
                     else:
 
                         #SSML
@@ -111,12 +112,12 @@ def lexLookup(lang,utt):
                     ph = responseDict[orth.lower()]
                     #if lang == "ar":
                     #    ph = re.sub("'","&apos;",ph)
-                    #print(ph)
+                    #log.debug(ph)
                     t["trans"] = ph
                     t["g2p_method"] = "lexicon"
-                    #print(t)
+                    #log.debug(t)
                 else:
-                    print("No trans for %s" % orth)
+                    log.debug("No trans for %s" % orth)
 
 
     return utt
@@ -125,8 +126,8 @@ def lexLookup(lang,utt):
 
 
 def lexLookupOLD(lang,utt):
-    print("lexLookup: %s" % utt)
-    #print("utt[s]: %s" % utt["s"])
+    log.debug("lexLookup: %s" % utt)
+    #log.debug("utt[s]: %s" % utt["s"])
 
 
     
@@ -147,7 +148,7 @@ def lexLookupOLD(lang,utt):
             for child in s["children"]:
                 if child["tag"] == "mtu":
                     for t in child["children"]:
-                        print("SKIPPING %s" % t)
+                        log.debug("SKIPPING %s" % t)
                         #tokenlist.append(t)
                 elif child["tag"] == "t":
 
@@ -163,14 +164,14 @@ def lexLookupOLD(lang,utt):
 
     if wordByWord:
         for t in tokenlist:
-            #print(t)
+            #log.debug(t)
             orth = t["#text"]
-            #print(orth)
+            #log.debug(orth)
             ph = getLookup(lang, orth)
             if ph:
-                #print(ph)
+                #log.debug(ph)
                 t["@ph"] = ph
-                #print(t)
+                #log.debug(t)
 
     else:
         #get transcriptions for the entire sentence
@@ -187,17 +188,18 @@ def lexLookupOLD(lang,utt):
 
                 if orth.lower() in responseDict:
                     ph = responseDict[orth.lower()]
-                    #print(ph)
+                    #log.debug(ph)
                     t["ph"] = ph
-                    #print(t)
+                    #log.debug(t)
                 else:
-                    print("No trans for %s" % orth)
+                    log.debug("No trans for %s" % orth)
 
 
     return utt
 
 
 def getLookupBySentence(lang,orth):
+    
     if lang in ["sv", "en", "ar"]:
 
         if lang == "sv":
@@ -210,13 +212,13 @@ def getLookupBySentence(lang,orth):
         #url = "http://localhost:8787/lexicon/lookup?lexicons=%s&words=%s" % (lexicon, orth.lower())
         url = "%s/lexicon/lookup?lexicons=%s&words=%s" % (host, lexicon, orth.lower())
         r = requests.get(url)
-        print(r.url)
+        log.debug(r.url)
         response = r.text
 
         if response == "null":
             return {}
 
-        print("RESPONSE: %s" % response)
+        log.debug("RESPONSE: %s" % response)
 
         try:
             response_json = json.loads(response)
@@ -225,17 +227,17 @@ def getLookupBySentence(lang,orth):
             #with straight list response:
             if type(response_json) == type([]):
                 for response_item in response_json:
-                    print("STATUS: %s" % response_item["status"]["name"])
+                    log.debug("STATUS: %s" % response_item["status"]["name"])
                     if not response_item["status"]["name"] == "delete":
                         response_orth = response_item["strn"]
                         first_trans = response_item["transcriptions"][0]["strn"]
                         if response_item["preferred"] == True:
-                            print("ORTH: %s, PREFERRED TRANS: %s" % (response_orth,first_trans))
+                            log.debug("ORTH: %s, PREFERRED TRANS: %s" % (response_orth,first_trans))
                             trans_dict[response_orth] = first_trans
                         else:
                             #only add the first reading if none is preferred
                             if not response_orth in trans_dict:
-                                print("ORTH: %s, FIRST TRANS: %s" % (response_orth,first_trans))
+                                log.debug("ORTH: %s, FIRST TRANS: %s" % (response_orth,first_trans))
                                 trans_dict[response_orth] = first_trans
 
             else:
@@ -244,7 +246,7 @@ def getLookupBySentence(lang,orth):
                     response_item = response_json[response_orth]
                     if not response_item["status"]["name"] == "delete":
                         first_trans = response_item[0]["transcriptions"][0]["strn"]
-                        print("ORTH: %s, TRANS: %s" % (response_orth,first_trans))
+                        log.debug("ORTH: %s, TRANS: %s" % (response_orth,first_trans))
                         if response_item["preferred"] == True:
                             trans_dict[response_orth] = first_trans
                         else:
@@ -255,7 +257,7 @@ def getLookupBySentence(lang,orth):
             return trans_dict
         except:
             e = sys.exc_info()[0]
-            print("NO MATCH (%s): %s" % (e,response))
+            error("NO MATCH (%s): %s" % (e,response))
             raise
     
     if orth == "test":
@@ -268,18 +270,18 @@ def mapperMapToMary(trans):
     url = "http://localhost:8787/mapper/map?from=sv-se_ws-sampa&to=sv-se_sampa_mary&trans=%s" % quote_plus(trans)
 
     r = requests.get(url)
-    print(r.url)
+    log.debug(r.url)
     response = r.text
-    print("RESPONSE: %s" % response)
+    log.debug("RESPONSE: %s" % response)
     try:
         response_json = json.loads(response)
-        print("RESPONSE_JSON: %s" % response_json)
+        log.debug("RESPONSE_JSON: %s" % response_json)
         new_trans = response_json["Result"]
-        print("NEW TRANS: %s" % new_trans)
+        log.debug("NEW TRANS: %s" % new_trans)
         return new_trans
     except:
         e = sys.exc_info()[0]
-        print("ERROR: unable to get mapper result (%s). Response was: %s" % (e, response))
+        log.debug("ERROR: unable to get mapper result (%s). Response was: %s" % (e, response))
         return None
         
 def localMapToMary(first_trans):
@@ -302,24 +304,24 @@ def localMapToMary(first_trans):
         #read first two characters, see if they match key, otherwise see if first char matches key otherwise error
         rest = first_trans
         while rest != "":
-            print(rest)
-            #print(rest[:2])
+            log.debug(rest)
+            #log.debug(rest[:2])
             if rest[:2] in trans2maryttsMap:
-                print("Found %s, mapping to %s" % (rest[:2], trans2maryttsMap[rest[:2]]))
+                log.debug("Found %s, mapping to %s" % (rest[:2], trans2maryttsMap[rest[:2]]))
                 new_trans_list.append(trans2maryttsMap[rest[:2]])
                 if len(rest) > 2:
                     rest = rest[2:]
                 else:
                     rest = ""
             elif rest[0] in trans2maryttsMap:
-                print("Found %s, mapping to %s" % (rest[0], trans2maryttsMap[rest[0]]))
+                log.debug("Found %s, mapping to %s" % (rest[0], trans2maryttsMap[rest[0]]))
                 new_trans_list.append(trans2maryttsMap[rest[0]])
                 if len(rest) > 1:
                     rest = rest[1:]
                 else:
                     rest = ""
             else:
-                print("ERROR: %s not in trans2maryttsMap" % rest)
+                log.debug("ERROR: %s not in trans2maryttsMap" % rest)
                 #After this error, skip one character and try again.
                 #Or better to raise error?
                 rest = rest[1:]
@@ -403,14 +405,14 @@ def getLookup(lang,orth):
         #url = "http://localhost:8181/llookup/%s" % orth.lower()
         url = "http://localhost:8787/lexlookup?lexicons=sv.se.nst&words=%s" % orth.lower()
         r = requests.get(url)
-        print(r.url)
+        log.debug(r.url)
         response = r.text
-        print("RESPONSE: %s" % response)
+        log.debug("RESPONSE: %s" % response)
 
         try:
             response_json = json.loads(response)
             first_trans = response_json[0]["transcriptions"][0]["strn"]
-            print(first_trans)
+            log.debug(first_trans)
 
             # " -> ', "" -> ", . -> -
 
@@ -418,10 +420,10 @@ def getLookup(lang,orth):
             mary_fmt = mary_fmt.replace('"',"'")
             mary_fmt = mary_fmt.replace('#',"\"")
             mary_fmt = mary_fmt.replace('.',"-")
-            print(mary_fmt)
+            log.debug(mary_fmt)
             return mary_fmt
         except:
-            print("NO MATCH: "+response)
+            log.debug("NO MATCH: "+response)
     
     if orth == "test":
         return "' t I s t"

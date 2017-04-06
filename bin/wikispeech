@@ -2,14 +2,27 @@
 
 import sys
 sys.path.insert(0,".")
-
-
 import wikispeech_mockup.wikispeech as ws
 
-print("RUNNING SELF-TESTS...")
+
+
+
+ws.log.log_level = "info" #debug, info, warning, error
+
+ws.log.info("RUNNING SELF-TESTS...")
+
+ws.test_config()
 ws.test_wikilex()
 ws.test_textproc()
 ws.test_wikispeech()
-print("ALL SELF-TESTS RUN SUCCESSFULLY")
+
+import wikispeech_mockup.test_api
+import wikispeech_mockup.test_voice_configs
+
+
+ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
 ws.app.run(host='0.0.0.0', port=10000, debug=True, threaded=True)
+
+
+

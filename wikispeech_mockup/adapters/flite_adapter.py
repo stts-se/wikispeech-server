@@ -1,16 +1,17 @@
 import os, re
+import wikispeech_mockup.log as log
 
 
 def synthesise(lang, voice, input, presynth=False):
     voice = voice["flite_voice"]
     #convert utt to ssml
     ssml = utt2ssml(input)
-    print(ssml)
+    log.debug(ssml)
 
     #send ssml to flite
     outfile = "tmp/flite_out"
     cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s.wav > %s.timing" % (voice, ssml, outfile, outfile)
-    print(cmd)
+    log.debug(cmd)
     os.system(cmd)
 
 
@@ -25,14 +26,14 @@ def synthesise(lang, voice, input, presynth=False):
     words = []
     addtime = 0
     for segment in segments:
-        print(segment)
+        log.debug(segment)
         (symbol,endtime,word) = segment.split("|")
         if prevword == "0":
             prevword = "sil"
 
        
-        #print("prevwordend: %f" % float(prevwordend))
-        #print("endtime: %f" % float(endtime))
+        #log.debug("prevwordend: %f" % float(prevwordend))
+        #log.debug("endtime: %f" % float(endtime))
 
 
         if prevword and prevword != "sil" and word != prevword:
@@ -43,7 +44,7 @@ def synthesise(lang, voice, input, presynth=False):
 
         if float(endtime) < float(prevwordend):            
             addtime += float(prevwordend)
-            print("New addtime: %f" % addtime)
+            log.debug("New addtime: %f" % addtime)
 
 
 
@@ -65,7 +66,7 @@ def synthesise(lang, voice, input, presynth=False):
     return (audio_url, words)
 
 def utt2ssmlOLD(item):
-    print(item)
+    log.debug(item)
     if item["tag"] == "t":
         word = item["text"]
         if "ph" in item:
@@ -83,7 +84,7 @@ def utt2ssmlOLD(item):
     return ssml
 
 def utt2ssml(utterance):
-    print(utterance)
+    log.debug(utterance)
     ssml_list = []
     paragraphs = utterance["paragraphs"]    
     for paragraph in paragraphs:
@@ -98,9 +99,9 @@ def utt2ssml(utterance):
                         orth = word["orth"]
                         if "trans" in word:
                             ws_trans = word["trans"]
-                            print("WS_TRANS: %s" % ws_trans)
+                            log.debug("WS_TRANS: %s" % ws_trans)
                             flite_trans = map2flite(ws_trans)
-                            print("FLITE_TRANS: %s" % flite_trans)
+                            log.debug("FLITE_TRANS: %s" % flite_trans)
                             ssml = """<phoneme ph="%s">%s</phoneme>""" % (flite_trans, orth)
                         else:
                             ssml = orth
@@ -184,7 +185,7 @@ def map2flite(phonestring):
     flite = re.sub(r"1 (.+)(aa|ae|ah|ao|aw|ax|axr|ay|eh|ih|iy|ow|oy|uh|uw)", r"\1\2 1", flite)
     flite = re.sub(" 1", "1", flite)
 
-    print("MAPPED %s TO %s" % (phonestring, flite))
+    log.debug("MAPPED %s TO %s" % (phonestring, flite))
 
 
     return flite
@@ -232,5 +233,5 @@ if __name__ == "__main__":
     voice = {"flite_voice":"slt"}
 
     (audio_url, tokens) = synthesise(lang, voice, input)
-    print("AUDIO URL: %s" % audio_url)
-    print("TOKENS: %s" % tokens)
+    log.debug("AUDIO URL: %s" % audio_url)
+    log.debug("TOKENS: %s" % tokens)

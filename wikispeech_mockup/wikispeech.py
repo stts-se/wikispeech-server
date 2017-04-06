@@ -6,24 +6,32 @@ import requests
 from flask import Flask, request, json, Response, make_response, render_template
 from flask_cors import CORS
 
+
 from wikispeech_mockup.voice_config import textprocessor_configs, voices
 #HB moved into this file: from wikispeech_mockup.options import *
 import wikispeech_mockup.wikilex as wikilex
 import wikispeech_mockup.config as config
+import wikispeech_mockup.log as log
 
 
-
+        
 #################
 #
 # Test opusenc before anything else
 #
 ################
 
-retval = os.system("opusenc -V")
+log.debug("\nOPUSENC\n\nChecking that opusenc is installed on your system..")
+retval = os.system("opusenc -V &> /dev/null")
 if retval != 0:
-    print("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
+    os.system("opusenc -V")
+    log.error("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
     sys.exit(1)
+else:
+    log.debug("opusenc found.\n\nEND OPUSENC\n")
 
+
+    
 
 ################
 #
@@ -54,7 +62,7 @@ CORS(app)
 def wikispeech_options():
 
     options = getWikispeechOptions()
-    print(options)
+    log.debug(options)
 
     resp = make_response(json.dumps(options))
     resp.headers["Content-type"] = "application/json"
@@ -92,7 +100,7 @@ def wikispeech():
 
 
 
-    print("WIKISPEECH CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input))
+    log.debug("WIKISPEECH CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input))
 
     supported_languages = getSupportedLanguages()
     hostname = request.url_root
@@ -110,7 +118,7 @@ def wikispeech():
     if input_type in ["text","ssml"]:
         markup = textproc(lang, textprocessor_name, input, input_type=input_type)
         if type(markup) == type(""):
-            print("RETURNING MESSAGE: %s" % markup)
+            log.debug("RETURNING MESSAGE: %s" % markup)
             return markup
     else:
         return "input_type %s not supported" % input_type
@@ -118,7 +126,7 @@ def wikispeech():
     if output_type == "json":
         result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname, presynth=presynth)
         if type(result) == type(""):
-            print("RETURNING MESSAGE: %s" % result)
+            log.debug("RETURNING MESSAGE: %s" % result)
             return result
 
         #TODO
@@ -210,7 +218,7 @@ def textprocessing():
     if input_type in ["text","ssml"]:
         markup = textproc(lang,textprocessor_name, input, input_type=input_type)
         if type(markup) == type(""):
-            print("RETURNING MESSAGE: %s" % markup)
+            log.debug("RETURNING MESSAGE: %s" % markup)
             return markup
     else:
         return "input_type %s not supported" % input_type
@@ -250,21 +258,21 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
             return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
 
 
-    print("TEXTPROCESSOR: %s" % textprocessor)
+    log.debug("TEXTPROCESSOR: %s" % textprocessor)
 
     for (module_name,component_name) in textprocessor["components"]:
 
-        print("MODULE: %s" % module_name)
-        print("COMPONENT: %s" % component_name)
+        log.debug("MODULE: %s" % module_name)
+        log.debug("COMPONENT: %s" % component_name)
 
         #Import the defined module and function
         #mod = import_module(module_name)
         #HB testing
         mod = import_module("wikispeech_mockup."+module_name)
-        #print(mod)
-        #print(dir(mod))
+        #log.debug(mod)
+        #log.debug(dir(mod))
         process = getattr(mod, component_name)
-        print("PROCESS: %s" % process)
+        log.debug("PROCESS: %s" % process)
 
         #TODO clean this up to always use process(utt)
         if component_name == "tokenise":
@@ -276,7 +284,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
                 utt = process(utt)
             except:
                 utt = process(lang, utt)
-        print(utt)
+        log.debug(str(utt))
 
     return utt
 
@@ -357,7 +365,7 @@ def synthesis():
     else:
         presynth=False
 
-    #print "SYNTHESIS CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input)
+    #log.debug "SYNTHESIS CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input)
 
     if lang not in synthesisSupportedLanguages():
         return "synthesis does not support language %s" % lang
@@ -366,7 +374,7 @@ def synthesis():
     input = json.loads(input)
     result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname,presynth=presynth)
     if type(result) == type(""):
-        print("RETURNING MESSAGE: %s" % result)
+        log.debug("RETURNING MESSAGE: %s" % result)
         return result
     json_data = json.dumps(result)
     return Response(json_data, mimetype='application/json')
@@ -387,7 +395,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
     
     voices = list_voices_by_language(lang)
-    #print(voices)
+    #log.debug(voices)
     voice = None
     if voice_name == "default_voice":
         if len(voices) > 0:
@@ -404,18 +412,18 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
 
 
-    #print(voice)
+    #log.debug(voice)
 
     #Import the defined module and function
     #TODO drop synthesise for voice[function] (?)
 
     mod = import_module("wikispeech_mockup."+voice["adapter"])
-    print(mod)
-    print(dir(mod))
+    log.debug(str(mod))
+    log.debug(str(dir(mod)))
 
     process = getattr(mod, "synthesise")
     
-    print("PROCESS: %s" % process)
+    log.debug("PROCESS: %s" % process)
 
     #process = getattr(__import__(voice["adapter"]), "synthesise")
 
@@ -429,7 +437,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     if "localhost:10000" in hostname:
         hostname = "http://localhost"
     audio_url = "%s/%s/%s" % (hostname,config.config.get("Audio settings","audio_url_prefix"),opus_audio)
-    print("audio_url: %s" % audio_url)
+    log.debug("audio_url: %s" % audio_url)
 
 
     data = {
@@ -452,7 +460,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 def checkInputAndOutputTokens(input_string,output_token_list):
     msgs = []
     for token in output_token_list:
-        print(token)
+        log.debug(token)
         if token["orth"] not in input_string:
             msgs.append("output token \"%s\" not found in input string \"%s\"" % (token["orth"], input_string))
 
@@ -478,9 +486,9 @@ def checkInputAndOutputTokens(input_string,output_token_list):
                 #output_orth = output_list[i]
                 if output_orth == "":
                     j += 1
-                    print("skipping empty output token")
+                    log.debug("skipping empty output token")
                 else:
-                    print("%s\t%s" % (input_orth, output_orth))
+                    log.debug("%s\t%s" % (input_orth, output_orth))
                     if input_orth != output_orth:
                         output_token_list[j]["orth"] = input_orth
                         msgs.append("REPLACED: %s -> %s" % (output_orth, input_orth))
@@ -497,10 +505,10 @@ def checkInputAndOutputTokens(input_string,output_token_list):
 def saveAndConvertAudio(audio_url,presynth=False):
     global config
 
-    print("PRESYNTH: %s, type: %s" % (presynth, type(presynth)) )
+    log.debug("PRESYNTH: %s, type: %s" % (presynth, type(presynth)) )
 
     tmpdir = config.config.get("Audio settings","audio_tmpdir")
-    print("TMPDIR: %s" % tmpdir)
+    log.debug("TMPDIR: %s" % tmpdir)
     
     fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
     tmpwav = fh.name    
@@ -509,14 +517,14 @@ def saveAndConvertAudio(audio_url,presynth=False):
         fh.close()
         #The "url" is actually a filename at this point
         cmd = "mv %s %s" % (audio_url, tmpwav)
-        print(cmd)
+        log.debug(cmd)
         os.system(cmd)
 
     else:
 
-        print("audio_url:\n%s" % audio_url)
+        log.debug("audio_url:\n%s" % audio_url)
         r = requests.get(audio_url)
-        print(r.headers['content-type'])
+        log.debug(r.headers['content-type'])
 
         audio_data = r.content
 
@@ -531,14 +539,16 @@ def saveAndConvertAudio(audio_url,presynth=False):
     tmpopus = "%s.opus" % tmpwav
 
     convertcmd = "opusenc %s %s" % (tmpwav, tmpopus)
-    print("convertcmd: %s" % convertcmd)
+    log.debug("convertcmd: %s" % convertcmd)
+    if log.log_level != "debug":
+        convertcmd = convertcmd+" &> /dev/null"
     os.system(convertcmd)
 
     #remove everything before the tmpdir, to build the external url
     #HB problem with wikimedia usage?
     #opus_url_suffix = re.sub("^.*/%s/" % tmpdir, "%s/" % tmpdir, tmpopus)
     opus_url_suffix = re.sub("^.*/%s/" % tmpdir, "", tmpopus)
-    print("opus_url_suffix: %s" % opus_url_suffix)
+    log.debug("opus_url_suffix: %s" % opus_url_suffix)
 
     #return tmpopus
     return opus_url_suffix
@@ -556,15 +566,15 @@ def getTestExample(lang):
 
 def getParam(param,default=None):
     value = None
-    print("getParam %s, request.method: %s" % (param, request.method))
+    log.debug("getParam %s, request.method: %s" % (param, request.method))
     if request.method == "GET":
         value = request.args.get(param)
     elif request.method == "POST":
-        #print(request)
-        #print(request.form)
+        #log.debug(request)
+        #log.debug(request.form)
         if param in request.form:
             value = request.form[param]
-    print("VALUE: %s" % value)
+    log.debug("VALUE: %s" % value)
     if value == None:
         value = default
     return value
@@ -801,32 +811,33 @@ def test_wikilex():
 
     try:
         lex = wikilex.getLookupBySentence("sv", sent)
-        print("LEX: %s" % lex)
+        log.debug("LEX: %s" % lex)
     except:
-        print("Failed to do lexicon lookup.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        log.error("Failed to do lexicon lookup.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
 
         import traceback
-        print("Stacktrace:")
-        traceback.print_tb(sys.exc_info()[2])
-        print("END stacktrace")
+        log.debug("Stacktrace:")
+        if log.log_level == "debug":
+            traceback.print_tb(sys.exc_info()[2])
+        log.debug("END stacktrace")
 
-        print("ERROR: lexicon lookup test failure")
-        print("Is the lexserver running?")
+        log.error("lexicon lookup test failure")
+        log.error("No running lexserver found at %s" % config.config.get("Services","lexicon"))
         sys.exit()
         
     for word in sent.split(" "):
         try:
             if lex[word] != trans[word]:
-                print("ERROR: lexicon lookup test failure")
-                print("ERROR: word %s, found %s, expected %s" % (word, lex[word], trans[word]))
+                log.error("lexicon lookup test failure")
+                log.error("word %s, found %s, expected %s" % (word, lex[word], trans[word]))
                 sys.exit()
         except KeyError:
-            print("ERROR: lexicon lookup test failure")
-            print("ERROR: word %s not found, expected %s" % (word, trans[word]))
+            log.error("lexicon lookup test failure")
+            log.error("word %s not found, expected %s" % (word, trans[word]))
             sys.exit()
             
                 
-    print("SUCCESS: lexicon lookup test")
+    log.debug("SUCCESS: lexicon lookup test")
 
 
 def test_textproc():
@@ -836,27 +847,27 @@ def test_textproc():
     try:
         res = textproc("sv","default_textprocessor", sent)
     except:
-        print("Failed to do textprocessing.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        log.error("Failed to do textprocessing.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
 
         import traceback
-        print("Stacktrace:")
+        log.debug("Stacktrace:")
         traceback.print_tb(sys.exc_info()[2])
-        print("END stacktrace")
+        log.debug("END stacktrace")
 
-        print("ERROR: textprocessing test failure")
-        print("Is the marytts server running?")
+        log.error("textprocessing test failure")
+        log.error("No running marytts server found at %s" % config.config.get("Services","marytts"))
         sys.exit()
         
         
     #TODO Better with exception than return value
     if type(res) == type("") and res.startswith("ERROR:"):
-        print("Failed to do textprocessing")
-        print(res)
-        print("ERROR: textprocessing test failure")
+        log.error("Failed to do textprocessing")
+        log.error(res)
+        log.error("textprocessing test failure")
         sys.exit()
         
-    print("%s --> %s" % (sent,res))
-    print("SUCCESS: textprocessing test")
+    log.debug("%s --> %s" % (sent,res))
+    log.debug("SUCCESS: textprocessing test")
 
     
 def test_wikispeech():
@@ -868,48 +879,62 @@ def test_wikispeech():
         tmp = textproc(lang,"default_textprocessor", sent)
         res = synthesise(lang,"default_voice",tmp,"markup","json")
     except FileNotFoundError:
-        print("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        log.error("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
 
         import traceback
-        print("Stacktrace:")
+        log.debug("Stacktrace:")
         traceback.print_tb(sys.exc_info()[2])
-        print("END stacktrace")
+        log.debug("END stacktrace")
 
-        print("ERROR: wikispeech test failure")
-        print("Is the audio_tmpdir %s correctly configured?" % config.config.get("Audio settings", "audio_tmpdir"))
+        log.error("wikispeech test failure")
+        log.error("Is the audio_tmpdir %s correctly configured?" % config.config.get("Audio settings", "audio_tmpdir"))
         sys.exit()
         
     except:
-        print("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        log.error("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
 
         import traceback
-        print("Stacktrace:")
+        log.debug("Stacktrace:")
         traceback.print_tb(sys.exc_info()[2])
-        print("END stacktrace")
+        log.debug("END stacktrace")
 
-        print("ERROR: wikispeech test failure")
-        print("Is the marytts server running?")
+        log.error("wikispeech test failure")
+        log.error("No running marytts server found at %s" % config.config.get("Services","marytts"))
         sys.exit()
 
     #TODO Better with exception than return value
     if type(res) == type("") and res.startswith("No voice available"):
-        print("Failed to do wikispeech test")
-        print(res)
-        print("ERROR: wikispeech test failure")
+        log.error("Failed to do wikispeech test")
+        log.error(res)
+        log.error("wikispeech test failure")
         sys.exit()
         
-    print("%s --> %s" % (sent,res))
-    print("SUCCESS: wikispeech test")
+    log.debug("%s --> %s" % (sent,res))
+    log.debug("SUCCESS: wikispeech test")
 
+
+def test_config():
+    log.debug("\nTEST CONFIG\n")
+    log.debug("Testing to make sure that config file contains url to lexicon server:")
+    try:
+        log.debug("Services|lexicon = %s" % config.config.get("Services", "lexicon"))
+        log.debug("ok")
+    except:
+        log.error("Services|lexicon not found in config file\n")
+    log.debug("\nEND TEST CONFIG\n")
+        
+
+    
 
 if __name__ == '__main__':
 
 
 
-    print("RUNNING SELF-TESTS...")
+    log.debug("RUNNING SELF-TESTS...")
+    test_config()
     test_wikilex()
     test_textproc()
     test_wikispeech()
-    print("ALL SELF-TESTS RUN SUCCESSFULLY")
+    log.debug("ALL SELF-TESTS RUN SUCCESSFULLY")
 
     app.run(host='0.0.0.0', port=10000, debug=True, threaded=True)

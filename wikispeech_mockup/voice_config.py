@@ -18,8 +18,8 @@ textprocessor_configs = [
     ,
 
     #This will only work if there is an arabic lexicon available
-    #{"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
-    {"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc")]}
+    {"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
+    #{"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc")]}
 
 ]
 

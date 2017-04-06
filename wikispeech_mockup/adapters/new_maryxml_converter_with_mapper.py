@@ -10,6 +10,7 @@ except:
     from urllib import quote_plus
 
 
+import wikispeech_mockup.log as log
 import wikispeech_mockup.config as config
 host = config.config.get("Services", "lexicon")
 
@@ -550,7 +551,7 @@ def mary2ws(maryxml):
     (lang, maryxml) = dropHeader(maryxml)
     #lang = "sv"
 
-    #print(maryxml)
+    #log.debug(maryxml)
 
     root = ET.fromstring(maryxml.encode('utf-8'))
     #root = ET.fromstring(maryxml)
@@ -602,7 +603,7 @@ def mary2ws(maryxml):
                     phrases.append(phrase)
 
                 else:
-                    print("ERROR: sentence child should not have tag %s" % sentence_child.tag)
+                    log.error("sentence child should not have tag %s" % sentence_child.tag)
                     
 
     return utterance
@@ -610,12 +611,12 @@ def mary2ws(maryxml):
 
 def buildPhrase(phrase_element, lang):
     if phrase_element.tag != "phrase":
-        print("ERROR: wrong type of element: %s\n%s" % (phrase_element.tag, phrase_element))
+        log.error("wrong type of element: %s\n%s" % (phrase_element.tag, phrase_element))
         sys.exit(1)
     tokens = []
     phrase = {"tokens": tokens}
     for phrase_child in phrase_element:
-        #print("phrase_child: %s" % phrase_child.tag)
+        #log.debug("phrase_child: %s" % phrase_child.tag)
                         
         #no 'mtu'
         if phrase_child.tag == "t":                
@@ -658,7 +659,7 @@ def buildPhrase(phrase_element, lang):
             phrase["boundary"] = boundary
                             
         else:
-            print("ERROR: phrase child should not have tag %s" % phrase_child.tag)
+            log.warn("phrase child should not have tag %s" % phrase_child.tag)
     return phrase
 
 
@@ -666,7 +667,7 @@ def buildPhrase(phrase_element, lang):
 
 def buildWord(token_element, lang):
     if token_element.tag != "t":
-        print("ERROR: wrong type of element: %s\n%s" % (token_element.tag, token_element))
+        log.error("wrong type of element: %s\n%s" % (token_element.tag, token_element))
         sys.exit(1)
 
     orth = token_element.text
@@ -726,14 +727,14 @@ def dropHeader(maryxml):
         maryxml = m.group(2)
         if not maryxml.startswith("<maryxml"):
             maryxml = "<maryxml>"+maryxml
-    #print(lang)
-    #print(maryxml)
+    #log.debug(lang)
+    #log.debug(maryxml)
     #sys.exit()
     return (lang,maryxml)
 
 def ws2mary(utterance):
 
-    #print(utterance)
+    #log.debug(utterance)
     
     lang = utterance["lang"]
 
@@ -840,7 +841,7 @@ def ws2mary(utterance):
         #This works in python3
         maryxmlstring = ET.tostring(maryxml, encoding="unicode")
 
-    #print("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
+    #log.debug("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
 
 
     return "%s%s" % (header,maryxmlstring)
@@ -867,24 +868,24 @@ def mapperMapFromMary(trans, lang):
     #    from_symbol_set = "en-us_sampa_mary"
     #    to_symbol_set = "en-us_cmu"
     else:
-        print("No marytts mapper defined for language %s" % lang)
+        log.warn("No marytts mapper defined for language %s" % lang)
         return trans
 
     url = host+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
 
 
     r = requests.get(url)
-    print("MAPPER URL: "+r.url)
+    log.debug("MAPPER URL: "+r.url)
     response = r.text
-    #print("RESPONSE: %s" % response)
+    #log.debug("RESPONSE: %s" % response)
     try:
         response_json = json.loads(response)
-        #print("RESPONSE_JSON: %s" % response_json)
+        #log.debug("RESPONSE_JSON: %s" % response_json)
         new_trans = response_json["Result"]
     except:
-        print("ERROR: unable to map %s, from %s to %s. response was %s" % (trans, from_symbol_set, to_symbol_set, response))
+        log.error("unable to map %s, from %s to %s. response was %s" % (trans, from_symbol_set, to_symbol_set, response))
         raise
-    #print("NEW TRANS: %s" % new_trans)
+    #log.debug("NEW TRANS: %s" % new_trans)
     return new_trans
 
 def mapperMapToMary(trans, lang):
@@ -901,7 +902,7 @@ def mapperMapToMary(trans, lang):
     #    to_symbol_set = "en-us_sampa_mary"
     #    from_symbol_set = "en-us_cmu"
     else:
-        print("No marytts mapper defined for language %s" % lang)
+        log.warn("No marytts mapper defined for language %s" % lang)
         return trans
 
     
@@ -910,14 +911,14 @@ def mapperMapToMary(trans, lang):
     url = host+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
     
     r = requests.get(url)
-    print("MAPPER URL: %s" % r.url)
+    log.debug("MAPPER URL: %s" % r.url)
     response = r.text
-    print("MAPPER RESPONSE: %s" % response)
+    log.debug("MAPPER RESPONSE: %s" % response)
     try:
         response_json = json.loads(response)
     except json.JSONDecodeError:
-        print("JSONDecodeError:")
-        print("RESPONSE: %s" % response)
+        log.error("JSONDecodeError:")
+        log.error("RESPONSE: %s" % response)
         raise
         
     new_trans = response_json["Result"]
@@ -928,7 +929,7 @@ def mapperMapToMary(trans, lang):
         new_trans = re.sub("2(:? -) r? ",r"9\1 r", new_trans)
 
 
-    print("NEW TRANS: %s" % new_trans)
+    log.debug("NEW TRANS: %s" % new_trans)
 
     
     return new_trans
@@ -942,41 +943,41 @@ class TestM2Ws(unittest.TestCase):
 
     def test1(self):
         u = mary2ws(m_test1)
-        #print(u)
-        #print(w_test1)
+        #log.debug(u)
+        #log.debug(w_test1)
         self.assertEqual(u, w_test1)
 
     def test2(self):
         u = mary2ws(m_test2)
-        #print(u)
-        #print(w_test2)
+        #log.debug(u)
+        #log.debug(w_test2)
         self.assertEqual(u, w_test2)
 
     def test3(self):
         u = mary2ws(m_test3)
-        #print(u)
-        #print(w_test3)
+        #log.debug(u)
+        #log.debug(w_test3)
         self.assertEqual(u, w_test3)
         
     def test4(self):
         u = mary2ws(m_test4)
-        #print("")
-        #print(u)
-        #print(w_test4)
+        #log.debug("")
+        #log.debug(u)
+        #log.debug(w_test4)
         self.assertEqual(u, w_test4)
 
     def test5(self):
         u = mary2ws(m_test5)
-        #print("")
-        #print(u)
-        #print(w_test5)
+        #log.debug("")
+        #log.debug(u)
+        #log.debug(w_test5)
         self.assertEqual(u, w_test5)
 
     def test6(self):
         u = mary2ws(m_test6)
-        #print("")
-        #print(u)
-        #print(w_test6)
+        #log.debug("")
+        #log.debug(u)
+        #log.debug(w_test6)
         self.assertEqual(u, w_test6)
 
 class TestWs2M(unittest.TestCase):
@@ -987,9 +988,9 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test1)
 
-        #print()
-        #print(m1)
-        #print(m2)
+        #log.debug()
+        #log.debug(m1)
+        #log.debug(m2)
         self.assertEqual(m1, m2)
         
     def test2(self):
@@ -998,9 +999,9 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test2)
 
-        #print("")
-        #print(m1)
-        #print(m2)
+        #log.debug("")
+        #log.debug(m1)
+        #log.debug(m2)
         self.assertEqual(m1, m2)
         
     def test3(self):
@@ -1009,9 +1010,9 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test3)
 
-        #print("")
-        #print(m1)
-        #print(m2)
+        #log.debug("")
+        #log.debug(m1)
+        #log.debug(m2)
         self.assertEqual(m1, m2)
         
     def test4(self):
@@ -1020,9 +1021,9 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test4)
 
-        #print("")
-        #print(m1)
-        #print(m2)
+        #log.debug("")
+        #log.debug(m1)
+        #log.debug(m2)
         self.assertEqual(m1, m2)
         
     def test5(self):
@@ -1031,9 +1032,9 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test5)
 
-        #print("")
-        #print(m1)
-        #print(m2)
+        #log.debug("")
+        #log.debug(m1)
+        #log.debug(m2)
         self.assertEqual(m1, m2)
         
     def test6(self):
@@ -1042,9 +1043,9 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test6)
 
-        #print("")
-        #print(m1)
-        #print(m2)
+        #log.debug("")
+        #log.debug(m1)
+        #log.debug(m2)
         self.assertEqual(m1, m2)
         
 
