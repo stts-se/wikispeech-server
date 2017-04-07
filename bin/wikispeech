@@ -7,7 +7,7 @@ import wikispeech_mockup.wikispeech as ws
 
 
 
-ws.log.log_level = "info" #debug, info, warning, error
+ws.log.log_level = "error" #debug, info, warning, error
 
 ws.log.info("RUNNING SELF-TESTS...")
 
