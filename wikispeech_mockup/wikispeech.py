@@ -260,7 +260,10 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
     log.debug("TEXTPROCESSOR: %s" % textprocessor)
 
-    for (module_name,component_name) in textprocessor["components"]:
+    for component in textprocessor["components"]:
+
+        module_name = component["module"]
+        component_name = component["call"]
 
         log.debug("MODULE: %s" % module_name)
         log.debug("COMPONENT: %s" % component_name)
@@ -283,7 +286,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
             try:
                 utt = process(utt)
             except:
-                utt = process(lang, utt)
+                utt = process(utt, lang, component)
         log.debug(str(utt))
 
     return utt
@@ -803,6 +806,7 @@ def getSynthesisOptions():
 
 
 def test_wikilex():
+    lexicon = "sv-se.nst"
     sent = "apa hund färöarna"
     trans = {}
     trans["apa"] = '"" A: . p a'
@@ -810,7 +814,7 @@ def test_wikilex():
     trans["färöarna"] = '"" f {: . % r 2: . a . rn a'
 
     try:
-        lex = wikilex.getLookupBySentence("sv", sent)
+        lex = wikilex.getLookupBySentence(sent, lexicon)
         log.debug("LEX: %s" % lex)
     except:
         log.error("Failed to do lexicon lookup.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))

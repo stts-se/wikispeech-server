@@ -1,25 +1,66 @@
 
 
 textprocessor_configs = [
-    #{"name":"wikitextproc_sv", "lang":"sv", "components":[("tokeniser","tokenise"), ("adapters.marytts_adapter","marytts_preproc_tokenised"), ("wikilex","lexLookup"), ("adapters.marytts_adapter","marytts_postproc")]}
-    #,
-    #{"name":"wikitextproc_sv", "lang":"sv", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup"), ("adapters.marytts_adapter","marytts_postproc")]}
-    #,
-    {"name":"wikitextproc_sv", "lang":"sv", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
+    {"name":"wikitextproc_sv", "lang":"sv",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc"
+         },
+         {
+             "module":"wikilex",
+             "call":"lexLookup",
+             "lexicon":"sv-se.nst"
+         }
+     ]
+    }
     ,
-    #{"name":"wikitextproc_nb", "lang":"nb", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("adapters.marytts_adapter", "marytts_postproc")]}
-    #,
-    {"name":"wikitextproc_nb", "lang":"nb", "components":[("adapters.marytts_adapter", "marytts_preproc")]}
+    
+    {"name":"wikitextproc_nb", "lang":"nb",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc"
+#         },
+#         {
+#             "module":"wikilex",
+#             "call":"lexLookup",
+#             "lexicon":"no-nb.nst"
+         }
+     ]
+    }
     ,
 
-    #{"name":"wikitextproc_en", "lang":"en", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("adapters.marytts_adapter", "marytts_postproc")]}
-    #,
-    {"name":"wikitextproc_en", "lang":"en", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
+
+    {"name":"wikitextproc_en", "lang":"en",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc"
+         },
+         {
+             "module":"wikilex",
+             "call":"lexLookup",
+             "lexicon":"en-us.cmu"
+         }
+     ]
+    }
     ,
 
-    #This will only work if there is an arabic lexicon available
-    {"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc"), ("wikilex","lexLookup")]}
-    #{"name":"wikitextproc_ar", "lang":"ar", "components":[("adapters.marytts_adapter", "marytts_preproc")]}
+
+    {"name":"wikitextproc_ar", "lang":"ar",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc"
+         },
+         {
+             "module":"wikilex",
+             "call":"lexLookup",
+             "lexicon":"ar-test"
+         }
+     ]
+    }
 
 ]
 
