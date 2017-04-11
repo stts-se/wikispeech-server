@@ -5,7 +5,11 @@ textprocessor_configs = [
      "components":[
          {
              "module":"adapters.marytts_adapter",
-             "call":"marytts_preproc"
+             "call":"marytts_preproc",
+             "mapper": {
+                 "from":"sv-se_ws-sampa",
+                 "to":"sv-se_sampa_mary"
+             },
          },
          {
              "module":"wikilex",
@@ -52,7 +56,11 @@ textprocessor_configs = [
      "components":[
          {
              "module":"adapters.marytts_adapter",
-             "call":"marytts_preproc"
+             "call":"marytts_preproc",
+             "mapper": {
+                 "from":"ar_ws-sampa",
+                 "to":"ar_sampa_mary"
+             },
          },
          {
              "module":"wikilex",
@@ -66,7 +74,17 @@ textprocessor_configs = [
 
 
 voices = [
-    {"lang":"sv", "name":"stts_sv_nst-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}}
+    {
+        "lang":"sv",
+        "name":"stts_sv_nst-hsmm",
+        "engine":"marytts",
+        "adapter":"adapters.marytts_adapter",
+        "mapper": {
+            "from":"sv-se_ws-sampa",
+            "to":"sv-se_sampa_mary"
+            },
+        "server":{"url":'https://demo.morf.se/marytts'}
+    }
     ,
     #TODO
     #{"lang":"sv", "name":"espeak_mbrola_sv1", "engine":"espeak", "adapter":"adapters.espeak_adapter", "espeak_mbrola_voice":"mb-sw1", "espeak_voice":"mb-sw1", "program":{"command":'espeak -v mb-sw1'}}
@@ -88,5 +106,15 @@ voices = [
     {"lang":"en", "name":"cmu-slt-flite", "engine":"flite", "adapter":"adapters.flite_adapter", "flite_voice":"slt"}
     ,
 
-    {"lang":"ar", "name":"ar-nah-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "server":{"url":'https://demo.morf.se/marytts'}}    
+    {
+        "lang":"ar",
+        "name":"ar-nah-hsmm",
+        "engine":"marytts",
+        "adapter":"adapters.marytts_adapter",
+        "mapper": {
+            "from":"ar_ws-sampa",
+            "to":"ar_sampa_mary"
+        },
+        "server":{"url":'https://demo.morf.se/marytts'}
+    }    
 ]

@@ -8,7 +8,7 @@ import wikispeech_mockup.config as config
 
 
 
-ws.log.log_level = "info" #debug, info, warning, error
+ws.log.log_level = "debug" #debug, info, warning, error
 
 try:
     run_tests = config.config.get("Tests","run_startup_tests")
@@ -24,8 +24,8 @@ if run_tests == "True":
     ws.test_wikispeech()
 
     #These tests are run directly on import. TODO change to normal method invocation 
-    import wikispeech_mockup.test_api
-    import wikispeech_mockup.test_voice_configs
+    #import wikispeech_mockup.test_api
+    #import wikispeech_mockup.test_voice_configs
     ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
     

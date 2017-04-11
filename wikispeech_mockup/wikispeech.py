@@ -190,6 +190,14 @@ def list_tp_configs_by_language(lang):
             l.append(tp_config)
     return l
 
+def get_tp_config_by_name(name):
+    for tp_config in textprocessor_configs:
+        log.debug("get_tp_config_by_name: %s" % tp_config)
+        log.debug("name: %s, wanted: %s" % (tp_config["name"], name))
+        if tp_config["name"] == name:
+            log.debug("RETURNING: %s" % tp_config)
+            return tp_config
+    return None
 
 
 
@@ -281,7 +289,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         if component_name == "tokenise":
             utt = process(text)
         elif component_name == "marytts_preproc":
-            utt = process(lang,text, input_type=input_type)
+            utt = process(text, lang, component, input_type=input_type)
         else:
             try:
                 utt = process(utt)

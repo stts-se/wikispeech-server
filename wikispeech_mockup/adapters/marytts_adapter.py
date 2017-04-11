@@ -1,17 +1,11 @@
-import requests, json
-#import tokeniser
-#from adapters.maryxml_converter import *
-
-import wikispeech_mockup.log as log
-from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import *
-
-#try:
-#    from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import *
-#except:
-#    #If running as __main__
-#    from new_maryxml_converter_with_mapper import *
-    
+import requests, json, re
 import xml.etree.ElementTree as ET
+
+import wikispeech_mockup.config as config
+import wikispeech_mockup.log as log
+from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import mapperMapToMary, maryxml2utt, utt2maryxml
+import wikispeech_mockup.wikispeech as ws
+
 
 try:
     #Python 3
@@ -21,18 +15,14 @@ except:
     from urllib import quote_plus
 
 
-#BUGFIX TODO
-#configure elsewhere
-#url = 'https://demo.morf.se/marytts/process'
-#url = "http://morf.se:59125/process"
-#url = "http://localhost:59125/process"
 
-import wikispeech_mockup.config as config
+
 url = config.config.get("Services", "marytts")
 
 
 
-def marytts_preproc(lang, text, input_type="text"):
+def marytts_preproc(text, lang, tp_config, input_type="text"):
+
     if lang == "en":
         locale = "en_US"
     elif lang == "nb":
@@ -46,7 +36,7 @@ def marytts_preproc(lang, text, input_type="text"):
         mary_input_type = "TEXT"
 
     if input_type == "ssml":
-        text = mapSsmlTranscriptionsToMary(text, lang)
+        text = mapSsmlTranscriptionsToMary(text, lang, tp_config)
 
     payload = {
         "INPUT_TYPE": mary_input_type,
@@ -62,7 +52,7 @@ def marytts_preproc(lang, text, input_type="text"):
     
     xml = r.text
     #log.debug "REPLY:", xml
-    (marylang, utt) = maryxml2utt(xml)
+    (marylang, utt) = maryxml2utt(xml, tp_config)
 
     return utt
 
@@ -160,13 +150,9 @@ def synthesise_old(lang,voice,input):
         locale = lang
 
     #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
-    maryxml = utt2maryxml(xmllang, input)
+    maryxml = utt2maryxml(xmllang, input, voice)
     log.debug("MARYXML: %s" % maryxml)
      
-    #BUGFIX TODO
-    #url = 'https://demo.morf.se/marytts/process'
-    #url = "%s/%s" % (voice["server"]["url"], "process")
-    #url = "http://morf.se:59125/process"
 
     params = {
         "INPUT_TYPE":"INTONATION",
@@ -261,14 +247,14 @@ def synthesise_json(lang,voice,input):
 
 
 
-def mapSsmlTranscriptionsToMary(ssml, lang):
+def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
     phoneme_elements = re.findall("(<phoneme [^>]+>)", ssml)
     for element in phoneme_elements:
         #log.debug(element)
         trans = re.findall("ph=\"(.+)\">", element)[0]
-        #log.debug(trans)
-        mary_trans = mapperMapToMary(trans.replace("&quot;","\""), lang)
-        #log.debug(mary_trans)
+        log.debug("ws_trans: %s" % trans)
+        mary_trans = mapperMapToMary(trans.replace("&quot;","\""), lang, tp_config)
+        log.debug("mary_trans: %s" % mary_trans)
         ssml = re.sub(trans, mary_trans.replace("\"", "&quot;"), ssml)
     #log.debug("MAPPED SSML: %s" % ssml)
     return ssml
@@ -493,7 +479,11 @@ class TestMapSsml(unittest.TestCase):
     </s>
 </p>
 """
-        mapped = mapSsmlTranscriptionsToMary(ws_ssml, "sv")
+
+        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        log.debug("tp_config: %s" % tp_config)
+        component_config = tp_config["components"][0]
+        mapped = mapSsmlTranscriptionsToMary(ws_ssml, "sv", component_config)
         self.assertEqual(mapped, mary_ssml)
 
 
@@ -504,13 +494,17 @@ class TestPreproc(unittest.TestCase):
         #expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'tone': 'L-L%', 'breakindex': '5'}, 'tokens': [{'words': [{'pos': 'content', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'g2p_method': 'lexicon'}], 'token_orth': 'Ett'}, {'words': [{'pos': 'content', 'trans': '"" 2: . r a', 'orth': 'öra', 'accent': '!H*', 'g2p_method': 'lexicon'}], 'token_orth': 'öra'}, {'words': [{'pos': '$PUNCT', 'orth': '.'}], 'token_orth': '.'}]}]}]}], 'lang': 'sv'}
         expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': 'Ett', 'words': [{'g2p_method': 'lexicon', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'pos': 'content'}]}, {'token_orth': 'öra', 'words': [{'g2p_method': 'lexicon', 'trans': '"" 9: . r a', 'orth': 'öra', 'accent': '!H*', 'pos': 'content'}]}, {'token_orth': '.', 'words': [{'orth': '.', 'pos': '$PUNCT'}]}], 'boundary': {'tone': 'L-L%', 'breakindex': '5'}}]}]}]}
 
-        result = marytts_preproc("sv", input_text)
+        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        log.debug("tp_config: %s" % tp_config)
+        component_config = tp_config["components"][0]
+        result = marytts_preproc(input_text, "sv", component_config)
         #print(result)
         self.assertEqual(expected, result)
 
         
 
 if __name__ == "__main__":
+    ws.log.log_level = "info" #debug, info, warning, error
     unittest.main()
 
 
