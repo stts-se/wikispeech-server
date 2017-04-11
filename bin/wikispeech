@@ -3,25 +3,28 @@
 import sys
 sys.path.insert(0,".")
 import wikispeech_mockup.wikispeech as ws
+import wikispeech_mockup.config as config
 
 
 
 
-ws.log.log_level = "error" #debug, info, warning, error
-
-ws.log.info("RUNNING SELF-TESTS...")
-
-ws.test_config()
-ws.test_wikilex()
-ws.test_textproc()
-ws.test_wikispeech()
-
-import wikispeech_mockup.test_api
-import wikispeech_mockup.test_voice_configs
+ws.log.log_level = "info" #debug, info, warning, error
 
 
-ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
+if config.config.get("Tests","run_startup_tests") == "True":
+    ws.log.info("RUNNING SELF-TESTS...")
 
+    ws.test_config()
+    ws.test_wikilex()
+    ws.test_textproc()
+    ws.test_wikispeech()
+
+    #These tests are run directly on import. TODO change to normal method invocation 
+    import wikispeech_mockup.test_api
+    import wikispeech_mockup.test_voice_configs
+    ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
+
+    
 ws.app.run(host='0.0.0.0', port=10000, debug=True, threaded=True)
 
 
