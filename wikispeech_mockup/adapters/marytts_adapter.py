@@ -355,7 +355,7 @@ def maryxml2tokensET(maryxmlstring):
                         #The original orthography
                         #TODO return both
                         orth = child.attrib["orig"]
-                        log.debug("ORTH:", orth)
+                        log.debug("ORTH: %s" % orth)
                         tokendur = 0
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
                             #log.debug ph.attrib
