@@ -11,7 +11,7 @@ import wikispeech_mockup.config as config
 ws.log.log_level = "info" #debug, info, warning, error
 
 try:
-    run_tests = config.config.get("Tests","run_startup_testsXX")
+    run_tests = config.config.get("Tests","run_startup_tests")
 except:
     run_tests = "False"
     
