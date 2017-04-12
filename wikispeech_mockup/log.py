@@ -1,22 +1,20 @@
+import sys
+
 log_level = "error"
 
 def log(level, msg):
-    if level == "debug":
-        l = 0
-    if level == "info":
-        l = 1
-    if level == "warning":
-        l = 2
-    if level == "error":
-        l = 3
-    if log_level == "debug":
-        ll = 0
-    if log_level == "info":
-        ll = 1
-    if log_level == "warning":
-        ll = 2
-    if log_level == "error":
-        ll = 3
+
+    levels = ["debug", "info", "warning", "error", "fatal"]
+    if level in levels:
+        l = levels.index(level)
+    else:
+        raise ValueError("Level %s not in %s" % (level, levels))
+
+    if log_level in levels:
+        ll = levels.index(log_level)
+    else:
+        raise ValueError("Level %s not in %s" % (log_level, levels))
+
         
     if l >= ll:
         print(msg)
@@ -32,3 +30,7 @@ def warn(msg):
 
 def error(msg):
     log("error", "ERROR: "+str(msg))
+
+def fatal(msg):
+    log("fatal", "FATAL: "+str(msg))
+    sys.exit(1)
