@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 
 import wikispeech_mockup.config as config
 import wikispeech_mockup.log as log
-#from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import mapperMapToMary, maryxml2utt, utt2maryxml
 import wikispeech_mockup.wikispeech as ws
 
 
