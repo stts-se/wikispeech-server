@@ -7,7 +7,7 @@ from flask import Flask, request, json, Response, make_response, render_template
 from flask_cors import CORS
 
 
-from wikispeech_mockup.voice_config import textprocessor_configs, voices
+from wikispeech_mockup.voice_config import textprocessor_configs, voice_configs
 #HB moved into this file: from wikispeech_mockup.options import *
 import wikispeech_mockup.wikilex as wikilex
 import wikispeech_mockup.config as config
@@ -29,6 +29,31 @@ if retval != 0:
     sys.exit(1)
 else:
     log.debug("opusenc found.\n\nEND OPUSENC\n")
+
+
+###############
+#
+# Load textprocessors and voices
+#
+###############
+
+
+def loadTextprocessor(tp_config):
+    pass
+
+def loadVoice(voice_config):
+    pass
+
+
+
+textprocessors = []
+for tp_config in textprocessor_configs:
+    loadTextprocessor(tp_config)
+voices = []
+for voice_config in voice_configs:
+    loadVoice(voice_config)
+
+
 
 
     
@@ -323,7 +348,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
 @app.route('/wikispeech/synthesis/voices', methods=["GET"])
 def list_voices():
-    json_data = json.dumps(voices)
+    json_data = json.dumps(voice_configs)
     return Response(json_data, mimetype='application/json')
 
 @app.route('/wikispeech/synthesis/voices/<lang>', methods=["GET"])
@@ -333,14 +358,14 @@ def return_voices_by_language(lang):
 
 def list_voices_by_language(lang):
     v = []
-    for voice in voices:
+    for voice in voice_configs:
         if voice["lang"] == lang:
             v.append(voice)
     return v
 
 def synthesisSupportedLanguages():
     langs = []
-    for voice in voices:
+    for voice in voice_configs:
         if voice["lang"] not in langs:
             langs.append(voice["lang"])
     return langs
