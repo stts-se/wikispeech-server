@@ -1,9 +1,9 @@
-import requests, json, re
+import sys, requests, json, re
 import xml.etree.ElementTree as ET
 
 import wikispeech_mockup.config as config
 import wikispeech_mockup.log as log
-from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import mapperMapToMary, maryxml2utt, utt2maryxml
+#from wikispeech_mockup.adapters.new_maryxml_converter_with_mapper import mapperMapToMary, maryxml2utt, utt2maryxml
 import wikispeech_mockup.wikispeech as ws
 
 
@@ -17,7 +17,8 @@ except:
 
 
 
-url = config.config.get("Services", "marytts")
+marytts_url = config.config.get("Services", "marytts")
+mapper_url = config.config.get("Services", "lexicon")
 
 
 
@@ -47,7 +48,7 @@ def marytts_preproc(text, lang, tp_config, input_type="text"):
         "INPUT_TEXT": text
     }
     #Using output_type PHONEMES/INTONATION/ALLOPHONES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
-    r = requests.get(url, params=payload)
+    r = requests.get(marytts_url, params=payload)
     log.debug("CALLING MARYTTS: %s" % r.url)
     
     xml = r.text
@@ -74,7 +75,7 @@ def marytts_preproc_tokenised(lang, utt):
         "INPUT_TEXT":maryxml
     }
     #Using output_type PHONEMES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
-    r = requests.get(url, params=payload)
+    r = requests.get(marytts_url, params=payload)
     log.debug("CALLING MARYTTS: %s" % r.url)
     
     xml = r.text
@@ -106,7 +107,7 @@ def marytts_postproc(lang, utt):
         "LOCALE":locale,
         "INPUT_TEXT":xml
     }
-    r = requests.post(url, params=payload)
+    r = requests.post(marytts_url, params=payload)
     log.debug("CALLING MARYTTS: %s" % r.url)
 
     #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
@@ -162,7 +163,7 @@ def synthesise_old(lang,voice,input):
         "VOICE":voice["name"],
         "INPUT_TEXT":maryxml
     }
-    r = requests.post(url,params=params)
+    r = requests.post(marytts_url,params=params)
 
     log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
 
@@ -190,7 +191,7 @@ def synthesise_old(lang,voice,input):
     }
     #actually synthesising it here so should be no problem saving the audio and returning link to that rather than the marytts synthesising url
     #As it is it will be synthesised again when the audio tag is put on page
-    audio_r = requests.get(url,params=params)
+    audio_r = requests.get(marytts_url,params=params)
     audio_url = audio_r.url
 
     #log.debug("runMarytts AUDIO_URL: %s" % audio_url)
@@ -227,7 +228,7 @@ def synthesise_json(lang,voice,input):
               "LOCALE":locale,
               "VOICE":voice["name"],
               "INPUT_TEXT":maryxml}
-    r = requests.post(url,params=params)
+    r = requests.post(marytts_url,params=params)
 
     log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
 
@@ -434,77 +435,399 @@ def maryxml2uttET(maryxmlstring):
     return (utt, lang)
 
 
-import unittest
+##############
+# moved from new_maryxml_converter_with_mapper.py
 
-class TestMapSsml(unittest.TestCase):
+def maryxml2utt(xml, voice):    
+    utt =  mary2ws(xml, voice)
+    lang = utt["lang"]
+    return (lang, utt)
 
-    def test1(self):
-        ws_ssml = """
-<p>
-    <s>
-    Fartyget byggdes <br>
-    <sub alias="nittonhundra-femtionio">1959</sub> 
-    i 
-    <phoneme alphabet="x-sampa" ph="\" p O . rt u0 . g a l">Portugal</phoneme> 
-    på 
-    <phoneme alphabet="x-sampa" ph="E s . t a . \" l E j . r O s">Estaleiros</phoneme> 
-    <phoneme alphabet="x-sampa" ph="n a . \" v a j s">Navais</phoneme> 
-    <phoneme alphabet="x-sampa" ph="\" d E">de</phoneme> 
-    <phoneme alphabet="x-sampa" ph="v I . \" a . n a">Viana</phoneme> 
-    <phoneme alphabet="x-sampa" ph="\" d O">do</phoneme> 
-    <phoneme alphabet="x-sampa" ph="k a s . \" t E . l O">Castelo</phoneme>
-    , och levererades till Färöarna under namnet 
-    <phoneme alphabet="x-sampa" ph="\" v A: k . b I N . k u0 r">Vágbingur</phoneme>
-    .
-    </s>
-</p>
-"""
-        mary_ssml = """
-<p>
-    <s>
-    Fartyget byggdes <br>
-    <sub alias="nittonhundra-femtionio">1959</sub> 
-    i 
-    <phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
-    på 
-    <phoneme alphabet="x-sampa" ph="E s - t a - ' l E j - r O s">Estaleiros</phoneme> 
-    <phoneme alphabet="x-sampa" ph="n a - ' v a j s">Navais</phoneme> 
-    <phoneme alphabet="x-sampa" ph="' d E">de</phoneme> 
-    <phoneme alphabet="x-sampa" ph="v I - ' a - n a">Viana</phoneme> 
-    <phoneme alphabet="x-sampa" ph="' d O">do</phoneme> 
-    <phoneme alphabet="x-sampa" ph="k a s - ' t E - l O">Castelo</phoneme>
-    , och levererades till Färöarna under namnet 
-    <phoneme alphabet="x-sampa" ph="' v A: k - b I N - k u0 r">Vágbingur</phoneme>
-    .
-    </s>
-</p>
-"""
+def utt2maryxml(lang, utt, voice):
+    xml = ws2mary(utt, voice)
+    return xml
 
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
-        log.debug("tp_config: %s" % tp_config)
-        component_config = tp_config["components"][0]
-        mapped = mapSsmlTranscriptionsToMary(ws_ssml, "sv", component_config)
-        self.assertEqual(mapped, mary_ssml)
+#mary2ws: 'prosody' and 'phrase' are combined into 'phrase'. ws2mary: 'phrase' is split into 'prosody' and 'phrase'
+#mary2ws: 'mtu' and 'token' are combined into 'token', and 'token' is also copied to 'word'
+def mary2ws(maryxml, voice):
+    (lang, maryxml) = dropHeader(maryxml)
+    #lang = "sv"
+
+    #log.debug(maryxml)
+
+    root = ET.fromstring(maryxml.encode('utf-8'))
+    #root = ET.fromstring(maryxml)
+
+    paragraphs = []
+    utterance = {
+        "lang": lang,
+        "paragraphs": paragraphs
+    }
+
+    paragraph_elements = root.findall(".//p")
+    for paragraph_element in paragraph_elements:
+
+        sentences = []
+        paragraphs.append({"sentences": sentences})
+        
+        sentence_elements = paragraph_element.findall("s")
+        for sentence_element in sentence_elements:
+
+            phrases = []
+            sentence = {"phrases": phrases}
+            sentences.append(sentence)
+
+            for sentence_child in sentence_element:
+
+                if sentence_child.tag == "phrase":
+                    phrase_element = sentence_child
+                    phrase = buildPhrase(phrase_element, lang, voice)
+                    phrases.append(phrase)
+                elif sentence_child.tag == "prosody":
+                    prosody_element = sentence_child
+                    #can 'prosody' only contain exactly one 'phrase'? 
+                    phrase_element = prosody_element[0]
+                    phrase = buildPhrase(phrase_element, lang, voice)
+
+                    phrase = addIfExists(phrase, prosody_element, "pitch", prefix="prosody_")
+                    phrase = addIfExists(phrase, prosody_element, "range", prefix="prosody_")
+
+                    phrases.append(phrase)
+                elif sentence_child.tag == "t":
+                    #This is a special case that happens (sometimes..) with single-word sentences
+                    #doesn't work, produces error in synthesis
+                    #TODO look at this again
+                    #It only happens with the word "Hon." ...
+                    phrase_element = ET.Element("phrase")
+                    phrase_element.append(sentence_child)
+                    phrase = buildPhrase(phrase_element, lang, voice)
+
+                    phrases.append(phrase)
+
+                else:
+                    log.error("sentence child should not have tag %s" % sentence_child.tag)
+                    
+
+    return utterance
 
 
-class TestPreproc(unittest.TestCase):
+def buildPhrase(phrase_element, lang, voice):
+    if phrase_element.tag != "phrase":
+        log.error("wrong type of element: %s\n%s" % (phrase_element.tag, phrase_element))
+        sys.exit(1)
+    tokens = []
+    phrase = {"tokens": tokens}
+    for phrase_child in phrase_element:
+        #log.debug("phrase_child: %s" % phrase_child.tag)
+                        
+        #no 'mtu'
+        if phrase_child.tag == "t":                
+            token_element = phrase_child
+            words = []
+            token = {
+                "words": words
+            }
+            tokens.append(token)
+            
+            orth = token_element.text
+            token["token_orth"] = orth
+            
+            word = buildWord(token_element, lang, voice)
+            words.append(word)
+            
+            #END no 'mtu'
+            #'mtu'
+        elif phrase_child.tag == "mtu":                
+            mtu_element = phrase_child
+            words = []
+            token = {
+                "mtu": True,
+                "words": words
+            }
+            tokens.append(token)
+            
+            token_orth = mtu_element.attrib["orig"]
+            token["token_orth"] = token_orth
+            
+            token_elements = mtu_element.findall("t")
+            for token_element in token_elements:
+                word = buildWord(token_element, lang, voice)
+                words.append(word)
+                #END  'mtu'
+        elif phrase_child.tag == "boundary":
+            boundary = {}
+            boundary = addIfExists(boundary, phrase_child, "breakindex")
+            boundary = addIfExists(boundary, phrase_child, "tone")
+            phrase["boundary"] = boundary
+                            
+        else:
+            log.warn("phrase child should not have tag %s" % phrase_child.tag)
+    return phrase
 
-    def test1(self):
-        input_text = "Ett öra."
-        #expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'tone': 'L-L%', 'breakindex': '5'}, 'tokens': [{'words': [{'pos': 'content', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'g2p_method': 'lexicon'}], 'token_orth': 'Ett'}, {'words': [{'pos': 'content', 'trans': '"" 2: . r a', 'orth': 'öra', 'accent': '!H*', 'g2p_method': 'lexicon'}], 'token_orth': 'öra'}, {'words': [{'pos': '$PUNCT', 'orth': '.'}], 'token_orth': '.'}]}]}]}], 'lang': 'sv'}
-        expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': 'Ett', 'words': [{'g2p_method': 'lexicon', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'pos': 'content'}]}, {'token_orth': 'öra', 'words': [{'g2p_method': 'lexicon', 'trans': '"" 9: . r a', 'orth': 'öra', 'accent': '!H*', 'pos': 'content'}]}, {'token_orth': '.', 'words': [{'orth': '.', 'pos': '$PUNCT'}]}], 'boundary': {'tone': 'L-L%', 'breakindex': '5'}}]}]}]}
 
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
-        log.debug("tp_config: %s" % tp_config)
-        component_config = tp_config["components"][0]
-        result = marytts_preproc(input_text, "sv", component_config)
-        #print(result)
-        self.assertEqual(expected, result)
+
+
+def buildWord(token_element, lang, voice):
+    if token_element.tag != "t":
+        log.error("wrong type of element: %s\n%s" % (token_element.tag, token_element))
+        sys.exit(1)
+
+    orth = token_element.text
+    word = {
+        "orth": orth
+    }
+    word = addIfExists(word, token_element, "accent")
+    #g2p_method can be rules, lexicon, or not there if there is sampa in input
+    word = addIfExists(word, token_element, "g2p_method")
+    word = addIfExists(word, token_element, "pos")
+    #word = addIfExists(word, token_element, "ph")
+    if "ph" in token_element.attrib:
+        mary_trans = token_element.attrib.get("ph")
+        ws_trans = mapperMapFromMary(mary_trans, lang, voice)
+        word["trans"] = ws_trans
+
+    #In the new version with output_type INTONATION from marytts the following is no longer used
+    syllable_elements = token_element.findall("syllable")
+
+    if len(syllable_elements) > 0:
+        syllables = []
+        word["syllables"] = syllables
+
+    
+    for syllable_element in syllable_elements:
+        phonemes = []
+        syllable = {
+            "phonemes": phonemes
+        }
+        syllable = addIfExists(syllable, syllable_element, "accent")
+        syllable = addIfExists(syllable, syllable_element, "ph")
+        syllable = addIfExists(syllable, syllable_element, "stress")
 
         
+        syllables.append(syllable)
+        
+        phoneme_elements = syllable_element.findall("ph")
+        for phoneme_element in phoneme_elements:
+            symbol = phoneme_element.attrib["p"]
+            phonemes.append({"symbol": symbol})
 
-if __name__ == "__main__":
-    ws.log.log_level = "info" #debug, info, warning, error
-    unittest.main()
+    return word
+
+def addIfExists(addTo, element, attribute, prefix=""):
+    if attribute in element.attrib:
+        addTo[prefix+attribute] = element.attrib.get(attribute)
+    return addTo
+
+
+
+def dropHeader(maryxml):
+    lang = None
+    maryxml = maryxml.replace("\n","")
+    m = re.match("<\?xml .+xml:lang=\"([^\"]*)\"[^>]*>(.*)$", maryxml)
+    if m:
+        lang = m.group(1)
+        maryxml = m.group(2)
+        if not maryxml.startswith("<maryxml"):
+            maryxml = "<maryxml>"+maryxml
+    #log.debug(lang)
+    #log.debug(maryxml)
+    #sys.exit()
+    return (lang,maryxml)
+
+def ws2mary(utterance, voice):
+
+    #log.debug(utterance)
+    
+    lang = utterance["lang"]
+
+    header = '<?xml version="1.0" encoding="UTF-8"?>'
+
+    #<maryxml xmlns="http://mary.dfki.de/2002/MaryXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5" xml:lang="%s">' % lang
+
+    maryxml = ET.Element("maryxml")
+
+    maryxml.attrib["xmlns"] = "http://mary.dfki.de/2002/MaryXML"
+    maryxml.attrib["xmlns:xsi"] = "http://www.w3.org/2001/XMLSchema-instance"
+    maryxml.attrib["version"] = "0.5"
+    maryxml.attrib["xml:lang"] = lang
+
+    paragraphs = utterance["paragraphs"]
+    for paragraph in paragraphs:
+        paragraph_element = ET.Element("p")
+        maryxml.append(paragraph_element)
+        sentences = paragraph["sentences"]
+        for sentence in sentences:
+            sentence_element = ET.Element("s")
+            paragraph_element.append(sentence_element)
+            phrases = sentence["phrases"]
+            for phrase in phrases:
+                phrase_element = ET.Element("phrase")
+
+                #add prosody element if necessary
+                if "prosody_range" in phrase or "prosody_pitch" in phrase:
+                    prosody_element = ET.Element("prosody")
+                    prosody_element = addToElementIfExists(prosody_element, phrase, "prosody_range", drop_prefix="prosody_")
+                    prosody_element = addToElementIfExists(prosody_element, phrase, "prosody_pitch", drop_prefix="prosody_")
+                    sentence_element.append(prosody_element)
+                    prosody_element.append(phrase_element)
+                else:                    
+                    sentence_element.append(phrase_element)
+
+                tokens = phrase["tokens"]
+                for token in tokens:
+
+                    words = token["words"]
+
+                    #add mtu element if necessary
+                    if "mtu" in token and token["mtu"] == True:
+                        mtu_element = ET.Element("mtu")
+                        phrase_element.append(mtu_element)
+                        mtu_element.attrib["orig"] = token["token_orth"]
+                        token_parent = mtu_element
+                    else:
+                        token_parent = phrase_element
+                        
+
+                    for word in words:
+                        #each word creates one token_element
+                        token_element = ET.Element("t")
+
+                        token_element.text = word["orth"]
+                        
+                        token_element = addToElementIfExists(token_element, word, "accent")
+                        token_element = addToElementIfExists(token_element, word, "g2p_method")
+                        token_element = addToElementIfExists(token_element, word, "pos")
+                        #token_element = addToElementIfExists(token_element, word, "ph")
+                        if "trans" in word:
+                            ws_trans = word["trans"]
+                            mary_trans = mapperMapToMary(ws_trans, lang, voice)
+                            token_element.attrib["ph"] = mary_trans
+
+                        #In the new version with output_type INTONATION from marytts the following is no longer used
+                        if "syllables" in word:
+                            #normal word
+                            syllables = word["syllables"]
+                        else:
+                            #punctuation
+                            syllables = []
+                            
+                        for syllable in syllables:
+                            syllable_element = ET.Element("syllable")
+
+                            syllable_element = addToElementIfExists(syllable_element, syllable, "accent")
+                            syllable_element = addToElementIfExists(syllable_element, syllable, "ph")
+                            syllable_element = addToElementIfExists(syllable_element, syllable, "stress")
+
+                            token_element.append(syllable_element)
+                            phonemes = syllable["phonemes"]
+                            for phoneme in phonemes:
+                                phoneme_element = ET.Element("ph")
+                                phoneme_element.attrib["p"] = phoneme["symbol"]
+                                syllable_element.append(phoneme_element)
+
+                        #each word creates one token_element
+                        token_parent.append(token_element)
+
+                if "boundary" in phrase:
+                    boundary_element = ET.Element("boundary")
+                    boundary_element = addToElementIfExists(boundary_element, phrase["boundary"], "breakindex")
+                    boundary_element = addToElementIfExists(boundary_element, phrase["boundary"], "tone")
+                    phrase_element.append(boundary_element)
+                
+
+
+    if sys.version_info.major == 2:
+        #This works in python2.7
+        maryxmlstring = ET.tostring(maryxml, encoding="utf-8")
+    else:
+        #This works in python3
+        maryxmlstring = ET.tostring(maryxml, encoding="unicode")
+
+    #log.debug("utt2maryxml maryxml:\n%s%s" % (header,maryxmlstring))
+
+
+    return "%s%s" % (header,maryxmlstring)
+
+
+def addToElementIfExists(element, item, attribute, drop_prefix=""):
+    if attribute in item:
+        new_attribute = re.sub("^"+drop_prefix, "", attribute)
+        element.attrib[new_attribute] = item[attribute]
+    return element
+
+def mapperMapFromMary(trans, lang, voice):
+
+    log.info("mapperMapFromMary( %s , %s , %s )" % (trans, lang, voice))
+
+    if "mapper" in voice:
+        #Bad names.. It should be perhaps "external" and "internal" instead of "from" and "to"
+        to_symbol_set = voice["mapper"]["from"]
+        from_symbol_set = voice["mapper"]["to"]
+    
+    else:
+        log.info("No marytts mapper defined for language %s" % lang)
+        return trans
+
+    url = mapper_url+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+
+
+    r = requests.get(url)
+    log.debug("MAPPER URL: "+r.url)
+    response = r.text
+    #log.debug("RESPONSE: %s" % response)
+    try:
+        response_json = json.loads(response)
+        #log.debug("RESPONSE_JSON: %s" % response_json)
+        new_trans = response_json["Result"]
+    except:
+        log.error("unable to map %s, from %s to %s. response was %s" % (trans, from_symbol_set, to_symbol_set, response))
+        raise
+    #log.debug("NEW TRANS: %s" % new_trans)
+    return new_trans
+
+def mapperMapToMary(trans, lang, voice):
+
+    log.debug("mapperMapToMary( %s, %s, %s)" % (trans, lang, voice))
+    if "mapper" in voice:
+        to_symbol_set = voice["mapper"]["to"]
+        from_symbol_set = voice["mapper"]["from"]
+
+        log.info("marytts mapper defined for language %s\nFrom: %s\nTo: %s" % (lang, from_symbol_set, to_symbol_set))
+    
+    else:        
+        log.info("No marytts mapper defined for language %s" % lang)
+        return trans
+
+    
+    url = mapper_url+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    
+    r = requests.get(url)
+    log.debug("MAPPER URL: %s" % r.url)
+    response = r.text
+    log.debug("MAPPER RESPONSE: %s" % response)
+    try:
+        response_json = json.loads(response)
+    except json.JSONDecodeError:
+        log.error("JSONDecodeError:")
+        log.error("RESPONSE: %s" % response)
+        raise
+        
+    new_trans = response_json["Result"]
+
+    #Special cases for Swedish pre-r allophones that are not handled by the mapper (because mary uses an old version of the phoneme set that desn't distinguish between normal and r-coloured E/{ (always E) and 2/9 (always 9). This should change in mary later on.
+    if lang == "sv":
+        new_trans = re.sub("{( -)? ",r"E\1 ", new_trans)
+        new_trans = re.sub("2(:? -) r? ",r"9\1 r", new_trans)
+
+
+    log.debug("NEW TRANS: %s" % new_trans)
+
+    
+    return new_trans
+ 
+
+
+
+
 
 

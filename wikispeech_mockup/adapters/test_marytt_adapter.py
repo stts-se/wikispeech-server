@@ -1,21 +1,4 @@
-# *-* coding: utf-8 *-*
-
-import sys, re, requests, json
-import xml.etree.ElementTree as ET
-try:
-    #Python 3
-    from urllib.parse import quote_plus
-except:
-    #Python 2
-    from urllib import quote_plus
-
-import wikispeech_mockup.wikispeech as ws
-import wikispeech_mockup.log as log
-import wikispeech_mockup.config as config
-host = config.config.get("Services", "lexicon")
-
-
-
+from marytts_adapter import *
 
 #test1: no 'prosody', no 'mtu'
 #hel häl här
@@ -779,5 +762,76 @@ class TestWs2M(unittest.TestCase):
 
 
 
-if __name__ == '__main__':
+
+import unittest
+
+class TestMapSsml(unittest.TestCase):
+
+    def test1(self):
+        ws_ssml = """
+<p>
+    <s>
+    Fartyget byggdes <br>
+    <sub alias="nittonhundra-femtionio">1959</sub> 
+    i 
+    <phoneme alphabet="x-sampa" ph="\" p O . rt u0 . g a l">Portugal</phoneme> 
+    på 
+    <phoneme alphabet="x-sampa" ph="E s . t a . \" l E j . r O s">Estaleiros</phoneme> 
+    <phoneme alphabet="x-sampa" ph="n a . \" v a j s">Navais</phoneme> 
+    <phoneme alphabet="x-sampa" ph="\" d E">de</phoneme> 
+    <phoneme alphabet="x-sampa" ph="v I . \" a . n a">Viana</phoneme> 
+    <phoneme alphabet="x-sampa" ph="\" d O">do</phoneme> 
+    <phoneme alphabet="x-sampa" ph="k a s . \" t E . l O">Castelo</phoneme>
+    , och levererades till Färöarna under namnet 
+    <phoneme alphabet="x-sampa" ph="\" v A: k . b I N . k u0 r">Vágbingur</phoneme>
+    .
+    </s>
+</p>
+"""
+        mary_ssml = """
+<p>
+    <s>
+    Fartyget byggdes <br>
+    <sub alias="nittonhundra-femtionio">1959</sub> 
+    i 
+    <phoneme alphabet="x-sampa" ph="' p O - rt u0 - g a l">Portugal</phoneme> 
+    på 
+    <phoneme alphabet="x-sampa" ph="E s - t a - ' l E j - r O s">Estaleiros</phoneme> 
+    <phoneme alphabet="x-sampa" ph="n a - ' v a j s">Navais</phoneme> 
+    <phoneme alphabet="x-sampa" ph="' d E">de</phoneme> 
+    <phoneme alphabet="x-sampa" ph="v I - ' a - n a">Viana</phoneme> 
+    <phoneme alphabet="x-sampa" ph="' d O">do</phoneme> 
+    <phoneme alphabet="x-sampa" ph="k a s - ' t E - l O">Castelo</phoneme>
+    , och levererades till Färöarna under namnet 
+    <phoneme alphabet="x-sampa" ph="' v A: k - b I N - k u0 r">Vágbingur</phoneme>
+    .
+    </s>
+</p>
+"""
+
+        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        log.debug("tp_config: %s" % tp_config)
+        component_config = tp_config["components"][0]
+        mapped = mapSsmlTranscriptionsToMary(ws_ssml, "sv", component_config)
+        self.assertEqual(mapped, mary_ssml)
+
+
+class TestPreproc(unittest.TestCase):
+
+    def test1(self):
+        input_text = "Ett öra."
+        #expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'tone': 'L-L%', 'breakindex': '5'}, 'tokens': [{'words': [{'pos': 'content', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'g2p_method': 'lexicon'}], 'token_orth': 'Ett'}, {'words': [{'pos': 'content', 'trans': '"" 2: . r a', 'orth': 'öra', 'accent': '!H*', 'g2p_method': 'lexicon'}], 'token_orth': 'öra'}, {'words': [{'pos': '$PUNCT', 'orth': '.'}], 'token_orth': '.'}]}]}]}], 'lang': 'sv'}
+        expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': 'Ett', 'words': [{'g2p_method': 'lexicon', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'pos': 'content'}]}, {'token_orth': 'öra', 'words': [{'g2p_method': 'lexicon', 'trans': '"" 9: . r a', 'orth': 'öra', 'accent': '!H*', 'pos': 'content'}]}, {'token_orth': '.', 'words': [{'orth': '.', 'pos': '$PUNCT'}]}], 'boundary': {'tone': 'L-L%', 'breakindex': '5'}}]}]}]}
+
+        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        log.debug("tp_config: %s" % tp_config)
+        component_config = tp_config["components"][0]
+        result = marytts_preproc(input_text, "sv", component_config)
+        #print(result)
+        self.assertEqual(expected, result)
+
+        
+
+if __name__ == "__main__":
+    ws.log.log_level = "error" #debug, info, warning, error
     unittest.main()
