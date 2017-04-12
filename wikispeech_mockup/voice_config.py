@@ -12,7 +12,8 @@ textprocessor_configs = [
              },
          },
          {
-             "module":"wikilex",
+             #"module":"wikilex",
+             "module":"adapters.lexicon_client",
              "call":"lexLookup",
              "lexicon":"sv-se.nst"
          }
@@ -63,7 +64,8 @@ textprocessor_configs = [
              },
          },
          {
-             "module":"wikilex",
+             #"module":"wikilex",
+             "module":"adapters.lexicon_client",
              "call":"lexLookup",
              "lexicon":"ar-test"
          }
@@ -73,7 +75,7 @@ textprocessor_configs = [
 ]
 
 
-voices = [
+voice_configs = [
     {
         "lang":"sv",
         "name":"stts_sv_nst-hsmm",
