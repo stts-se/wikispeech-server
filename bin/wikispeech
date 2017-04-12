@@ -24,8 +24,9 @@ if run_tests == "True":
     ws.test_wikispeech()
 
     #These tests are run directly on import. TODO change to normal method invocation 
-    #import wikispeech_mockup.test_api
-    #import wikispeech_mockup.test_voice_configs
+    import wikispeech_mockup.test_api
+    import wikispeech_mockup.test_voice_configs
+    import wikispeech_mockup.adapters.test_marytts_adapter
     ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
     
