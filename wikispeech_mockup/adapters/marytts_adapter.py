@@ -58,7 +58,7 @@ def marytts_preproc(text, lang, tp_config, input_type="text"):
 
 
 
-def marytts_preproc_tokenised(lang, utt):
+def marytts_preproc_tokenised_TOREMOVE(lang, utt):
     if lang == "en":
         locale = "en_US"
     else:
@@ -133,11 +133,11 @@ def synthesise(lang,voice,input, presynth=False):
     if presynth:
         return synthesise_json(lang,voice,input)
     else:
-        return synthesise_old(lang,voice,input)
+        return synthesise_default(lang,voice,input)
 
 
 
-def synthesise_old(lang,voice,input):
+def synthesise_default(lang,voice,input):
 
     if lang == "nb":
         xmllang = "no"
@@ -247,6 +247,7 @@ def synthesise_json(lang,voice,input):
 
 
 
+#Called from marytts_preproc
 def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
     phoneme_elements = re.findall("(<phoneme [^>]+>)", ssml)
     for element in phoneme_elements:
@@ -262,11 +263,11 @@ def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
         
 
 
-def dropMaryHeader(utt):
+def dropMaryHeader_TOREMOVE(utt):
     utt = utt["maryxml"]["p"]
     return utt
 
-def addMaryHeader(utt,lang):
+def addMaryHeader_TOREMOVE(utt,lang):
     newutt = {"maryxml": {
         "@xmlns": "http://mary.dfki.de/2002/MaryXML", 
         "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance", 
@@ -276,23 +277,15 @@ def addMaryHeader(utt,lang):
     }}
     return newutt
 
-# def maryxml2utt(maryxmlstring):
-#     utt = xmltodict.parse(maryxmlstring)
-#     lang = utt["maryxml"]["@xml:lang"]
-#     utt = dropMaryHeader(utt)
-#     return (utt, lang)
 
-# def utt2maryxml(utt, lang):
-#     utt = addMaryHeader(utt,lang)
-#     maryxmlstring = xmltodict.unparse(utt)
-#     return maryxmlstring
-
-def json2utt(jsonstring):
+def json2utt_TOREMOVE(jsonstring):
     return json.loads(jsonstring)
 
-def utt2json(utt):
+def utt2json_TOREMOVE(utt):
     return json.dumps(utt)
 
+
+#Called from synthesise_default
 def maryxml2tokensET(maryxmlstring):
     try:
         root = ET.fromstring(maryxmlstring)
@@ -375,7 +368,7 @@ def maryxml2tokensET(maryxmlstring):
     #return (output_tokens, lang)
     return output_tokens
 
-def maryxml2uttET(maryxmlstring):
+def maryxml2uttET_TOREMOVE(maryxmlstring):
     log.debug("MARYXMLSTRING: %s" % maryxmlstring)
     root = ET.fromstring(maryxmlstring)
     #root = doc.getroot()
@@ -437,17 +430,20 @@ def maryxml2uttET(maryxmlstring):
 ##############
 # moved from new_maryxml_converter_with_mapper.py
 
+#Called from marytts_preproc, marytts_postproc
 def maryxml2utt(xml, voice):    
     utt =  mary2ws(xml, voice)
     lang = utt["lang"]
     return (lang, utt)
 
+#Called from marytts_postproc, synthesise_default, synthesise_json
 def utt2maryxml(lang, utt, voice):
     xml = ws2mary(utt, voice)
     return xml
 
 #mary2ws: 'prosody' and 'phrase' are combined into 'phrase'. ws2mary: 'phrase' is split into 'prosody' and 'phrase'
 #mary2ws: 'mtu' and 'token' are combined into 'token', and 'token' is also copied to 'word'
+#Called from maryxml2utt
 def mary2ws(maryxml, voice):
     (lang, maryxml) = dropHeader(maryxml)
     #lang = "sv"
@@ -509,7 +505,7 @@ def mary2ws(maryxml, voice):
 
     return utterance
 
-
+#Called from mary2ws
 def buildPhrase(phrase_element, lang, voice):
     if phrase_element.tag != "phrase":
         log.error("wrong type of element: %s\n%s" % (phrase_element.tag, phrase_element))
@@ -565,7 +561,7 @@ def buildPhrase(phrase_element, lang, voice):
 
 
 
-
+#Called from buildPhrase
 def buildWord(token_element, lang, voice):
     if token_element.tag != "t":
         log.error("wrong type of element: %s\n%s" % (token_element.tag, token_element))
@@ -612,13 +608,14 @@ def buildWord(token_element, lang, voice):
 
     return word
 
+#Called from buildWord
 def addIfExists(addTo, element, attribute, prefix=""):
     if attribute in element.attrib:
         addTo[prefix+attribute] = element.attrib.get(attribute)
     return addTo
 
 
-
+#Called from mary2ws
 def dropHeader(maryxml):
     lang = None
     maryxml = maryxml.replace("\n","")
@@ -633,6 +630,7 @@ def dropHeader(maryxml):
     #sys.exit()
     return (lang,maryxml)
 
+#Called from utt2maryxml
 def ws2mary(utterance, voice):
 
     #log.debug(utterance)
@@ -748,12 +746,16 @@ def ws2mary(utterance, voice):
     return "%s%s" % (header,maryxmlstring)
 
 
+#Called from ws2mary
 def addToElementIfExists(element, item, attribute, drop_prefix=""):
     if attribute in item:
         new_attribute = re.sub("^"+drop_prefix, "", attribute)
         element.attrib[new_attribute] = item[attribute]
     return element
 
+
+
+#Called from buildWord
 def mapperMapFromMary(trans, lang, voice):
 
     log.info("mapperMapFromMary( %s , %s , %s )" % (trans, lang, voice))
@@ -784,6 +786,8 @@ def mapperMapFromMary(trans, lang, voice):
     #log.debug("NEW TRANS: %s" % new_trans)
     return new_trans
 
+
+#Called from mapSsmlTranscriptionsToMary, ws2mary
 def mapperMapToMary(trans, lang, voice):
 
     log.debug("mapperMapToMary( %s, %s, %s)" % (trans, lang, voice))
