@@ -24,9 +24,10 @@ class Mapper(object):
         response = r.text
         try:
             response_json = json.loads(response)
-        except:
-            log.error("unable to create mapper from %s to %s. response was %s" % (self.from_symbol_set, self.to_symbol_set, response))
-            raise MapperException
+        except json.JSONDecodeError:
+            msg = "Unable to create mapper from %s to %s. Response was: %s" % (self.from_symbol_set, self.to_symbol_set, response)
+            log.error(msg)
+            raise MapperException(msg)
 
 
 

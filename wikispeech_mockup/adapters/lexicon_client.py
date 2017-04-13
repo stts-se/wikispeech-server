@@ -120,9 +120,10 @@ class Lexicon(object):
         response = r.text
         try:
             response_json = json.loads(response)
-        except:
-            log.error("unable to create lexicon client for %s. response was %s" % (self.lexicon_name, response))
-            raise LexiconException
+        except json.JSONDecodeError:
+            msg = "Unable to create lexicon client for %s. Response was: %s" % (self.lexicon_name, response)
+            log.error(msg)
+            raise LexiconException(msg)
 
 
 
