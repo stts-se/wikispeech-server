@@ -19,16 +19,19 @@ class Mapper(object):
 
     def test(self):
         url = "%s/%s?from=%s&to=%s" % (self.base_url, "maptable", self.from_symbol_set, self.to_symbol_set)
-        r = requests.get(url)
-        log.debug(r.url)
-        response = r.text
+        log.debug(url)
         try:
+            r = requests.get(url)
+            response = r.text
             response_json = json.loads(response)
         except json.JSONDecodeError:
             msg = "Unable to create mapper from %s to %s. Response was: %s" % (self.from_symbol_set, self.to_symbol_set, response)
             log.error(msg)
             raise MapperException(msg)
-
+        except Exception as e:
+            msg = "Unable to create mapper at url %s. Reason: %s" % (url, e)
+            log.error(msg)
+            raise MapperException(msg)
 
 
     def map(self, string):

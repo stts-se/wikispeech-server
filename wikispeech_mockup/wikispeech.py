@@ -12,7 +12,8 @@ from wikispeech_mockup.voice_config import textprocessor_configs, voice_configs
 import wikispeech_mockup.wikilex as wikilex
 import wikispeech_mockup.config as config
 import wikispeech_mockup.log as log
-
+from wikispeech_mockup.textprocessor import Textprocessor, TextprocessorException
+from wikispeech_mockup.voice import Voice, VoiceException
 
         
 #################
@@ -39,10 +40,19 @@ else:
 
 
 def loadTextprocessor(tp_config):
-    pass
+    try:
+        tp = Textprocessor(tp_config)        
+        textprocessors.append(tp)
+    except TextprocessorException as e:
+        log.error("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
 
 def loadVoice(voice_config):
-    pass
+    try:
+        v = Voice(voice_config)        
+        voices.append(v)
+    except VoiceException as e:
+        log.error("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))
+
 
 
 
@@ -52,7 +62,6 @@ for tp_config in textprocessor_configs:
 voices = []
 for voice_config in voice_configs:
     loadVoice(voice_config)
-
 
 
 
@@ -200,7 +209,8 @@ def getSupportedLanguages():
 
 @app.route('/wikispeech/textprocessing/languages', methods=["GET"])
 def list_tp_configs():
-    json_data = json.dumps(textprocessor_configs)
+    #json_data = json.dumps(textprocessor_configs)
+    json_data = json.dumps(textprocSupportedLanguages())
     return Response(json_data, mimetype='application/json')
 
 @app.route('/wikispeech/textprocessing/languages/<lang>', methods=["GET"])
@@ -263,11 +273,18 @@ def textprocessing():
         return "output_type %s not supported" % output_type
 
 
-def textprocSupportedLanguages():
+def textprocSupportedLanguages_OLD():
     supported_languages = []
     for t in textprocessor_configs:
         if t["lang"] not in supported_languages:
             supported_languages.append(t["lang"])
+    return supported_languages
+#HB 170413 Changed to look at list of loaded textprocessors, instead of textprocessor_configs
+def textprocSupportedLanguages():
+    supported_languages = []
+    for t in textprocessors:
+        if t.lang not in supported_languages:
+            supported_languages.append(t.lang)
     return supported_languages
 
 def textproc(lang, textprocessor_name, text, input_type="text"):
@@ -344,6 +361,10 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
 #nej ingen av dessa funkar..
 
+@app.route('/wikispeech/synthesis/languages', methods=["GET"])
+def list_synthesisSupportedLanguages():
+    json_data = json.dumps(synthesisSupportedLanguages())
+    return Response(json_data, mimetype='application/json')
 
 
 @app.route('/wikispeech/synthesis/voices', methods=["GET"])
@@ -363,13 +384,20 @@ def list_voices_by_language(lang):
             v.append(voice)
     return v
 
-def synthesisSupportedLanguages():
+def synthesisSupportedLanguages_OLD():
     langs = []
     for voice in voice_configs:
         if voice["lang"] not in langs:
             langs.append(voice["lang"])
     return langs
-                        
+
+def synthesisSupportedLanguages():
+    langs = []
+    for voice in voices:
+        if voice.lang not in langs:
+            langs.append(voice.lang)
+    return langs
+
 
 
 @app.route('/wikispeech/synthesis/', methods=["OPTIONS"])

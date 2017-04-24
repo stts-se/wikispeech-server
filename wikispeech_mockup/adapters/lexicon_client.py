@@ -115,13 +115,17 @@ class Lexicon(object):
 
     def test(self):
         url = "%s/%s?lexicons=%s" % (self.base_url, "lookup", self.lexicon_name)
-        r = requests.get(url)
-        log.debug(r.url)
-        response = r.text
+        log.debug(url)
         try:
+            r = requests.get(url)
+            response = r.text
             response_json = json.loads(response)
         except json.JSONDecodeError:
             msg = "Unable to create lexicon client for %s. Response was: %s" % (self.lexicon_name, response)
+            log.error(msg)
+            raise LexiconException(msg)
+        except Exception as e:
+            msg = "Unable to create lexicon client for %s at url %s. Reason: %s" % (self.lexicon_name, url, e)
             log.error(msg)
             raise LexiconException(msg)
 

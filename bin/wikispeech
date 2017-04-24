@@ -29,8 +29,10 @@ if run_tests == "True":
     import wikispeech_mockup.adapters.test_marytts_adapter
     ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
+ws.log.info("Loaded textprocessors: %s" % ws.textprocSupportedLanguages())
+ws.log.info("Loaded voices: %s" % ws.synthesisSupportedLanguages())
     
-ws.app.run(host='0.0.0.0', port=10000, debug=True, threaded=True)
+ws.app.run(host='0.0.0.0', port=10000, debug=False, threaded=True)
 
 
 
