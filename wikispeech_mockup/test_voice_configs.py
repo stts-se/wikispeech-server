@@ -20,7 +20,7 @@ def test_default_settings():
         log.debug("START: %s" % lang)
 
         # GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
-        r = test_client.get("%s?lang=%s&input=test." % (host,lang))
+        r = test_client.get("%s?XXlang=%s&input=test." % (host,lang))
         log.debug(r.data.decode('utf-8'))
         log.debug("DONE: %s" % lang)
 

@@ -888,18 +888,17 @@ def test_wikilex():
 
         log.error("lexicon lookup test failure")
         log.error("No running lexserver found at %s" % config.config.get("Services","lexicon"))
-        sys.exit()
+        raise
         
     for word in sent.split(" "):
         try:
             if lex[word] != trans[word]:
                 log.error("lexicon lookup test failure")
                 log.error("word %s, found %s, expected %s" % (word, lex[word], trans[word]))
-                sys.exit()
+                raise
         except KeyError:
-            log.error("lexicon lookup test failure")
-            log.error("word %s not found, expected %s" % (word, trans[word]))
-            sys.exit()
+            log.error("Lexicon lookup test failure: Word %s not found in lexicon %s" % (word, lexicon))
+            raise
             
                 
     log.debug("SUCCESS: lexicon lookup test")
@@ -907,8 +906,6 @@ def test_wikilex():
 
 def test_textproc():
     sent = "apa"
-    trans = {}
-    trans["apa"] = '" A: - p a'
     try:
         res = textproc("sv","default_textprocessor", sent)
     except:
@@ -921,7 +918,7 @@ def test_textproc():
 
         log.error("textprocessing test failure")
         log.error("No running marytts server found at %s" % config.config.get("Services","marytts"))
-        sys.exit()
+        raise
         
         
     #TODO Better with exception than return value
@@ -929,7 +926,7 @@ def test_textproc():
         log.error("Failed to do textprocessing")
         log.error(res)
         log.error("textprocessing test failure")
-        sys.exit()
+        raise
         
     log.debug("%s --> %s" % (sent,res))
     log.debug("SUCCESS: textprocessing test")
@@ -953,7 +950,7 @@ def test_wikispeech():
 
         log.error("wikispeech test failure")
         log.error("Is the audio_tmpdir %s correctly configured?" % config.config.get("Audio settings", "audio_tmpdir"))
-        sys.exit()
+        raise
         
     except:
         log.error("Failed to do wikispeech test.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
@@ -965,14 +962,14 @@ def test_wikispeech():
 
         log.error("wikispeech test failure")
         log.error("No running marytts server found at %s" % config.config.get("Services","marytts"))
-        sys.exit()
+        raise
 
     #TODO Better with exception than return value
     if type(res) == type("") and res.startswith("No voice available"):
         log.error("Failed to do wikispeech test")
         log.error(res)
         log.error("wikispeech test failure")
-        sys.exit()
+        raise
         
     log.debug("%s --> %s" % (sent,res))
     log.debug("SUCCESS: wikispeech test")
@@ -982,10 +979,12 @@ def test_config():
     log.debug("\nTEST CONFIG\n")
     log.debug("Testing to make sure that config file contains url to lexicon server:")
     try:
+        assert ( config.config.has_option("Services", "lexicon") == True )
         log.debug("Services|lexicon = %s" % config.config.get("Services", "lexicon"))
         log.debug("ok")
     except:
         log.error("Services|lexicon not found in config file\n")
+        raise
     log.debug("\nEND TEST CONFIG\n")
         
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys
+import sys, traceback
 sys.path.insert(0,".")
 import wikispeech_mockup.wikispeech as ws
 import wikispeech_mockup.config as config
@@ -8,31 +8,46 @@ import wikispeech_mockup.config as config
 
 
 
-ws.log.log_level = "debug" #debug, info, warning, error
+ws.log.log_level = config.config.get("Server","log_level")
 
 try:
-    run_tests = config.config.get("Tests","run_startup_tests")
+    run_tests = config.config.getboolean("Tests","run_startup_tests")
 except:
-    run_tests = "False"
+    run_tests = False
     
-if run_tests == "True":
+if run_tests:
     ws.log.info("RUNNING SELF-TESTS...")
 
-    ws.test_config()
-    ws.test_wikilex()
-    ws.test_textproc()
-    ws.test_wikispeech()
+    try:
+        ws.test_config()        
+        ws.test_wikilex()
+        ws.test_textproc()
+        ws.test_wikispeech()
 
-    #These tests are run directly on import. TODO change to normal method invocation 
-    import wikispeech_mockup.test_api
-    import wikispeech_mockup.test_voice_configs
-    import wikispeech_mockup.adapters.test_marytts_adapter
-    ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
+        #These tests are run directly on import. TODO change to normal method invocation 
+        import wikispeech_mockup.test_api
+        import wikispeech_mockup.test_voice_configs
+        import wikispeech_mockup.adapters.test_marytts_adapter
+        ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
+        
+    except:
+        print("Test error:\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]) )
+        traceback.print_tb(sys.exc_info()[2])
+        if config.config.getboolean("Tests","quit_on_error"):
+            print("Exiting because of test error and Tests:quit_on_error is set to True")
+            sys.exit()
+        else:
+            print("Starting anyway because Tests:quit_on_error is set to False")
+
+
+        
 ws.log.info("Loaded textprocessors: %s" % ws.textprocSupportedLanguages())
 ws.log.info("Loaded voices: %s" % ws.synthesisSupportedLanguages())
-    
-ws.app.run(host='0.0.0.0', port=10000, debug=False, threaded=True)
+
+port_nr = config.config.get("Server","port")
+ 
+ws.app.run(host='0.0.0.0', port=port_nr, debug=False, threaded=True)
 
 
 

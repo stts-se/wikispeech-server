@@ -32,7 +32,7 @@ log.debug("RUNNING API TESTS")
 
 log.debug("RUNNING TEST 1.1")
 
-expected_langs = ["sv", "nb", "en", "ar"]
+expected_langs = ["svXX", "nb", "en", "ar"]
 
 r = test_client.options(host)
 res = json.loads(r.data.decode('utf-8'))
