@@ -182,15 +182,15 @@ test_done()
 
 # 2.3
 # GET:  curl "http://localhost:10000/wikispeech/textprocessing/languages"
-# returns list of textprocessors for all supported languages
+# returns list of supported languages
 
 r = test_client.get("%slanguages" % (host))
 res = json.loads(r.data.decode('utf-8'))
 assert ( type(res) == type([]) )
 
 expected = ["sv", "nb", "en", "ar"]
-for textprocessor in res:    
-    assert ( textprocessor["lang"] in expected ), "%s not in  %s" % (textprocessor["lang"], expected)
+for lang in res:    
+    assert ( lang in expected ), "%s not in  %s" % (lang, expected)
 test_done()
 
 
