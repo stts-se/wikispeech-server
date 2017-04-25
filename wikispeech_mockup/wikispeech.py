@@ -330,6 +330,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         #TODO clean this up to always use process(utt)
         if component_name == "tokenise":
             utt = process(text)
+            utt["lang"] = lang
         elif component_name == "marytts_preproc":
             utt = process(text, lang, component, input_type=input_type)
         else:

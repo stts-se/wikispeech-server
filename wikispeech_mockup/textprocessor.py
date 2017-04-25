@@ -31,7 +31,11 @@ class Textprocessor(object):
                 
             self.components.append(component)
 
+    def __repr__(self):
+        return "Textprocessor:{name:%s, lang:%s}" % (self.name, self.lang)
 
+    def __str__(self):
+        return self.__repr__()
 
 class TextprocComponentException(Exception):
     pass

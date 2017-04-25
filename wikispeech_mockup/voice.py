@@ -51,6 +51,15 @@ class Voice(object):
             name = line.split(" ")[0]
             names.append(name)
         return names
+
+    def __repr__(self):
+        return "Voice:{name:%s, lang=%s}" % (self.name, self.lang)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+
     
 if __name__ == "__main__":
 

@@ -42,8 +42,13 @@ if run_tests:
 
 
         
-ws.log.info("Loaded textprocessors: %s" % ws.textprocSupportedLanguages())
-ws.log.info("Loaded voices: %s" % ws.synthesisSupportedLanguages())
+ws.log.info("Loaded textprocessors: %s" % ws.textprocessors)
+ws.log.info("Loaded textprocessors for languages: %s" % ws.textprocSupportedLanguages())
+
+ws.log.info("Loaded voices: %s" % ws.voices)
+ws.log.info("Loaded voices for languages: %s" % ws.synthesisSupportedLanguages())
+
+ws.log.info("Supported languages: %s" % ws.getSupportedLanguages())
 
 port_nr = config.config.get("Server","port")
  
