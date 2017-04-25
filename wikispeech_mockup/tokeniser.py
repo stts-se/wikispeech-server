@@ -150,8 +150,7 @@ def tokenise(text, add_text=False):
     pars = re.split(end_paragraph, text)
     paragraphs = []
     utt = {
-        "tag":"utt",
-        "children":paragraphs
+        "paragraphs":paragraphs
     }
     if add_text:
         utt["text"] = text
@@ -175,8 +174,7 @@ def tokenise(text, add_text=False):
         sentences = []
         p = {
             #"name":"par"+str(p_nr),
-            "tag":"p",
-            "children":sentences
+            "sentences":sentences
         }
         if add_text:
             p["text"] = par
@@ -197,8 +195,7 @@ def tokenise(text, add_text=False):
             phraselist = []
             s =  {
                 #"name":"sent"+str(s_nr),
-                "tag":"s",
-                "children":phraselist
+                "phrases":phraselist
             }
             if add_text:
                 s["text"] = sent
@@ -213,8 +210,7 @@ def tokenise(text, add_text=False):
                 tokenlist = []
                 phr =  {
                     #"name":"phrase"+str(phr_nr),
-                    "tag":"phr",
-                    "children":tokenlist
+                    "tokens":tokenlist
                 }
                 if add_text:
                     phr["text"] = phrase
@@ -235,16 +231,20 @@ def tokenise(text, add_text=False):
                     prepunct = None
                     punct = None
                     #.*? non-greedy match, because punctuation can be repeated '("hello?")'
-                    m = re.search("^("+punctuation+"*)(.*?)("+punctuation+"+)$", token)
+                    m = re.search("^("+punctuation+"*)(.*?)("+punctuation+"*)$", token)
                     if m:
                         prepunct = m.group(1)
-                        token = m.group(2)
+                        word = m.group(2)
                         punct = m.group(3)
                     
                     t =  {
                         #"name":"token"+str(t_nr),
-                        "tag":"t",
-                        "text":token 
+                        "token_orth":token,
+                        "words": [
+                            {
+                                "orth":word
+                            }
+                        ]
                     }
 
                     if prepunct:

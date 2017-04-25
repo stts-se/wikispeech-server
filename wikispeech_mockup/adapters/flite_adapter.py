@@ -1,6 +1,9 @@
 import os, re
 import wikispeech_mockup.log as log
 
+def preproc(utt):
+    #Nothing to be done here .. Maybe there will be?
+    return utt
 
 def synthesise(lang, voice, input, presynth=False):
     voice = voice["flite_voice"]
@@ -231,7 +234,9 @@ if __name__ == "__main__":
 
     lang = "en"
     voice = {"flite_voice":"slt"}
+    log.log_level = "debug"
 
+    
     (audio_url, tokens) = synthesise(lang, voice, input)
     log.debug("AUDIO URL: %s" % audio_url)
     log.debug("TOKENS: %s" % tokens)

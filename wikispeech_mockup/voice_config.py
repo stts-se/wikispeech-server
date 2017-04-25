@@ -52,6 +52,25 @@ textprocessor_configs = [
     }
     ,
 
+    {"name":"basic_flite_en", "lang":"en",
+     "components":[
+         {
+             "module":"tokeniser",
+             "call":"tokenise"
+             #},
+         #{
+         #    "module":"adapters.flite_adapter",
+         #    "call":"preproc"
+             #},
+         #{
+         #    "module":"wikilex",
+         #    "call":"lexLookup",
+         #    "lexicon":"en-us.cmu"
+         }
+     ]
+    }
+    ,
+
 
     {"name":"wikitextproc_ar", "lang":"ar",
      "components":[
