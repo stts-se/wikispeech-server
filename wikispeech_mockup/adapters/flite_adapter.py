@@ -14,8 +14,10 @@ def synthesise(lang, voice, input, presynth=False):
 
     #send ssml to flite
     tmpdir = config.config.get("Audio settings","audio_tmpdir")
-    outfile = "%s/flite_out" % tmpdir
-    cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s.wav > %s.timing" % (voice, ssml, outfile, outfile)
+    wavfile_name = "flite_out.wav"
+    timingfile_name = "flite_out.timing"
+    #outfile = "%s/flite_out" % tmpdir
+    cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s/%s > %s/%s" % (voice, ssml, tmpdir, wavfile_name, tmpdir, timingfile_name)
     log.debug(cmd)
     os.system(cmd)
 
@@ -23,7 +25,7 @@ def synthesise(lang, voice, input, presynth=False):
 
     #read psdur file
 
-    infh = open(outfile+".timing")
+    infh = open(tmpdir+"/"+timingfile_name)
     segments = infh.read().strip().split(" ")
     infh.close()
     prevword = None
@@ -73,8 +75,10 @@ def synthesise(lang, voice, input, presynth=False):
     if prevword and prevword != "sil" and word != prevword:
         words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
 
-    audio_url = "http://localhost/wikispeech_mockup/%s.wav" % outfile
+    prefix = config.config.get("Audio settings","audio_url_prefix")
+    audio_url = "%s/%s" % (prefix, wavfile_name)
 
+    log.debug("flite_adapter returning audio_url: %s" % audio_url) 
 
     #return audio_url and tokens
     return (audio_url, words)
