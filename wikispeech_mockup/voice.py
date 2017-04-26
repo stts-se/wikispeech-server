@@ -32,7 +32,13 @@ class Voice(object):
             voice_host = config.config.get("Services", "marytts")
             url = re.sub("process","voices",voice_host)
             log.debug("Calling url: %s" % url)
-            r = requests.get(url)
+            try:
+                r = requests.get(url)
+            except:
+                msg = "Marytts server not found at url %s" % (url)
+                log.error(msg)
+                raise VoiceException(msg)
+
             response = r.text
             log.debug("Response:\n%s" % response)
             marytts_voicenames = self.getMaryttsVoicenames(response)

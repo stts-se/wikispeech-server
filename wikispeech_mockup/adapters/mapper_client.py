@@ -1,4 +1,5 @@
-import requests, json
+import requests
+import simplejson as json
 import wikispeech_mockup.config as config
 import wikispeech_mockup.log as log
 

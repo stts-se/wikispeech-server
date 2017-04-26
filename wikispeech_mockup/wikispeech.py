@@ -23,7 +23,7 @@ from wikispeech_mockup.voice import Voice, VoiceException
 ################
 
 log.debug("\nOPUSENC\n\nChecking that opusenc is installed on your system..")
-retval = os.system("opusenc -V &> /dev/null")
+retval = os.system("opusenc -V")
 if retval != 0:
     os.system("opusenc -V")
     log.error("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
