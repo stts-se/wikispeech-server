@@ -8,6 +8,7 @@ class TextprocessorException(Exception):
 
 class Textprocessor(object):
     def __init__(self, tp_config):
+        self.config = tp_config
         self.name = tp_config["name"]
         self.lang = tp_config["lang"]
         self.loadComponents(tp_config["components"])
@@ -32,10 +33,10 @@ class Textprocessor(object):
             self.components.append(component)
 
     def __repr__(self):
-        return "Textprocessor:{name:%s, lang:%s}" % (self.name, self.lang)
+        return '{"name":"%s", "lang":"%s"}' % (self.name, self.lang)
 
     def __str__(self):
-        return self.__repr__()
+        return '{"name":"%s", "lang":"%s"}' % (self.name, self.lang)
 
 class TextprocComponentException(Exception):
     pass

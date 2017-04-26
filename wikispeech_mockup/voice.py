@@ -11,6 +11,7 @@ class VoiceException(Exception):
 
 class Voice(object):
     def __init__(self, voice_config):
+        self.config = voice_config
         self.name = voice_config["name"]
         self.lang = voice_config["lang"]
         self.engine = voice_config["engine"]

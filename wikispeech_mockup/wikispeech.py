@@ -220,12 +220,28 @@ def return_tp_configs_by_language(lang):
 
 def list_tp_configs_by_language(lang):
     l = []
+    for tp in textprocessors:
+        if tp.lang == lang:
+            l.append(tp.config)
+    return l
+
+def get_tp_config_by_name(name):
+    for tp in textprocessors:
+        log.debug("get_tp_config_by_name: %s" % tp)
+        log.debug("name: %s, wanted: %s" % (tp.name, name))
+        if tp.name == name:
+            log.debug("RETURNING: %s" % tp.config)
+            return tp.config
+    return None
+
+def list_tp_configs_by_languageOLD(lang):
+    l = []
     for tp_config in textprocessor_configs:
         if tp_config["lang"] == lang:
             l.append(tp_config)
     return l
 
-def get_tp_config_by_name(name):
+def get_tp_config_by_nameOLD(name):
     for tp_config in textprocessor_configs:
         log.debug("get_tp_config_by_name: %s" % tp_config)
         log.debug("name: %s, wanted: %s" % (tp_config["name"], name))
@@ -379,6 +395,13 @@ def return_voices_by_language(lang):
     return Response(json_data, mimetype='application/json')
 
 def list_voices_by_language(lang):
+    v = []
+    for voice in voices:
+        if voice.lang == lang:
+            v.append(voice.config)
+    return v
+
+def list_voices_by_languageOLD(lang):
     v = []
     for voice in voice_configs:
         if voice["lang"] == lang:
