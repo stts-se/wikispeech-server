@@ -1,5 +1,6 @@
 import os, re
 import wikispeech_mockup.log as log
+import wikispeech_mockup.config as config
 
 def preproc(utt):
     #Nothing to be done here .. Maybe there will be?
@@ -12,7 +13,8 @@ def synthesise(lang, voice, input, presynth=False):
     log.debug(ssml)
 
     #send ssml to flite
-    outfile = "tmp/flite_out"
+    tmpdir = config.config.get("Audio settings","audio_tmpdir")
+    outfile = "%s/flite_out" % tmpdir
     cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s.wav > %s.timing" % (voice, ssml, outfile, outfile)
     log.debug(cmd)
     os.system(cmd)

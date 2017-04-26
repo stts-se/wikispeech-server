@@ -1001,6 +1001,21 @@ def test_wikispeech():
 
 def test_config():
     log.debug("\nTEST CONFIG\n")
+
+    log.debug("Testing that audio_tmpdir exists and is writeable")
+    try:
+        tmpdir = config.config.get("Audio settings","audio_tmpdir")
+        log.debug("TMPDIR: %s" % tmpdir)
+        fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
+        tmpfile = fh.name        
+        fh.write("test".encode("utf-8"))
+        fh.close()
+    except:
+        log.error("audio_tmpdir does not exist or is not writeable")
+        raise
+
+
+
     log.debug("Testing to make sure that config file contains url to lexicon server:")
     try:
         assert ( config.config.has_option("Services", "lexicon") == True )
