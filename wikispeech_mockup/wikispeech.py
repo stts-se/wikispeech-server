@@ -73,7 +73,7 @@ for voice_config in voice_configs:
 #
 ###############
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 CORS(app)
 
 
@@ -522,9 +522,13 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
     opus_audio = saveAndConvertAudio(audio_url, presynth)
-    if "localhost:10000" in hostname:
-        hostname = "http://localhost"
-    audio_url = "%s/%s/%s" % (hostname,config.config.get("Audio settings","audio_url_prefix"),opus_audio)
+
+
+    #if "localhost:10000" in hostname:
+    #    hostname = "http://localhost"
+    #audio_url = "%s/%s/%s" % (hostname,config.config.get("Audio settings","audio_url_prefix"),opus_audio)
+
+    audio_url = "%s/%s" % (config.config.get("Audio settings","audio_url_prefix"),opus_audio)
     log.debug("audio_url: %s" % audio_url)
 
 
@@ -536,6 +540,18 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     
     return data
 
+
+############################################
+#
+#  serve the audio file if needed (should usually be behind proxy)
+from flask import send_from_directory
+
+@app.route('/audio/<path:path>')
+def static_proxy(path):
+    audio_file_name = "tmp/"+path
+    log.info("Looking for audio file %s" % audio_file_name)
+    # send_static_file will guess the correct MIME type
+    return send_from_directory("tmp", path)
 
 
 

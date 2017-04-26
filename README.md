@@ -25,7 +25,7 @@ The file contains settings for:
 * server port (default: 10000)
 * log_level (default: warning)
 * audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_mockup/tmp)
-* audio_url_prefix: how the soundfiles should be found through apache. (default: audio)
+* audio_url_prefix: how the soundfiles should be served. Change this for production, and serve through eg. apache. (default: http://localhost:10000/audio)
 * lexicon: url to lexicon server. (default: http://localhost:8787)
 * marytts: url to marytts server. (default: http://localhost:59125/process)
 * run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found. (default: True)
