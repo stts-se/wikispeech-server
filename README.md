@@ -2,47 +2,19 @@
 
 ## Prerequisites:
 ```
-sudo apt install python3-setuptools
-```
-```
 sudo apt install opus-tools
+sudo apt install python3-pip
+sudo pip3 install -r requirements.txt
+
+mkdir wikispeech_mockup/tmp
 ```
 
-
-## Install:
-```
-sudo python3 setup.py install
-```
-
-or, without sudo, for example
-
-```
-mkdir ~/python3
-export PYTHONPATH=~/python3/lib/python
-export PATH=$PATH:~/python3/bin
-python3 setup.py install --home=~/python3/
-```
-
-NOTE There is still a problem with the flask package, that in some circumstances fails to install. Repeating "sudo python3 setup.py install" has worked for me.
 
 
 ## Usage:
 ```
-bin/wikispeech
-```
-or, if installed to somewhere on your path:
-```
-wikispeech
-```
-
-or:
-
-```
 python3 bin/wikispeech
 ```
-
-
-
 
 ## Configuration:
 
@@ -50,24 +22,19 @@ For local configuration, make a copy of wikispeech_mockup/user-host_example.conf
 name it ```<username>-<hostname>.conf```, and edit it as needed.
 
 The file contains settings for:
+* server port
+* log_level
 * audio_tmpdir: output directory for soundfiles. This directory needs to exist.
 * audio_url_prefix: how the soundfiles should be found through apache
 * lexicon: url to lexicon server
 * marytts: url to marytts server
+* run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found
+* quit_on_error: Quit or keep going if a test fails
 
-The usage examples will both test that the configuration is correct, and that a lexicon server and a marytts server are accessible.
+
+
 
 ## Test:
-```
-python3 test/test_api.py
-```
-(tests that the api calls return what is expected)
-
-```
-python3 test/test_voice_configs.py
-```
-(tests voice/server configurations)
-
 
 ```
 google-chrome test.html
