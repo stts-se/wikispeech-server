@@ -547,11 +547,27 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 from flask import send_from_directory
 
 @app.route('/audio/<path:path>')
-def static_proxy(path):
+def static_proxy_audio(path):
     audio_file_name = "tmp/"+path
     log.info("Looking for audio file %s" % audio_file_name)
     # send_static_file will guess the correct MIME type
     return send_from_directory("tmp", path)
+
+############################################
+#
+#  serve test file if needed (should usually be behind proxy)
+
+@app.route('/test.html')
+def static_test():
+    log.info("Looking for static file %s" % "test.html")
+    hostname = "http://localhost:10000/wikispeech"
+    return render_template("test.html", server=hostname)
+
+@app.route('/wikispeech_simple_player.js')
+def static_proxy_js():
+    log.info("Looking for static file %s" % "wikispeech_simple_player.js")
+    # send_static_file will guess the correct MIME type
+    return render_template("wikispeech_simple_player.js")
 
 
 
