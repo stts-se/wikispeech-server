@@ -40,10 +40,21 @@ def synthesise(lang, voice, input, presynth=False):
         #log.debug("prevwordend: %f" % float(prevwordend))
         #log.debug("endtime: %f" % float(endtime))
 
+        #TODO From the timing file we can't tell if a word is repeated
+        #Try to find another way!
+        #EXAMPLE:
+        #pau|0.164|0
+        #hh|0.233|hello
+        #ax|0.282|hello
+        #l|0.390|hello
+        #ow|0.515|hello
+        #hh|0.556|hello
+        #ax|0.596|hello
+        #l|0.708|hello
+        #ow|0.934|hello
+        #pau|1.199|0
 
         if prevword and prevword != "sil" and word != prevword:
-        #if prevword and word != prevword:
-            #words.append((prevword, str(float(prevwordend)+addtime) ))
             words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
 
 
@@ -60,8 +71,6 @@ def synthesise(lang, voice, input, presynth=False):
     if prevword == "0":
         prevword = "sil"
     if prevword and prevword != "sil" and word != prevword:
-    #if prevword and word != prevword:
-        #words.append((prevword, str(float(prevwordend)+addtime) ))
         words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
 
     audio_url = "http://localhost/wikispeech_mockup/%s.wav" % outfile
@@ -70,23 +79,6 @@ def synthesise(lang, voice, input, presynth=False):
     #return audio_url and tokens
     return (audio_url, words)
 
-def utt2ssmlOLD(item):
-    log.debug(item)
-    if item["tag"] == "t":
-        word = item["text"]
-        if "ph" in item:
-            phns = map2flite(item["ph"])
-            ssml = """<phoneme ph="%s">%s</phoneme>""" % (phns, word)
-        else:
-            ssml = word
-    elif item["tag"] == "boundary":
-        ssml = "<break/>"
-    else:
-        ssml_list = []
-        for child in item["children"]:
-            ssml_list.append(utt2ssml(child))
-        ssml = " ".join(ssml_list)
-    return ssml
 
 def utt2ssml(utterance):
     log.debug(utterance)
