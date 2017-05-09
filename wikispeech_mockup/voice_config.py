@@ -114,9 +114,30 @@ voice_configs = [
     ,
 
 
-    {"lang":"en", "name":"dfki-spike-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "marytts_locale":"en_US"}
+    {
+        "lang":"en",
+        "name":"dfki-spike-hsmm",
+        "engine":"marytts",
+        "adapter":"adapters.marytts_adapter",
+        "marytts_locale":"en_US",
+        "mapper": {
+            "from":"en-us_ws-sampa",
+            "to":"en-us_sampa_mary"
+        }
+    }
     ,
-    {"lang":"en", "name":"cmu-slt-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "marytts_locale":"en_US"}
+
+    {
+        "lang":"en",
+        "name":"cmu-slt-hsmm",
+        "engine":"marytts",
+        "adapter":"adapters.marytts_adapter",
+        "marytts_locale":"en_US",
+        "mapper": {
+            "from":"en-us_ws-sampa",
+            "to":"en-us_sampa_mary"
+        }
+    }
     ,
 
     #{"lang":"en", "name":"cmu_slt_hts", "engine":"hts_engine", "adapter":"hts_engine_adapter", "voice_file":"voices/hts_engine/cmu_us_arctic_slt_demo.htsvoice"}
