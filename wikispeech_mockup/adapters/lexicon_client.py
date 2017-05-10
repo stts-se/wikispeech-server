@@ -35,7 +35,9 @@ def getTokens(utt):
                 for token in phr["tokens"]:
                     if "mtu" in token and token["mtu"] == True:
                         for word in token["words"]:
-                            log.debug("SKIPPING %s" % word)
+                            #log.debug("SKIPPING %s" % word)
+                            if "g2p_method" in word:
+                                tokenlist.append(word)
                     else:
 
                         #SSML
@@ -53,6 +55,8 @@ def getOrth(tokenlist):
     orthlist = []
     for t in tokenlist:
         orth = t["orth"]
+        #Remove soft hyphen if it occurs - it's a hidden character that causes problems in lookup
+        orth = orth.replace("\xad","")
         orthlist.append(orth)
     return " ".join(orthlist)
 
@@ -93,6 +97,8 @@ def convertResponse(response_json):
 def addTransFromResponse(tokenlist, responseDict):
     for t in tokenlist:
         orth = t["orth"]
+        #Remove soft hyphen if it occurs - it's a hidden character that causes problems in lookup
+        orth = orth.replace("\xad","")
         if orth.lower() in responseDict:
             ph = responseDict[orth.lower()]
             t["trans"] = ph
