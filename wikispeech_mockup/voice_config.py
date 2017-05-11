@@ -41,7 +41,11 @@ textprocessor_configs = [
      "components":[
          {
              "module":"adapters.marytts_adapter",
-             "call":"marytts_preproc"
+             "call":"marytts_preproc",
+             "mapper": {
+                 "from":"en-us_ws-sampa",
+                 "to":"en-us_sampa_mary"
+             },
          },
          {
              "module":"wikilex",

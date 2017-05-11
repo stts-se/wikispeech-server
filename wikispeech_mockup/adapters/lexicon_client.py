@@ -3,8 +3,37 @@ import simplejson as json
 import wikispeech_mockup.config as config
 import wikispeech_mockup.log as log
 
-lexica = []
 
+def cleanupOrth(orth):
+
+    orig = orth
+    
+    #Remove soft hyphen if it occurs - it's a hidden character that causes problems in lookup
+    orth = orth.replace("\xad","")
+
+    #Remove Arabic diacritics if they occur
+    #Bad place for this but where else? In mapper?
+    FATHATAN         = '\u064b' 
+    DAMMATAN         = '\u064c' 
+    KASRATAN         = '\u064d' 
+    FATHA            = '\u064e' 
+    DAMMA            = '\u064f' 
+    KASRA            = '\u0650' 
+    SHADDA           = '\u0651' 
+    SUKUN            = '\u0652' 
+
+    TASHKEEL  = (FATHATAN,DAMMATAN,KASRATAN,FATHA,DAMMA,KASRA,SUKUN,SHADDA)
+
+    orth = re.sub("("+"|".join(TASHKEEL)+")","", orth)
+
+    
+    orth = orth.lower()
+
+    log.debug("lexicon_client.cleanupOrth: %s -> %s" % (orig, orth))
+
+    return orth
+    
+lexica = []
 def loadLexicon(lexicon_name):
     lexicon = Lexicon(lexicon_name)
     lexica.append(lexicon)
@@ -55,8 +84,7 @@ def getOrth(tokenlist):
     orthlist = []
     for t in tokenlist:
         orth = t["orth"]
-        #Remove soft hyphen if it occurs - it's a hidden character that causes problems in lookup
-        orth = orth.replace("\xad","")
+        orth = cleanupOrth(orth)
         orthlist.append(orth)
     return " ".join(orthlist)
 
@@ -97,10 +125,9 @@ def convertResponse(response_json):
 def addTransFromResponse(tokenlist, responseDict):
     for t in tokenlist:
         orth = t["orth"]
-        #Remove soft hyphen if it occurs - it's a hidden character that causes problems in lookup
-        orth = orth.replace("\xad","")
-        if orth.lower() in responseDict:
-            ph = responseDict[orth.lower()]
+        orth = cleanupOrth(orth)
+        if orth in responseDict:
+            ph = responseDict[orth]
             t["trans"] = ph
             t["g2p_method"] = "lexicon"
         else:
