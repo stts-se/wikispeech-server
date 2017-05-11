@@ -38,6 +38,12 @@ def marytts_preproc(text, lang, tp_config, input_type="text"):
     if input_type == "ssml":
         text = mapSsmlTranscriptionsToMary(text, lang, tp_config)
 
+    #FIX FOR ISSUE T164917: 600-talet loses number
+    #Marytts uses ICU to expand numerals, but only numerals that are a full token.
+    #In cases like this the number is just dropped.
+    #The very simple fix is to insert space before the hyphen
+    text = re.sub(r"([0-9]+)-tal",r"\1 -tal", text)
+        
     payload = {
         "INPUT_TYPE": mary_input_type,
         #"OUTPUT_TYPE": "WORDS",
