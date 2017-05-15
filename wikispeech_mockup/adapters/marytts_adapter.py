@@ -825,7 +825,8 @@ def mapperMapToMary(trans, lang, voice):
 
     #Special cases for Swedish pre-r allophones that are not handled by the mapper (because mary uses an old version of the phoneme set that desn't distinguish between normal and r-coloured E/{ (always E) and 2/9 (always 9). This should change in mary later on.
     if lang == "sv":
-        new_trans = re.sub("{( -)? ",r"E\1 ", new_trans)
+        new_trans = re.sub("{ - ",r"E - ", new_trans)
+        new_trans = re.sub("{ ",r"E ", new_trans)
         new_trans = re.sub("2(:? -) r? ",r"9\1 r", new_trans)
 
 
