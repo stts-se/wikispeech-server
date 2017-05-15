@@ -188,6 +188,9 @@ function displayInSimpleEditor(entry_list, selected_table, orth, lang) {
 	    if ( lang == "en" ) {
 		xmllang = "en-US";
 	    }
+	    if ( lang == "nb" ) {
+		xmllang = "no";
+	    }
 
 	    trans.setAttribute("lang", xmllang);
 	    trans.setAttribute("contenteditable",true);
@@ -298,6 +301,9 @@ function tokeniseHtmlText(lang) {
     var xmllang = lang;
     if ( lang == "en" ) {
 	xmllang = "en_US";
+    }
+    if ( lang == "nb" ) {
+	xmllang = "no";
     }
     
     var ssml_header = '<?xml version="1.0" encoding="UTF-8" ?>\n<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"\n  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n  xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"\nxml:lang="'+xmllang+'">\n';
@@ -427,17 +433,19 @@ function addHtmlSentencesToSynthesisTab(lang) {
     text_chunks = html_editor.getElementsByTagName("ssml:s");
     //If there are no sentences, use p tags instead
     if ( text_chunks.length == 0 ) {
+	console.log("Found no ssml:s elements");
 	text_chunks = html_editor.getElementsByTagName("p");
 	//If there are no p tags, use entire text (?)
 	if ( text_chunks.length == 0 ) {
+	    console.log("Found no p elements, using entire text");
 	    text_chunks = [html_editor.innerHTML];
 	}
 	
     }
 
 
-    //console.log("TEXT CHUNKS: ");
-    //console.log(text_chunks);
+    console.log("TEXT CHUNKS: ");
+    console.log(text_chunks);
 
 
     for ( var i=0; i<text_chunks.length; i++ ) {
@@ -452,6 +460,9 @@ function addHtmlSentencesToSynthesisTab(lang) {
 	var xmllang = lang;
 	if ( lang == "en" ) {
 	    xmllang = "en-US";
+	}
+	if ( lang == "nb" ) {
+	    xmllang = "no";
 	}
 	    
 

@@ -39,17 +39,18 @@ var en_ssml1 = `<p lang="en" class="ssml">
     <br>
     <ssml:s>
     The title of the movie is: 
-    <phoneme alphabet="x-sampa" ph="' l A ' v i - t @ ' E ' b E - l A"> La vita è bella</phoneme>,
+    <phoneme alphabet="x-sampa" ph="' l A . ' v i . t @ . ' E . ' b E . l A"> La vita è bella</phoneme>,
 (Life is beautiful), 
 which is directed by 
-    <phoneme alphabet="x-sampa" ph="r O - ' b r= - t O - b E - ' n I n - j i">Roberto Benigni</phoneme>.
+    <phoneme alphabet="x-sampa" ph="r O . ' b r= . t O . b E . ' n I n . j i">Roberto Benigni</phoneme>.
     </ssml:s>
     </p>
     `;
 
+var ar_text = "<p>الموسوعة الحرة التي يستطيع الجميع تحريرها. توجد الآن 520,523 مقالة بالعربية.</p>"
 
 
-var no_text = "Søderbergelektroden regnes som en banebrytende oppfinnelse med stor betydning for effektiv produksjon i metallurgisk industri. Spesielt etter andre verdenskrig ble Søderbergelektroden en viktig komponent i kraftkrevende industri i Norge. Lenge etter at Søderbergelektroden ble oppfunnet ble den nominert til Norges største ingeniørbragd."
+var no_text = "<p>Søderbergelektroden regnes som en banebrytende oppfinnelse med stor betydning for effektiv produksjon i metallurgisk industri. Spesielt etter andre verdenskrig ble Søderbergelektroden en viktig komponent i kraftkrevende industri i Norge. Lenge etter at Søderbergelektroden ble oppfunnet ble den nominert til Norges største ingeniørbragd.</p>"
 
 
 
@@ -64,6 +65,9 @@ function addTestdata(lang) {
     }
     if (lang === "en") {
 	html_editor.innerHTML = en_ssml1;
+    }
+    if (lang === "ar") {
+	html_editor.innerHTML = ar_text;
     }
     if (lang === "nb") {
 	html_editor.innerHTML = no_text;
