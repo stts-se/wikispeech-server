@@ -51,6 +51,7 @@ def lexLookup(utt, lang, componentConfig):
         
     tokens = getTokens(utt)
     orthstring = getOrth(tokens)
+    log.debug("ORTH TO LOOKUP: %s" % orthstring)
     responseDict = getLookupBySentence(orthstring, lexicon_name)
     addTransFromResponse(tokens, responseDict)
     return utt
@@ -69,14 +70,11 @@ def getTokens(utt):
                                 tokenlist.append(word)
                     else:
 
-                        #SSML
-                        #If there are transcriptions (from marytts) that have no g2p_method, they came from ssml input and should not be overwritten! 
-                        #if "g2p_method" in child and child["g2p_method"] in ["rules","lexicon"]:
-                        #TODO this should be handled in a more general way
-                        #'input_transcription' or something
                         for word in token["words"]:
-                            if "g2p_method" in word:
+                            #Only append to tokenlist if word doesn't have 'input_ssml_transcription' attribute
+                            if "input_ssml_transcription" not in word:
                                 tokenlist.append(word)
+                                log.debug("Appending to tokenlist: %s" % word)
     return tokenlist
 
 
@@ -149,7 +147,7 @@ class Lexicon(object):
 
     def test(self):
         url = "%s/%s?lexicons=%s" % (self.base_url, "lookup", self.lexicon_name)
-        log.debug(url)
+        log.debug("LEXICON URL: %s" % url)
         try:
             r = requests.get(url)
             response = r.text
@@ -166,10 +164,15 @@ class Lexicon(object):
 
 
     def lookup(self, string):
+
+        if string.strip() == "":
+            log.warning("LEXICON LOOKUP STRING IS EMPTY!")
+            return {}
+
         
         url = "%s/%s?lexicons=%s&words=%s" % (self.base_url, "lookup", self.lexicon_name, string)
         r = requests.get(url)
-        log.debug(r.url)
+        log.debug("LEXICON LOOKUP URL: %s" % r.url)
         response = r.text
         try:
             response_json = json.loads(response)

@@ -579,7 +579,11 @@ def buildWord(token_element, lang, voice):
     }
     word = addIfExists(word, token_element, "accent")
     #g2p_method can be rules, lexicon, or not there if there is sampa in input
-    word = addIfExists(word, token_element, "g2p_method")
+    #change to a tag for input_ssml_transcription that can be used by the lexicon_client
+    if "g2p_method" not in token_element.attrib:
+        word["input_ssml_transcription"] = True
+
+        
     word = addIfExists(word, token_element, "pos")
     #word = addIfExists(word, token_element, "ph")
     if "ph" in token_element.attrib:

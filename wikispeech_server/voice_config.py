@@ -12,7 +12,6 @@ textprocessor_configs = [
              },
          },
          {
-             #"module":"wikilex",
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
              "lexicon":"sv-se.nst"
@@ -48,7 +47,7 @@ textprocessor_configs = [
              },
          },
          {
-             "module":"wikilex",
+             "module":"adapters.lexicon_client",
              "call":"lexLookup",
              "lexicon":"en-us.cmu"
          }
@@ -56,22 +55,20 @@ textprocessor_configs = [
     }
     ,
 
-    {"name":"basic_flite_en", "lang":"en",
-     "components":[
-         {
-             "module":"tokeniser",
-             "call":"tokenise"
-             #},
-         #{
-         #    "module":"adapters.flite_adapter",
-         #    "call":"preproc"
-             #},
-         #{
-         #    "module":"wikilex",
-         #    "call":"lexLookup",
-         #    "lexicon":"en-us.cmu"
-         }
-     ]
+    {
+        "name":"basic_en",
+        "lang":"en",
+        "components":[
+            {
+                "module":"tokeniser",
+                "call":"tokenise"
+            },
+            {
+                "module":"adapters.lexicon_client",
+                "call":"lexLookup",
+                "lexicon":"en-us.cmu"
+            }
+        ]
     }
     ,
 
@@ -87,7 +84,6 @@ textprocessor_configs = [
              },
          },
          {
-             #"module":"wikilex",
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
              "lexicon":"ar-test"
@@ -99,6 +95,9 @@ textprocessor_configs = [
 
 
 voice_configs = [
+
+    # SWEDISH
+
     {
         "lang":"sv",
         "name":"stts_sv_nst-hsmm",
@@ -114,10 +113,13 @@ voice_configs = [
     #{"lang":"sv", "name":"espeak_mbrola_sv1", "engine":"espeak", "adapter":"adapters.espeak_adapter", "espeak_mbrola_voice":"mb-sw1", "espeak_voice":"mb-sw1", "program":{"command":'espeak -v mb-sw1'}}
     #,
 
+    # NORWEGIAN
+
     {"lang":"nb", "name":"stts_no_nst-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "marytts_locale":"no"}
     ,
 
-
+    # ENGLISH
+    
     {
         "lang":"en",
         "name":"dfki-spike-hsmm",
@@ -144,12 +146,18 @@ voice_configs = [
     }
     ,
 
-    #{"lang":"en", "name":"cmu_slt_hts", "engine":"hts_engine", "adapter":"hts_engine_adapter", "voice_file":"voices/hts_engine/cmu_us_arctic_slt_demo.htsvoice"}
-    #,
-
-    #TODO
-    {"lang":"en", "name":"cmu-slt-flite", "engine":"flite", "adapter":"adapters.flite_adapter", "flite_voice":"slt"}
+    {
+        "lang":"en",
+        "name":"cmu-slt-flite",
+        "engine":"flite",
+        "adapter":"adapters.flite_adapter",
+        "flite_voice":"slt"
+    }
     ,
+
+
+
+    # ARABIC
 
     {
         "lang":"ar",

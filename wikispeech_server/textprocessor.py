@@ -1,7 +1,17 @@
+if __name__ == "__main__":
+    import sys
+    sys.path.append("/media/bigdisk/git/wikispeech_mockup")
+    print(sys.path)
+
 import wikispeech_server.log as log
 
 from wikispeech_server.adapters.lexicon_client import Lexicon, LexiconException
 from wikispeech_server.adapters.mapper_client import Mapper, MapperException
+
+#For testing marytts_adapter
+#TODO? move to test function in marytts_adapter
+import wikispeech_server.config as config
+import requests
 
 class TextprocessorException(Exception):
     pass
@@ -52,7 +62,24 @@ class TextprocComponent(object):
                 self.mapper = Mapper(cconfig["mapper"]["from"], cconfig["mapper"]["to"])
             except MapperException as e:
                 raise TextprocComponentException(e)
-            
+        if "module" in cconfig and cconfig["module"] == "adapters.marytts_adapter":
+            log.info("Trying to create marytts component: %s" % cconfig)
+            #For testing marytts_adapter
+            #TODO? move to test function in marytts_adapter
+            try:
+                marytts_url = config.config.get("Services", "marytts")
+                payload = {
+                    "INPUT_TYPE": "TEXT",
+                    "OUTPUT_TYPE": "INTONATION",
+                    "LOCALE": "en_US",
+                    "INPUT_TEXT": "test"
+                }
+                r = requests.get(marytts_url, params=payload)
+                log.debug("CALLING MARYTTS: %s" % r.url)    
+                xml = r.text
+            except Exception as e:
+                raise TextprocComponentException(e)
+
                                               
 
 if __name__ == "__main__":
@@ -74,7 +101,7 @@ if __name__ == "__main__":
             {
                 "module":"adapters.lexicon_client",
                 "call":"lexLookup",
-                "lexicon":"sv-se.nstXX"
+                "lexicon":"sv-se.nst"
             }
         ]
     }
