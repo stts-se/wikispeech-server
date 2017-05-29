@@ -24,6 +24,7 @@ name it ```<username>-<hostname>.conf```, and edit it as needed.
 The file contains settings for:
 * server port (default: 10000)
 * log_level (default: warning)
+* debug_mode: python flask setting to reload when files are edited. (default: False)
 * audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
 * audio_url_prefix: how the soundfiles should be served. Change this for production, and serve through eg. apache. (default: http://localhost:10000/audio)
 * lexicon: url to lexicon server. (default: http://localhost:8787)
