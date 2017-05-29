@@ -50,9 +50,18 @@ ws.log.info("Loaded voices for languages: %s" % ws.synthesisSupportedLanguages()
 
 ws.log.info("Supported languages: %s" % ws.getSupportedLanguages())
 
-port_nr = config.config.get("Server","port")
+port_nr = config.config.getint("Server","port")
+
+
+DEBUG_MODE = False
+if config.config.has_option("Server","debug_mode"):
+    DEBUG_MODE = config.config.getboolean("Server", "debug_mode")
+
+
+ws.log.info("port_nr set to %d" % port_nr)    
+ws.log.info("DEBUG_MODE set to %s" % DEBUG_MODE)
  
-ws.app.run(host='0.0.0.0', port=port_nr, debug=False, threaded=True)
+ws.app.run(host='0.0.0.0', port=port_nr, debug=DEBUG_MODE, threaded=True)
 
 
 
