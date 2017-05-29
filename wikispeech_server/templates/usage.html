@@ -12,7 +12,7 @@ USAGE: wikispeech/?lang=LANG&input=TEXT
 <br>
 Supported languages are: {{ languages }}
 <br>
-EXAMPLE: <a href='{{ server }}wikispeech/?lang=sv&input=Ett+test'>{{ server }}/wikispeech/?lang=sv&input=Ett test</a>
+EXAMPLE: <a href='{{ server }}wikispeech/?lang=en&input=A+test'>{{ server }}/wikispeech/?lang=en&input=A test</a>
 <hr>
 Other things to try:
 <br>
@@ -20,16 +20,23 @@ Other things to try:
 <br>
 <a href='{{ server }}wikispeech/textprocessing/languages'>{{ server }}wikispeech/textprocessing/languages</a>
 <br>
-<a href='{{ server }}wikispeech/textprocessing/languages/sv'>{{ server }}wikispeech/textprocessing/languages/sv</a>
+<a href='{{ server }}wikispeech/textprocessing/languages/en'>{{ server }}wikispeech/textprocessing/languages/en</a>
 <br>
 <a href='{{ server }}wikispeech/synthesis/voices'>{{ server }}wikispeech/synthesis/voices</a>
 <br>
-<a href='{{ server }}wikispeech/synthesis/voices/sv'>{{ server }}wikispeech/synthesis/voices/sv</a>
+<a href='{{ server }}wikispeech/synthesis/voices/en'>{{ server }}wikispeech/synthesis/voices/en</a>
+<hr>
+Textprocessing example:
 <br>
+<a href='{{ server }}wikispeech/textprocessing/?lang=en&input=A+test'>{{ server }}/wikispeech/textprocessing/?lang=en&input=A test</a>
+<br>
+Tokenisation example:
+<br>
+<a href='{{ server }}wikispeech/textprocessing/?lang=en&input=A+test&textprocessor=basic_flite_en&process=tokenise'>{{ server }}/wikispeech/textprocessing/?lang=en&input=A test&testprocessor=basic_flite_en&process=tokenise</a>
 
 
 
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Tue Jun 14 10:08:29 CEST 2016 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Mon May 29 13:42:48 CEST 2017 <!-- hhmts end -->
 </body> </html>
