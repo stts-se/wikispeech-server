@@ -1,22 +1,28 @@
-python3 -m venv /media/bigdisk/ws_venv
-cd /media/bigdisk/ws_venv
+#!/bin/sh
+
+VENVDIR=$1
+#VENVDIR=/media/bigdisk/ws_venv
+
+python3 -m venv $VENVDIR
+cd $VENVDIR
 source ./bin/activate
 
-mkdir git
+mkdir -p git
+mkdir -p wikispeech_mockup/tmp
 cd git
-git clone https://github.com/stts-se/wikispeech_mockup.git
+
+#First time:
+#git clone https://github.com/stts-se/wikispeech_mockup.git
+
+
 cd wikispeech_mockup
-git checkout packaging
-mkdir wikispeech_mockup/tmp
+git pull
 
-#should fail with "ImportError: No module named 'requests'":
-bin/wikispeech
 
-python3 setup.py install
-#Need to run it twice, fails on flask the first time, WHY?
-python3 setup.py install
+pip3 install -r requirements.txt
 
 #should now work (except lexicon and marytts servers may need to be configured and/or started):
 bin/wikispeech
 
-deactivate
+#To quit venv:
+#deactivate
