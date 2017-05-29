@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#from wikispeech_mockup.wikispeech import getSupportedLanguages, textprocSupportedLanguages, synthesisSupportedLanguages
+#from wikispeech_server.wikispeech import getSupportedLanguages, textprocSupportedLanguages, synthesisSupportedLanguages
 
 def getWikispeechOptions():
 

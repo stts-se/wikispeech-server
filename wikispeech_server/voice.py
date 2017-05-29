@@ -1,10 +1,10 @@
 import re, requests
 
-import wikispeech_mockup.log as log
-import wikispeech_mockup.config as config
+import wikispeech_server.log as log
+import wikispeech_server.config as config
 
-from wikispeech_mockup.adapters.lexicon_client import Lexicon, LexiconException
-from wikispeech_mockup.adapters.mapper_client import Mapper, MapperException
+from wikispeech_server.adapters.lexicon_client import Lexicon, LexiconException
+from wikispeech_server.adapters.mapper_client import Mapper, MapperException
 
 class VoiceException(Exception):
     pass

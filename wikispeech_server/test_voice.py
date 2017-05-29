@@ -1,10 +1,10 @@
 import unittest
 try:
-    from wikispeech_mockup.voice import *
+    from wikispeech_server.voice import *
 except:
     from voice import *
 
-import wikispeech_mockup.log as log
+import wikispeech_server.log as log
 
 
     
@@ -26,7 +26,7 @@ class TestVoice(unittest.TestCase):
 
         self.assertEqual(v.name, voice_config["name"])
         self.assertEqual(v.engine, voice_config["engine"])
-        self.assertEqual(str(type(v.mapper)), "<class 'wikispeech_mockup.adapters.mapper_client.Mapper'>")
+        self.assertEqual(str(type(v.mapper)), "<class 'wikispeech_server.adapters.mapper_client.Mapper'>")
 
     def testBrokenVoice(self):
         default_log_level = log.log_level

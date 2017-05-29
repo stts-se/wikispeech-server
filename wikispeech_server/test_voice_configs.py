@@ -1,7 +1,7 @@
 import sys
 import json
-import wikispeech_mockup.wikispeech as ws
-import wikispeech_mockup.log as log
+import wikispeech_server.wikispeech as ws
+import wikispeech_server.log as log
 
 log.info("RUNNING VOICE CONFIG TESTS")
 

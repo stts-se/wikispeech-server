@@ -1,4 +1,4 @@
-from wikispeech_mockup.adapters.marytts_adapter import *
+from wikispeech_server.adapters.marytts_adapter import *
 
 #test1: no 'prosody', no 'mtu'
 #hel häl här

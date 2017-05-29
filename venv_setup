@@ -8,7 +8,6 @@ cd $VENVDIR
 source ./bin/activate
 
 mkdir -p git
-mkdir -p wikispeech_mockup/tmp
 cd git
 
 #First time:
@@ -17,6 +16,7 @@ cd git
 
 cd wikispeech_mockup
 git pull
+mkdir -p wikispeech_server/tmp
 
 
 pip3 install -r requirements.txt

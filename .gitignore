@@ -1,5 +1,2 @@
 tmp/*
-dist/*
-build/*
-wikispeech_mockup.egg-info/*
-wikispeech_mockup/tmp/*
+wikispeech_server/tmp/*

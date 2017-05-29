@@ -7,13 +7,13 @@ from flask import Flask, request, json, Response, make_response, render_template
 from flask_cors import CORS
 
 
-from wikispeech_mockup.voice_config import textprocessor_configs, voice_configs
-#HB moved into this file: from wikispeech_mockup.options import *
-import wikispeech_mockup.wikilex as wikilex
-import wikispeech_mockup.config as config
-import wikispeech_mockup.log as log
-from wikispeech_mockup.textprocessor import Textprocessor, TextprocessorException
-from wikispeech_mockup.voice import Voice, VoiceException
+from wikispeech_server.voice_config import textprocessor_configs, voice_configs
+#HB moved into this file: from wikispeech_server.options import *
+import wikispeech_server.wikilex as wikilex
+import wikispeech_server.config as config
+import wikispeech_server.log as log
+from wikispeech_server.textprocessor import Textprocessor, TextprocessorException
+from wikispeech_server.voice import Voice, VoiceException
 
         
 #################
@@ -337,7 +337,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         #Import the defined module and function
         #mod = import_module(module_name)
         #HB testing
-        mod = import_module("wikispeech_mockup."+module_name)
+        mod = import_module("wikispeech_server."+module_name)
         #log.debug(mod)
         #log.debug(dir(mod))
         process = getattr(mod, component_name)
@@ -505,7 +505,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #Import the defined module and function
     #TODO drop synthesise for voice[function] (?)
 
-    mod = import_module("wikispeech_mockup."+voice["adapter"])
+    mod = import_module("wikispeech_server."+voice["adapter"])
     log.debug(str(mod))
     log.debug(str(dir(mod)))
 

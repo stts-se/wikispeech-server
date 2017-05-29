@@ -1,10 +1,10 @@
 import unittest
 try:
-    from wikispeech_mockup.adapters.mapper_client import *
+    from wikispeech_server.adapters.mapper_client import *
 except:
     from mapper_client import *
 
-import wikispeech_mockup.log as log
+import wikispeech_server.log as log
 
 
     
@@ -14,7 +14,7 @@ class TestMapper(unittest.TestCase):
         from_symbol_set = "sv-se_ws-sampa"
         to_symbol_set = "sv-se_sampa_mary"
         mapper = Mapper(from_symbol_set, to_symbol_set)
-        self.assertEqual(str(type(mapper)), "<class 'wikispeech_mockup.adapters.mapper_client.Mapper'>")
+        self.assertEqual(str(type(mapper)), "<class 'wikispeech_server.adapters.mapper_client.Mapper'>")
 
     def testMap(self):
         from_symbol_set = "sv-se_ws-sampa"

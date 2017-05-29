@@ -1,7 +1,7 @@
 import requests, re
 import simplejson as json
-import wikispeech_mockup.config as config
-import wikispeech_mockup.log as log
+import wikispeech_server.config as config
+import wikispeech_server.log as log
 
 
 def cleanupOrth(orth):

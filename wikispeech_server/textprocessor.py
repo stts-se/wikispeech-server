@@ -1,7 +1,7 @@
-import wikispeech_mockup.log as log
+import wikispeech_server.log as log
 
-from wikispeech_mockup.adapters.lexicon_client import Lexicon, LexiconException
-from wikispeech_mockup.adapters.mapper_client import Mapper, MapperException
+from wikispeech_server.adapters.lexicon_client import Lexicon, LexiconException
+from wikispeech_server.adapters.mapper_client import Mapper, MapperException
 
 class TextprocessorException(Exception):
     pass

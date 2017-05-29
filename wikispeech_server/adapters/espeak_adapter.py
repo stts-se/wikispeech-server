@@ -77,7 +77,7 @@ def synthesise(lang, voice, input, presynth=False):
     #if prevword and word != prevword:
     #    words.append((prevword, str(float(prevwordend)+addtime) ))
 
-    audio_url = "http://localhost/wikispeech_mockup/%s.wav" % outfile
+    audio_url = "http://localhost/wikispeech_server/%s.wav" % outfile
 
 
     #return audio_url and tokens

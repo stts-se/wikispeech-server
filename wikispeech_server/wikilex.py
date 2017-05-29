@@ -7,8 +7,8 @@ except:
     #Python 2
     from urllib import quote_plus
     
-import wikispeech_mockup.config as config
-import wikispeech_mockup.log as log
+import wikispeech_server.config as config
+import wikispeech_server.log as log
 host = config.config.get("Services","lexicon")
 
 

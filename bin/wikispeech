@@ -2,8 +2,8 @@
 
 import sys, traceback
 sys.path.insert(0,".")
-import wikispeech_mockup.wikispeech as ws
-import wikispeech_mockup.config as config
+import wikispeech_server.wikispeech as ws
+import wikispeech_server.config as config
 
 
 
@@ -25,9 +25,9 @@ if run_tests:
         ws.test_wikispeech()
 
         #These tests are run directly on import. TODO change to normal method invocation 
-        import wikispeech_mockup.test_api
-        import wikispeech_mockup.test_voice_configs
-        import wikispeech_mockup.adapters.test_marytts_adapter
+        import wikispeech_server.test_api
+        import wikispeech_server.test_voice_configs
+        import wikispeech_server.adapters.test_marytts_adapter
         ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
         

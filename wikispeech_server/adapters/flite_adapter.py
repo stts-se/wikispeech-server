@@ -1,6 +1,6 @@
 import os, re
-import wikispeech_mockup.log as log
-import wikispeech_mockup.config as config
+import wikispeech_server.log as log
+import wikispeech_server.config as config
 
 def preproc(utt):
     #Nothing to be done here .. Maybe there will be?

@@ -1,10 +1,10 @@
 import unittest
 try:
-    from wikispeech_mockup.textprocessor import *
+    from wikispeech_server.textprocessor import *
 except:
     from textprocessor import *
 
-import wikispeech_mockup.log as log
+import wikispeech_server.log as log
 
 
     
@@ -33,7 +33,7 @@ class TestTextprocessor(unittest.TestCase):
         tp = Textprocessor(tp_config)
         self.assertEqual(tp.name, tp_config["name"])
         self.assertEqual(tp.components[0].call, tp_config["components"][0]["call"])
-        self.assertEqual(str(type(tp.components[1])), "<class 'wikispeech_mockup.adapters.lexicon_client.Lexicon'>")
+        self.assertEqual(str(type(tp.components[1])), "<class 'wikispeech_server.adapters.lexicon_client.Lexicon'>")
 
     def testBrokenTextprocessor(self):
         default_log_level = log.log_level

@@ -1,9 +1,9 @@
 import sys, requests, json, re
 import xml.etree.ElementTree as ET
 
-import wikispeech_mockup.config as config
-import wikispeech_mockup.log as log
-import wikispeech_mockup.wikispeech as ws
+import wikispeech_server.config as config
+import wikispeech_server.log as log
+import wikispeech_server.wikispeech as ws
 
 
 try:

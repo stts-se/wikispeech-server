@@ -1,10 +1,10 @@
 import unittest
 try:
-    from wikispeech_mockup.adapters.lexicon_client import *
+    from wikispeech_server.adapters.lexicon_client import *
 except:
     from lexicon_client import *
 
-import wikispeech_mockup.log as log
+import wikispeech_server.log as log
 
 
     
@@ -13,7 +13,7 @@ class TestLexicon(unittest.TestCase):
     def testNewLexicon(self):
         lexicon_name = "sv-se.nst"
         lexicon = Lexicon(lexicon_name)
-        self.assertEqual(str(type(lexicon)), "<class 'wikispeech_mockup.adapters.lexicon_client.Lexicon'>")
+        self.assertEqual(str(type(lexicon)), "<class 'wikispeech_server.adapters.lexicon_client.Lexicon'>")
 
     def testLookup(self):
         lexicon_name = "sv-se.nst"

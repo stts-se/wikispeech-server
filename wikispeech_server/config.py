@@ -10,7 +10,7 @@ hostname = os.uname()[1]
 
 
 
-default_config_file = "wikispeech_mockup/default.conf"
+default_config_file = "wikispeech_server/default.conf"
     
 if not os.path.isfile(default_config_file):
     print("ERROR: Default config file %s not found" % default_config_file)
@@ -19,7 +19,7 @@ if not os.path.isfile(default_config_file):
 #print("Default config file found: %s" % default_config_file)
 config.read(default_config_file)
 
-user_config_file = "wikispeech_mockup/%s-%s.conf" % (user, hostname)
+user_config_file = "wikispeech_server/%s-%s.conf" % (user, hostname)
 if not os.path.isfile(user_config_file):
     print("User config file %s not found, using default config file %s" % (user_config_file, default_config_file))
 else:
