@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#from wikispeech_server.wikispeech import getSupportedLanguages, textprocSupportedLanguages, synthesisSupportedLanguages
+import wikispeech_server as ws
 
 def getWikispeechOptions():
 
@@ -18,7 +18,7 @@ def getWikispeechOptions():
                 "type": "string",
                 "description": "ISO 639-1 two-letter code for textprocessing and synthesis language",
                 "required": True,
-                "allowed": getSupportedLanguages(),
+                "allowed": ws.wikispeech.getSupportedLanguages(),
                 "default": None
             },
             "textprocessor": {
@@ -91,7 +91,7 @@ def getTextprocessingOptions():
                     "type": "string",
                     "description": "ISO 639-1 two-letter code for textprocessing language",
                     "required": True,
-                    "allowed": textprocSupportedLanguages(),
+                    "allowed": ws.wikispeech.textprocSupportedLanguages(),
                     "default": None
                 },
                 "textprocessor": {
@@ -156,7 +156,7 @@ def getSynthesisOptions():
                     "type": "string",
                     "description": "ISO 639-1 two-letter code for synthesis language",
                     "required": True,
-                    "allowed": synthesisSupportedLanguages(),
+                    "allowed": ws.wikispeech.synthesisSupportedLanguages(),
                     "default": None
                 },
                 "voice": {
