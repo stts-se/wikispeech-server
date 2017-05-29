@@ -393,6 +393,8 @@ def list_synthesisSupportedLanguages():
 @app.route('/wikispeech/synthesis/voices', methods=["GET"])
 def list_voices():
     json_data = json.dumps(voice_configs)
+    #TODO return list of loaded voices, not configured!
+    #json_data = json.dumps(voices)
     return Response(json_data, mimetype='application/json')
 
 @app.route('/wikispeech/synthesis/voices/<lang>', methods=["GET"])

@@ -60,10 +60,13 @@ class Voice(object):
         return names
 
     def __repr__(self):
-        return "Voice:{name:%s, lang=%s}" % (self.name, self.lang)
+        #return {"name":self.name, "lang":self.lang}
+        return "{name:%s, lang:%s}" % (self.name, self.lang)
 
     def __str__(self):
-        return self.__repr__()
+        return {"name":self.name, "lang":self.lang}
+        #return "{name:%s, lang:%s}" % (self.name, self.lang)
+
 
 
 
