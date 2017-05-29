@@ -1,2 +1,0 @@
-include wikispeech_mockup/*.conf
-include wikispeech_mockup/templates/*
