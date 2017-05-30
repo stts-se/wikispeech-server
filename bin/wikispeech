@@ -27,7 +27,15 @@ if run_tests:
         #These tests are run directly on import. TODO change to normal method invocation 
         import wikispeech_server.test_api
         import wikispeech_server.test_voice_configs
-        import wikispeech_server.adapters.test_marytts_adapter
+
+        #These tests use the unittest module. Import all tests and then run unittest.main(exit=False). exit=False is needed otherwise unittest will do SystemExit even after success
+        from wikispeech_server.test_textprocessor import *
+        from wikispeech_server.test_voice import *
+        from wikispeech_server.adapters.test_marytts_adapter import *
+        from wikispeech_server.adapters.test_lexicon_client import *
+        from wikispeech_server.adapters.test_mapper_client import *
+        unittest.main(exit=False, failfast=True)
+
         ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
         

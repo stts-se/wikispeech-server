@@ -1,3 +1,7 @@
+if __name__ == "__main__":
+    import sys
+    sys.path.append(sys.path[0]+"/..")
+
 import unittest
 try:
     from wikispeech_server.textprocessor import *
@@ -62,7 +66,12 @@ class TestTextprocessor(unittest.TestCase):
         log.log_level = default_log_level
 
 
+
+def run_tests():
+    unittest.main(exit=False, failfast=True)
+    
+        
     
 if __name__ == "__main__":
     log.log_level = "error" #debug, info, warning, error
-    unittest.main()
+    run_tests()
