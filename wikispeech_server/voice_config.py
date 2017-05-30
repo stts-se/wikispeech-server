@@ -1,7 +1,7 @@
 
 
 textprocessor_configs = [
-    {"name":"wikitextproc_sv", "lang":"sv",
+    {"name":"marytts_textproc_sv", "lang":"sv",
      "components":[
          {
              "module":"adapters.marytts_adapter",
@@ -20,7 +20,7 @@ textprocessor_configs = [
     }
     ,
     
-    {"name":"wikitextproc_nb", "lang":"nb",
+    {"name":"marytts_textproc_nb", "lang":"nb",
      "components":[
          {
              "module":"adapters.marytts_adapter",
@@ -36,7 +36,7 @@ textprocessor_configs = [
     ,
 
 
-    {"name":"wikitextproc_en", "lang":"en",
+    {"name":"marytts_textproc_en", "lang":"en",
      "components":[
          {
              "module":"adapters.marytts_adapter",
@@ -56,7 +56,7 @@ textprocessor_configs = [
     ,
 
     {
-        "name":"basic_en",
+        "name":"ws_textproc_en",
         "lang":"en",
         "components":[
             {
@@ -71,9 +71,20 @@ textprocessor_configs = [
         ]
     }
     ,
+    {
+        "name":"basic_en",
+        "lang":"en",
+        "components":[
+            {
+                "module":"tokeniser",
+                "call":"tokenise"
+            }
+        ]
+    }
+    ,
 
 
-    {"name":"wikitextproc_ar", "lang":"ar",
+    {"name":"marytts_textproc_ar", "lang":"ar",
      "components":[
          {
              "module":"adapters.marytts_adapter",
