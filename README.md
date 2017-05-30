@@ -36,7 +36,10 @@ The file contains settings for:
 ** run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found. (default: True)
 ** quit_on_error: Quit if a test fails. (default: False)
 
-
+To test the config file, the script can be run with a config file as argument:
+```
+python3 bin/wikispeech <config-file>
+```
 
 
 ## Test:
