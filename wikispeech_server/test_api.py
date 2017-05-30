@@ -201,7 +201,7 @@ test_done()
 r = test_client.get("%stextprocessors/sv" % (host))
 res = json.loads(r.data.decode('utf-8'))
 assert ( type(res) == type([]) )
-expected = ["wikitextproc_sv"]
+expected = ["marytts_textproc_sv"]
 for textprocessor in res:    
     assert ( textprocessor["name"] in expected ), "%s not in %s" % (textprocessor["name"], expected)
 test_done()

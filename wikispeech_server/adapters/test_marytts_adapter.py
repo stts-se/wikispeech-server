@@ -521,7 +521,7 @@ import unittest
 class TestM2Ws(unittest.TestCase):
 
     def test1(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         u = mary2ws(m_test1, component_config)
@@ -531,7 +531,7 @@ class TestM2Ws(unittest.TestCase):
 
 
     def test2(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         u = mary2ws(m_test2, component_config)
@@ -540,7 +540,7 @@ class TestM2Ws(unittest.TestCase):
         self.assertEqual(u, w_test2)
 
     def test3(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -550,7 +550,7 @@ class TestM2Ws(unittest.TestCase):
         self.assertEqual(u, w_test3)
         
     def test4(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -561,7 +561,7 @@ class TestM2Ws(unittest.TestCase):
         self.assertEqual(u, w_test4)
 
     def test5(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_en")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_en")
         log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -571,7 +571,7 @@ class TestM2Ws(unittest.TestCase):
         self.assertEqual(u, w_test5)
 
     def test6(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -584,7 +584,7 @@ class TestM2Ws(unittest.TestCase):
 class TestWs2M(unittest.TestCase):
 
     def test1(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -601,7 +601,7 @@ class TestWs2M(unittest.TestCase):
         self.assertEqual(m1, m2)
         
     def test2(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -617,7 +617,7 @@ class TestWs2M(unittest.TestCase):
         self.assertEqual(m1, m2)
         
     def test3(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         
@@ -634,7 +634,7 @@ class TestWs2M(unittest.TestCase):
         self.assertEqual(m1, m2)
         
     def test4(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -651,7 +651,7 @@ class TestWs2M(unittest.TestCase):
         self.assertEqual(m1, m2)
         
     def test5(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_en")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_en")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
     
@@ -668,7 +668,7 @@ class TestWs2M(unittest.TestCase):
         self.assertEqual(m1, m2)
         
     def test6(self):
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         #log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
@@ -734,7 +734,7 @@ class TestMapSsml(unittest.TestCase):
 </p>
 """
 
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         mapped = mapSsmlTranscriptionsToMary(ws_ssml, "sv", component_config)
@@ -748,7 +748,7 @@ class TestPreproc(unittest.TestCase):
 
         expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'words': [{'orth': 'Ett', 'trans': '" E t', 'accent': 'L+H*', 'pos': 'content'}], 'token_orth': 'Ett'}, {'words': [{'orth': 'öra', 'trans': '"" 9: . r a', 'accent': '!H*', 'pos': 'content'}], 'token_orth': 'öra'}, {'words': [{'orth': '.', 'pos': '$PUNCT'}], 'token_orth': '.'}], 'boundary': {'tone': 'L-L%', 'breakindex': '5'}}]}]}]}
 
-        tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
+        tp_config = ws.get_tp_config_by_name("marytts_textproc_sv")
         log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         result = marytts_preproc(input_text, "sv", component_config)
