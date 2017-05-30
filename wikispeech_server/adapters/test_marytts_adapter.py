@@ -1,3 +1,7 @@
+import sys
+if __name__ == "__main__":
+    sys.path.append(sys.path[0]+"/../..")
+
 from wikispeech_server.adapters.marytts_adapter import *
 
 #test1: no 'prosody', no 'mtu'
@@ -36,7 +40,6 @@ w_test1 = {
                             {
                                 "orth": "hel",
                                 "accent": "L+H*",
-                                "g2p_method": "lexicon",
                                 "pos": "content",
                                 "trans": "\" h e: l"
                             }
@@ -48,7 +51,6 @@ w_test1 = {
                             {
                                 "orth": "häl",
                                 "accent": "L+H*",
-                                "g2p_method": "lexicon",
                                 "pos": "content",
                                 "trans": "\" h E: l"
                             }
@@ -60,7 +62,6 @@ w_test1 = {
                             {
                                 "orth": "här",
                                 "accent": "!H*",
-                                "g2p_method": "lexicon",
                                 "pos": "content",
                                 "trans": "\" h {: r"
                             }
@@ -126,7 +127,6 @@ w_test2 = {
                                 {
                                     "orth": "hel",
                                     "accent": "L+H*",
-                                    "g2p_method": "lexicon",
                                     "pos": "content",
                                     "trans": "\" h e: l"
                                 }
@@ -154,7 +154,6 @@ w_test2 = {
                                 {
                                     "orth": "häl",
                                     "accent": "L+H*",
-                                    "g2p_method": "lexicon",
                                     "pos": "content",
                                     "trans": "\" h E: l"
                                 }
@@ -166,7 +165,6 @@ w_test2 = {
                                 {
                                     "orth": "här",
                                     "accent": "!H*",
-                                    "g2p_method": "lexicon",
                                     "pos": "content",
                                     "trans": "\" h {: r"
                                 }
@@ -222,7 +220,6 @@ w_test3 = {
                             {
                                 "orth": "öga",
                                 "accent": "L+H*",
-                                "g2p_method": "lexicon",
                                 "pos": "content",
                                 "trans": "\"\" 2: . g a"
                             }
@@ -234,7 +231,6 @@ w_test3 = {
                             {
                                 "orth": "öra",
                                 "accent": "L+H*",
-                                "g2p_method": "lexicon",
                                 "pos": "content",
                                 "trans": "\"\" 9: . r a"
                             }
@@ -247,7 +243,6 @@ w_test3 = {
                             {
                                 "orth": "tolv",
                                 "accent": "!H*",
-                                "g2p_method": "lexicon",
                                 "pos": "content",
                                 "trans": "\" t O l v"
                             }
@@ -315,7 +310,6 @@ w_test4 = {
                                 {
                                     "orth": "öga",
                                     "accent": "L+H*",
-                                    "g2p_method": "lexicon",
                                     "pos": "content",
                                     "trans": "\"\" 2: . g a"
                                 }
@@ -343,7 +337,6 @@ w_test4 = {
                                 {
                                     "orth": "öra",
                                     "accent": "L+H*",
-                                    "g2p_method": "lexicon",
                                     "pos": "content",
                                     "trans": "\"\" 9: . r a"
                                 }
@@ -356,7 +349,6 @@ w_test4 = {
                                 {
                                     "orth": "tolv",
                                     "accent": "!H*",
-                                    "g2p_method": "lexicon",
                                     "pos": "content",
                                     "trans": "\" t O l v"
                                 }
@@ -423,9 +415,8 @@ w_test5 = {
                                     {
                                         "orth": "Hello",
                                         "accent": "!H*",
-                                        "g2p_method": "lexicon",
                                         "pos": "UH",
-                                        "trans": "h @ - ' l @U",
+                                        "trans": "h @ . ' l @U",
                                     }
                                 ]
                             },
@@ -444,94 +435,18 @@ w_test5 = {
                                 "words": [
                                     {
                                         "orth": "one",
-                                        "g2p_method": "lexicon",
                                         "pos": ",",
                                         "trans": "' w V n",
                                     },
                                     {
                                         "orth": "hundred",
-                                        "g2p_method": "lexicon",
                                         "pos": "CD",
-                                        "trans": "' h V n - d r @ d",
+                                        "trans": "' h V n . d r @ d",
                                     },
                                     {
                                         "orth": "twelve",
-                                        "g2p_method": "lexicon",
                                         "pos": "CD",
                                         "trans": "' t w E l v",
-                                    }
-                                ]
-                            },
-                            {
-                                "token_orth": ".",
-                                "words": [
-                                    {
-                                        "orth": ".",
-                                        "pos": "."
-                                    }
-                                ]
-                            }                            
-                        ],
-                        "boundary": {"breakindex": "5", "tone": "L-L%"}
-                    }
-                ]
-            }
-            ]
-        }
-    ]
-}
-
-w_test5_OLD_BROKEN = {
-    "lang": "en",
-    "paragraphs": [
-        {
-            "sentences": [
-            {
-                "phrases": [
-                    {
-                        "tokens": [
-                            {
-                                "token_orth": "Hello",
-                                "words": [
-                                    {
-                                        "orth": "Hello",
-                                        "accent": "!H*",
-                                        "g2p_method": "lexicon",
-                                        "pos": "UH",
-                                        "trans": "HH AX $ L OW1",
-                                    }
-                                ]
-                            },
-                            {
-                                "token_orth": ",",
-                                "words": [
-                                    {
-                                        "orth": ",",
-                                        "pos": "."
-                                    }
-                                ]
-                            },
-                            {
-                                "token_orth": "112",
-                                "mtu": True,
-                                "words": [
-                                    {
-                                        "orth": "one",
-                                        "g2p_method": "lexicon",
-                                        "pos": ",",
-                                        "trans": "W AH1 N",
-                                    },
-                                    {
-                                        "orth": "hundred",
-                                        "g2p_method": "lexicon",
-                                        "pos": "CD",
-                                        "trans": "HH AH1 N $ D R AX D",
-                                    },
-                                    {
-                                        "orth": "twelve",
-                                        "g2p_method": "lexicon",
-                                        "pos": "CD",
-                                        "trans": "T W EH1 L V",
                                     }
                                 ]
                             },
@@ -584,7 +499,6 @@ w_test6 = {
                             {
                                 "orth": "göteborg",
                                 "accent": "!H*",
-                                "g2p_method": "lexicon",
                                 "pos": "content",
                                 "trans": "j 9 . t @ . \" b O r g"
                             }
@@ -608,20 +522,21 @@ class TestM2Ws(unittest.TestCase):
 
     def test1(self):
         tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
-        #log.debug("tp_config: %s" % tp_config)
+        log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         u = mary2ws(m_test1, component_config)
-        #log.debug(u)
-        #log.debug(w_test1)
+        log.debug("RESULT:\n%s" % u)
+        log.debug("EXPECTED:\n%s" % w_test1)
         self.assertEqual(u, w_test1)
+
 
     def test2(self):
         tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
-        #log.debug("tp_config: %s" % tp_config)
+        log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         u = mary2ws(m_test2, component_config)
-        #log.debug(u)
-        #log.debug(w_test2)
+        log.debug("RESULT:\n%s" % u)
+        log.debug("EXPECTED:\n%s" % w_test2)
         self.assertEqual(u, w_test2)
 
     def test3(self):
@@ -647,13 +562,12 @@ class TestM2Ws(unittest.TestCase):
 
     def test5(self):
         tp_config = ws.get_tp_config_by_name("wikitextproc_en")
-        #log.debug("tp_config: %s" % tp_config)
+        log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
 
         u = mary2ws(m_test5, component_config)
-        #log.debug("")
-        #log.debug(u)
-        #log.debug(w_test5)
+        log.debug("RESULT:\n%s" % u)
+        log.debug("EXPECTED:\n%s" % w_test5)
         self.assertEqual(u, w_test5)
 
     def test6(self):
@@ -678,10 +592,12 @@ class TestWs2M(unittest.TestCase):
         #m1 = re.sub('" />', '"/>', m1)
 
         m2 = re.sub("\n","",m_test1)
+        #ignore g2p_method..
+        m2 = re.sub(r' g2p_method="[^"]*" *', " ", m2)
+        
+        log.debug("RESULT:\n%s" % m1)
+        log.debug("EXPECTED:\n%s" % m2)
 
-        #log.debug()
-        #log.debug(m1)
-        #log.debug(m2)
         self.assertEqual(m1, m2)
         
     def test2(self):
@@ -693,10 +609,11 @@ class TestWs2M(unittest.TestCase):
         #m1 = re.sub('" />', '"/>', m1)
 
         m2 = re.sub("\n","",m_test2)
+        #ignore g2p_method..
+        m2 = re.sub(r' g2p_method="[^"]*" *', " ", m2)
+        log.debug("RESULT:\n%s" % m1)
+        log.debug("EXPECTED:\n%s" % m2)
 
-        #log.debug("")
-        #log.debug(m1)
-        #log.debug(m2)
         self.assertEqual(m1, m2)
         
     def test3(self):
@@ -709,9 +626,11 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test3)
 
-        #log.debug("")
-        #log.debug(m1)
-        #log.debug(m2)
+        #ignore g2p_method..
+        m2 = re.sub(r' g2p_method="[^"]*" *', " ", m2)
+        log.debug("RESULT:\n%s" % m1)
+        log.debug("EXPECTED:\n%s" % m2)
+
         self.assertEqual(m1, m2)
         
     def test4(self):
@@ -724,9 +643,11 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test4)
 
-        #log.debug("")
-        #log.debug(m1)
-        #log.debug(m2)
+        #ignore g2p_method..
+        m2 = re.sub(r' g2p_method="[^"]*" *', " ", m2)
+        log.debug("RESULT:\n%s" % m1)
+        log.debug("EXPECTED:\n%s" % m2)
+
         self.assertEqual(m1, m2)
         
     def test5(self):
@@ -739,9 +660,11 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test5)
 
-        #log.debug("")
-        #log.debug(m1)
-        #log.debug(m2)
+        #ignore g2p_method..
+        m2 = re.sub(r' g2p_method="[^"]*" *', " ", m2)
+        log.debug("RESULT:\n%s" % m1)
+        log.debug("EXPECTED:\n%s" % m2)
+
         self.assertEqual(m1, m2)
         
     def test6(self):
@@ -754,9 +677,11 @@ class TestWs2M(unittest.TestCase):
 
         m2 = re.sub("\n","",m_test6)
 
-        #log.debug("")
-        #log.debug(m1)
-        #log.debug(m2)
+        #ignore g2p_method..
+        m2 = re.sub(r' g2p_method="[^"]*" *', " ", m2)
+        log.debug("RESULT:\n%s" % m1)
+        log.debug("EXPECTED:\n%s" % m2)
+
         self.assertEqual(m1, m2)
         
 
@@ -820,18 +745,21 @@ class TestPreproc(unittest.TestCase):
 
     def test1(self):
         input_text = "Ett öra."
-        #expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'tone': 'L-L%', 'breakindex': '5'}, 'tokens': [{'words': [{'pos': 'content', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'g2p_method': 'lexicon'}], 'token_orth': 'Ett'}, {'words': [{'pos': 'content', 'trans': '"" 2: . r a', 'orth': 'öra', 'accent': '!H*', 'g2p_method': 'lexicon'}], 'token_orth': 'öra'}, {'words': [{'pos': '$PUNCT', 'orth': '.'}], 'token_orth': '.'}]}]}]}], 'lang': 'sv'}
-        expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': 'Ett', 'words': [{'g2p_method': 'lexicon', 'trans': '" E t', 'orth': 'Ett', 'accent': 'L+H*', 'pos': 'content'}]}, {'token_orth': 'öra', 'words': [{'g2p_method': 'lexicon', 'trans': '"" 9: . r a', 'orth': 'öra', 'accent': '!H*', 'pos': 'content'}]}, {'token_orth': '.', 'words': [{'orth': '.', 'pos': '$PUNCT'}]}], 'boundary': {'tone': 'L-L%', 'breakindex': '5'}}]}]}]}
+
+        expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'words': [{'orth': 'Ett', 'trans': '" E t', 'accent': 'L+H*', 'pos': 'content'}], 'token_orth': 'Ett'}, {'words': [{'orth': 'öra', 'trans': '"" 9: . r a', 'accent': '!H*', 'pos': 'content'}], 'token_orth': 'öra'}, {'words': [{'orth': '.', 'pos': '$PUNCT'}], 'token_orth': '.'}], 'boundary': {'tone': 'L-L%', 'breakindex': '5'}}]}]}]}
 
         tp_config = ws.get_tp_config_by_name("wikitextproc_sv")
         log.debug("tp_config: %s" % tp_config)
         component_config = tp_config["components"][0]
         result = marytts_preproc(input_text, "sv", component_config)
-        #print(result)
+
+        log.debug("RESULT:\n%s" % result)
+        log.debug("EXPECTED:\n%s" % expected)
+
         self.assertEqual(expected, result)
 
         
 
 if __name__ == "__main__":
-    ws.log.log_level = "error" #debug, info, warning, error
-    unittest.main()
+    ws.log.log_level = "warning" #debug, info, warning, error
+    unittest.main(failfast=True)

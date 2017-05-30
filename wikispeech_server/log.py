@@ -27,6 +27,8 @@ def info(msg):
 
 def warn(msg):
     log("warning","WARNING: "+str(msg))
+def warning(msg):
+    log("warning","WARNING: "+str(msg))
 
 def error(msg):
     log("error", "ERROR: "+str(msg))

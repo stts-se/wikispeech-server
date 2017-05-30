@@ -221,7 +221,7 @@ assert ( type(res) == type({}) )
 
 #expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'breakindex': '5', 'tone': 'L-L%'}, 'tokens': [{'token_orth': 'test', 'words': [{'accent': '!H*', 'g2p_method': 'lexicon', 'pos': 'NN', 'trans': "' t E s t", 'orth': 'test'}]}, {'token_orth': '.', 'words': [{'pos': '.', 'orth': '.'}]}]}]}]}], 'lang': 'en-US'}
 
-expected = {'lang': 'en-US', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': 'test', 'words': [{'g2p_method': 'lexicon', 'pos': 'NN', 'trans': "' t E s t", 'accent': '!H*', 'orth': 'test'}]}, {'token_orth': '.', 'words': [{'pos': '.', 'input_ssml_transcription': True, 'orth': '.'}]}], 'boundary': {'breakindex': '5', 'tone': 'L-L%'}}]}]}]}
+expected = {'lang': 'en-US', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': 'test', 'words': [{'g2p_method': 'lexicon', 'pos': 'NN', 'trans': "' t E s t", 'accent': '!H*', 'orth': 'test'}]}, {'token_orth': '.', 'words': [{'pos': '.', 'orth': '.'}]}], 'boundary': {'breakindex': '5', 'tone': 'L-L%'}}]}]}]}
 
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
