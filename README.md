@@ -18,19 +18,23 @@ python3 bin/wikispeech
 
 ## Configuration:
 
-For local configuration, make a copy of wikispeech_server/user-host_example.conf,
+For local configuration, make a copy of wikispeech_server/default.conf,
 name it ```<username>-<hostname>.conf```, and edit it as needed.
 
 The file contains settings for:
-* server port (default: 10000)
-* log_level (default: warning)
-* debug_mode: python flask setting to reload when files are edited. (default: False)
-* audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
-* audio_url_prefix: how the soundfiles should be served. Change this for production, and serve through eg. apache. (default: http://localhost:10000/audio)
-* lexicon: url to lexicon server. (default: http://localhost:8787)
-* marytts: url to marytts server. (default: http://localhost:59125/process)
-* run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found. (default: True)
-* quit_on_error: Quit if a test fails. (default: False)
+* Server
+** server port (default: 10000)
+** log_level (default: warning)
+** debug_mode: python flask setting to reload when files are edited. (default: False)
+* Audio settings
+** audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
+** audio_url_prefix: how the soundfiles should be served. Change this for production, and serve through eg. apache. (default: http://localhost:10000/audio)
+* Services
+** lexicon: url to lexicon server. (default: http://localhost:8787)
+** marytts: url to marytts server. (default: http://localhost:59125/process)
+* Tests
+** run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found. (default: True)
+** quit_on_error: Quit if a test fails. (default: False)
 
 
 
@@ -56,7 +60,7 @@ google-chrome "http://localhost:10000/wikispeech/?lang=sv&input=Ett+test"
 
 ## Documentation:
 
-started in https://github.com/stts-se/wikispeech_server/wiki
+started in https://github.com/stts-se/wikispeech_mockup/wiki
 
 
 ## Apache setup:
@@ -114,13 +118,13 @@ ProxyRequests     Off
 
 Link this directory in apache's document root, for example: 
 ```
-cd /var/www/html; sudo ln -s ~/git/wikispeech_server
+cd /var/www/html; sudo ln -s ~/git/wikispeech_mockup
 ```
 
 Test:
 ```
-google-chrome http://localhost/wikispeech_server/test.html
+google-chrome http://localhost/wikispeech_mockup/test.html
 ```
 ```
-google-chrome http://localhost/wikispeech_server/workflow_demo/test.html
+google-chrome http://localhost/wikispeech_mockup/workflow_demo/test.html
 ```
