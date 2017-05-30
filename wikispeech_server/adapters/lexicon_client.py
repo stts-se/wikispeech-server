@@ -35,8 +35,11 @@ def cleanupOrth(orth):
     
 lexica = []
 def loadLexicon(lexicon_name):
-    lexicon = Lexicon(lexicon_name)
-    lexica.append(lexicon)
+    try:
+        lexicon = getLexiconByName(lexicon_name)
+    except ValueError:
+        lexicon = Lexicon(lexicon_name)
+        lexica.append(lexicon)
     return lexicon
 
 #legacy call (from wikilex)
@@ -44,10 +47,7 @@ def lexLookup(utt, lang, componentConfig):
     lexicon_name = componentConfig["lexicon"]
 
     #TODO Load lexicon here, before we have an external call to loadLexicon
-    try:
-        getLexiconByName(lexicon_name)
-    except ValueError:
-        loadLexicon(lexicon_name)
+    loadLexicon(lexicon_name)
         
     tokens = getTokens(utt)
     orthstring = getOrth(tokens)
@@ -97,7 +97,7 @@ def getLexiconByName(lexicon_name):
     for lexicon in lexica:
         if lexicon.lexicon_name == lexicon_name:
             return lexicon
-    raise ValueError("Lexicon %s not loaded" % lexicon_name)
+    raise ValueError("Lexicon %s not loaded\nLoaded lexica: %s" % (lexicon_name, lexica))
 
 
 def convertResponse(response_json):

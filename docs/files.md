@@ -4,7 +4,7 @@ wikispeech.py
 voice_config.py
 
 tokeniser.py
-wikilex.py
+
 
 adapters
 	__init__.py
@@ -15,6 +15,7 @@ adapters
 	maryxml_converter.py
 	maryxml2json.py
 	xml2json.py
+	lexicon_client.py
 
 engines
 	flite

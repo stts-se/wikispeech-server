@@ -27,7 +27,7 @@ textprocessor_configs = [
              "call":"marytts_preproc"
 #         },
 #         {
-#             "module":"wikilex",
+#             "module":"adapters.lexicon_client",
 #             "call":"lexLookup",
 #             "lexicon":"no-nb.nst"
          }

@@ -10,7 +10,7 @@ from flask_cors import CORS
 from wikispeech_server.voice_config import textprocessor_configs, voice_configs
 #HB moved into this file:
 from wikispeech_server.options import *
-import wikispeech_server.wikilex as wikilex
+import wikispeech_server.adapters.lexicon_client as lexicon_client
 import wikispeech_server.config as config
 import wikispeech_server.log as log
 from wikispeech_server.textprocessor import Textprocessor, TextprocessorException
@@ -737,7 +737,7 @@ def getParam(param,default=None):
 
 
 
-def test_wikilex():
+def test_lexicon_client():
     lexicon = "sv-se.nst"
     sent = "apa hund färöarna"
     trans = {}
@@ -746,7 +746,8 @@ def test_wikilex():
     trans["färöarna"] = '"" f {: . % r 2: . a . rn a'
 
     try:
-        lex = wikilex.getLookupBySentence(sent, lexicon)
+        lexicon_client.loadLexicon(lexicon)
+        lex = lexicon_client.getLookupBySentence(sent, lexicon)
         log.debug("LEX: %s" % lex)
     except:
         log.error("Failed to do lexicon lookup.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))

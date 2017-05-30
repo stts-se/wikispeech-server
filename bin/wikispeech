@@ -20,7 +20,7 @@ if run_tests:
 
     try:
         ws.test_config()        
-        ws.test_wikilex()
+        ws.test_lexicon_client()
         ws.test_textproc()
         ws.test_wikispeech()
 

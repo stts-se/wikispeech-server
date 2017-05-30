@@ -1,3 +1,8 @@
+if __name__ == "__main__":
+    import sys
+    sys.path.append(sys.path[0]+"/../..")
+    #print(sys.path)
+    
 import unittest
 try:
     from wikispeech_server.adapters.lexicon_client import *
@@ -21,9 +26,14 @@ class TestLexicon(unittest.TestCase):
 
         orth = "apa"
 
-        expected = [{'entryValidations': [], 'preferred': False, 'lexiconId': 2, 'partOfSpeech': 'NN', 'wordParts': 'apa', 'id': 74078, 'transcriptions': [{'language': 'sv-se', 'id': 79414, 'strn': '"" A: . p a', 'sources': [], 'entryId': 74078}], 'lemma': {'paradigm': 's1a-flicka', 'id': 8764, 'strn': 'apa', 'reading': ''}, 'status': {'id': 74078, 'source': 'nst', 'timestamp': '2017-04-06T09:40:10Z', 'current': True, 'name': 'imported'}, 'language': 'sv-se', 'strn': 'apa', 'morphology': 'SIN|IND|NOM|UTR'}, {'entryValidations': [], 'preferred': False, 'lexiconId': 2, 'partOfSpeech': 'VB', 'wordParts': 'apa', 'id': 74079, 'transcriptions': [{'language': 'sv-se', 'id': 79415, 'strn': '"" A: . p a', 'sources': [], 'entryId': 74079}], 'lemma': {'paradigm': 's1a-flicka', 'id': 8764, 'strn': 'apa', 'reading': ''}, 'status': {'id': 74079, 'source': 'nst', 'timestamp': '2017-04-06T09:40:10Z', 'current': True, 'name': 'imported'}, 'language': 'sv-se', 'strn': 'apa', 'morphology': ''}, {'entryValidations': [], 'preferred': False, 'lexiconId': 2, 'partOfSpeech': 'VB', 'wordParts': 'apa', 'id': 74080, 'transcriptions': [{'language': 'sv-se', 'id': 79416, 'strn': '"" A: . p a', 'sources': [], 'entryId': 74080}], 'lemma': {'paradigm': 's1a-flicka', 'id': 8764, 'strn': 'apa', 'reading': ''}, 'status': {'id': 74080, 'source': 'nst', 'timestamp': '2017-04-06T09:40:10Z', 'current': True, 'name': 'imported'}, 'language': 'sv-se', 'strn': 'apa', 'morphology': 'AKT|INF-IMP'}]
-        
+        #expected = [{'entryValidations': [], 'preferred': False, 'lexiconId': 2, 'partOfSpeech': 'NN', 'wordParts': 'apa', 'id': 74078, 'transcriptions': [{'language': 'sv-se', 'id': 79414, 'strn': '"" A: . p a', 'sources': [], 'entryId': 74078}], 'lemma': {'paradigm': 's1a-flicka', 'id': 8764, 'strn': 'apa', 'reading': ''}, 'status': {'id': 74078, 'source': 'nst', 'timestamp': '2017-04-06T09:40:10Z', 'current': True, 'name': 'imported'}, 'language': 'sv-se', 'strn': 'apa', 'morphology': 'SIN|IND|NOM|UTR'}, {'entryValidations': [], 'preferred': False, 'lexiconId': 2, 'partOfSpeech': 'VB', 'wordParts': 'apa', 'id': 74079, 'transcriptions': [{'language': 'sv-se', 'id': 79415, 'strn': '"" A: . p a', 'sources': [], 'entryId': 74079}], 'lemma': {'paradigm': 's1a-flicka', 'id': 8764, 'strn': 'apa', 'reading': ''}, 'status': {'id': 74079, 'source': 'nst', 'timestamp': '2017-04-06T09:40:10Z', 'current': True, 'name': 'imported'}, 'language': 'sv-se', 'strn': 'apa', 'morphology': ''}, {'entryValidations': [], 'preferred': False, 'lexiconId': 2, 'partOfSpeech': 'VB', 'wordParts': 'apa', 'id': 74080, 'transcriptions': [{'language': 'sv-se', 'id': 79416, 'strn': '"" A: . p a', 'sources': [], 'entryId': 74080}], 'lemma': {'paradigm': 's1a-flicka', 'id': 8764, 'strn': 'apa', 'reading': ''}, 'status': {'id': 74080, 'source': 'nst', 'timestamp': '2017-04-06T09:40:10Z', 'current': True, 'name': 'imported'}, 'language': 'sv-se', 'strn': 'apa', 'morphology': 'AKT|INF-IMP'}]
+
+        expected = [{'entryValidations': [], 'partOfSpeech': 'NN', 'language': 'sv-se', 'transcriptions': [{'id': 79410, 'entryId': 74074, 'sources': [], 'language': 'sv-se', 'strn': '"" A: . p a'}], 'id': 74074, 'preferred': False, 'morphology': 'SIN|IND|NOM|UTR', 'lemma': {'id': 8764, 'paradigm': 's1a-flicka', 'reading': '', 'strn': 'apa'}, 'wordParts': 'apa', 'strn': 'apa', 'lexiconId': 1, 'status': {'name': 'imported', 'id': 74074, 'current': True, 'source': 'nst', 'timestamp': '2017-05-12T10:55:49Z'}}, {'entryValidations': [], 'partOfSpeech': 'VB', 'language': 'sv-se', 'transcriptions': [{'id': 79411, 'entryId': 74075, 'sources': [], 'language': 'sv-se', 'strn': '"" A: . p a'}], 'id': 74075, 'preferred': False, 'morphology': '', 'lemma': {'id': 8764, 'paradigm': 's1a-flicka', 'reading': '', 'strn': 'apa'}, 'wordParts': 'apa', 'strn': 'apa', 'lexiconId': 1, 'status': {'name': 'imported', 'id': 74075, 'current': True, 'source': 'nst', 'timestamp': '2017-05-12T10:55:49Z'}}, {'entryValidations': [], 'partOfSpeech': 'VB', 'language': 'sv-se', 'transcriptions': [{'id': 79412, 'entryId': 74076, 'sources': [], 'language': 'sv-se', 'strn': '"" A: . p a'}], 'id': 74076, 'preferred': False, 'morphology': 'AKT|INF-IMP', 'lemma': {'id': 8764, 'paradigm': 's1a-flicka', 'reading': '', 'strn': 'apa'}, 'wordParts': 'apa', 'strn': 'apa', 'lexiconId': 1, 'status': {'name': 'imported', 'id': 74076, 'current': True, 'source': 'nst', 'timestamp': '2017-05-12T10:55:49Z'}}]
+
         result = lexicon.lookup(orth)
+        log.info("RESULT: %s" % result)
+
+        
         self.assertEqual(expected,result)
 
     def testLexiconException1(self):
@@ -47,7 +57,7 @@ class TestLexicon(unittest.TestCase):
 
     def test_lexLookup(self):
         lex_config = {
-            "module":"wikilex",
+            "module":"adapters.lexicon_client",
             "call":"lexLookup",
             "lexicon":"sv-se.nst"
         }
@@ -85,7 +95,7 @@ class TestLexicon(unittest.TestCase):
         default_log_level = log.log_level
         log.log_level = "fatal"
         lex_config = {
-            "module":"wikilex",
+            "module":"adapters.lexicon_client",
             "call":"lexLookup",
             "lexicon":"sv-se.nst_DOES_NOT_EXIST"
         }
@@ -123,5 +133,5 @@ class TestLexicon(unittest.TestCase):
             
         
 if __name__ == "__main__":
-    log.log_level = "error" #debug, info, warning, error
+    log.log_level = "warning" #debug, info, warning, error
     unittest.main()
