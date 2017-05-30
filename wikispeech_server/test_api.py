@@ -195,10 +195,10 @@ test_done()
 
 
 # 2.4
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/languages/sv"
+# GET:  curl "http://localhost:10000/wikispeech/textprocessing/textprocessors/sv"
 # returns list of defined textprocessors for <lang>
 
-r = test_client.get("%slanguages/sv" % (host))
+r = test_client.get("%stextprocessors/sv" % (host))
 res = json.loads(r.data.decode('utf-8'))
 assert ( type(res) == type([]) )
 expected = ["wikitextproc_sv"]

@@ -209,12 +209,22 @@ def getSupportedLanguages():
 
 
 @app.route('/wikispeech/textprocessing/languages', methods=["GET"])
-def list_tp_configs():
-    #json_data = json.dumps(textprocessor_configs)
+def list_textprocSupportedLanguages():
     json_data = json.dumps(textprocSupportedLanguages())
     return Response(json_data, mimetype='application/json')
 
-@app.route('/wikispeech/textprocessing/languages/<lang>', methods=["GET"])
+@app.route('/wikispeech/textprocessing/textprocessors', methods=["GET"])
+def list_textprocessors():
+    """Returns list of loaded textprocessors."""
+    t = []
+    for tp in textprocessors:
+        for tpc in textprocessor_configs:
+            if tpc["name"] == tp.name:
+                t.append(tpc)
+    json_data = json.dumps(t)
+    return Response(json_data, mimetype='application/json')
+
+@app.route('/wikispeech/textprocessing/textprocessors/<lang>', methods=["GET"])
 def return_tp_configs_by_language(lang):
     json_data = json.dumps(list_tp_configs_by_language(lang))
     return Response(json_data, mimetype='application/json')
@@ -392,9 +402,13 @@ def list_synthesisSupportedLanguages():
 
 @app.route('/wikispeech/synthesis/voices', methods=["GET"])
 def list_voices():
-    json_data = json.dumps(voice_configs)
-    #TODO return list of loaded voices, not configured!
-    #json_data = json.dumps(voices)
+    """Returns list of loaded voices."""
+    v = []
+    for voice in voices:
+        for vc in voice_configs:
+            if vc["name"] == voice.name:
+                v.append(vc)
+    json_data = json.dumps(v)
     return Response(json_data, mimetype='application/json')
 
 @app.route('/wikispeech/synthesis/voices/<lang>', methods=["GET"])

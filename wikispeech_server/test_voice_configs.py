@@ -34,7 +34,7 @@ def test_all_settings():
     for lang in supported_languages:
         log.debug("START: %s" % lang)
         
-        r = test_client.get("%stextprocessing/languages/%s" % (host,lang))
+        r = test_client.get("%stextprocessing/textprocessors/%s" % (host,lang))
         #log.debug(r.url)
         textproc_configs = json.loads(r.data.decode('utf-8'))
 
