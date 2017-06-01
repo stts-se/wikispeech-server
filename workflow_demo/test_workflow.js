@@ -44,19 +44,28 @@ $("#ssml_transcription_div").on('input', function(){
 
 $("#ssml_transcription_input").on('input', function(){
 
+    //TODO
+    //THIS WHOLE THING DOESN'T WORK
+
+    
     var orth = $('#selected_word').text();
 
-    console.log(this);
-    console.log(this.value);
-    console.log(this.innerText);
+    var ssml_trans = this.value;
+    //console.log(this);
+    //console.log("ssml_transcription_input.value before validation: "+this.value);
+    console.log("ssml_transcription_input.value before validation: "+ssml_trans);
+    //console.log(this.innerText);
 
     validateTranscription(this);
-    
+
+
     // store current positions in variables
     var start = this.selectionStart,
         end = this.selectionEnd;
 
-    this.value = makeSSMLReplacementString(this.value, orth);
+    console.log("ssml_transcription_input.value after validation: "+ssml_trans);
+    //this.value = makeSSMLReplacementString(this.value, orth);
+    makeSSMLReplacementString();
 
     // restore from variables...
     this.setSelectionRange(start, end);
@@ -85,13 +94,18 @@ function getCaretPosition(element) {
 
 
 
-function makeSSMLReplacementString(ssml, orth) {
+function makeSSMLReplacementString() {
+
+    var ssml = $("#ssml_transcription_input").val();
+    var orth = $('#selected_word').text();
+
     //var orth = "dummy";
 
     //var ssml = $('#ssml_transcription').html();
     //var ssml = $(this).html();
     //var ssml = container.html();
-    console.log(ssml);
+    console.log("ssml_trans: "+ssml);
+    console.log("orth: "+orth);
     var trans_string = ssml.replace(/^.*<p><phoneme .+>(.+)<\/phoneme><\/p>.*$/,"$1");
     trans_string = trans_string.replace(/"/g, "&quot;");
     trans_string = trans_string.replace(/&nbsp;/g, " ");
@@ -197,7 +211,7 @@ function displayInSimpleEditor(entry_list, selected_table, orth, lang) {
 	    trans.setAttribute("style", "background-color:lightgreen;");
 	    
 	    trans.innerHTML = entry["transcriptions"][0]["strn"];
-	    trans.setAttribute("onkeyup","validateTranscription($('#selected_trans_"+i+"')[0]);");	    
+	    trans.setAttribute("onkeyup","validateTranscription($('#selected_trans_"+i+"')[0], '"+lang+"');");	    
 	    row.appendChild(trans)
 	    
 	    //LISTEN BUTTON
@@ -205,7 +219,7 @@ function displayInSimpleEditor(entry_list, selected_table, orth, lang) {
 	    var listen_button = document.createElement("input");
 	    listen_button.setAttribute("type","button");
 	    listen_button.setAttribute("value","listen");
-	    listen_button.setAttribute("onclick", "playTranscription($('#selected_trans_"+i+"')[0]);");
+	    listen_button.setAttribute("onclick", "playTranscription($('#selected_trans_"+i+"')[0], '"+lang+"');");
 	    listen.appendChild(listen_button);
 	    row.appendChild(listen)
 
@@ -271,11 +285,18 @@ function updateLexicon(orth) {
 }
 
 
-function makeSSMLTranscription(transcription) {
+function makeSSMLTranscription(transcription, lang) {
     var speak = document.createElement("speak");
     
-    //NOTE hardcoded language
-    speak.setAttribute("xml:lang", "sv");
+    var xmllang = lang;
+    if ( lang == "en" ) {
+	xmllang = "en-US";
+    }
+    if ( lang == "nb" ) {
+	xmllang = "no";
+    }
+
+    speak.setAttribute("xml:lang", xmllang);
 	
     speak.setAttribute("version","1.0");
     speak.setAttribute("xmlns", "http://www.w3.org/2001/10/synthesis");
@@ -291,7 +312,7 @@ function makeSSMLTranscription(transcription) {
 }
 
 /* Step 1 - send html/text/ssml to wikispeech for textprocessing */
-/* Called from Imput tab "tokenise" button */
+/* Called from Input tab "start" button */
 /* TODO remove hardcoded language */
 function tokeniseHtmlText(lang) {
     var html_editor = document.getElementById('html_editor');
@@ -662,7 +683,7 @@ function addWordsToLexiconTab(words, lang) {
     }
     //See if the words are found in lexicon, update table accordingly
     //Better to look up all words first..
-    wordsInLex(words);
+    wordsInLex(words, lang);
 
     
 }
@@ -670,8 +691,15 @@ function addWordsToLexiconTab(words, lang) {
 
 function validateTranscription(t, lang) {
     console.log(t);
-    var trans = t.innerText;
-    console.log(trans);
+
+    //if it's an element
+    var trans = t.innerHTML;
+    //if it's an input field
+    if ( trans == undefined ) {
+	trans = t.value;
+    }
+
+    console.log("validateTranscription: trans = "+trans);
     
     var word = "dummy";
     var entry = {
@@ -684,12 +712,18 @@ function validateTranscription(t, lang) {
 	]
     };
 
+    //TODO fix
+    if ( lang == undefined ) {
+	lang = document.getElementById("language_selector").value;
+    }
+    console.log("validateTranscription: lang = "+lang);
+    
     //TODO hardcoded symbolsets
     if ( lang == "sv" ) {
 	var symbolset = "sv-se_ws-sampa";
     }
     else if ( lang == "en" ) {
-	var symbolset = "en-us_cmu";
+	var symbolset = "en-us_ws-sampa";
     } else {
 	console.log("WARNING: no symbolset defined for language "+lang);
 	return;
@@ -700,13 +734,14 @@ function validateTranscription(t, lang) {
 	"entry": JSON.stringify(entry)
     }
 
+    
     //TODO hardcoded url
     $.get(
         //'http://localhost/ws_service/validation/validateentry',
         ws_hostname+'/ws_service/validation/validateentry',
         params,
         function(response) {
-	    console.log(response);
+	    console.log("validateTranscription: response = "+response);
 	    var container = $('#validation')[0];
 	    container.innerHTML = "";
 
@@ -782,7 +817,7 @@ function playTranscription(t,lang) {
 	var symbolset = "sv-se_ws-sampa";
     }
     else if ( lang == "en" ) {
-	var symbolset = "en-us_cmu";
+	var symbolset = "en-us_ws-sampa";
     } else {
 	console.log("WARNING: no symbolset defined for language "+lang);
 	return;
@@ -797,27 +832,33 @@ function playTranscription(t,lang) {
     console.log(params);
 
     //TODO hardcoded url
-    $.get(
-        //'http://localhost/ws_service/validation/validateentry',
-        ws_hostname+'/ws_service/validation/validateentry',
-        params,
-        function(response) {
-	    console.log(response);
-	    var validation_container = $('#validation')[0];
-	    validation_container.innerHTML = "";
+    $.ajax(
+	{
+            //'http://localhost/ws_service/validation/validateentry',
+            url: ws_hostname+'/ws_service/validation/validateentry',
+            data: params,
+            success: function(response) {
+		console.log(response);
+		var validation_container = $('#validation')[0];
+		validation_container.innerHTML = "";
 
-	    if ( response["entryValidations"].length == 0 ) {
+		if ( response["entryValidations"].length == 0 ) {
 
-		t.setAttribute("style", "background-color:lightgreen;");
-
-		ssml = makeSSMLTranscription(trans);
-		//Actually play only after validation
-		playSSML(ssml);
+		    t.setAttribute("style", "background-color:lightgreen;");
+		    
+		    ssml = makeSSMLTranscription(trans, lang);
+		    //Actually play only after validation
+		    playSSML(ssml, lang);
 		
-	    } else {
+		} else {
 
-		displayValidationResult(response["entryValidations"], validation_container, t);
+		    displayValidationResult(response["entryValidations"], validation_container, t);
 		
+		}
+	    },
+	    error: function(xhr) {
+		console.log(xhr);
+		alert("An error occured: " + xhr.status + " " + xhr.statusText + " " + xhr.responseText);
 	    }
 	}
     );

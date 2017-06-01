@@ -27,3 +27,7 @@ Validation of input.
 Lexicon displays two lists of words, known and unknown. Each should have a play button for easy proof-listening. Also show (selected) transcription. IPA? Other information needed here, before edit? And edit button, or click word to edit.
 
 The lexicon entry editor displays editable and uneditable information for the lexicon entry. Uses json schema. Validation of fields. 
+
+TODO 1/6 2017
+
+Configuration issue: Even if the wikispeech server uses morf.se for lexicon, lexicon lookup and updates in workflow_demo uses localhost.
