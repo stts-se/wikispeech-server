@@ -23,18 +23,18 @@ name it ```<username>-<hostname>.conf```, and edit it as needed.
 
 The file contains settings for:
 * Server
-** server port (default: 10000)
-** log_level (default: warning)
-** debug_mode: python flask setting to reload when files are edited. (default: False)
+  * server port (default: 10000)
+  * log_level (default: warning)
+  * debug_mode: python flask setting to reload when files are edited. (default: False)
 * Audio settings
-** audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
-** audio_url_prefix: how the soundfiles should be served. Change this for production, and serve through eg. apache. (default: http://localhost:10000/audio)
+  * audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
+  * audio_url_prefix: how the soundfiles should be served. Change this for production, and serve through eg. apache. (default: http://localhost:10000/audio)
 * Services
-** lexicon: url to lexicon server. (default: http://localhost:8787)
-** marytts: url to marytts server. (default: http://localhost:59125/process)
+  * lexicon: url to lexicon server. (default: http://localhost:8787)
+  * marytts: url to marytts server. (default: http://localhost:59125/process)
 * Tests
-** run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found. (default: True)
-** quit_on_error: Quit if a test fails. (default: False)
+  * run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found. (default: True)
+  * quit_on_error: Quit if a test fails. (default: False)
 
 To test the config file, the script can be run with a config file as argument:
 ```
