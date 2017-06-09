@@ -735,10 +735,8 @@ function validateTranscription(t, lang) {
     }
 
     
-    //TODO hardcoded url
     $.get(
-        //'http://localhost/ws_service/validation/validateentry',
-        ws_hostname+'/ws_service/validation/validateentry',
+        ws_host+'/lexserver/validation/validateentry',
         params,
         function(response) {
 	    console.log("validateTranscription: response = "+response);
@@ -831,11 +829,9 @@ function playTranscription(t,lang) {
 
     console.log(params);
 
-    //TODO hardcoded url
     $.ajax(
 	{
-            //'http://localhost/ws_service/validation/validateentry',
-            url: ws_hostname+'/ws_service/validation/validateentry',
+            url: ws_host+'/lexserver/validation/validateentry',
             data: params,
             success: function(response) {
 		console.log(response);
@@ -903,8 +899,7 @@ function searchLexicon(search_term, lang) {
     }
     
     $.get(
-        //'http://localhost/ws_service/lexicon/lookup',
-        ws_hostname+'/ws_service/lexicon/lookup',
+        ws_host+'/lexserver/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -974,10 +969,8 @@ function wordsInLex(words, lang) {
 	"words": words_to_lookup
     }
 
-    //TODO hardcoded url
     $.get(
-        //'http://localhost/ws_service/lexicon/lookup',
-        ws_hostname+'/ws_service/lexicon/lookup',
+        ws_host+'/lexserver/lexicon/lookup',
         params,
         function(response) {
 
@@ -1096,8 +1089,7 @@ function updateEntry(entry) {
     //console.log(JSON.stringify(params));
     
     $.ajax({
-	//url: 'http://localhost/ws_service/lexicon/updateentry',
-	url: ws_hostname+'/ws_service/lexicon/updateentry?entry='+entry_string,
+	url: ws_host+'/lexserver/lexicon/updateentry?entry='+entry_string,
 	//data: params,
 	type: "GET",
 	contentType: "application/json",

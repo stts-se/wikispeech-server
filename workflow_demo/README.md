@@ -30,4 +30,7 @@ The lexicon entry editor displays editable and uneditable information for the le
 
 TODO 1/6 2017
 
-Configuration issue: Even if the wikispeech server uses morf.se for lexicon, lexicon lookup and updates in workflow_demo uses localhost.
+* Configuration issues:
+ * Even if the wikispeech server uses morf.se for lexicon, lexicon lookup and updates in workflow_demo uses localhost.
+ * If localhost is serving the testpage, morf.se cannot be used for lexicon lookup (access control)
+ * FIX: a connection through the wikispeech server to  lexicon server on the same machine. Also easier to have just the one connection. Drawbacks? Well the lexicon server can still be contacted in the same way as before if needed.

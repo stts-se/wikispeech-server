@@ -79,6 +79,8 @@ document.getElementById("language_selector").value = lang;
 addTestdata(lang);
 //myTabs.goToTab(2);
 
+
+//Shouldn't have to set ws_hostname here ??
 ws_hostname = "http://localhost";
 //ws_hostname = "https://morf.se";
 ws_host = ws_hostname+"/wikispeech";

@@ -5,7 +5,7 @@
 ws_host = "https://morf.se/wikispeech";
 
 //Default, if getSupportedLanguages fails
-supported_languages = ["sv"];
+supported_languages = ["en"];
 //getSupportedLanguages();
 
 

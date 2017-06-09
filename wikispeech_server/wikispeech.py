@@ -3,7 +3,7 @@ import sys, os, re
 from tempfile import NamedTemporaryFile
 from importlib import import_module
 import requests
-from flask import Flask, request, json, Response, make_response, render_template
+from flask import Flask, request, json, Response, make_response, render_template, redirect
 from flask_cors import CORS
 
 
@@ -591,6 +591,21 @@ def static_proxy_js():
     log.info("Looking for static file %s" % "wikispeech_simple_player.js")
     # send_static_file will guess the correct MIME type
     return render_template("wikispeech_simple_player.js")
+
+##############################################
+#
+#   Connection to lexicon server running on same machine
+#   Used in workflow demo. Other uses?
+
+from flask import stream_with_context
+
+@app.route('/wikispeech/lexserver/<path:url>')
+def lexserver_proxy(url):
+    redirect_url = "http://localhost:8787/%s%s" % ((url, "?" + request.query_string.decode("utf-8") if request.query_string else ""))
+    log.info("Lexserver proxy to: %s" % redirect_url)
+    req = requests.get(redirect_url, stream = True)
+    return Response(stream_with_context(req.iter_content()), content_type = req.headers['content-type'])
+
 
 
 
