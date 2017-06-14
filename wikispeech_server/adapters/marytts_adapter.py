@@ -779,7 +779,9 @@ def mapperMapFromMary(trans, lang, voice):
         log.info("No marytts mapper defined for language %s" % lang)
         return trans
 
-    url = mapper_url+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    ## hl remove quote_plus 20170613
+    ## url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote_plus(trans))
+    url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, trans)
 
 
     r = requests.get(url)
@@ -812,7 +814,10 @@ def mapperMapToMary(trans, lang, voice):
         return trans
 
     
-    url = mapper_url+"/mapper/map?to=%s&from=%s&trans=%s" % (to_symbol_set, from_symbol_set, quote_plus(trans))
+    ## hl remove quote_plus 20170613
+    ## url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote_plus(trans))
+
+    url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, trans)
     
     r = requests.get(url)
     log.debug("MAPPER URL: %s" % r.url)

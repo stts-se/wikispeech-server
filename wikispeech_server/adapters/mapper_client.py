@@ -19,7 +19,7 @@ class Mapper(object):
 
 
     def test(self):
-        url = "%s/%s?from=%s&to=%s" % (self.base_url, "maptable", self.from_symbol_set, self.to_symbol_set)
+        url = "%s/%s/%s/%s" % (self.base_url, "maptable", self.from_symbol_set, self.to_symbol_set)
         log.debug(url)
         try:
             r = requests.get(url)
@@ -37,7 +37,7 @@ class Mapper(object):
 
     def map(self, string):
         
-        url = "%s/%s?from=%s&to=%s&trans=%s" % (self.base_url, "map", self.from_symbol_set, self.to_symbol_set, string)
+        url = "%s/%s/%s/%s/%s" % (self.base_url, "map", self.from_symbol_set, self.to_symbol_set, string)
         r = requests.get(url)
         log.debug(r.url)
         response = r.text
