@@ -8,10 +8,10 @@ import wikispeech_server.wikispeech as ws
 
 try:
     #Python 3
-    from urllib.parse import quote_plus
+    from urllib.parse import quote_plus, quote
 except:
     #Python 2
-    from urllib import quote_plus
+    from urllib import quote_plus, quote
 
 
 
@@ -780,9 +780,12 @@ def mapperMapFromMary(trans, lang, voice):
         return trans
 
     ## hl remove quote_plus 20170613
-    ## url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote_plus(trans))
-    url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, trans)
+    ## hb &quot;&quot; b j A: rn . % 9 j doesn't work, testing to put quote back in 20170626
+    ##url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote_plus(trans))
+    url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote(trans))
+    ##url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, trans)
 
+    log.debug("MAPPER URL before requests: %s" % url)
 
     r = requests.get(url)
     log.debug("MAPPER URL: "+r.url)
@@ -815,9 +818,13 @@ def mapperMapToMary(trans, lang, voice):
 
     
     ## hl remove quote_plus 20170613
-    ## url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote_plus(trans))
+    ## hb &quot;&quot; b j A: rn . % 9 j doesn't work, using quote  20170626
 
-    url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, trans)
+    ## url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote_plus(trans))
+    url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote(trans))
+
+    ##url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, trans)
+    log.debug("MAPPER URL before requests: %s" % url)
     
     r = requests.get(url)
     log.debug("MAPPER URL: %s" % r.url)
