@@ -884,10 +884,10 @@ function searchLexicon(search_term, lang) {
 
 
     if ( lang == "sv" ) {
-	var lexicons = "sv-se.nst";
+	var lexicons = "pronlex:sv-se.nst";
     } 
     else if ( lang == "en" ) {
-	var lexicons = "en-us.cmu";
+	var lexicons = "pronlex:en-us.cmu";
     }
     else {
 	console.log("WARNING: no lexicon defined for lang "+lang);
@@ -917,7 +917,7 @@ function wordInLex(word, div, trans) {
     var unknown_words_container = document.getElementById("unknown_words_container");
 
     var params = {
-	"lexicons": "sv-se.nst",
+	"lexicons": "pronlex:sv-se.nst",
 	"words": word
     }
     
@@ -955,10 +955,10 @@ function wordsInLex(words, lang) {
 
     //TODO hardcoded lexicon
     if ( lang == "sv" ) {
-	var lexicons = "sv-se.nst";
+	var lexicons = "pronlex:sv-se.nst";
     } 
     else if ( lang == "en" ) {
-	var lexicons = "en-us.cmu";
+	var lexicons = "pronlex:en-us.cmu";
     }
     else {
 	console.log("WARNING: no lexicon defined for lang "+lang);

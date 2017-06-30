@@ -101,7 +101,7 @@ if __name__ == "__main__":
             {
                 "module":"adapters.lexicon_client",
                 "call":"lexLookup",
-                "lexicon":"sv-se.nst"
+                "lexicon":"pronlex:sv-se.nst"
             }
         ]
     }

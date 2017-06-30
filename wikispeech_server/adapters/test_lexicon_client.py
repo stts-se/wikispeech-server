@@ -16,12 +16,12 @@ import wikispeech_server.log as log
 class TestLexicon(unittest.TestCase):
 
     def testNewLexicon(self):
-        lexicon_name = "sv-se.nst"
+        lexicon_name = "pronlex:sv-se.nst"
         lexicon = Lexicon(lexicon_name)
         self.assertEqual(str(type(lexicon)), "<class 'wikispeech_server.adapters.lexicon_client.Lexicon'>")
 
     def testLookup(self):
-        lexicon_name = "sv-se.nst"
+        lexicon_name = "pronlex:sv-se.nst"
         lexicon = Lexicon(lexicon_name)
 
         orth = "apa"
@@ -39,7 +39,7 @@ class TestLexicon(unittest.TestCase):
     def testLexiconException1(self):
         default_log_level = log.log_level
         log.log_level = "fatal"
-        lexicon_name = "sv-se.nst_THIS_LEXICON_SHOULD_NOT_EXIST"
+        lexicon_name = "pronlex:sv-se.nst_THIS_LEXICON_SHOULD_NOT_EXIST"
         with self.assertRaises(LexiconException):
             lexicon = Lexicon(lexicon_name)
         log.log_level = default_log_level
@@ -47,9 +47,9 @@ class TestLexicon(unittest.TestCase):
     def testLexiconException2(self):
         default_log_level = log.log_level
         log.log_level = "fatal"
-        lexicon_name = "sv-se.nst_THIS_LEXICON_SHOULD_NOT_EXIST"
+        lexicon_name = "pronlex:sv-se.nst_THIS_LEXICON_SHOULD_NOT_EXIST"
         with self.assertRaises(LexiconException):
-            lexicon = Lexicon("sv-se.nst")
+            lexicon = Lexicon("pronlex:sv-se.nst")
             lexicon.lexicon_name = lexicon_name
             lexicon.lookup("apa")
         log.log_level = default_log_level
@@ -59,7 +59,7 @@ class TestLexicon(unittest.TestCase):
         lex_config = {
             "module":"adapters.lexicon_client",
             "call":"lexLookup",
-            "lexicon":"sv-se.nst"
+            "lexicon":"pronlex:sv-se.nst"
         }
         utt = {
             "lang": "sv",
@@ -97,7 +97,7 @@ class TestLexicon(unittest.TestCase):
         lex_config = {
             "module":"adapters.lexicon_client",
             "call":"lexLookup",
-            "lexicon":"sv-se.nst_DOES_NOT_EXIST"
+            "lexicon":"pronlex:sv-se.nst_DOES_NOT_EXIST"
         }
         utt = {
             "lang": "sv",

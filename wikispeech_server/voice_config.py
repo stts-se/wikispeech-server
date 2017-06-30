@@ -14,7 +14,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"sv-se.nst"
+             "lexicon":"pronlex:sv-se.nst"
          }
      ]
     }
@@ -49,7 +49,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"en-us.cmu"
+             "lexicon":"pronlex:en-us.cmu"
          }
      ]
     }
@@ -66,7 +66,7 @@ textprocessor_configs = [
             {
                 "module":"adapters.lexicon_client",
                 "call":"lexLookup",
-                "lexicon":"en-us.cmu"
+                "lexicon":"pronlex:en-us.cmu"
             }
         ]
     }
@@ -97,7 +97,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"ar-test"
+             "lexicon":"pronlex:ar-test"
          }
      ]
     }
