@@ -753,7 +753,7 @@ def getParam(param,default=None):
 
 
 def test_lexicon_client():
-    lexicon = "pronlex:sv-se.nst"
+    lexicon = "sv_se_nst_lex:sv-se.nst"
     sent = "apa hund färöarna"
     trans = {}
     trans["apa"] = '"" A: . p a'

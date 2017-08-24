@@ -30,7 +30,7 @@ class TestTextprocessor(unittest.TestCase):
                 {
                     "module":"adapters.lexicon_client",
                     "call":"lexLookup",
-                    "lexicon":"pronlex:sv-se.nst"
+                    "lexicon":"sv_se_nst_lex:sv-se.nst"
                 }
             ]
         }
@@ -57,7 +57,7 @@ class TestTextprocessor(unittest.TestCase):
                 {
                     "module":"adapters.lexicon_client",
                     "call":"lexLookup",
-                    "lexicon":"pronlex:sv-se.nst"
+                    "lexicon":"sv_se_nst_lex:sv-se.nst"
                 }
             ]
         }
