@@ -34,6 +34,10 @@ if run_tests:
         from wikispeech_server.adapters.test_marytts_adapter import *
         from wikispeech_server.adapters.test_lexicon_client import *
         from wikispeech_server.adapters.test_mapper_client import *
+
+        #HB Before calling unittest.main, remove command line parameters (config file) otherwise unittest will try and fail to load it..
+        del sys.argv[1:]
+
         unittest.main(exit=False, failfast=True)
 
         ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
