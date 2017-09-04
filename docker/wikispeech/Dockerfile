@@ -12,5 +12,7 @@ RUN mkdir -p wikispeech_mockup/wikispeech_server/tmp
 
 EXPOSE 10000
 
-CMD (cd wikispeech_mockup && python3 bin/wikispeech /config/hanna-maskineri.conf)
+# TODO: Specify config file
+
+CMD (cd wikispeech_mockup && python3 bin/wikispeech /config/docker.conf)
 
