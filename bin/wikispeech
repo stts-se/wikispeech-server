@@ -44,13 +44,8 @@ if run_tests:
 
         
     except:
-        if len(sys.exc_info()) > 1:
-            print("Test error:\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]) )
-            traceback.print_tb(sys.exc_info()[2])
-
-        else:
-            print("Test error:\n%s" % (sys.exc_info()[0]) )
-
+        print("Test error:\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]) )
+        traceback.print_tb(sys.exc_info()[2])
             
         if config.config.getboolean("Tests","quit_on_error"):
             print("Exiting because of test error and Tests:quit_on_error is set to True")
