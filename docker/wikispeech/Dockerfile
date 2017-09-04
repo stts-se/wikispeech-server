@@ -10,6 +10,9 @@ RUN git clone https://github.com/stts-se/wikispeech_mockup.git
 
 RUN mkdir -p wikispeech_mockup/wikispeech_server/tmp
 
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
 EXPOSE 10000
 
 # TODO: Specify config file
