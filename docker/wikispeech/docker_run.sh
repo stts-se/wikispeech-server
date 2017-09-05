@@ -1,7 +1,7 @@
 CMD=`basename $0`
 CONFIGNAME="docker.conf"
 
-if [ $# -ne 1 ]; then
+if [ $# -lt 1 ]; then
     echo "USAGE: sh $CMD <CONFIG DIR>
        <CONFIG DIR> must contain valid config file: $CONFIGNAME
 " >&2
@@ -26,7 +26,8 @@ if docker container inspect $CNAME &> /dev/null ; then
     docker rm $CNAME
 fi
 
-docker run --name=$CNAME -p 10000:10000 -v $DIRABS:/config/ -it wikispeech
+shift
+docker run --name=$CNAME -p 10000:10000 -v $DIRABS:/config/ -it wikispeech $*
 
 ## TODO: SNYGGARE MAPPNING AV CONFIGFILER
 

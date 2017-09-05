@@ -6,4 +6,4 @@ if docker container inspect $CNAME &> /dev/null ; then
     docker rm $CNAME
 fi
 
-docker run --name=$CNAME -p 59125:59125 -ti marytts
+docker run --name=$CNAME -p 59125:59125 -ti marytts $*
