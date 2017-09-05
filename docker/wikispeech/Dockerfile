@@ -10,7 +10,7 @@ RUN git clone https://github.com/stts-se/wikispeech_mockup.git
 
 RUN mkdir -p wikispeech_mockup/wikispeech_server/tmp
 
-RUN ln -s wikispeech_mockup/docker/wikispeech/wait-for-services /bin/wait-for-services
+RUN cp wikispeech_mockup/docker/wikispeech/ws-postponed-start /bin/
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
