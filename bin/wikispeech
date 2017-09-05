@@ -77,8 +77,8 @@ ws.log.info("DEBUG_MODE set to %s" % DEBUG_MODE)
 ws.log.info("The wikispeech server can be accessed at http://localhost:%s/wikispeech" % port_nr)
 
 
-ws.app.run(host='0.0.0.0', port=port_nr, debug=DEBUG_MODE, threaded=True)
-#ws.app.run(port=port_nr, debug=DEBUG_MODE, threaded=True)
+ws.app.run(host='0.0.0.0', port=port_nr, debug=DEBUG_MODE, threaded=True) # OPEN FOR EXTERNAL CALLS
+#ws.app.run(port=port_nr, debug=DEBUG_MODE, threaded=True) # ONLY OPEN FOR LOCALHOST
 
 
 
