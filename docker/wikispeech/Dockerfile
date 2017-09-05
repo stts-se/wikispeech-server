@@ -2,7 +2,7 @@ FROM debian
 
 RUN apt-get update -y && apt-get upgrade -y && apt-get install apt-utils -y
 
-RUN apt-get install -y curl opus-tools python3-pip git
+RUN apt-get install -y curl opus-tools python3-pip git curl
 
 RUN pip3 install simplejson requests flask flask_cors
 
@@ -10,7 +10,9 @@ RUN git clone https://github.com/stts-se/wikispeech_mockup.git
 
 RUN mkdir -p wikispeech_mockup/wikispeech_server/tmp
 
-RUN cp wikispeech_mockup/docker/wikispeech/ws-postponed-start /bin/
+#RUN cp wikispeech_mockup/docker/wikispeech/ws-postponed-start /bin/
+RUN curl https://raw.githubusercontent.com/stts-se/wikispeech_mockup/master/docker/wikispeech/ws-postponed-start > bin/ws-postponed-start
+RUN chmod +x bin/ws-postponed-start
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
