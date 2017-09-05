@@ -1,6 +1,6 @@
 import sys
 
-log_level = "debug"
+log_level = "error"
 
 def log(level, msg):
 
