@@ -5,13 +5,13 @@ s1=$1
 s2=$2
 
 for i in `seq $TIMEOUT` ; do
-    curl $s1 > /dev/null 2>&1
+    curl $s1 #> /dev/null 2>&1
     
     result=$?
     if [ $result -eq 0 ] ; then
 
 	for j in `seq $TIMEOUT` ; do
-	    curl $s2 > /dev/null 2>&1
+	    curl $s2 #> /dev/null 2>&1
 	    
 	    result=$?
 	    if [ $result -eq 0 ] ; then
