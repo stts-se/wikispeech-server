@@ -3,7 +3,7 @@ CONFIGNAME="docker.conf"
 
 if [ $# -ne 1 ]; then
     echo "USAGE: sh $CMD <CONFIG DIR>
-       <CONFIG DIR> must contain config file: $CONFIGNAME
+       <CONFIG DIR> must contain valid config file: $CONFIGNAME
 " >&2
     exit 1
 fi
