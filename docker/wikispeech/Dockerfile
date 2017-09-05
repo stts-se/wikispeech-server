@@ -2,7 +2,10 @@ FROM debian
 
 RUN apt-get update -y && apt-get upgrade -y && apt-get install apt-utils -y
 
-RUN apt-get install -y curl opus-tools python3-pip git curl
+RUN apt-get install -y opus-tools python3-pip git 
+
+# DEBUG
+RUN apt-get install -y libnet-ifconfig-wrapper-perl/stable curl
 
 RUN pip3 install simplejson requests flask flask_cors
 
