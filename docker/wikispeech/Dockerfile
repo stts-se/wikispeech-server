@@ -13,8 +13,7 @@ RUN git clone https://github.com/stts-se/wikispeech_mockup.git
 
 RUN mkdir -p wikispeech_mockup/wikispeech_server/tmp
 
-#RUN cp wikispeech_mockup/docker/wikispeech/ws-postponed-start /bin/
-RUN curl https://raw.githubusercontent.com/stts-se/wikispeech_mockup/master/docker/wikispeech/ws-postponed-start > bin/ws-postponed-start
+RUN cp wikispeech_mockup/docker/wikispeech/ws-postponed-start /bin/
 RUN chmod +x bin/ws-postponed-start
 
 ENV LANG C.UTF-8
