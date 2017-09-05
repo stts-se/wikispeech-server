@@ -4,8 +4,8 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install apt-utils -y
 
 RUN apt-get install -y opus-tools python3-pip git netcat
 
-# DEBUG
-RUN apt-get install -y libnet-ifconfig-wrapper-perl/stable curl
+# FOR DEBUGGING
+RUN apt-get install -y libnet-ifconfig-wrapper-perl/stable curl emacs
 
 RUN pip3 install simplejson requests flask flask_cors
 
