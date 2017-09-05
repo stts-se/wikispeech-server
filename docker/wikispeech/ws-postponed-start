@@ -25,7 +25,7 @@ for i in `seq $TIMEOUT` ; do
 	    
 	    result=$?
 	    if [ $result -eq 0 ] ; then
-		wikispeech_mockup/python3 bin/wikispeech
+		python3 wikispeech_mockup/bin/wikispeech
 		exit 0
 	    fi
 	    sleep 1
