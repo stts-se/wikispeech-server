@@ -16,9 +16,13 @@ Getting started: https://docs.docker.com/compose/gettingstarted/
 
 Test setup for docker compose with pronlex, marytts and the wikispeech server.
 
-### Config
+### RUN DOCKER
 
-Sample config file: `<GIT>/wikispeech_mockup/docker/ws-config/docker-compose.conf`
+`$ docker-compose up --abort-on-container-exit`
+
+`$ docker-compose up -f docker-compose.yml --abort-on-container-exit`
+
+
 
 ---
 TODO: How do we know the docker internal IP addresses?

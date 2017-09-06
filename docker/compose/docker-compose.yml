@@ -1,5 +1,5 @@
 version: '3'
-#networks:
+    #networks:
 #  app_net:
 #    driver: bridge
 #    ipam:
@@ -8,7 +8,8 @@ version: '3'
 #      - subnet: 172.99.0.0/16
 services:
   pronlex:
-    build: /home/hanna/go/src/github.com/stts-se/pronlex
+    #build: ${GOPATH}/src/github.com/stts-se/pronlex
+    build: https://github.com/stts-se/pronlex.git
     image: "pronlex"
     volumes:
      - /home/hanna/wikispeech/lexdata:/go/appdir
@@ -19,20 +20,20 @@ services:
     #    ipv4_address: 172.99.0.2
     #command: ifconfig
   marytts:
-    build: /home/hanna/git_repos/wikispeech_mockup/docker/marytts
+    build: ${WIKISPEECH_GIT}/docker/marytts
     image: "marytts"
     ports:
-     - "59125:59125"
+      - "59125:59125"
     #networks:
     #  app_net:
     #    ipv4_address: 172.99.0.3
     #command: ifconfig
   wikispeech:
-    build: /home/hanna/git_repos/wikispeech_mockup/docker/wikispeech
+    build: ${WIKISPEECH_GIT}/docker/wikispeech
     image: "wikispeech"
     volumes:
-     - /home/hanna/git_repos/wikispeech_mockup/docker/ws-config:/ws-config
-     - /home/hanna/git_repos/wikispeech_mockup/docker/compose/bin:/compose/bin
+     - ${WIKISPEECH_GIT}/docker/ws-config:/ws-config
+     - ${WIKISPEECH_GIT}/docker/compose/bin:/compose/bin
     ports:
      - "10000:10000"
     depends_on:
@@ -42,3 +43,4 @@ services:
     #  app_net:
     #    ipv4_address: 172.99.0.4
     command: ["/compose/bin/ws-postponed-start", "172.19.0.1:8787", "172.19.0.1:59125"]
+    #command: ["/compose/bin/debug", "${ENV_FILE}"]
