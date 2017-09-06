@@ -2,7 +2,7 @@
 
 WORK IN PROGRESS
 
-This is a folder with utilities and info for building and running the Wikispeech server using `docker-compose`.
+Utilities and info for building and running the Wikispeech server using `docker-compose`.
 
 ### I. Install `docker-compose`
 
