@@ -2,48 +2,50 @@
 
 WORK IN PROGRESS
 
-This is a folder with utilities and info for building and running the Wikispeech server using `docker-compose`.
+Utilities and info for building and running the Wikispeech server using [Docker Compose](https://docs.docker.com/compose/).
 
-### I. Install `docker-compose`
+### I. Install Docker Compose
 
-Requires Docker CE: https://docs.docker.com/engine/installation/
+_Requires Docker CE: https://docs.docker.com/engine/installation/_
 
-General info: https://docs.docker.com/compose/   
-Installation: https://docs.docker.com/compose/install/   
+Docker Compose Installation: https://docs.docker.com/compose/install/   
 
-Latest Linux version for docker-compose (as of 2017-09-06):
-https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64
-
-Sample installation command for version 1.16.1:   
+Sample installation command for Linux version 1.16.1 (latest version as of 2017-09-06):   
   
     sudo -i curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64 -`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 
-Getting started: https://docs.docker.com/compose/gettingstarted/
+### II. Clone the Wikispeech git repository
 
-Test setup for docker compose with pronlex, marytts and the wikispeech server.
+TODO: Should NOT be needed in the future -- move Docker stuff to a separate repository?
 
-### II. Run wikispeech
+`$ mkdir -p ~/gitrepos`    
+`$ cd ~/gitrepos`   
+`$ git clone https://github.com/stts-se/wikispeech_mockup.git`
+
+### III. Start using wikispeech
 
 1. Create environment variables
 
-   `$ cp TEMPLATE.env $USER.env`     
-   `$ ln -s $USER.env .env`
+   `$ cd ~/gitrepos/stts-se/wikispeech_mockup/docker/compose`      
+   `$ cp TEMPLATE.env .env`     
    
-    Edit the variables in the `$USER.env` file to match your system settings.
+   Edit the variables in the `.env` file to match your system settings.
 
 
-2. Run wikispeech
+2. Setup standard lexicon data
+
+   `$ docker-compose --file pronlex-import-all.yml up`
+
+
+3. Run wikispeech
    
-   `$ docker-compose up --abort-on-container-exit`
+   `$ docker-compose --file wikispeech.yml up --abort-on-container-exit`
 
    To specify a separate compose-file:   
-   `$ docker-compose up -f docker-compose.yml --abort-on-container-exit`
+   `$ docker-compose --file wikispeech.yml up --abort-on-container-exit`
 
    Inspect the application:   
    `$ docker-compose config`
 
 
-
-
----
-TODO: How do we know the docker internal IP addresses?
+   
