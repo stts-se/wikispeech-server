@@ -19,10 +19,9 @@ Sample installation command for Linux version 1.16.1 (latest version as of 2017-
 
 1. Create environment variables
 
-   `$ cp TEMPLATE.env $USER.env`     
-   `$ ln -s $USER.env .env`
+   `$ cp TEMPLATE.env .env`     
    
-    Edit the variables in the `$USER.env` file to match your system settings.
+    Edit the variables in the `.env` file to match your system settings.
 
 
 2. Run wikispeech
