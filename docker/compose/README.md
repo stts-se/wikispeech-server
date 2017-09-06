@@ -2,27 +2,35 @@
 
 WORK IN PROGRESS
 
-General info: https://docs.docker.com/compose/   
-Installation: https://docs.docker.com/compose/install/   
+Utilities and info for building and running the Wikispeech server using [Docker Compose](https://docs.docker.com/compose/).
 
-Latest Linux version for docker-compose (as of 2017-09-06):
-https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64
+### I. Install Docker Compose
 
-Sample installation command for version 1.16.1:   
+_Requires Docker CE: https://docs.docker.com/engine/installation/_
+
+Docker Compose Installation: https://docs.docker.com/compose/install/   
+
+Sample installation command for Linux version 1.16.1 (latest version as of 2017-09-06):   
   
     sudo -i curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64 -`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 
-Getting started: https://docs.docker.com/compose/gettingstarted/
 
-Test setup for docker compose with pronlex, marytts and the wikispeech server.
+### II. Run wikispeech
 
-### RUN DOCKER
+1. Create environment variables
 
-`$ docker-compose up --abort-on-container-exit`
-
-`$ docker-compose up -f docker-compose.yml --abort-on-container-exit`
-
+   `$ cp TEMPLATE.env .env`     
+   
+    Edit the variables in the `.env` file to match your system settings.
 
 
----
-TODO: How do we know the docker internal IP addresses?
+2. Run wikispeech
+   
+   `$ docker-compose up --abort-on-container-exit`
+
+   To specify a separate compose-file:   
+   `$ docker-compose up -f docker-compose.yml --abort-on-container-exit`
+
+   Inspect the application:   
+   `$ docker-compose config`
+

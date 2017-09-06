@@ -38,7 +38,7 @@ if run_tests:
         #HB Before calling unittest.main, remove command line parameters (config file) otherwise unittest will try and fail to load it..
         del sys.argv[1:]
 
-        unittest.main(exit=False, failfast=True)
+        unittest.main(exit=False, failfast=True, warnings="ignore")
 
         ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
@@ -75,6 +75,7 @@ ws.log.info("port_nr set to %d" % port_nr)
 ws.log.info("DEBUG_MODE set to %s" % DEBUG_MODE)
 
 ws.log.info("The wikispeech server can be accessed at http://localhost:%s/wikispeech" % port_nr)
+print("The wikispeech server can be accessed at http://localhost:%s/wikispeech\n(The following line comes from the flask server, ignore it..)" % port_nr)
 
 
 ws.app.run(host='0.0.0.0', port=port_nr, debug=DEBUG_MODE, threaded=True) # OPEN FOR EXTERNAL CALLS
