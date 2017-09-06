@@ -49,7 +49,7 @@ if run_tests:
             
         if config.config.getboolean("Tests","quit_on_error"):
             print("Exiting because of test error and Tests:quit_on_error is set to True")
-            sys.exit()
+            sys.exit(1)
         else:
             print("Starting anyway because Tests:quit_on_error is set to False")
 
