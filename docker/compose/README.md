@@ -2,25 +2,19 @@
 
 WORK IN PROGRESS
 
-Utilities and info for building and running the Wikispeech server using `docker-compose`.
+Utilities and info for building and running the Wikispeech server using [Docker Compose](https://docs.docker.com/compose/).
 
 ### I. Install Docker Compose
 
-Requires Docker CE: https://docs.docker.com/engine/installation/
+_Requires Docker CE: https://docs.docker.com/engine/installation/_
 
-General info: https://docs.docker.com/compose/   
-Installation: https://docs.docker.com/compose/install/   
+Docker Compose Installation: https://docs.docker.com/compose/install/   
 
-Latest Linux version for docker-compose (as of 2017-09-06):
-https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64
-
+Latest Linux version for Docker Compose is 1.16.1 (2017-09-06)    
 Sample installation command for version 1.16.1:   
   
     sudo -i curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64 -`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 
-Getting started: https://docs.docker.com/compose/gettingstarted/
-
-Test setup for docker compose with pronlex, marytts and the wikispeech server.
 
 ### II. Run wikispeech
 
