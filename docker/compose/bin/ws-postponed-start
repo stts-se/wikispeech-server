@@ -10,25 +10,27 @@ s1port=`echo $s1|cut -f2 -d:`
 s2host=`echo $s2|cut -f1 -d:`
 s2port=`echo $s2|cut -f2 -d:`
 
-#set -e
-
-sleep 5
+#sleep 5
 
 for i in `seq $TIMEOUT` ; do
-    nc -z $s1host $s1port #> /dev/null 2>&1
-    #curl $s1
+    #nc -z $s1host $s1port #> /dev/null 2>&1
+    curl $s1 > /dev/null 2>&1
     
     result=$?
     if [ $result -eq 0 ] ; then
 
 	for j in `seq $TIMEOUT` ; do
-	    nc -z $s2host $s2port # > /dev/null 2>&1
-	    #curl $s2
+	    #nc -z $s2host $s2port # > /dev/null 2>&1
+	    curl $s2 > /dev/null 2>&1
 	    
 	    result=$?
 	    if [ $result -eq 0 ] ; then
-		cd wikispeech_mockup && python3 bin/wikispeech /ws-config/docker-compose.conf
-		exit 0
+		if cd wikispeech_mockup ; then
+		    python3 bin/wikispeech /ws-config/docker-compose.conf
+		    exit $?
+		else
+		    exit 1
+		fi
 	    fi
 	    sleep 1
 	done

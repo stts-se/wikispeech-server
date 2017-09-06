@@ -4,6 +4,9 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install apt-utils -y
 
 RUN apt install -y git wget
 
+# FOR DEBUGGING
+RUN apt-get install -y libnet-ifconfig-wrapper-perl/stable
+
 RUN git clone https://github.com/marytts/marytts-installer.git
 
 RUN cd marytts-installer && ./marytts install:cmu-slt && ./marytts install:cmu-slt-hsmm && ./marytts install:dfki-spike-hsmm

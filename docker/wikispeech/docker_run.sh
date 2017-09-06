@@ -30,4 +30,4 @@ if docker container inspect $CNAME &> /dev/null ; then
 fi
 
 shift
-docker run --name=$CNAME -p 10000:10000 -v $DIRABS:/config/ -it wikispeech $*
+docker run --name=$CNAME $* -p 10000:10000 -v $DIRABS:/config/ -it wikispeech

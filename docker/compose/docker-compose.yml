@@ -1,4 +1,11 @@
 version: '3'
+#networks:
+#  app_net:
+#    driver: bridge
+#    ipam:
+#      driver: default
+#      config:
+#      - subnet: 172.99.0.0/16
 services:
   pronlex:
     #build: /home/hanna/go/src/github.com/stts-se/pronlex
@@ -7,11 +14,19 @@ services:
      - /home/hanna/wikispeech/lexdata:/go/appdir
     ports:
      - "8787:8787"
+    #networks:
+    #  app_net:
+    #    ipv4_address: 172.99.0.2
+    #command: ifconfig
   marytts:
     #build: /home/hanna/git_repos/wikispeech_mockup/docker/marytts
     image: "marytts"
     ports:
      - "59125:59125"
+    #networks:
+    #  app_net:
+    #    ipv4_address: 172.99.0.3
+    #command: ifconfig
   wikispeech:
     #build: /home/hanna/git_repos/wikispeech_mockup/docker/wikispeech
     image: "wikispeech"
@@ -23,4 +38,7 @@ services:
     depends_on:
       - pronlex
       - marytts
+    #networks:
+    #  app_net:
+    #    ipv4_address: 172.99.0.4
     command: ["/compose/bin/ws-postponed-start", "172.19.0.1:8787", "172.19.0.1:59125"]
