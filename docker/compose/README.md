@@ -4,7 +4,7 @@ WORK IN PROGRESS
 
 Utilities and info for building and running the Wikispeech server using `docker-compose`.
 
-### I. Install `docker-compose`
+### I. Install Docker Compose
 
 Requires Docker CE: https://docs.docker.com/engine/installation/
 
