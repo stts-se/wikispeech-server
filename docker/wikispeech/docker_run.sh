@@ -4,6 +4,9 @@ CONFIGNAME="docker.conf"
 if [ $# -lt 1 ]; then
     echo "USAGE: sh $CMD <CONFIG DIR>
        <CONFIG DIR> must contain valid config file: $CONFIGNAME
+
+       Suggested config dir: `<GIT>/wikispeech_mockup/docker/ws-config`
+
 " >&2
     exit 1
 fi
@@ -28,7 +31,3 @@ fi
 
 shift
 docker run --name=$CNAME -p 10000:10000 -v $DIRABS:/config/ -it wikispeech $*
-
-## TODO: SNYGGARE MAPPNING AV CONFIGFILER
-
-

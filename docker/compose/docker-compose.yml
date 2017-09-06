@@ -16,7 +16,7 @@ services:
     #build: /home/hanna/git_repos/wikispeech_mockup/docker/wikispeech
     image: "wikispeech"
     volumes:
-     - /home/hanna/wikispeech/ws-config:/config
+     - /home/hanna/git_repos/wikispeech_mockup/docker/ws-config:/ws-config
      - /home/hanna/git_repos/wikispeech_mockup/docker/compose/bin:/compose/bin
     ports:
      - "10000:10000"

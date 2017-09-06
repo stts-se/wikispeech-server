@@ -1,5 +1,3 @@
-Work in progress! Currently, for some reason, the container cannot be called from outside, which makes it unusable....
-
 ## Docker build
 
 `$ docker build <GIT>/wikispeech_mockup/docker/wikispeech/ -t wikispeech`
@@ -8,6 +6,8 @@ Work in progress! Currently, for some reason, the container cannot be called fro
 
 `$ sh docker_run.sh <CONFIG DIR>`      
 `<CONFIG DIR>` must contain valid config file: `docker.conf`
+
+Suggested config dir: `<GIT>/wikispeech_mockup/docker/ws-config`
 
 Requires `pronlex` and `marytts` servers up and running as specified in `docker.conf`.
 
