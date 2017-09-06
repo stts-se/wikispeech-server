@@ -1,0 +1,26 @@
+version: '3'
+services:
+  pronlex:
+    #build: /home/hanna/go/src/github.com/stts-se/pronlex
+    image: "pronlex"
+    volumes:
+     - /home/hanna/wikispeech/lexdata:/go/appdir
+    ports:
+     - "8787:8787"
+  marytts:
+    #build: /home/hanna/git_repos/wikispeech_mockup/docker/marytts
+    image: "marytts"
+    ports:
+     - "59125:59125"
+  wikispeech:
+    #build: /home/hanna/git_repos/wikispeech_mockup/docker/wikispeech
+    image: "wikispeech"
+    volumes:
+     - /home/hanna/wikispeech/ws-config:/config
+     - /home/hanna/git_repos/wikispeech_mockup/docker/compose/bin:/compose/bin
+    ports:
+     - "10000:10000"
+    depends_on:
+      - pronlex
+      - marytts
+    command: ["/compose/bin/ws-postponed-start", "172.19.0.1:8787", "172.19.0.1:59125"]
