@@ -16,6 +16,8 @@ Sample installation command for Linux version 1.16.1 (latest version as of 2017-
 
 ### II. Clone the Wikispeech git repository
 
+TODO: Should NOT be needed in the future -- move Docker stuff to a separate repository?
+
 `$ mkdir -p ~/gitrepos`    
 `$ cd ~/gitrepos`   
 `$ git clone https://github.com/stts-se/wikispeech_mockup.git`
