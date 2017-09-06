@@ -1,8 +1,7 @@
+WORK IN PROGRESS
+
 ## Docker compose
 
-WORK IN PROGRESS
-
-## Docker with network
-
-WORK IN PROGRESS
+Readme: docker-compose/README.md   
+Git folder: [docker-compose/](https://github.com/stts-se/wikispeech_mockup/blob/master/docker/compose/)
 

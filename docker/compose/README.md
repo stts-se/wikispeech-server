@@ -2,6 +2,12 @@
 
 WORK IN PROGRESS
 
+This is a folder with utilities and info for building and running the Wikispeech server using `docker-compose`.
+
+### I. Install `docker-compose`
+
+Requires Docker CE: https://docs.docker.com/engine/installation/
+
 General info: https://docs.docker.com/compose/   
 Installation: https://docs.docker.com/compose/install/   
 
@@ -16,9 +22,28 @@ Getting started: https://docs.docker.com/compose/gettingstarted/
 
 Test setup for docker compose with pronlex, marytts and the wikispeech server.
 
-### Config
+### II. Run wikispeech
 
-Sample config file: `<GIT>/wikispeech_mockup/docker/ws-config/docker-compose.conf`
+1. Create environment variables
+
+   `$ cp TEMPLATE.env $USER.env`     
+   `$ ln -s $USER.env .env`
+   
+    Edit the variables in the `$USER.env` file to match your system settings.
+
+
+2. Run wikispeech
+   
+   `$ docker-compose up --abort-on-container-exit`
+
+   To specify a separate compose-file:   
+   `$ docker-compose up -f docker-compose.yml --abort-on-container-exit`
+
+   Inspect the application:   
+   `$ docker-compose config`
+
+
+
 
 ---
 TODO: How do we know the docker internal IP addresses?

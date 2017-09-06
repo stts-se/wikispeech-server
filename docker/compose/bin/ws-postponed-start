@@ -10,18 +10,18 @@ s1port=`echo $s1|cut -f2 -d:`
 s2host=`echo $s2|cut -f1 -d:`
 s2port=`echo $s2|cut -f2 -d:`
 
-#sleep 5
+sleep 5
 
 for i in `seq $TIMEOUT` ; do
-    #nc -z $s1host $s1port #> /dev/null 2>&1
-    curl $s1 > /dev/null 2>&1
+    nc -z $s1host $s1port #> /dev/null 2>&1
+    #curl $s1 > /dev/null 2>&1
     
     result=$?
     if [ $result -eq 0 ] ; then
 
 	for j in `seq $TIMEOUT` ; do
-	    #nc -z $s2host $s2port # > /dev/null 2>&1
-	    curl $s2 > /dev/null 2>&1
+	    nc -z $s2host $s2port # > /dev/null 2>&1
+	    #curl $s2 > /dev/null 2>&1
 	    
 	    result=$?
 	    if [ $result -eq 0 ] ; then
