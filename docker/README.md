@@ -1,8 +1,6 @@
+WORK IN PROGRESS
+
 ## Docker compose
 
-WORK IN PROGRESS
-
-## Docker with network
-
-WORK IN PROGRESS
+Git folder: [docker/](https://github.com/stts-se/wikispeech_mockup/blob/master/docker-compose/)
 
