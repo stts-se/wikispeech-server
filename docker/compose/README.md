@@ -24,10 +24,10 @@ Sample installation command for Linux version 1.16.1 (latest version as of 2017-
 
 1. Create environment variables
 
-   `$ cd ~/gitrepos/stts-se/wikispeech_mockup/docker/compose`      
-   `$ cp TEMPLATE.env .env`     
+   `$ cd ~/gitrepos/stts-se/wikispeech_mockup/docker/compose`      
+   `$ cp TEMPLATE.env .env`     
    
-    Edit the variables in the `.env` file to match your system settings.
+   Edit the variables in the `.env` file to match your system settings.
 
 
 2. Run wikispeech
