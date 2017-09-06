@@ -10,8 +10,7 @@ _Requires Docker CE: https://docs.docker.com/engine/installation/_
 
 Docker Compose Installation: https://docs.docker.com/compose/install/   
 
-Latest Linux version for Docker Compose is 1.16.1 (2017-09-06)    
-Sample installation command for version 1.16.1:   
+Sample installation command for Linux version 1.16.1 (latest version as of 2017-09-06):   
   
     sudo -i curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64 -`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 
@@ -36,8 +35,3 @@ Sample installation command for version 1.16.1:
    Inspect the application:   
    `$ docker-compose config`
 
-
-
-
----
-TODO: How do we know the docker internal IP addresses?
