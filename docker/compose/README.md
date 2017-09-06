@@ -27,9 +27,9 @@ Test setup for docker compose with pronlex, marytts and the wikispeech server.
 1. Create environment variables
 
    `$ cp TEMPLATE.env $USER.env`     
-   `$ ln -s $USER.env .env`
+   `$ ln -s $USER.env .env`
    
-    Edit the variables in the `$USER.env` file to match your system settings.
+    Edit the variables in the `$USER.env` file to match your system settings.
 
 
 2. Run wikispeech
