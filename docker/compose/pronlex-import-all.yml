@@ -1,0 +1,23 @@
+## docker-compose configuration for importing standard lexicon data
+
+version: '3'
+networks:
+  app_net:
+   driver: bridge
+   ipam:
+     driver: default
+     config:
+     - subnet: 172.99.0.0/16
+services:
+  pronlex:
+    #build: ${GOPATH}/src/github.com/stts-se/pronlex
+    build: https://github.com/stts-se/pronlex.git
+    image: "pronlex"
+    volumes:
+     - ${LEXDATA_DIR}:/go/appdir
+    ports:
+     - "8787:8787"
+    networks:
+     app_net:
+       ipv4_address: 172.99.0.2
+    command: ["import_all"]

@@ -1,3 +1,5 @@
+## docker-compose configuration for starting the wikispeech server
+
 version: '3'
 networks:
   app_net:
@@ -12,7 +14,7 @@ services:
     build: https://github.com/stts-se/pronlex.git
     image: "pronlex"
     volumes:
-     - /home/hanna/wikispeech/lexdata:/go/appdir
+     - ${LEXDATA_DIR}:/go/appdir
     ports:
      - "8787:8787"
     networks:

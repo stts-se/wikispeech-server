@@ -22,7 +22,7 @@ TODO: Should NOT be needed in the future -- move Docker stuff to a separate repo
 `$ cd ~/gitrepos`   
 `$ git clone https://github.com/stts-se/wikispeech_mockup.git`
 
-### III. Run wikispeech
+### III. Start using wikispeech
 
 1. Create environment variables
 
@@ -32,13 +32,20 @@ TODO: Should NOT be needed in the future -- move Docker stuff to a separate repo
    Edit the variables in the `.env` file to match your system settings.
 
 
-2. Run wikispeech
+2. Setup standard lexicon data
+
+   `$ docker-compose --file pronlex-import-all.yml up`
+
+
+3. Run wikispeech
    
-   `$ docker-compose up --abort-on-container-exit`
+   `$ docker-compose --file wikispeech.yml up --abort-on-container-exit`
 
    To specify a separate compose-file:   
-   `$ docker-compose up -f docker-compose.yml --abort-on-container-exit`
+   `$ docker-compose --file wikispeech.yml up --abort-on-container-exit`
 
    Inspect the application:   
    `$ docker-compose config`
 
+
+   
