@@ -14,12 +14,18 @@ Sample installation command for Linux version 1.16.1 (latest version as of 2017-
   
     sudo -i curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64 -`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 
+### II. Clone the Wikispeech git repository
 
-### II. Run wikispeech
+`$ mkdir -p ~/gitrepos`    
+`$ cd ~/gitrepos`   
+`$ git clone https://github.com/stts-se/wikispeech_mockup.git`
+
+### III. Run wikispeech
 
 1. Create environment variables
 
-   `$ cp TEMPLATE.env .env`     
+   `$ cd ~/gitrepos/stts-se/wikispeech_mockup/docker/compose`    
+   `$ cp TEMPLATE.env .env`     
    
     Edit the variables in the `.env` file to match your system settings.
 
