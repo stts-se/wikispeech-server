@@ -19,7 +19,7 @@ Obtain a Docker image using one of the following methods
 
 * Build from local Dockerfile:
 
-   `$ docker build <GIT>/wikispeech_mockup/docker/wikispeech/ -t wikispeech`
+   `$ docker build <GIT>/wikispeech_mockup/ -t wikispeech`
 
 Insert the `--no-cache` switch after the `build` tag if you encounter caching issues (e.g., with updated git repos, etc).
 
