@@ -1,7 +1,13 @@
-WORK IN PROGRESS
+## Docker build
 
-## Docker compose
+`$ docker build <GIT>/wikispeech_mockup/docker/wikispeech/ -t wikispeech`
 
-Readme: docker-compose/README.md   
-Git folder: [docker-compose/](https://github.com/stts-se/wikispeech_mockup/blob/master/docker/compose/)
+## Docker run
+
+`$ sh docker_run.sh <CONFIG DIR>`      
+`<CONFIG DIR>` must contain valid config file: `docker.conf`
+
+Suggested config dir: `<GIT>/wikispeech_mockup/docker/ws-config`
+
+Requires `pronlex` and `marytts` servers up and running as specified in `docker.conf`.
 
