@@ -170,14 +170,15 @@ voice_configs = [
 
     # ARABIC
 
-    {
-        "lang":"ar",
-        "name":"ar-nah-hsmm",
-        "engine":"marytts",
-        "adapter":"adapters.marytts_adapter",
-        "mapper": {
-            "from":"ar_ws-sampa",
-            "to":"ar_sampa_mary"
-        }
-    }    
+    # HL commented out Arabic 2017-09-11
+    # {
+    #     "lang":"ar",
+    #     "name":"ar-nah-hsmm",
+    #     "engine":"marytts",
+    #     "adapter":"adapters.marytts_adapter",
+    #     "mapper": {
+    #         "from":"ar_ws-sampa",
+    #         "to":"ar_sampa_mary"
+    #     }
+    # }    
 ]
