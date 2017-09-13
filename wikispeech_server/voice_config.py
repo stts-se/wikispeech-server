@@ -84,6 +84,19 @@ textprocessor_configs = [
     ,
 
 
+    {
+        "name":"basic_eu",
+        "lang":"eu",
+        "components":[
+            {
+                "module":"tokeniser",
+                "call":"tokenise"
+            }
+        ]
+    }
+    ,
+
+
     {"name":"marytts_textproc_ar", "lang":"ar",
      "components":[
          {
@@ -163,6 +176,15 @@ voice_configs = [
         "engine":"flite",
         "adapter":"adapters.flite_adapter",
         "flite_voice":"slt"
+    }
+    ,
+
+    # TEST BASQUE
+    {
+        "lang":"eu",
+        "name":"ahotts",
+        "engine":"ahotts",
+        "adapter":"adapters.ahotts_adapter"
     }
     ,
 
