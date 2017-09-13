@@ -26,7 +26,7 @@ ssml = """<?xml version="1.0" encoding="ISO-8859-1"?>
                  http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
        xml:lang="sv">
 
-  Det här är ett test av <phoneme alphabet="x-sampa" ph="b a . b I . &quot; A: n">SSML</phoneme>
+  Det här är ett test av <phoneme alphabet="x-sampa" ph="b a - b I - &quot; A: n">SSML</phoneme>
 
 </speak>"""
 
