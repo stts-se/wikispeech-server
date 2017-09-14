@@ -7,6 +7,10 @@ import wikispeech_server.log as log
 def cleanupOrth(orth):
 
     orig = orth
+
+    if orth == None:
+        orth = ""
+        return orth
     
     #Remove soft hyphen if it occurs - it's a hidden character that causes problems in lookup
     orth = orth.replace("\xad","")
