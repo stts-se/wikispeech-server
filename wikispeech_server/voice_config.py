@@ -180,13 +180,13 @@ voice_configs = [
     ,
 
     # TEST BASQUE
-    {
-        "lang":"eu",
-        "name":"ahotts",
-        "engine":"ahotts",
-        "adapter":"adapters.ahotts_adapter"
-    }
-    ,
+    # {
+    #     "lang":"eu",
+    #     "name":"ahotts",
+    #     "engine":"ahotts",
+    #     "adapter":"adapters.ahotts_adapter"
+    # }
+    # ,
 
 
 
