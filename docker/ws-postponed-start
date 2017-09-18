@@ -1,0 +1,47 @@
+#!/bin/bash
+
+CMD=`basename $0`
+
+TIMEOUT=15
+s1=$1
+s2=$2
+
+s1host=`echo $s1|cut -f1 -d:`
+s1port=`echo $s1|cut -f2 -d:`
+
+s2host=`echo $s2|cut -f1 -d:`
+s2port=`echo $s2|cut -f2 -d:`
+
+#sleep 5
+
+for i1 in `seq $TIMEOUT` ; do
+    echo "[$CMD] Waiting for $s1 to start" 2>&1
+    nc -z $s1host $s1port > /dev/null 2>&1
+    curl $s1 > /dev/null 2>&1
+    
+    result=$?
+    if [ $result -eq 0 ] ; then
+
+	for i2 in `seq $TIMEOUT` ; do
+	    echo "[$CMD] Waiting for $s2 to start" 2>&1
+	    nc -z $s2host $s2port > /dev/null 2>&1
+	    curl $s2 > /dev/null 2>&1
+	    
+	    result=$?
+	    if [ $result -eq 0 ] ; then
+		echo "[$CMD] All required servers up and running, starting wikispeech" 2>&1
+		if cd wikispeech_mockup ; then
+		    python3 bin/wikispeech /ws-config/docker-compose.conf
+		    exit $?
+		else
+		    exit 1
+		fi
+	    fi
+	    sleep 1
+	done
+
+    fi
+    sleep 1
+done
+
+echo "[$CMD] Reached timeout for service dependencies: $s1 && $s2" 2>&1
