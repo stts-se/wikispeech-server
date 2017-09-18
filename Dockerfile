@@ -11,12 +11,9 @@ RUN pip3 install simplejson requests flask flask_cors
 
 RUN git clone https://github.com/stts-se/wikispeech_mockup.git 
 
-RUN ls -l wikispeech_mockup/
-
-RUN ln -s wikispeech_mockup/ws-postponed-start /bin/
-# && chmod +x /bin/ws-postponed-start
-
 RUN mkdir -p wikispeech_mockup/wikispeech_server/tmp
+RUN ln -s /wikispeech_mockup/docker/ws-postponed-start /bin/
+RUN ln -s /wikispeech_mockup/docker/config /config
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
