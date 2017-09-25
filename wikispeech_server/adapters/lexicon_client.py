@@ -2,6 +2,7 @@ import requests, re
 import simplejson as json
 import wikispeech_server.config as config
 import wikispeech_server.log as log
+import urllib.parse
 
 
 def cleanupOrth(orth):
@@ -173,8 +174,10 @@ class Lexicon(object):
             log.warning("LEXICON LOOKUP STRING IS EMPTY!")
             return {}
 
-        
-        url = "%s/%s?lexicons=%s&words=%s" % (self.base_url, "lookup", self.lexicon_name, string)
+
+        encString = urllib.parse.quote(string)
+        print(encString)
+        url = "%s/%s?lexicons=%s&words=%s" % (self.base_url, "lookup", self.lexicon_name, encString)
         r = requests.get(url)
         log.debug("LEXICON LOOKUP URL: %s" % r.url)
         response = r.text
