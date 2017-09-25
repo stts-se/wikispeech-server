@@ -176,7 +176,6 @@ class Lexicon(object):
 
 
         encString = urllib.parse.quote(string)
-        print(encString)
         url = "%s/%s?lexicons=%s&words=%s" % (self.base_url, "lookup", self.lexicon_name, encString)
         r = requests.get(url)
         log.debug("LEXICON LOOKUP URL: %s" % r.url)
