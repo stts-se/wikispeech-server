@@ -167,6 +167,7 @@ function play(id) {
 	//using video.js or one html5 audio element
 	//var audio = document.getElementById("audio_player");
 	//using regular html5 audio
+ 	audio.setAttribute('crossorigin', 'anonymous');  // HL 20170927
 	audio.setAttribute("src", response.audio);
 
 
