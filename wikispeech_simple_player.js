@@ -167,8 +167,8 @@ function play(id) {
 	//using video.js or one html5 audio element
 	//var audio = document.getElementById("audio_player");
 	//using regular html5 audio
+ 	audio.setAttribute('crossorigin', 'anonymous'); 
 	audio.setAttribute("src", response.audio);
-
 
 	if (showControls) {
 	    addTimingInfoFromJson(container, response);
@@ -179,7 +179,7 @@ function play(id) {
 	}
 
 	audio.play();
-	
+
     };
 
     xhr.onerror = function() {
