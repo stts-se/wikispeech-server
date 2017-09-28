@@ -115,6 +115,11 @@ ProxyPreserveHost On
 ProxyPass         /wikispeech/  http://127.0.1.1:10000/wikispeech/
 ProxyPassReverse  /wikispeech/  http://127.0.1.1:10000/wikispeech/
 ProxyRequests     Off
+
+ProxyPreserveHost On
+ProxyPass /ws_service/ http://127.0.1.1:8787/
+ProxyPassReverse /ws_service/ http://127.0.1.1:8787/
+ProxyRequests Off
 ```
 
 #### 4. (optional - for testing through apache)
