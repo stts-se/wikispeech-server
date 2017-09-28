@@ -10,12 +10,14 @@ function setupLexiconTable() {
 	//alert(value);
 	//$("#selected_trans").html(trans);
 
+	console.log("setupLexiconTable calling displaySelected")
 	displaySelected(this);
     });
 }
 
 //make sure that the lexicon table is setup after loading words
 $( document ).ajaxComplete(function( event, xhr, settings ) {
+    console.log("ajaxComplete calling setupLexiconTable")
     setupLexiconTable();
 });
 
@@ -1047,6 +1049,7 @@ function wordsInLex(words, lang) {
 	    $(row).addClass("selected");
 
 	    //TODO This goes wrong..
+	    console.log("wordsInLex calling displaySelected")
 	    displaySelected(row);
 
 
