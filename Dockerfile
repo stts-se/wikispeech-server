@@ -15,6 +15,8 @@ RUN mkdir -p wikispeech_mockup/wikispeech_server/tmp
 RUN ln -s /wikispeech_mockup/docker/ws-postponed-start /bin/
 RUN ln -s /wikispeech_mockup/docker/config /config
 
+RUN echo "172.99.0.1	localhost" >> /etc/hosts
+
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
