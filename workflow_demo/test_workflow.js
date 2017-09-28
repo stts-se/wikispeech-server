@@ -226,9 +226,9 @@ function displayInSimpleEditor(entry_list, selected_table, orth, lang) {
 	    row.appendChild(listen)
 
 	    //ENTRY LANG
-	    var lang = document.createElement("td");
-	    lang.innerHTML = entry["language"];
-	    row.appendChild(lang)
+	    var langE = document.createElement("td");
+	    langE.innerHTML = entry["language"];
+	    row.appendChild(langE)
 
 	    //ENTRY POS
 	    var pos = document.createElement("td");
@@ -357,6 +357,7 @@ function tokeniseHtmlText(lang) {
 		addHtmlSentencesToSynthesisTab(lang);
 		
 		var data = getSentenceAndTokens(response);
+		
 		addWordsToLexiconTab(data.words, lang);
 
 	    } else {
@@ -513,6 +514,8 @@ function addHtmlSentencesToSynthesisTab(lang) {
 	var id = "sentence_nr_"+i;
 	p.setAttribute("id",id);
 
+	console.log("addHtmlSentencesToSynthesisTab: LANGUAGE")
+	console.log(lang)
 	p.setAttribute("lang", lang);
    
 	var playButton = document.createElement("input");
@@ -717,7 +720,7 @@ function validateTranscription(t, lang) {
     //TODO fix
     if ( lang == undefined ) {
 	lang = document.getElementById("language_selector").value;
-    }
+    }    
     console.log("validateTranscription: lang = "+lang);
     
     //TODO hardcoded symbolsets
@@ -811,6 +814,9 @@ function playTranscription(t,lang) {
 	    }
 	]
     };
+
+    console.log("playTranscription: LANGUAGE")
+    console.log(lang)
 
     //TODO hardcoded symbolsets
     if ( lang == "sv" ) {
