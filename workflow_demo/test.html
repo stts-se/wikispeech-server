@@ -117,7 +117,7 @@ getSupportedLanguages();
 		  <div>
 		    <h4 id="selected_word" style="display: inline-block; width: 30em;"></h4>
 		    <input type="button" value="Save" onclick="updateLexicon($('#selected_word')[0].innerHTML);">
-		    <input type="button" value="Open in Entry editor" onclick="myTabs.goToTab(3);searchLexicon($('#selected_word')[0].innerHTML);">
+		    <input type="button" value="Open in Entry editor" onclick="myTabs.goToTab(3);searchLexicon($('#selected_word')[0].innerHTML, document.getElementById('language_selector').value);">
 		    <div>
 		      <h4>Lexicon entries</h4>
 		      <table>
@@ -173,7 +173,7 @@ getSupportedLanguages();
 	  </p>
 	  <div>
 	    <input type="text" id="search_term">
-	    <input type="button" value="search" onclick="searchLexicon($('#search_term').val());">
+	    <input type="button" value="search" onclick="searchLexicon($('#search_term').val(), document.getElementById('language_selector').value);">
 	  </div>
 	  <hr/>
 	  <div>
@@ -193,7 +193,7 @@ getSupportedLanguages();
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start --> Last modified: Fri Jun  9 12:56:54 CEST 2017 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Fri Sep 29 15:37:31 CEST 2017 <!-- hhmts end -->
 
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
