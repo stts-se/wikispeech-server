@@ -92,8 +92,6 @@ function filterToSSML(html) {
 
 function play(id) {
 
-    console.log("DEBUG /wikispeech_simple_player.js : .play()");
-    
     console.log("play("+id+")");
     console.log(id);
 
@@ -169,24 +167,18 @@ function play(id) {
 	//using video.js or one html5 audio element
 	//var audio = document.getElementById("audio_player");
 	//using regular html5 audio
- 	//audio.setAttribute('crossorigin', 'anonymous');  // HL 20170927
 
-	if (showControls) {
+	if (showControls) { // will not work properly with showControls set to true
 	    addTimingInfoFromJson(container, response);
 	    connectTimingAndAudio(container,audio);
 	    audio.setAttribute("controls", "true");
-	    //container.appendChild(audio);	
+	    container.appendChild(audio);	
 	    toggleAudioControls();
 	}
 
-	//console.log("setTimeout(5000)")
-	//setTimeout(function (){
+	audio.setAttribute("src", response.audio);	    
+	audio.play();
 	    
-	    audio.setAttribute("src", response.audio);	    
-	    audio.play();
-	    
-	//}, 5000);
-
     };
 
     xhr.onerror = function() {
