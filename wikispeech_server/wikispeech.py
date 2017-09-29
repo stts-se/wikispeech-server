@@ -699,8 +699,10 @@ def saveAndConvertAudio(audio_url,presynth=False):
     convertcmd = "opusenc %s %s" % (tmpwav, tmpopus)
     log.debug("convertcmd: %s" % convertcmd)
     if log.log_level != "debug":
-        convertcmd = convertcmd+" &> /dev/null"
-    os.system(convertcmd)
+        convertcmd = convertcmd # +" &> /dev/null"
+    retval = os.system(convertcmd)
+    if retval != 0:
+        log.error("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
 
     #remove everything before the tmpdir, to build the external url
     #HB problem with wikimedia usage?
