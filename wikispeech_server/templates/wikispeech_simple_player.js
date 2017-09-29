@@ -155,11 +155,9 @@ function play(id) {
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.send(params);
 
-    console.log("wikispeech_simple_player DEBUG 1")
     xhr.onload = function() {
 	var response = JSON.parse(xhr.responseText);
 	//var response = xhr.responseJSON;
-	console.log("wikispeech_simple_player DEBUG 2")
 	console.log(response);
 	
 	
