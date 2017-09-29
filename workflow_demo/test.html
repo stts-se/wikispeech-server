@@ -138,7 +138,7 @@ getSupportedLanguages();
 		      <h4>SSML transcription</h4>		      
 		      <input type="text" id="ssml_transcription_input" class="makeSSML" contenteditable="true" onkeyup="makeSSMLReplacementString();"></input>
 		    <!-- <div id="ssml_transcription" class="makeSSML" contenteditable="true" onkeyup="makeSSMLReplacementString();"></div>-->
-		      <input type="button" value="listen" onclick="playSSML($('#ssml_transcription')[0]);">
+		      <input type="button" value="listen" onclick="playSSML($('#ssml_transcription_input')[0], document.getElementById('language_selector').value);">
 		      <h4>SSML replacement string</h4>		      
 		      <div id="ssml_replacement"></div>
 		      <h4>Autotrans</h4>		      
@@ -193,7 +193,7 @@ getSupportedLanguages();
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Fri Sep 29 15:37:31 CEST 2017 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Fri Sep 29 15:56:22 CEST 2017 <!-- hhmts end -->
 
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>
