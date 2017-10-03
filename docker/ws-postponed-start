@@ -12,8 +12,6 @@ s1port=`echo $s1|cut -f2 -d:`
 s2host=`echo $s2|cut -f1 -d:`
 s2port=`echo $s2|cut -f2 -d:`
 
-### echo "$s1host	localhost" >> /etc/hosts ## needed for workflow demo setup, should probably be configured in another way
-
 for i1 in `seq $TIMEOUT` ; do
     echo "[$CMD] Waiting for $s1 to start" 2>&1
     nc -z $s1host $s1port > /dev/null 2>&1
