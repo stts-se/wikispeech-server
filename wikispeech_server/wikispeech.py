@@ -92,6 +92,10 @@ CORS(app)
 # POST: curl -d "lang=en" -d "input=test." http://localhost:10000/wikispeech/
 # GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
 
+@app.route('/ping')
+def ping():
+    return 'wikispeech_server'
+
 
 @app.route('/wikispeech/', methods=["OPTIONS"])
 def wikispeech_options():
