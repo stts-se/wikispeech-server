@@ -5,6 +5,7 @@ import wikispeech_server.config as config
 import wikispeech_server.log as log
 import wikispeech_server.wikispeech as ws
 
+from urllib.parse import quote
 
 try:
     #Python 3
@@ -55,8 +56,14 @@ def marytts_preproc(text, lang, tp_config, input_type="text"):
     #Using output_type PHONEMES/INTONATION/ALLOPHONES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
     r = requests.get(marytts_url, params=payload)
     log.debug("CALLING MARYTTS: %s" % r.url)
+    if r.status_code != 200:
+        log.debug("marytts call failed with error %d" % r.status_code)
+        log.debug("marytts error text %s" % r.text)
+        raise ValueError("marytts call failed with error", r.status_code, r.text)
     
+
     xml = r.text
+    
     #log.debug "REPLY:", xml
     (marylang, utt) = maryxml2utt(xml, tp_config)
 
