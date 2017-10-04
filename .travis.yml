@@ -10,4 +10,5 @@ script:
   - python3 bin/wikispeech docker/config/travis.conf &
   - export pid=$!
   - sleep 10 
-  - ps -A | egrep -vw PID | cut -f1 -d' ' | egrep "^$pid$" | xargs kill
+  - export ws_running=`ps -p 123456456|egrep -vw PID|wc -l`
+  - if [ $ws_running -eq 1 ]; then kill -9 $pid ; fi
