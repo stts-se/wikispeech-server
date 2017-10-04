@@ -6,9 +6,9 @@ services:
 before_install:
  - sudo apt install opus-tools
  - docker build https://github.com/stts-se/pronlex.git -t pronlex
- - docker run --name=pronlex -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex setup
- - docker run --name=pronlex -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex import_for_ws_tests
- - docker run --name=pronlex -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex 
+ - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex setup
+ - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex import_for_ws_tests
+ - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex 
 
 
 install:
