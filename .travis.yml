@@ -8,7 +8,7 @@ before_install:
  - docker build https://github.com/stts-se/pronlex.git -t pronlex
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex setup
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex import_for_ws_test /appdir /tmp/appdir
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex 
+ - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex & 
 
 
 install:
