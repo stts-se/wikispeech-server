@@ -98,32 +98,22 @@ function getCaretPosition(element) {
 
 function makeSSMLReplacementString() {
 
-    var ssml = $("#ssml_transcription_input").val();
+    var trans_string = $("#ssml_transcription_input").val();
     var orth = $('#selected_word').text();
 
-    //var orth = "dummy";
 
-    //var ssml = $('#ssml_transcription').html();
-    //var ssml = $(this).html();
-    //var ssml = container.html();
-    console.log("ssml_trans: "+ssml);
-    console.log("orth: "+orth);
-    var trans_string = ssml.replace(/^.*<p><phoneme .+>(.+)<\/phoneme><\/p>.*$/,"$1");
     trans_string = trans_string.replace(/"/g, "&quot;");
     trans_string = trans_string.replace(/&nbsp;/g, " ");
 
+    console.log("orth: "+orth);
+    console.log("trans_string: "+trans_string);
 
-    console.log(trans_string);
-    var new_ssml = ssml.replace(/ph="[^"]+"/, "ph=\""+trans_string+"\""); 
-    var new_ssml = new_ssml.replace(/>[^<]+<\/phoneme/, ">"+trans_string+"<\/phoneme"); 
-    console.log(new_ssml);
-        
-    //phoneme_string = "<p><phoneme alphabet=\"x-sampa\" ph=\""+trans_string+"\">"+orth+"</phoneme></p>";
     phoneme_string = "<phoneme alphabet=\"x-sampa\" ph=\""+trans_string+"\">"+orth+"</phoneme>";
     console.log(phoneme_string);
+
     $("#ssml_replacement").text(phoneme_string);
 
-    return new_ssml;
+    //return new_ssml;
 }
 
 function displaySelected(row) {
@@ -700,8 +690,14 @@ function validateTranscription(t, lang) {
     //if it's an element
     var trans = t.innerHTML;
     //if it's an input field
-    if ( trans == undefined ) {
+    //TODO check instead if it is..
+    if ( trans == "" ) {
 	trans = t.value;
+	//replace all except first ' with % if ssml transcription..
+	trans = trans.replace(/'/g,"%%");
+	trans = trans.replace("%%","'");
+	trans = trans.replace("%%", "%");
+	trans = trans.replace(/%%/g,"");
     }
 
     console.log("validateTranscription: trans = "+trans);
@@ -850,9 +846,8 @@ function playTranscription(t,lang) {
 
 		    t.setAttribute("style", "background-color:lightgreen;");
 		    
-		    ssml = makeSSMLTranscription(trans, lang);
 		    //Actually play only after validation
-		    playSSML(ssml, lang);
+		    playSSML(trans, lang);
 		
 		} else {
 
@@ -868,13 +863,21 @@ function playTranscription(t,lang) {
     );
 }
 
-function playSSML(ssml, lang) {
-    clone = ssml.cloneNode(true);
+function playSSML(trans, lang) {
+
+    ssml = makeSSMLTranscription(trans, lang);
+
+    
     container = document.createElement("p");
 
     container.setAttribute("lang", lang);
     container.setAttribute("class", "ssml");
-    container.appendChild(clone);
+
+    container.appendChild(ssml);
+
+    console.log("container: ");
+    console.log(container);
+    
     //globals for player
     useOriginalText = false;
     showControls = false;

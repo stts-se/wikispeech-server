@@ -81,9 +81,11 @@ addTestdata(lang);
 
 
 //Shouldn't have to set ws_hostname here ??
-ws_hostname = "http://localhost";
+// REMOVED 3/10
+//ws_hostname = "http://localhost:10000";
+//ws_hostname = "http://localhost";
 //ws_hostname = "https://morf.se";
-ws_host = ws_hostname+"/wikispeech";
+//ws_host = ws_hostname+"/wikispeech";
 
 tokeniseHtmlText(lang);
 

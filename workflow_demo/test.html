@@ -28,10 +28,11 @@ tr.selected{
 <script type="text/javascript" src="../wikispeech_simple_player.js"></script>
 <script type="text/javascript">
 window.onload = function() {
- ws_hostname = "http://localhost";
- //ws_hostname = "http://localhost:10000";
- //ws_hostname = "https://morf.se";
- ws_host = ws_hostname+"/wikispeech";
+ // NOTE Change this!
+ //ws_host = "http://localhost/wikispeech";
+ ws_host = "http://localhost:10000/wikispeech";
+ //ws_host = "https://morf.se/wikispeech";
+
 useOriginalText=true;
 getSupportedLanguages();
 };
@@ -136,9 +137,8 @@ getSupportedLanguages();
 			</tbody>
 		      </table>
 		      <h4>SSML transcription</h4>		      
-		      <input type="text" id="ssml_transcription_input" class="makeSSML" contenteditable="true" onkeyup="makeSSMLReplacementString();"></input>
-		    <!-- <div id="ssml_transcription" class="makeSSML" contenteditable="true" onkeyup="makeSSMLReplacementString();"></div>-->
-		      <input type="button" value="listen" onclick="playSSML($('#ssml_transcription_input')[0], document.getElementById('language_selector').value);">
+		      <input type="text" id="ssml_transcription_input" class="makeSSML" onkeyup="makeSSMLReplacementString();"></input>
+		      <input type="button" value="listen" onclick="playSSML(document.getElementById('ssml_transcription_input').value, document.getElementById('language_selector').value);">
 		      <h4>SSML replacement string</h4>		      
 		      <div id="ssml_replacement"></div>
 		      <h4>Autotrans</h4>		      

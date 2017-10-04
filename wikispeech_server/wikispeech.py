@@ -590,11 +590,44 @@ def static_test():
     hostname = "http://localhost:10000/wikispeech"
     return render_template("test.html", server=hostname)
 
+
 @app.route('/wikispeech_simple_player.js')
 def static_proxy_js():
-    log.info("Looking for static file %s" % "wikispeech_simple_player.js")
-    # send_static_file will guess the correct MIME type
-    return render_template("wikispeech_simple_player.js")
+    filename = "wikispeech_simple_player.js"
+    root_dir = os.getcwd()
+    log.info("Looking for static file %s/%s" % (root_dir, filename))
+    return send_from_directory(root_dir, filename)
+
+#Two different routes to the same file. Because test.html uses the previous, and workflow_demo/test.html uses the following.
+#TODO change so that test.html also uses the following
+@app.route('/wikispeech/wikispeech_simple_player.js')
+def static_proxy_js2():
+    filename = "wikispeech_simple_player.js"
+    root_dir = os.getcwd()
+    log.info("Looking for static file %s/%s" % (root_dir, filename))
+    return send_from_directory(root_dir, filename)
+
+
+# @app.route('/workflow_demo/test.html')
+# def static_test_workflow():
+#     filename = "workflow_demo/test.html"
+#     root_dir = os.getcwd()
+#     log.info("Looking for static file %s/%s" % (root_dir, filename))
+#     return send_from_directory(root_dir, filename)
+    #log.info("Looking for static file %s" % filename)
+    #hostname = "http://localhost:10000/wikispeech"
+    #return render_template(filename, server=hostname)
+
+@app.route('/wikispeech/workflow_demo/<path:path>')
+def static_proxy_workflow(path):
+    filename = "workflow_demo/"+path
+    root_dir = os.getcwd()
+    log.info("Looking for static file %s/%s" % (root_dir, filename))
+    return send_from_directory(root_dir, filename)
+
+
+
+
 
 ##############################################
 #
