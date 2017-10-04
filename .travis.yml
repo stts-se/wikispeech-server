@@ -2,8 +2,7 @@ language: python
 python:
   - "3.5.3"
 before_install:
- - apt install opus-tools
-# command to install dependencies
+ - sudo apt install opus-tools
 install:
   - pip install -r requirements.txt
 # command to run tests
