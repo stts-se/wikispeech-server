@@ -8,5 +8,5 @@ install:
 # command to run tests
 script:
   - python3 bin/wikispeech docker/config/travis.conf &
-  - export pid=$! && sleep 10 && export ws_running=`ps -p 123456456|egrep -vw PID|wc -l`
-  - if [ $ws_running -eq 1 ]; then kill -9 $pid ; else echo "Expected Wikispeech server to still be up and running after 10 seconds. Will exit with error code 1." >&2 && exit 1; fi
+  - export pid=$! && sleep 10 && export ws_running=`ps -p $pid|egrep -vw PID|wc -l`
+  - echo 'if [ $ws_running -eq 1 ]; then kill -9 $pid ; else echo "Expected Wikispeech server to still be up and running after 10 seconds. Will exit with error code 1." && exit 1 ; fi' > /tmp/exit_right && /tmp/exit_right
