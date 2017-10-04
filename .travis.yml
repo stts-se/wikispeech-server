@@ -5,8 +5,15 @@ before_install:
  - sudo apt install opus-tools
 install:
   - pip install -r requirements.txt
+services:
+  - docker
 # command to run tests
 script:
   - python3 bin/wikispeech docker/config/travis.conf &
   - export pid=$! && sleep 10 && export ws_running=`ps -p $pid|egrep -vw PID|wc -l`
   - echo 'if [ $ws_running -eq 1 ]; then kill -9 $pid ; else echo "Expected Wikispeech server to still be up and running after 10 seconds. Will exit with error code 1." && exit 1 ; fi' > /tmp/exit_right && sh /tmp/exit_right
+
+
+### TODO
+# set up pronlex and run setup + import_for_ws_tests
+# travis.conf should have this setting: quit_on_error: True
