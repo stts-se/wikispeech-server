@@ -1,12 +1,18 @@
 language: python
 python:
   - "3.5.3"
-before_install:
- - sudo apt install opus-tools
-install:
-  - pip install -r requirements.txt
 services:
   - docker
+before_install:
+ - sudo apt install opus-tools
+ - docker build https://github.com/stts-se/pronlex.git -t pronlex
+ - docker run --name=pronlex -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex setup
+ - docker run --name=pronlex -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex import_for_ws_tests
+ - docker run --name=pronlex -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex 
+
+
+install:
+  - pip install -r requirements.txt
 # command to run tests
 script:
   - python3 bin/wikispeech docker/config/travis.conf &
