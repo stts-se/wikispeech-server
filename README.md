@@ -1,6 +1,6 @@
 # Server for wikispeech TTS
 
-<!-- [![Build Status](https://travis-ci.org/stts-se/wikispeech_mockup.svg?branch=master)](https://travis-ci.org/stts-se/wikispeech_mockup) -->
+[![Build Status](https://travis-ci.org/stts-se/wikispeech_mockup.svg?branch=master)](https://travis-ci.org/stts-se/wikispeech_mockup)
 
 ## Prerequisites:
 ```
