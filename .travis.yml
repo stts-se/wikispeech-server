@@ -7,4 +7,8 @@ install:
   - pip install -r requirements.txt
 # command to run tests
 script:
-  - python3 bin/wikispeech docker/config/travis.conf
+  - python3 bin/wikispeech docker/config/travis.conf &
+  - export pid=$!
+  - sleep 10
+  - echo $pid
+  - kill -9 $pid
