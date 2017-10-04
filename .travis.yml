@@ -9,6 +9,5 @@ install:
 script:
   - python3 bin/wikispeech docker/config/travis.conf &
   - export pid=$!
-  - sleep 10
-  - echo $pid
-  - kill -9 $pid
+  - sleep 10 
+  - ps -A | egrep -vw PID | cut -f1 -d' ' | egrep "^$pid$" | xargs kill
