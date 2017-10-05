@@ -21,7 +21,7 @@ script:
   - python3 bin/wikispeech docker/config/travis.conf &
   - echo "wikispeech server started with return value $?"
   - sleep 20
-  - ps -Af
+  - ps -Af | egrep "wikispeech|python|pronlex|docker"
   - killall -9 wikispeech && killall -9 pronlex
   #- export pid=$! && sleep 10 && export ws_running=`ps -p $pid|egrep -vw PID|wc -l`
   #- echo 'if [ $ws_running -eq 1 ]; then kill -9 $pid ; else echo "Expected Wikispeech server to still be up and running after 10 seconds. Will exit with error code 1." && exit 1 ; fi' > /tmp/exit_right && sh /tmp/exit_right
