@@ -25,11 +25,16 @@ textprocessor_configs = [
          {
              "module":"adapters.marytts_adapter",
              "call":"marytts_preproc"
-#         },
-#         {
-#             "module":"adapters.lexicon_client",
-#             "call":"lexLookup",
-#             "lexicon":"no-nb.nst"
+             ,
+             "mapper": {
+                 "from":"nb-no_ws-sampa",
+                 "to":"nb-no_sampa_mary"
+             },
+         },
+         {
+             "module":"adapters.lexicon_client",
+             "call":"lexLookup",
+             "lexicon":"no_nob_nst_lex:nb-no.nst"
          }
      ]
     }
@@ -139,7 +144,17 @@ voice_configs = [
 
     # NORWEGIAN
 
-    {"lang":"nb", "name":"stts_no_nst-hsmm", "engine":"marytts", "adapter":"adapters.marytts_adapter", "marytts_locale":"no"}
+    {
+        "lang":"nb",
+        "name":"stts_no_nst-hsmm",
+        "engine":"marytts",
+        "adapter":"adapters.marytts_adapter",
+        "marytts_locale":"no",
+        "mapper": {
+            "from":"nb-no_ws-sampa",
+            "to":"nb-no_sampa_mary"
+            }
+    }
     ,
 
     # ENGLISH

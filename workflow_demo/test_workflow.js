@@ -616,6 +616,9 @@ function addWordsToLexiconTab(words, lang) {
 	    if ( lang == "en" ) {
 		xmllang = "en-US";
 	    }
+	    else if ( lang == "nb" ) {
+		xmllang = "no";
+	    }
 
 	    speak.setAttribute("xml:lang", xmllang);
 	
@@ -725,6 +728,9 @@ function validateTranscription(t, lang) {
     }
     else if ( lang == "en" ) {
 	var symbolset = "en-us_ws-sampa";
+    }
+    else if ( lang == "nb" ) {
+	var symbolset = "nb-no_ws-sampa";
     } else {
 	console.log("WARNING: no symbolset defined for language "+lang);
 	return;
@@ -820,6 +826,9 @@ function playTranscription(t,lang) {
     }
     else if ( lang == "en" ) {
 	var symbolset = "en-us_ws-sampa";
+    }
+    else if ( lang == "nb" ) {
+	var symbolset = "nb-no_ws-sampa";
     } else {
 	console.log("WARNING: no symbolset defined for language "+lang);
 	return;
@@ -970,6 +979,8 @@ function wordsInLex(words, lang) {
     } 
     else if ( lang == "en" ) {
 	var lexicons = "en_am_cmu_lex:en-us.cmu";
+    } if ( lang == "nb" ) {
+	var lexicons = "no_nob_nst_lex:nb-no.nst";
     }
     else {
 	console.log("WARNING: no lexicon defined for lang "+lang);
