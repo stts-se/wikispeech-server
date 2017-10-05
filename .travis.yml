@@ -25,7 +25,7 @@ script:
  - export wikispeech_pid=$!  
  - echo "wikispeech running on pid $wikispeech_pid"
  - sleep 20
- - docker/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
- - docker/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
- - docker/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
+ - /.travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
+ - /.travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
+ - /.travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
  
