@@ -16,6 +16,7 @@ install:
 script:
   - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex & 
   - echo "pronlex server started with return value $?"
+  - sleep 20
   - python3 bin/wikispeech docker/config/travis.conf &
   - echo "wikispeech server started with return value $?"
   - sleep 20
