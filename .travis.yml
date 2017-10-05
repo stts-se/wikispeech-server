@@ -4,22 +4,33 @@ python:
 services:
   - docker
 before_install:
- - sudo apt install opus-tools
- - docker build https://github.com/stts-se/pronlex.git -t pronlex
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex setup
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex import_for_ws_test /appdir /tmp/appdir
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex & 
-
-
+ # fail on any non-zero exit value
+ - set -e
+ 
 install:
-  - pip install -r requirements.txt
+ - sudo apt install opus-tools
+ - pip install -r requirements.txt
+ - docker build https://github.com/stts-se/pronlex.git -t pronlex
+ - docker build https://github.com/HannaLindgren/marytts.git -t marytts
+ - docker run -v /tmp/appdir:/appdir -t pronlex import_for_ws_tests /appdir /tmp/appdir
+
+before_script:
+ - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex &
+ - export pronlex_pid=$!
+ - echo "pronlex running on pid $pronlex_pid"
+ - sleep 20
+ - docker run -p 59125:59125 -t marytts &
+ - export marytts_pid=$!
+ - echo "marytts running on pid $marytts_pid"
+ - sleep 20
+  
 # command to run tests
 script:
-  - python3 bin/wikispeech docker/config/travis.conf &
-  - export pid=$! && sleep 10 && export ws_running=`ps -p $pid|egrep -vw PID|wc -l`
-  - echo 'if [ $ws_running -eq 1 ]; then kill -9 $pid ; else echo "Expected Wikispeech server to still be up and running after 10 seconds. Will exit with error code 1." && exit 1 ; fi' > /tmp/exit_right && sh /tmp/exit_right
-
-
-### TODO
-# set up pronlex and run setup + import_for_ws_tests
-# travis.conf should have this setting: quit_on_error: True
+ - python3 bin/wikispeech docker/config/travis.conf &
+ - export wikispeech_pid=$!  
+ - echo "wikispeech running on pid $wikispeech_pid"
+ - sleep 20
+ - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
+ - sh .travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
+ - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
+ 
