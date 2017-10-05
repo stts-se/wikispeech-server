@@ -9,6 +9,7 @@ before_install:
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex setup
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex import_for_ws_test /appdir /tmp/appdir
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -it pronlex & 
+ - echo "pronlex server started with return value $?"
  - sleep 20
 
 
@@ -18,6 +19,7 @@ install:
 # command to run tests
 script:
   - python3 bin/wikispeech docker/config/travis.conf &
+  - echo "wikispeech server started with return value $?"
   - sleep 20
   - ps -Af
   - killall -9 wikispeech && killall -9 pronlex
