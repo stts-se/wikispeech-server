@@ -11,15 +11,19 @@ install:
  - docker build https://github.com/stts-se/pronlex.git -t pronlex && docker build https://github.com/HannaLindgren/marytts.git -t marytts && docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex setup && docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex import_for_ws_tests /appdir /tmp/appdir
 
 before_script:
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex & 
+ - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex
+ - export pronlex_pid=$!
  - sleep 20
- - docker run -p 59125:59125 -t marytts & 
+ - docker run -p 59125:59125 -t marytts &
+ - export marytts_pid=$!
  - sleep 20
   
 # command to run tests
 script:
   - python3 bin/wikispeech docker/config/travis.conf &
-  - echo "wikispeech server started with return value $?"
+  - export wikispeech_pid=$!  
   - sleep 20
-  - killall -9 python3 && killall -9 docker
+  - docker/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
+  - docker/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
+  - docker/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
  
