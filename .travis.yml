@@ -12,10 +12,8 @@ install:
 
 before_script:
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex & 
- - echo "pronlex server started with return value $?"
  - sleep 20
  - docker run -p 59125:59125 -t marytts & 
- - echo "marytts server started with return value $?"
  - sleep 20
   
 # command to run tests
