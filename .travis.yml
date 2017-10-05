@@ -23,7 +23,5 @@ script:
   - python3 bin/wikispeech docker/config/travis.conf &
   - echo "wikispeech server started with return value $?"
   - sleep 20
-  #- ps -Af | egrep --color "pronlex"
-  #- ps -Af | egrep --color "wikispeech|python|pronlex|docker"
   - killall -9 python3 && killall -9 docker
-  - echo "TRAVIS TESTS ARE NOT COMPLETED => WILL ALWAYS FAIL FOR NOW" && exit 1
+ 
