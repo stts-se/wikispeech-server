@@ -13,17 +13,19 @@ install:
 before_script:
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex
  - export pronlex_pid=$!
- - sleep 20
+ - echo "pronlex running on pid $pronlex_pid"
  - docker run -p 59125:59125 -t marytts &
  - export marytts_pid=$!
+ - echo "marytts running on pid $marytts_pid"
  - sleep 20
   
 # command to run tests
 script:
-  - python3 bin/wikispeech docker/config/travis.conf &
-  - export wikispeech_pid=$!  
-  - sleep 20
-  - docker/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
-  - docker/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
-  - docker/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
+ - python3 bin/wikispeech docker/config/travis.conf &
+ - export wikispeech_pid=$!  
+ - echo "wikispeech running on pid $wikispeech_pid"
+ - sleep 20
+ - docker/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
+ - docker/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
+ - docker/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
  
