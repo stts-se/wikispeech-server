@@ -8,10 +8,9 @@ before_install:
 
 install:
  - pip install -r requirements.txt
- - docker build https://github.com/stts-se/pronlex.git -t pronlex && docker build https://github.com/HannaLindgren/marytts.git -t marytts && docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex setup && docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex import_for_ws_test /appdir /tmp/appdir
+ - docker build https://github.com/stts-se/pronlex.git -t pronlex && docker build https://github.com/HannaLindgren/marytts.git -t marytts && docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex setup && docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex import_for_ws_tests /appdir /tmp/appdir
 
 before_script:
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex import_for_ws_tests 
  - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex & 
  - echo "pronlex server started with return value $?"
  - sleep 20
@@ -28,5 +27,3 @@ script:
   #- ps -Af | egrep --color "wikispeech|python|pronlex|docker"
   - killall -9 python3 && killall -9 docker
   - echo "TRAVIS TESTS ARE NOT COMPLETED => WILL ALWAYS FAIL FOR NOW" && exit 1
-  
-
