@@ -12,7 +12,6 @@ install:
  - pip install -r requirements.txt
  - docker build https://github.com/stts-se/pronlex.git -t pronlex
  - docker build https://github.com/HannaLindgren/marytts.git -t marytts
- - docker run -v /tmp/appdir:/appdir -t pronlex setup
  - docker run -v /tmp/appdir:/appdir -t pronlex import_for_ws_tests /appdir /tmp/appdir
 
 before_script:
