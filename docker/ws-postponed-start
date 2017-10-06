@@ -2,7 +2,7 @@
 
 CMD=`basename $0`
 
-TIMEOUT=200
+TIMEOUT=300
 s1=$1
 s2=$2
 
