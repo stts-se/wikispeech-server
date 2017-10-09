@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 
 from wikispeech_server.voice_config import textprocessor_configs, voice_configs
-#HB moved into this file:
+
 from wikispeech_server.options import *
 import wikispeech_server.adapters.lexicon_client as lexicon_client
 import wikispeech_server.config as config
@@ -638,7 +638,8 @@ from flask import stream_with_context
 
 @app.route('/wikispeech/lexserver/<path:url>')
 def lexserver_proxy(url):
-    redirect_url = "http://localhost:8787/%s%s" % ((url, "?" + request.query_string.decode("utf-8") if request.query_string else ""))
+    lexicon_host = config.config.get("Services","lexicon")
+    redirect_url = "%s/%s%s" % ((lexicon_host, url, "?" + request.query_string.decode("utf-8") if request.query_string else ""))
     log.info("Lexserver proxy to: %s" % redirect_url)
     req = requests.get(redirect_url, stream = True)
     return Response(stream_with_context(req.iter_content()), content_type = req.headers['content-type'])
