@@ -793,7 +793,7 @@ def getParam(param,default=None):
 
 
 def test_lexicon_client():
-    lexicon = "sv_se_nst_lex:sv-se.nst"
+    lexicon = "wikispeech_testdb:sv"
     sent = "apa hund färöarna"
     trans = {}
     trans["apa"] = '"" A: . p a'

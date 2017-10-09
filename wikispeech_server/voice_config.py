@@ -14,7 +14,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"sv_se_nst_lex:sv-se.nst"
+             "lexicon":"wikispeech_testdb:sv"
          }
      ]
     }
@@ -34,7 +34,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"no_nob_nst_lex:nb-no.nst"
+             "lexicon":"wikispeech_testdb:nb"
          }
      ]
     }
@@ -54,7 +54,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"en_am_cmu_lex:en-us.cmu"
+             "lexicon":"wikispeech_testdb:enu"
          }
      ]
     }
@@ -71,7 +71,7 @@ textprocessor_configs = [
             {
                 "module":"adapters.lexicon_client",
                 "call":"lexLookup",
-                "lexicon":"en_am_cmu_lex:en-us.cmu"
+                "lexicon":"wikispeech_testdb:enu"
             }
         ]
     }
