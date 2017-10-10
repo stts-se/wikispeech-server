@@ -5,7 +5,7 @@ if [ $# -lt 1 ]; then
     echo "USAGE: sh $CMD <CONFIG DIR>
        <CONFIG DIR> must contain valid config file: $CONFIGNAME
 
-       Suggested config dir: `<GIT>/wikispeech_mockup/docker/ws-config`
+       Suggested config dir: <GIT>/wikispeech_mockup/docker/config
 
 " >&2
     exit 1
