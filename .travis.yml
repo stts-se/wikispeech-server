@@ -10,12 +10,13 @@ before_install:
 install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
+
+# command to run tests
+script:
  - docker build https://github.com/stts-se/pronlex.git -t pronlex
  - docker build https://github.com/HannaLindgren/marytts.git -t marytts
- 
-before_script:
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex setup /tmp/appdir
- - docker run -v /tmp/appdir:/appdir -p 8787:8787 -t pronlex &
+ - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex setup /appdir
+ - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
  - echo "pronlex running on pid $pronlex_pid"
  - sleep 20
@@ -23,9 +24,6 @@ before_script:
  - export marytts_pid=$!
  - echo "marytts running on pid $marytts_pid"
  - sleep 20
-  
-# command to run tests
-script:
  - python3 bin/wikispeech docker/config/travis.conf &
  - export wikispeech_pid=$!  
  - echo "wikispeech running on pid $wikispeech_pid"

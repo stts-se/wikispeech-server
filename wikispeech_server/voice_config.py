@@ -115,7 +115,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"ar_ar_tst_lex:ar-test"
+             "lexicon":"wikispeech_testdb:ar" 
          }
      ]
     }

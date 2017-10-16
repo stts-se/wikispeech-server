@@ -975,12 +975,12 @@ function wordsInLex(words, lang) {
 
     //TODO hardcoded lexicon
     if ( lang == "sv" ) {
-	var lexicons = "sv_se_nst_lex:sv-se.nst";
+	var lexicons = "wikispeech_testdb:sv";
     } 
     else if ( lang == "en" ) {
-	var lexicons = "en_am_cmu_lex:en-us.cmu";
+	var lexicons = "wikispeech_testdb:enu";
     } if ( lang == "nb" ) {
-	var lexicons = "no_nob_nst_lex:nb-no.nst";
+	var lexicons = "wikispeech_testdb:nb";
     }
     else {
 	console.log("WARNING: no lexicon defined for lang "+lang);
