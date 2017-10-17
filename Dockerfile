@@ -13,5 +13,6 @@ RUN ln -s /wikispeech_mockup/docker/ws-postponed-start /bin/
 
 EXPOSE 10000
 WORKDIR "/wikispeech_mockup"
+
 CMD python3 bin/wikispeech docker/config/docker.conf
 
