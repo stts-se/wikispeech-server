@@ -6,13 +6,16 @@
 ```
 sudo apt install opus-tools
 sudo apt install python3-pip
-sudo apt install python3-setuptools
 sudo pip3 install -r requirements.txt
 
 mkdir wikispeech_server/tmp
 ```
 
+Normally, `python3-setuptools` should be installed as a dependency for `python3-pip`, but some cases have been reported where you need to install this separately (debian-9.1):
 
+```
+sudo apt install python3-setuptools
+```
 
 ## Usage:
 ```
