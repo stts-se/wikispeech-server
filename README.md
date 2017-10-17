@@ -6,6 +6,7 @@
 ```
 sudo apt install opus-tools
 sudo apt install python3-pip
+sudo apt install python3-setuptools
 sudo pip3 install -r requirements.txt
 
 mkdir wikispeech_server/tmp
