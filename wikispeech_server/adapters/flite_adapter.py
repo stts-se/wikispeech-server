@@ -120,25 +120,26 @@ flitemap["A"] = "aa"
 flitemap["{"] = "ae"
 flitemap["V"] = "ah"
 flitemap["O"] = "ao"
-flitemap["O"] = "aw"
+#flitemap["O"] = "aw"
 flitemap["@"] = "ax"
-flitemap["r="] = "axr"
+#flitemap["r="] = "axr"
+flitemap["r="] = "er"
 flitemap["AI"] = "ay"
 flitemap["b"] = "b"
 flitemap["tS"] = "ch"
 flitemap["d"] = "d"
 flitemap["D"] = "dh"
-flitemap["d"] = "dx"
+#flitemap["d"] = "dx"
 flitemap["E"] = "eh"
-flitemap["XX"] = "el"
-flitemap["XX"] = "em"
-flitemap["XX"] = "en"
-flitemap["XX"] = "er"
+#flitemap["XX"] = "el"
+#flitemap["XX"] = "em"
+#flitemap["XX"] = "en"
+#flitemap["XX"] = "er"
 flitemap["EI"] = "ey"
 flitemap["f"] = "f"
 flitemap["g"] = "g"
 flitemap["h"] = "hh"
-flitemap["XX"] = "hv"
+#flitemap["XX"] = "hv"
 flitemap["I"] = "ih"
 flitemap["i"] = "iy"
 flitemap["dZ"] = "jh"
@@ -146,7 +147,7 @@ flitemap["k"] = "k"
 flitemap["l"] = "l"
 flitemap["m"] = "m"
 flitemap["n"] = "n"
-flitemap["XX"] = "nx"
+#flitemap["XX"] = "nx"
 flitemap["N"] = "ng"
 flitemap["@U"] = "ow"
 flitemap["OI"] = "oy"
@@ -163,15 +164,14 @@ flitemap["w"] = "w"
 flitemap["j"] = "y"
 flitemap["z"] = "z"
 flitemap["Z"] = "zh"
-flitemap["XX"] = "pau"
-flitemap["XX"] = "h#"
-flitemap["XX"] = "brth"
+#flitemap["XX"] = "pau"
+#flitemap["XX"] = "h#"
+#flitemap["XX"] = "brth"
 
 
 def map2flite(phonestring):
     #h @ - ' l @U
     #hh ax l ow1
-    phonestring = re.sub(" - "," ", phonestring)
     phonestring = re.sub("' ","1 ", phonestring)
     phones = phonestring.split(" ")
     flitephones = []
@@ -183,8 +183,9 @@ def map2flite(phonestring):
         flitephones.append(flitephone)
     flite = " ".join(flitephones)
     #move accents to following vowel
-    flite = re.sub(r"1 (.+)(aa|ae|ah|ao|aw|ax|axr|ay|eh|ih|iy|ow|oy|uh|uw)", r"\1\2 1", flite)
+    flite = re.sub(r"1 ([^.]*)(aa|ae|ah|ao|aw|ax|axr|ay|eh|ey|ih|iy|ow|oy|uh|uw)", r"\1\2 1", flite)
     flite = re.sub(" 1", "1", flite)
+    flite = re.sub(" \. "," ", flite)
 
     log.debug("MAPPED %s TO %s" % (phonestring, flite))
 
