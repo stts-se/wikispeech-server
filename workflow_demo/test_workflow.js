@@ -979,7 +979,8 @@ function wordsInLex(words, lang) {
     } 
     else if ( lang == "en" ) {
 	var lexicons = "wikispeech_testdb:enu";
-    } if ( lang == "nb" ) {
+    }
+    else if ( lang == "nb" ) {
 	var lexicons = "wikispeech_testdb:nb";
     }
     else {
