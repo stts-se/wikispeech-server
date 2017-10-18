@@ -14,12 +14,49 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"wikispeech_testdb:sv"
+             "lexicon":"sv_se_nst_lex:sv-se.nst"
          }
      ]
     }
     ,
-    
+    {"name":"test_textproc_sv", "lang":"sv",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc",
+             "mapper": {
+                 "from":"sv-se_ws-sampa",
+                 "to":"sv-se_sampa_mary"
+             },
+         },
+         {
+             "module":"adapters.lexicon_client",
+             "call":"lexLookup",
+             "lexicon":"wikispeech_testdb:sv"
+         }
+     ]
+    }
+    ,        
+    {"name":"marytts_textproc_nb", "lang":"nb",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc"
+             ,
+             "mapper": {
+                 "from":"nb-no_ws-sampa",
+                 "to":"nb-no_sampa_mary"
+             },
+         },
+         {
+             "module":"adapters.lexicon_client",
+             "call":"lexLookup",
+             "lexicon":"no_nob_nst_lex:nb-no.nst"
+         }
+     ]
+    }
+    ,
+
     {"name":"marytts_textproc_nb", "lang":"nb",
      "components":[
          {
@@ -42,6 +79,24 @@ textprocessor_configs = [
 
 
     {"name":"marytts_textproc_en", "lang":"en",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc",
+             "mapper": {
+                 "from":"en-us_ws-sampa",
+                 "to":"en-us_sampa_mary"
+             },
+         },
+         {
+             "module":"adapters.lexicon_client",
+             "call":"lexLookup",
+             "lexicon":"en_am_cmu_lex:en-us.cmu"
+         }
+     ]
+    }
+    ,
+    {"name":"test_textproc_en", "lang":"en",
      "components":[
          {
              "module":"adapters.marytts_adapter",
@@ -115,7 +170,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"wikispeech_testdb:ar" 
+             "lexicon":"ar_ar_tst_lex:ar-test" 
          }
      ]
     }

@@ -40,6 +40,9 @@ if run_tests:
 
         unittest.main(exit=False, failfast=True, warnings="ignore")
 
+        #Unittest somehow overrides log_level? It needs to be reset here
+        #anyway, otherwise nothing is printed..
+        ws.log.log_level = config.config.get("Server","log_level")
         ws.log.info("ALL SELF-TESTS RUN SUCCESSFULLY")
 
         

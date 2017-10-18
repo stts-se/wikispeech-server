@@ -43,6 +43,7 @@ assert (type(res) == type({}))
 #assert ( res == expected ) , "%s and %s are not equal" % (expected, res)
 #assert ( langs == expected_langs ) , "%s and %s are not equal" % (expected_langs, langs)
 
+
 for lang in expected_langs:
     assert lang in langs, "expected_lang %s not found in %s" % (expected_langs, langs)
 
@@ -207,9 +208,10 @@ test_done()
 r = test_client.get("%stextprocessors/sv" % (host))
 res = json.loads(r.data.decode('utf-8'))
 assert ( type(res) == type([]) )
-expected = ["marytts_textproc_sv"]
-for textprocessor in res:    
-    assert ( textprocessor["name"] in expected ), "%s not in %s" % (textprocessor["name"], expected)
+#HB 18/10 2017 Can't expect any particular textprocessor to exist
+#expected = ["marytts_textproc_sv"]
+#for textprocessor in res:    
+#    assert ( textprocessor["name"] in expected ), "%s not in %s" % (textprocessor["name"], expected)
 test_done()
 
 # 2.5
