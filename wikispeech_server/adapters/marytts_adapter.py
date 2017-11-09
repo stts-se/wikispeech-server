@@ -536,8 +536,13 @@ def buildPhrase(phrase_element, lang, voice):
                 "words": words
             }
             tokens.append(token)
-            
-            orth = token_element.text
+
+            #HB 171109
+            #This is the case with arabic words vocalised with mishkal
+            if "orig" in token_element.attrib:
+                orth = token_element.attrib["orig"]
+            else:
+                orth = token_element.text
             token["token_orth"] = orth
             
             word = buildWord(token_element, lang, voice)
@@ -706,8 +711,13 @@ def ws2mary(utterance, voice):
                         #each word creates one token_element
                         token_element = ET.Element("t")
 
-                        token_element.text = word["orth"]
-                        
+                        #HB 171109 Arabic token and word orths can differ if word has been vocalised.
+                        #Does it matter at all for any other?
+                        if lang == "ar":
+                            token_element.text = token["token_orth"]
+                        else:
+                            token_element.text = word["orth"]
+
                         token_element = addToElementIfExists(token_element, word, "accent")
                         token_element = addToElementIfExists(token_element, word, "g2p_method")
                         token_element = addToElementIfExists(token_element, word, "pos")
