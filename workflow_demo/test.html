@@ -35,6 +35,7 @@ window.onload = function() {
 
 useOriginalText=true;
 getSupportedLanguages();
+getLexiconList();
 };
 </script>
 
@@ -62,6 +63,8 @@ getSupportedLanguages();
 	    <option value="en">en</option>
 	    <option value="ar">ar</option>
 	    <option value="nb">nb</option>
+	  </select>
+	  <select id="lexicon_selector" onchange="setLexicon(this.value);">
 	  </select>
 	  <h2>Input</h2>
 	  <p>Edit html here, then synthesise or lookup words.</p>
@@ -130,7 +133,8 @@ getSupportedLanguages();
 			    <th>Language</th>
 			    <th>Pos</th>
 			    <th>wordParts</th>
-			    <th>Preferred</th>
+			    <th>preferred</th>
+			    <th>tag</th>
 			  </tr>
 			</thead>
 			<tbody id="selected_table">
@@ -193,7 +197,7 @@ getSupportedLanguages();
   </main>
   <hr>
   <address></address>
-  <!-- hhmts start -->Last modified: Fri Sep 29 15:56:22 CEST 2017 <!-- hhmts end -->
+  <!-- hhmts start -->Last modified: Fri Nov 10 12:16:48 CET 2017 <!-- hhmts end -->
 
   <script src="ext/responsivetabs/js/tabs.js"></script>
   <script>

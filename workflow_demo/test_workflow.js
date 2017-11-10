@@ -1,5 +1,41 @@
 
 
+
+
+lexicon_name = "wikispeech_testdb:enu";
+
+
+function getLexiconList() {
+    var params = {};
+    $.get(
+	ws_host+'/lexserver/lexicon/list',
+        params,
+        function(response) {
+	    console.log(response);
+	    lexicon_selector = document.getElementById("lexicon_selector");
+	    for (var i = 0, len = response.length; i < len; i++) {
+		var lexicon = response[i];
+		console.log(lexicon);
+		var name = lexicon.name;
+		console.log(name);
+		var option = document.createElement("option");
+		option.setAttribute("value", name);
+		option.text = name;
+		lexicon_selector.appendChild(option);
+		if ( name == lexicon_name ) {
+		    option.setAttribute("selected","true");		    
+		}
+	    }
+	}
+    )
+
+}
+
+function setLexicon(new_lexicon_name) {
+    lexicon_name = new_lexicon_name;
+    console.log("New lexicon name: "+lexicon_name);
+}
+
 /* Lexicon table TODO not on click of header*/
 function setupLexiconTable() {
     $("#words_table tbody tr").click(function(){
@@ -242,11 +278,16 @@ function displayInSimpleEditor(entry_list, selected_table, orth, lang) {
 	    
 	    console.log("entry['preferred']: "+entry["preferred"]);
 	    pref.checked = entry["preferred"];
-
-	    
 	    pref_td.appendChild(pref)
 	    row.appendChild(pref_td)
 
+	    
+	    //ENTRY TAG
+	    var tag = document.createElement("td");
+	    tag.id = "tag_"+i;
+	    tag.innerText = entry["tag"];
+	    row.appendChild(tag)
+	    
 
 
 	    //that's it
@@ -271,6 +312,11 @@ function updateLexicon(orth) {
 	if (newpref !== entry.preferred) {
 	    console.log("UPDATING PREF: "+entry.preferred+" -> "+newpref);
 	    entry.preferred = newpref;
+	}
+	var newtag = document.getElementById("tag_"+i).innerText;
+	if (newtag !== entry.tag) {
+	    console.log("UPDATING TAG: "+entry.tag+" -> "+newtag);
+	    entry.tag = newtag;
 	}
 	updateEntry(entry);
     }
@@ -902,7 +948,7 @@ function playSSML(trans, lang) {
 function searchLexicon(search_term, lang) {
     console.log("Searching lexicon for: " + search_term);
 
-
+    /*
     if ( lang == "sv" ) {
 	var lexicons = "sv_se_nst_lex:sv-se.nst";
     } 
@@ -912,6 +958,9 @@ function searchLexicon(search_term, lang) {
     else {
 	console.log("WARNING: no lexicon defined for lang "+lang);
     }
+    */
+    var lexicons = lexicon_name;
+    console.log("Lexicon name: "+lexicons);
 
     var params = {
 	"lexicons": lexicons,
@@ -974,6 +1023,7 @@ function wordsInLex(words, lang) {
     //console.log("Searching lexicon for: " + words);
 
     //TODO hardcoded lexicon
+    /*
     if ( lang == "sv" ) {
 	var lexicons = "wikispeech_testdb:sv";
     } 
@@ -986,6 +1036,12 @@ function wordsInLex(words, lang) {
     else {
 	console.log("WARNING: no lexicon defined for lang "+lang);
     }
+    */
+
+    var lexicons = lexicon_name;
+    console.log("Lexicon name: "+lexicons);
+
+
     var params = {
 	"lexicons": lexicons,
 	"pagelength": 2*wordlist.length,
