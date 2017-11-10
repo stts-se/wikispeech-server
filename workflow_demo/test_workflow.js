@@ -1053,17 +1053,18 @@ function wordsInLex(words, lang) {
         params,
         function(response) {
 
+	    console.log(response);
 	    //response is a list of entries, first convert it to hash with orth as key
 	    //GLOBAL for later use
 	    global_entries = {};
-	    for (i=1; i<response.length; i += 1) {
+	    for (i=0; i<response.length; i += 1) {
 		var entry = response[i];
 
 		//filter out entries with status:name=delete
 		if ( entry.status.name == "delete" ) {
 		    continue;
 		}
-		
+		console.log("Adding to global_entries: "+entry.strn);
 		if ( entry.strn in global_entries ) {
 		    global_entries[entry.strn].push(entry);
 		} else {
@@ -1080,7 +1081,7 @@ function wordsInLex(words, lang) {
 		}
 	    }
 	    
-	    //console.log(response);
+
 	    for (i=0; i<wordlist.length; i += 1) {
 		var word = wordlist[i];
 		if ( word.match(/^[.,?!]+$/) ) {
