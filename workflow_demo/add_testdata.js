@@ -28,11 +28,17 @@ var ssml1 = `<p><br>
 	      <ssml:sub alias='två'>II</ssml:sub>
 	      .
 	      </ssml:s>
-</p>`;
+    </p>
+
+`;
 
 
 
 var ssml2 = "<p><br><ssml:s>Fartyget byggdes i <phoneme alphabet='x-sampa' ph='&quot; p O . rt u0 . g a l'>Portugal</phoneme></ssml:s></p>";
+
+var dom1 = '<br><p>Dom gav en <phoneme alphabet="x-sampa" ph="&quot; d U m">dom</phoneme> om en <phoneme alphabet="x-sampa" ph="&quot; d o: m">dom</phoneme>.</p>';
+
+var dom2 = '<br><p>Dom gav en dom om en dom.</p>';
 
 
 var en_ssml1 = `<p lang="en" class="ssml">
@@ -46,6 +52,8 @@ which is directed by
     </ssml:s>
     </p>
     `;
+
+
 
 var ar_text = "<p>الموسوعة الحرة التي يستطيع الجميع تحريرها. توجد الآن 520,523 مقالة بالعربية.</p>"
 
@@ -61,7 +69,7 @@ function addTestdata(lang) {
     html_editor.innerHTML = "";
     
     if (lang === "sv") {
-	html_editor.innerHTML = ssml1;
+	html_editor.innerHTML = ssml1+dom1+dom2;
     }
     if (lang === "en") {
 	html_editor.innerHTML = en_ssml1;
