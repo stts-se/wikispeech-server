@@ -163,7 +163,7 @@ class Lexicon(object):
             raise LexiconException(msg)
         except Exception as e:
             msg = "Unable to create lexicon client for %s at url %s. Reason: %s" % (self.lexicon_name, url, e)
-            log.error(msg)
+            log.warning(msg)
             raise LexiconException(msg)
 
 

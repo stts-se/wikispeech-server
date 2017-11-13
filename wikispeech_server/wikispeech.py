@@ -45,14 +45,14 @@ def loadTextprocessor(tp_config):
         tp = Textprocessor(tp_config)        
         textprocessors.append(tp)
     except TextprocessorException as e:
-        log.error("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
+        log.warning("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
 
 def loadVoice(voice_config):
     try:
         v = Voice(voice_config)        
         voices.append(v)
     except VoiceException as e:
-        log.error("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))
+        log.warning("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))
 
 
 
