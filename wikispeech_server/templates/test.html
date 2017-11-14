@@ -214,7 +214,44 @@ såldes till
 </speak>
 </p>
 
+<hr>
 
+<h5>SSML with phoneme element</h5>
+<p lang="sv" class="ssml">
+<?xml version="1.0" encoding="utf-8"?>
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                   http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
+         xml:lang="sv">
+<phoneme alphabet="x-sampa" ph="&quot; d O m">Dom</phoneme>
+gav en
+<phoneme alphabet="x-sampa" ph="&quot; d U m">dom</phoneme>
+om en
+<phoneme alphabet="x-sampa" ph="&quot; d o: m">dom</phoneme>
+.
+</speak>
+</p>
+
+<h5>SSML with token/w element and role attribute (doesn't work yet)</h5>
+<p lang="sv" class="ssml">
+<?xml version="1.0" encoding="utf-8"?>
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                   http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
+         xml:lang="sv">
+<w role="wikispeech:PN">Dom</w> gav en
+<token role="wikispeech:NN wikispeech:juridik">dom</token>
+om en
+<token role="wikispeech:NN wikispeech:kyrka">dom</token>
+.
+</speak>
+</p>
+<h5>The above text without markup</h5>
+<p>
+Dom gav en dom om en dom.
+</p>
 
 <!-- arabic ssml doesn't seem to work.. -->
 <!--
@@ -252,5 +289,5 @@ såldes till
 <audio id="audio_player"></audio>
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Wed Apr 26 14:06:22 CEST 2017 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Tue Nov 14 11:27:43 CET 2017 <!-- hhmts end -->
 </body> </html>
