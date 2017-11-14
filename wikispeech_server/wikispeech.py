@@ -102,12 +102,19 @@ def wikispeech_options():
 
     options = getWikispeechOptions()
     log.debug(options)
-
     resp = make_response(json.dumps(options))
     resp.headers["Content-type"] = "application/json"
     resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
     return resp
 
+@app.route('/wikispeech/options', methods=["GET", "POST"])
+def wikispeech_options2():
+    options = getWikispeechOptions()
+    log.debug(options)
+    resp = make_response(json.dumps(options))
+    resp.headers["Content-type"] = "application/json"
+    resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
+    return resp
 
 
 @app.route('/wikispeech/languages', methods=["GET"])
@@ -121,8 +128,10 @@ def wikispeech():
 
 
     lang = getParam("lang")
+    input = getParam("input")
     input_type = getParam("input_type", "text")
     output_type = getParam("output_type", "json")
+
 
     #For use with synthesis only
     presynth = getParam("presynth", False)
@@ -132,7 +141,6 @@ def wikispeech():
         presynth = False
 
 
-    input = getParam("input")
 
     textprocessor_name = getParam("textprocessor", "default_textprocessor")
     voice_name = getParam("voice", "default_voice")
@@ -146,6 +154,7 @@ def wikispeech():
 
     if not lang or not input:
         return render_template("usage.html", server=hostname, languages=supported_languages)
+
     if lang not in supported_languages:
         return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
 
