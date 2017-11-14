@@ -272,8 +272,6 @@ def get_tp_config_by_nameOLD(name):
 def textprocessing_options():
 
     options = getTextprocessingOptions()
-
-
     resp = make_response(json.dumps(options))
     resp.headers["Content-type"] = "application/json"
     resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
@@ -289,6 +287,14 @@ def textprocessing():
     output_type = getParam("output_type", "json")
     input = getParam("input")
 
+    if lang == None or input == None:
+        options = getTextprocessingOptions()
+        resp = make_response(json.dumps(options))
+        resp.headers["Content-type"] = "application/json"
+        resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
+        return resp
+
+    
     if input_type in ["text","ssml"]:
         markup = textproc(lang,textprocessor_name, input, input_type=input_type)
         if type(markup) == type(""):
@@ -454,8 +460,6 @@ def synthesisSupportedLanguages():
 def synthesis_options():
 
     options = getSynthesisOptions()
-
-
     resp = make_response(json.dumps(options))
     resp.headers["Content-type"] = "application/json"
     resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
@@ -474,6 +478,19 @@ def synthesis():
     input_type = getParam("input_type", "markup")
     output_type = getParam("output_type", "json")
     presynth = getParam("presynth", False)
+
+
+    if lang == None or input == None:
+        options = getSynthesisOptions()
+        resp = make_response(json.dumps(options))
+        resp.headers["Content-type"] = "application/json"
+        resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
+        return resp
+
+
+
+
+
     if presynth == "True":
         presynth = True
     else:
