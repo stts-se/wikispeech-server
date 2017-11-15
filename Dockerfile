@@ -11,7 +11,7 @@ RUN ln -s /wikispeech_mockup/docker/ws-postponed-start /bin/
 
 # BUILD INFO
 RUN echo -n "Build timestamp: " > /var/.wikispeech_build_info.txt
-RUN date >> /var/.wikispeech_build_info.txt
+RUN date --utc "+%Y-%m-%d %H:%M:%S %Z" >> /var/.wikispeech_build_info.txt
 RUN echo "Built by: docker" >> /var/.wikispeech_build_info.txt
 RUN echo "Application name: wikispeech"  >> /var/.wikispeech_build_info.txt
 

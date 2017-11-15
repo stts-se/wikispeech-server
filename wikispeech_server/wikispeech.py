@@ -18,8 +18,9 @@ from wikispeech_server.voice import Voice, VoiceException
 
 import os.path
 import datetime
+import pytz
+from pytz import timezone
 
-        
 #################
 #
 # Test opusenc before anything else
@@ -107,7 +108,7 @@ class VersionInfo(object):
         self.startedAt = startedAt
 
     def htmlString(self):
-        return self.buildTimestamp + "<br/>" + self.builtBy + "<br/>" + self.appName + "<br/>" + self.startedAt
+        return self.appName + "<br/>" + self.buildTimestamp + "<br/>" + self.builtBy + "<br/>" + self.startedAt
         
 
 def versionInfo():
@@ -137,7 +138,12 @@ def versionInfo():
 
 
 
-startedAt = 'Started at: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+def genStartedAtString():
+    now = datetime.datetime.now()
+    now = now.astimezone(pytz.utc)
+    return 'Started at: {:%Y-%m-%d %H:%M:%S %Z}'.format(now)
+
+startedAt = genStartedAtString()
 vInfo = versionInfo()
 
 @app.route('/version')
