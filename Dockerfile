@@ -10,10 +10,10 @@ RUN ln -s /wikispeech_mockup/docker/ws-postponed-start /bin/
 
 
 # BUILD INFO
-RUN echo -n "Build timestamp: " > /.build_info.txt
-RUN date >> /.build_info.txt
-RUN echo "Built by: docker" >> /.build_info.txt
-RUN echo "Application name: wikispeech"  >> /.build_info.txt
+RUN echo -n "Build timestamp: " > /var/.wikispeech_build_info.txt
+RUN date >> /var/.wikispeech_build_info.txt
+RUN echo "Built by: docker" >> /var/.wikispeech_build_info.txt
+RUN echo "Application name: wikispeech"  >> /var/.wikispeech_build_info.txt
 
 
 ## RUNTIME SETTINGS

@@ -104,8 +104,8 @@ startedAt = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
 @app.route('/version')
 def version():
     info = "Build timestamp: undefined<br/>Built by: python3 runtime<br/>Application name: wikispeech_server"
-    if os.path.isfile("/.build_info.txt"):
-        file = open("/.build_info.txt", "r") 
+    if os.path.isfile("/var/.wikispeech_build_info.txt"):
+        file = open("/var/.wikispeech_build_info.txt", "r") 
         info = file.read()
 
     return info + "<br/>Started at: " + startedAt
