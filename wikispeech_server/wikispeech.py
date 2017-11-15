@@ -99,16 +99,50 @@ CORS(app)
 def ping():
     return 'wikispeech_server'
 
-startedAt = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+class VersionInfo(object):
+    def __init__(self, buildTimestamp, builtBy, appName, startedAt):
+        self.buildTimestamp = buildTimestamp
+        self.builtBy = builtBy
+        self.appName = appName
+        self.startedAt = startedAt
+
+    def htmlString(self):
+        return self.buildTimestamp + "<br/>" + self.builtBy + "<br/>" + self.appName + "<br/>" + self.startedAt
+        
+
+def versionInfo():
+    buildTimestamp = "Build timestamp: undefined"
+    builtBy = "Built by: python3 runtime"
+    appName = "Application name: wikispeech_server"
+    appNamePrefix = "Application name: "
+    builtByPrefix = "Built by: "
+    buildTimePrefix = "Build timestamp: "
+    buildInfoFile = "/var/.pronlex_build_info.txt"
+    if os.path.isfile("/var/.wikispeech_build_info.txt"):
+        with open("/var/.wikispeech_build_info.txt") as fp:  
+            lines = fp.readlines()
+            fp.close()
+            for l in lines:
+                l = l.strip()
+                if re.match(appNamePrefix, l):
+                    appName = l
+                elif re.match(builtByPrefix, l):
+                    builtBy = l
+                elif re.match(buildTimePrefix, l):
+                    buildTimestamp = l
+
+    info = VersionInfo(buildTimestamp, builtBy, appName, startedAt)
+    return info
+    
+
+
+
+startedAt = 'Started at: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+vInfo = versionInfo()
 
 @app.route('/version')
 def version():
-    info = "Build timestamp: undefined<br/>Built by: python3 runtime<br/>Application name: wikispeech_server"
-    if os.path.isfile("/var/.wikispeech_build_info.txt"):
-        file = open("/var/.wikispeech_build_info.txt", "r") 
-        info = file.read().strip().replace("\n", "<br/>")
-
-    return info + "<br/>Started at: " + startedAt
+    return vInfo.htmlString()
     
 
 
@@ -168,7 +202,7 @@ def wikispeech():
     hostname = request.url_root
 
     if not lang or not input:
-        return render_template("usage.html", server=hostname, languages=supported_languages)
+        return render_template("usage.html", server=hostname, languages=supported_languages, vInfo = vInfo)
 
     if lang not in supported_languages:
         return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
