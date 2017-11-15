@@ -98,7 +98,9 @@ CORS(app)
 
 @app.route('/ping')
 def ping():
-    return 'wikispeech'
+    resp = make_response("wikispeech")
+    resp.headers["Content-type"] = "text/plain"
+    return resp
 
 class VersionInfo(object):
     def __init__(self, buildTimestamp, builtBy, appName, startedAt):
@@ -107,13 +109,13 @@ class VersionInfo(object):
         self.appName = appName
         self.startedAt = startedAt
 
-    def htmlString(self):
-        return self.appName + "<br/>" + self.buildTimestamp + "<br/>" + self.builtBy + "<br/>" + self.startedAt
-        
+    def string(self):
+        return self.appName + "\n" + self.buildTimestamp + "\n" + self.builtBy + "\n" + self.startedAt
+
 
 def versionInfo():
     buildTimestamp = "Build timestamp: undefined"
-    builtBy = "Built by: python3 standalone"
+    builtBy = "Built by: python standalone"
     appName = "Application name: wikispeech"
     appNamePrefix = "Application name: "
     builtByPrefix = "Built by: "
@@ -139,12 +141,13 @@ def versionInfo():
 
 
 def genStartedAtString():
-    # from time import strftime, gmtime
-    # from tzlocal import get_localzone
-    # local_tz = get_localzone()
+    from time import strftime, gmtime
+    from tzlocal import get_localzone
+    local_tz = get_localzone()
     now = datetime.datetime.now()
-    # now = now.replace(tzinfo=local_tz)
-    # now = now.astimezone(pytz.utc)
+    if local_tz != None:
+        now = now.replace(tzinfo=local_tz)
+    now = now.astimezone(pytz.utc)
     return 'Started at: {:%Y-%m-%d %H:%M:%S %Z}'.format(now)
 
 startedAt = genStartedAtString()
@@ -152,7 +155,9 @@ vInfo = versionInfo()
 
 @app.route('/version')
 def version():
-    return vInfo.htmlString()
+    resp = make_response(vInfo.string())
+    resp.headers["Content-type"] = "text/plain"
+    return resp
     
 
 
