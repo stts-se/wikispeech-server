@@ -112,7 +112,7 @@ class VersionInfo(object):
 
 def versionInfo():
     buildTimestamp = "Build timestamp: undefined"
-    builtBy = "Built by: python3 runtime"
+    builtBy = "Built by: python3 standalone"
     appName = "Application name: wikispeech"
     appNamePrefix = "Application name: "
     builtByPrefix = "Built by: "
