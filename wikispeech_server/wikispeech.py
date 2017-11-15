@@ -139,7 +139,11 @@ def versionInfo():
 
 
 def genStartedAtString():
+    from time import strftime, gmtime
+    from tzlocal import get_localzone
+    local_tz = get_localzone()
     now = datetime.datetime.now()
+    now = now.replace(tzinfo=local_tz)
     now = now.astimezone(pytz.utc)
     return 'Started at: {:%Y-%m-%d %H:%M:%S %Z}'.format(now)
 
