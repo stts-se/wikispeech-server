@@ -97,7 +97,7 @@ CORS(app)
 
 @app.route('/ping')
 def ping():
-    return 'wikispeech_server'
+    return 'wikispeech'
 
 class VersionInfo(object):
     def __init__(self, buildTimestamp, builtBy, appName, startedAt):
@@ -113,7 +113,7 @@ class VersionInfo(object):
 def versionInfo():
     buildTimestamp = "Build timestamp: undefined"
     builtBy = "Built by: python3 runtime"
-    appName = "Application name: wikispeech_server"
+    appName = "Application name: wikispeech"
     appNamePrefix = "Application name: "
     builtByPrefix = "Built by: "
     buildTimePrefix = "Build timestamp: "
