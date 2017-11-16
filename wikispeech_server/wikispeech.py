@@ -120,9 +120,9 @@ def versionInfo():
     appNamePrefix = "Application name: "
     builtByPrefix = "Built by: "
     buildTimePrefix = "Build timestamp: "
-    buildInfoFile = "/var/.pronlex_build_info.txt"
-    if os.path.isfile("/var/.wikispeech_build_info.txt"):
-        with open("/var/.wikispeech_build_info.txt") as fp:  
+    buildInfoFile = "/wikispeech/.pronlex_build_info.txt"
+    if os.path.isfile(buildInfoFile):
+        with open(buildInfoFile) as fp:  
             lines = fp.readlines()
             fp.close()
             for l in lines:
