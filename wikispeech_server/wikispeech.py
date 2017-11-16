@@ -633,7 +633,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
 
 
-    (audio_file, output_tokens) = process(lang, voice, input, presynth=presynth)
+    (audio_file, output_tokens) = process(lang, voice, input, presynth=presynth, hostname=hostname)
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
@@ -641,11 +641,9 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
         audio_file = saveAndConvertAudio(audio_file, presynth)
 
 
-    #if "localhost:10000" in hostname:
-    #    hostname = "http://localhost"
-    #audio_url = "%s/%s/%s" % (hostname,config.config.get("Audio settings","audio_url_prefix"),opus_audio)
-
-    audio_url = "%s/%s" % (config.config.get("Audio settings","audio_url_prefix"), audio_file)
+    #audio_url = "%s/%s" % (config.config.get("Audio settings","audio_url_prefix"), audio_file)
+    #HB T180685: Remove audio_url_prefix from wikispeech config
+    audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
     log.debug("audio_url: %s" % audio_url)
 
 

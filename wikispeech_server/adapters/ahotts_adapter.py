@@ -14,11 +14,9 @@ import wikispeech_server.config as config
 cwdir = os.getcwd()
 tmpdir = config.config.get("Audio settings","audio_tmpdir")
 wavfile_name = "ahotts_out.wav"
-prefix = config.config.get("Audio settings","audio_url_prefix")
-audio_url = "%s/%s" % (prefix, wavfile_name)
 
 
-def synthesise(lang, voice, utterance, presynth=False):
+def synthesise(lang, voice, utterance, presynth=False, hostname=None):
     log.info("Utterance: %s" % utterance)
     words = get_orth(utterance)
     log.info("Words: %s" % words)
@@ -26,7 +24,7 @@ def synthesise(lang, voice, utterance, presynth=False):
     log.info("Ahotts command: %s" % ahotts_command)
     os.system(ahotts_command)
 
-    audio_url = "%s/%s" % (prefix,wavfile_name)
+    audio_url = "%s%s/%s" % (hostname, "audio",wavfile_name)
     tokens = []
     for word in words:
         tokens.append({"orth":word, "endtime":0})

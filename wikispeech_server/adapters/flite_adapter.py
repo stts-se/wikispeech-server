@@ -6,7 +6,7 @@ def preproc(utt):
     #Nothing to be done here .. Maybe there will be?
     return utt
 
-def synthesise(lang, voice, input, presynth=False):
+def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:10000"):
     voice = voice["flite_voice"]
     #convert utt to ssml
     ssml = utt2ssml(input)
@@ -75,9 +75,7 @@ def synthesise(lang, voice, input, presynth=False):
     if prevword and prevword != "sil" and word != prevword:
         words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
 
-    prefix = config.config.get("Audio settings","audio_url_prefix")
-    audio_url = "%s/%s" % (prefix, wavfile_name)
-
+    audio_url = "%s%s/%s" % (hostname, "audio", wavfile_name)
     log.debug("flite_adapter returning audio_url: %s" % audio_url) 
 
     #return audio_url and tokens

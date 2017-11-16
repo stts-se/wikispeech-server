@@ -142,7 +142,7 @@ def marytts_postproc(lang, utt):
 
 
 
-def synthesise(lang,voice,input, presynth=False):
+def synthesise(lang,voice,input, presynth=False, hostname=None):
     if presynth:
         return synthesise_json(lang,voice,input)
     else:
