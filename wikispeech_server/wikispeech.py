@@ -97,6 +97,7 @@ CORS(app)
 # GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
 
 @app.route('/ping')
+@app.route('/wikispeech/ping')
 def ping():
     resp = make_response("wikispeech")
     resp.headers["Content-type"] = "text/plain"
@@ -154,6 +155,7 @@ startedAt = genStartedAtString()
 vInfo = versionInfo()
 
 @app.route('/version')
+@app.route('/wikispeech/version')
 def version():
     resp = make_response(vInfo.string())
     resp.headers["Content-type"] = "text/plain"
