@@ -9,7 +9,7 @@ import json
 import wikispeech_server.wikispeech as ws
 import wikispeech_server.log as log
 
-host = "/wikispeech/textprocessing/"
+host = "/textprocessing/"
 test_client = ws.app.test_client()
 
 #Starting test of ssml input
@@ -17,7 +17,7 @@ test_client = ws.app.test_client()
 #input_type can be set to ssml
 #the textprocessing will then use the ssml (to begin with phoneme, break, perhaps some say-as) to build the output json
 #First full ssml. Later ssml chunks?
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=sv&input_type=ssml&input=<SSML>"
+# GET:  curl "http://localhost:10000/textprocessing/?lang=sv&input_type=ssml&input=<SSML>"
 
 ssml = """<?xml version="1.0" encoding="ISO-8859-1"?>
 <speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"

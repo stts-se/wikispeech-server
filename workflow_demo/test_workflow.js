@@ -381,7 +381,6 @@ function tokeniseHtmlText(lang) {
     }
     
     $.get(
-        //'http://localhost/wikispeech/textprocessing',
         ws_host+'/textprocessing/',
         params,
         function(response) {

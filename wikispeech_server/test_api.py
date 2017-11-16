@@ -17,7 +17,7 @@ def all_done():
     global i
     sys.stdout.write("\n%d tests OK\n" % i)
 
-host = "/wikispeech/"
+host = "/"
 test_client = ws.app.test_client()
 
 
@@ -27,7 +27,7 @@ log.debug("RUNNING API TESTS")
 
 #1.1
 ## OPTIONS <host>
-## curl -X OPTIONS "http://localhost:10000/wikispeech/
+## curl -X OPTIONS "http://localhost:10000/
 ## Expects description of call and parameters
 
 log.debug("RUNNING TEST 1.1")
@@ -52,7 +52,7 @@ test_done()
 
 #1.2
 ## GET/POST <host>
-## curl "http://localhost:10000/wikispeech/
+## curl "http://localhost:10000/
 ## Expects html usage message
 r = test_client.get(host)
 res = r.data.decode('utf-8')
@@ -67,7 +67,7 @@ test_done()
 
 #1.3
 ## GET/POST <host> args: input, lang
-## curl "http://localhost:10000/wikispeech/?lang=en&input=test."
+## curl "http://localhost:10000/?lang=en&input=test."
 ## Expects json with audio_url and token list
 
 parameters = {
@@ -103,7 +103,7 @@ test_done()
 
 #1.4
 #Input can be "TEST_EXAMPLE" + lang
-## curl "http://localhost:10000/wikispeech/?lang=en&input=TEST_EXAMPLE"
+## curl "http://localhost:10000/?lang=en&input=TEST_EXAMPLE"
 #TODO only defined for english. If not defined returns a message string instead
 parameters = {
     "input":"TEST_EXAMPLE",
@@ -122,7 +122,7 @@ test_done()
 
 #1.5
 #textprocessor arg can be set, returns message if it isn't defined
-## curl "http://localhost:10000/wikispeech/?lang=sv&input=test.&textprocessor=a_textprocessor_that_is_not_defined"
+## curl "http://localhost:10000/?lang=sv&input=test.&textprocessor=a_textprocessor_that_is_not_defined"
 parameters = {
     "input":"test.",
     "lang":"sv",
@@ -142,7 +142,7 @@ test_done()
 
 #1.6
 #voice arg can be set, returns message if the voice isn't defined
-## curl "http://localhost:10000/wikispeech/?lang=sv&input=test.&voice=a_voice_that_is_not_defined"
+## curl "http://localhost:10000/?lang=sv&input=test.&voice=a_voice_that_is_not_defined"
 parameters = {
     "input":"test.",
     "lang":"sv",
@@ -164,10 +164,11 @@ test_done()
 
 #2) textprocessing api
 
-host = "http://localhost:10000/wikispeech/textprocessing/"
+
+host = "http://localhost:10000/textprocessing/"
 
 # 2.1
-# OPTIONS:  curl -X OPTIONS "http://localhost:10000/wikispeech/textprocessing/"
+# OPTIONS:  curl -X OPTIONS "http://localhost:10000/textprocessing/"
 
 
 r = test_client.options("%s" % (host))
@@ -177,9 +178,9 @@ assert ( type(res) == type(expected) ), "%s != %s" % (res, expected)
 test_done()
 
 # 2.2
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/"
+# GET:  curl "http://localhost:10000/textprocessing/"
 # Returns a (bad) error message
-# TODO Better message, with suggested usage? Similar to /wikispeech/
+# TODO Better message, with suggested usage? Similar to /
 # Now returns same as OPTIONS
 
 r = test_client.get("%s" % (host))
@@ -189,7 +190,7 @@ expected = "ERROR: No textprocessor available for language None"
 test_done()
 
 # 2.3
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/languages"
+# GET:  curl "http://localhost:10000/textprocessing/languages"
 # returns list of supported languages
 
 r = test_client.get("%slanguages" % (host))
@@ -203,7 +204,7 @@ test_done()
 
 
 # 2.4
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/textprocessors/sv"
+# GET:  curl "http://localhost:10000/textprocessing/textprocessors/sv"
 # returns list of defined textprocessors for <lang>
 
 r = test_client.get("%stextprocessors/sv" % (host))
@@ -216,7 +217,7 @@ assert ( type(res) == type([]) )
 test_done()
 
 # 2.5
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=en&input=test."
+# GET:  curl "http://localhost:10000/textprocessing/?lang=en&input=test."
 # returns json markup
 
 parameters = {
@@ -237,7 +238,7 @@ test_done()
 
 # 2.6
 # textprocessor can be an argument, returns message if not defined
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=en&input=test.&textprocessor=undefined"
+# GET:  curl "http://localhost:10000/textprocessing/?lang=en&input=test.&textprocessor=undefined"
 
 parameters = {
     "lang":"en",
@@ -259,7 +260,7 @@ test_done()
 #input_type can be set to ssml
 #the textprocessing will then use the ssml (to begin with phoneme, break, perhaps some say-as) to build the output json
 #First full ssml. Later ssml chunks?
-# GET:  curl "http://localhost:10000/wikispeech/textprocessing/?lang=sv&input_type=ssml&input=<SSML>"
+# GET:  curl "http://localhost:10000/textprocessing/?lang=sv&input_type=ssml&input=<SSML>"
 
 ssml = """<?xml version="1.0" encoding="ISO-8859-1"?>
 <speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
@@ -300,10 +301,10 @@ test_done()
 
 #3) synthesis api
 
-host = "http://localhost:10000/wikispeech/synthesis/"
+host = "http://localhost:10000/synthesis/"
 
 # 3.1
-# OPTIONS:  curl -X OPTIONS "http://localhost:10000/wikispeech/synthesis/"
+# OPTIONS:  curl -X OPTIONS "http://localhost:10000/synthesis/"
 
 
 r = test_client.options("%s" % (host))
@@ -313,9 +314,9 @@ assert ( type(res) == type(expected) ), "%s != %s" % (res, expected)
 test_done()
 
 # 3.2
-# GET:  curl "http://localhost:10000/wikispeech/synthesis/"
+# GET:  curl "http://localhost:10000/synthesis/"
 # Returns a (bad) error message
-# TODO Better message, with suggested usage? Similar to /wikispeech/
+# TODO Better message, with suggested usage? Similar to /
 # Now returns same as OPTIONS
 
 r = test_client.get("%s" % (host))
@@ -326,7 +327,7 @@ test_done()
 
 
 # 3.3
-# GET:  curl "http://localhost:10000/wikispeech/synthesis/voices"
+# GET:  curl "http://localhost:10000/synthesis/voices"
 # returns list of voices for all supported languages
 
 r = test_client.get("%svoices" % (host))
@@ -340,7 +341,7 @@ assert ( type(res) == type([]) )
 
 
 # 3.4
-# GET:  curl "http://localhost:10000/wikispeech/synthesis/voices/sv"
+# GET:  curl "http://localhost:10000/synthesis/voices/sv"
 # returns list of defined voicess for <lang>
 
 r = test_client.get("%svoices/sv" % (host))
@@ -352,7 +353,7 @@ for voice in res:
 test_done()
 
 # 3.5
-# GET:  curl "http://localhost:10000/wikispeech/synthesis/?lang=en&input=test."
+# GET:  curl "http://localhost:10000/synthesis/?lang=en&input=test."
 # returns json, with "audio" url and "tokens" list
 
 markup = {"lang": "en-US", "paragraphs": [{"sentences": [{"phrases": [{"boundary": {"breakindex": "5", "tone": "L-L%"}, "tokens": [{"token_orth": "\"", "words": [{"orth": "\"", "pos": "."}]}, {"token_orth": "test", "words": [{"g2p_method": "lexicon", "orth": "test", "pos": "``", "trans": "' t E s t"}]}, {"token_orth": ".", "words": [{"orth": ".", "pos": "."}]}, {"token_orth": "\"", "words": [{"orth": "\"", "pos": "."}]}]}]}]}]}
@@ -378,8 +379,8 @@ test_done()
 
 
 # 3.6
-# GET:  curl "http://localhost:10000/wikispeech/synthesis/?lang=en&input=test.&voice=cmu-slt-flite"
-# GET:  curl "http://localhost:10000/wikispeech/synthesis/?lang=en&input=\{\}&voice=undefined"
+# GET:  curl "http://localhost:10000/synthesis/?lang=en&input=test.&voice=cmu-slt-flite"
+# GET:  curl "http://localhost:10000/synthesis/?lang=en&input=\{\}&voice=undefined"
 # voice can be an argument, returns message if not defined
 
 

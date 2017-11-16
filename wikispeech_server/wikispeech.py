@@ -93,11 +93,10 @@ CORS(app)
 #
 # wikispeech api
 #
-# POST: curl -d "lang=en" -d "input=test." http://localhost:10000/wikispeech/
-# GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
+# POST: curl -d "lang=en" -d "input=test." http://localhost:10000/
+# GET:  curl "http://localhost:10000/?lang=en&input=test."
 
 @app.route('/ping')
-@app.route('/wikispeech/ping')
 def ping():
     resp = make_response("wikispeech")
     resp.headers["Content-type"] = "text/plain"
@@ -155,7 +154,6 @@ startedAt = genStartedAtString()
 vInfo = versionInfo()
 
 @app.route('/version')
-@app.route('/wikispeech/version')
 def version():
     resp = make_response(vInfo.string())
     resp.headers["Content-type"] = "text/plain"
@@ -163,7 +161,7 @@ def version():
     
 
 
-@app.route('/wikispeech/', methods=["OPTIONS"])
+@app.route('/', methods=["OPTIONS"])
 def wikispeech_options():
 
     options = getWikispeechOptions()
@@ -173,7 +171,7 @@ def wikispeech_options():
     resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
     return resp
 
-@app.route('/wikispeech/options', methods=["GET", "POST"])
+@app.route('/options', methods=["GET", "POST"])
 def wikispeech_options2():
     options = getWikispeechOptions()
     log.debug(options)
@@ -183,12 +181,12 @@ def wikispeech_options2():
     return resp
 
 
-@app.route('/wikispeech/languages', methods=["GET"])
+@app.route('/languages', methods=["GET"])
 def list_languages():
     json_data = json.dumps(getSupportedLanguages())
     return Response(json_data, mimetype='application/json')
 
-@app.route('/wikispeech/', methods=["GET", "POST"])
+@app.route('/', methods=["GET", "POST"])
 def wikispeech():
     global hostname
 
@@ -287,12 +285,12 @@ def getSupportedLanguages():
 
 
 
-@app.route('/wikispeech/textprocessing/languages', methods=["GET"])
+@app.route('/textprocessing/languages', methods=["GET"])
 def list_textprocSupportedLanguages():
     json_data = json.dumps(textprocSupportedLanguages())
     return Response(json_data, mimetype='application/json')
 
-@app.route('/wikispeech/textprocessing/textprocessors', methods=["GET"])
+@app.route('/textprocessing/textprocessors', methods=["GET"])
 def list_textprocessors():
     """Returns list of loaded textprocessors."""
     t = []
@@ -303,7 +301,7 @@ def list_textprocessors():
     json_data = json.dumps(t)
     return Response(json_data, mimetype='application/json')
 
-@app.route('/wikispeech/textprocessing/textprocessors/<lang>', methods=["GET"])
+@app.route('/textprocessing/textprocessors/<lang>', methods=["GET"])
 def return_tp_configs_by_language(lang):
     json_data = json.dumps(list_tp_configs_by_language(lang))
     return Response(json_data, mimetype='application/json')
@@ -343,7 +341,7 @@ def get_tp_config_by_nameOLD(name):
 
 
 
-@app.route('/wikispeech/textprocessing/', methods=["OPTIONS"])
+@app.route('/textprocessing/', methods=["OPTIONS"])
 def textprocessing_options():
 
     options = getTextprocessingOptions()
@@ -354,7 +352,7 @@ def textprocessing_options():
 
 
 
-@app.route('/wikispeech/textprocessing/', methods=["GET", "POST"])
+@app.route('/textprocessing/', methods=["GET", "POST"])
 def textprocessing():
     lang = getParam("lang")
     textprocessor_name = getParam("textprocessor", "default_textprocessor")
@@ -416,7 +414,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
                 textprocessor = tp
                 break
         if textprocessor == None:
-            #example http://localhost/wikispeech/?lang=sv&input=test&textprocessor=undefined
+            #example http://localhost/?lang=sv&input=test&textprocessor=undefined
             return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
 
 
@@ -479,13 +477,13 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
 #nej ingen av dessa funkar..
 
-@app.route('/wikispeech/synthesis/languages', methods=["GET"])
+@app.route('/synthesis/languages', methods=["GET"])
 def list_synthesisSupportedLanguages():
     json_data = json.dumps(synthesisSupportedLanguages())
     return Response(json_data, mimetype='application/json')
 
 
-@app.route('/wikispeech/synthesis/voices', methods=["GET"])
+@app.route('/synthesis/voices', methods=["GET"])
 def list_voices():
     """Returns list of loaded voices."""
     v = []
@@ -496,7 +494,7 @@ def list_voices():
     json_data = json.dumps(v)
     return Response(json_data, mimetype='application/json')
 
-@app.route('/wikispeech/synthesis/voices/<lang>', methods=["GET"])
+@app.route('/synthesis/voices/<lang>', methods=["GET"])
 def return_voices_by_language(lang):
     json_data = json.dumps(list_voices_by_language(lang))
     return Response(json_data, mimetype='application/json')
@@ -531,7 +529,7 @@ def synthesisSupportedLanguages():
 
 
 
-@app.route('/wikispeech/synthesis/', methods=["OPTIONS"])
+@app.route('/synthesis/', methods=["OPTIONS"])
 def synthesis_options():
 
     options = getSynthesisOptions()
@@ -543,7 +541,7 @@ def synthesis_options():
 
 
 
-@app.route('/wikispeech/synthesis/', methods=["GET","POST"])
+@app.route('/synthesis/', methods=["GET","POST"])
 def synthesis():
     hostname = request.url_root
 
@@ -677,7 +675,7 @@ def static_proxy_audio(path):
 @app.route('/test.html')
 def static_test():
     log.info("Looking for static file %s" % "test.html")
-    hostname = "http://localhost:10000/wikispeech"
+    hostname = "http://localhost:10000"
     return render_template("test.html", server=hostname)
 
 
@@ -688,27 +686,8 @@ def static_proxy_js():
     log.info("Looking for static file %s/%s" % (root_dir, filename))
     return send_from_directory(root_dir, filename)
 
-#Two different routes to the same file. Because test.html uses the previous, and workflow_demo/test.html uses the following.
-#TODO change so that test.html also uses the following
-@app.route('/wikispeech/wikispeech_simple_player.js')
-def static_proxy_js2():
-    filename = "wikispeech_simple_player.js"
-    root_dir = os.getcwd()
-    log.info("Looking for static file %s/%s" % (root_dir, filename))
-    return send_from_directory(root_dir, filename)
 
-
-# @app.route('/workflow_demo/test.html')
-# def static_test_workflow():
-#     filename = "workflow_demo/test.html"
-#     root_dir = os.getcwd()
-#     log.info("Looking for static file %s/%s" % (root_dir, filename))
-#     return send_from_directory(root_dir, filename)
-    #log.info("Looking for static file %s" % filename)
-    #hostname = "http://localhost:10000/wikispeech"
-    #return render_template(filename, server=hostname)
-
-@app.route('/wikispeech/workflow_demo/<path:path>')
+@app.route('/workflow_demo/<path:path>')
 def static_proxy_workflow(path):
     filename = "workflow_demo/"+path
     root_dir = os.getcwd()
@@ -726,7 +705,7 @@ def static_proxy_workflow(path):
 
 from flask import stream_with_context
 
-@app.route('/wikispeech/lexserver/<path:url>')
+@app.route('/lexserver/<path:url>')
 def lexserver_proxy(url):
     lexicon_host = config.config.get("Services","lexicon")
     redirect_url = "%s/%s%s" % ((lexicon_host, url, "?" + request.query_string.decode("utf-8") if request.query_string else ""))

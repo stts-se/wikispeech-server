@@ -5,7 +5,7 @@ import wikispeech_server.log as log
 
 log.info("RUNNING VOICE CONFIG TESTS")
 
-host = "http://localhost:10000/wikispeech/"
+host = "http://localhost:10000/"
 test_client = ws.app.test_client()
 
 
@@ -19,7 +19,7 @@ def test_default_settings():
     for lang in supported_languages:
         log.debug("START: %s" % lang)
 
-        # GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
+        # GET:  curl "http://localhost:10000/?lang=en&input=test."
         r = test_client.get("%s?lang=%s&input=test." % (host,lang))
         log.debug(r.data.decode('utf-8'))
         log.debug("DONE: %s" % lang)

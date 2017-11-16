@@ -2,7 +2,7 @@
 
 
 //Default, if the html does not set ws_host 
-ws_host = "https://morf.se/wikispeech";
+ws_host = "http://localhost:10000";
 
 //Default, if getSupportedLanguages fails
 supported_languages = ["en"];

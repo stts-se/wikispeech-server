@@ -34,7 +34,6 @@ The file contains settings for:
   * debug_mode: python flask setting to reload when files are edited. (default: False)
 * Audio settings
   * audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
-  * audio_url_prefix: how the soundfiles should be served. Change this for production, and serve through eg. apache. (default: http://localhost:10000/audio)
 * Services
   * lexicon: url to lexicon server. (default: http://localhost:8787)
   * marytts: url to marytts server. (default: http://localhost:59125/process)
@@ -57,12 +56,12 @@ google-chrome test.html
 
 ```
 
-google-chrome "http://localhost:10000/wikispeech/"
+google-chrome "http://localhost:10000/"
 ```
 (for usage information)
 
 ```
-google-chrome "http://localhost:10000/wikispeech/?lang=sv&input=Ett+test"
+google-chrome "http://localhost:10000/?lang=sv&input=Ett+test"
 ```
 (example api call)
 
@@ -118,8 +117,8 @@ apache (for example with "sudo apache2ctl restart"). You may need to run "sudo a
 
 ```
 ProxyPreserveHost On
-ProxyPass         /wikispeech/  http://127.0.1.1:10000/wikispeech/
-ProxyPassReverse  /wikispeech/  http://127.0.1.1:10000/wikispeech/
+ProxyPass         /wikispeech/  http://127.0.1.1:10000/
+ProxyPassReverse  /wikispeech/  http://127.0.1.1:10000/
 ProxyRequests     Off
 
 ProxyPreserveHost On

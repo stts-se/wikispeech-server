@@ -8,9 +8,9 @@
 <body>
 <h1>Wikispeech usage</h1>
 
-USAGE: wikispeech/?lang=LANG&input=TEXT
+USAGE: /?lang=LANG&input=TEXT
 <br>
-<a href='{{ server }}wikispeech/options'>Wikispeech parameters (json)</a>
+<a href='{{ server }}options'>Wikispeech parameters (json)</a>
 <br>
 
 
@@ -18,56 +18,56 @@ USAGE: wikispeech/?lang=LANG&input=TEXT
 Supported languages are: {{ languages }}
 <p/>
 <b>EXAMPLES</b><br/>
-US English: <a href='{{ server }}wikispeech/?lang=en&input=A+test'>{{ server }}wikispeech/?lang=en&input=A test</a><br/>
-Swedish: <a href='{{ server }}wikispeech/?lang=sv&input=Vi%20testar%20talsyntes'>{{ server }}wikispeech/?lang=sv&input=Vi%20testar%20talsyntes</a>
+US English: <a href='{{ server }}?lang=en&input=A+test'>{{ server }}?lang=en&input=A test</a><br/>
+Swedish: <a href='{{ server }}?lang=sv&input=Vi%20testar%20talsyntes'>{{ server }}?lang=sv&input=Vi%20testar%20talsyntes</a>
 
 <hr>
 Other things to try:
 <br>
-<a href='{{ server }}wikispeech/languages'>{{ server }}wikispeech/languages</a>
+<a href='{{ server }}languages'>{{ server }}languages</a>
 
 <hr>
-<a href='{{ server }}wikispeech/textprocessing'>Textprocessing parameters (json)</a>
+<a href='{{ server }}textprocessing'>Textprocessing parameters (json)</a>
 <br>
-<a href='{{ server }}wikispeech/textprocessing/languages'>{{ server }}wikispeech/textprocessing/languages</a>
+<a href='{{ server }}textprocessing/languages'>{{ server }}textprocessing/languages</a>
 <br>
-<a href='{{ server }}wikispeech/textprocessing/textprocessors'>{{ server }}wikispeech/textprocessing/textprocessors</a>
+<a href='{{ server }}textprocessing/textprocessors'>{{ server }}textprocessing/textprocessors</a>
 <br>
-<a href='{{ server }}wikispeech/textprocessing/textprocessors/en'>{{ server }}wikispeech/textprocessing/textprocessors/en</a>
+<a href='{{ server }}textprocessing/textprocessors/en'>{{ server }}textprocessing/textprocessors/en</a>
 
 <hr>
 <br>
-<a href='{{ server }}wikispeech/synthesis'>Synthesis parameters (json)</a>
+<a href='{{ server }}synthesis'>Synthesis parameters (json)</a>
 <br>
-<a href='{{ server }}wikispeech/synthesis/languages'>{{ server }}wikispeech/synthesis/languages</a>
+<a href='{{ server }}synthesis/languages'>{{ server }}synthesis/languages</a>
 <br>
-<a href='{{ server }}wikispeech/synthesis/voices'>{{ server }}wikispeech/synthesis/voices</a>
+<a href='{{ server }}synthesis/voices'>{{ server }}synthesis/voices</a>
 <br>
-<a href='{{ server }}wikispeech/synthesis/voices/en'>{{ server }}wikispeech/synthesis/voices/en</a>
+<a href='{{ server }}synthesis/voices/en'>{{ server }}synthesis/voices/en</a>
 
 <hr>
 Textprocessing examples:
 <br>
-<a href='{{ server }}wikispeech/textprocessing/?lang=en&input=A+test'>{{ server }}/wikispeech/textprocessing/?lang=en&input=A test</a>
+<a href='{{ server }}textprocessing/?lang=en&input=A+test'>{{ server }}textprocessing/?lang=en&input=A test</a>
 <br>
-<a href='{{ server }}wikispeech/textprocessing/?lang=sv&input=Vi+testar+talsyntes'>{{ server }}/wikispeech/textprocessing/?lang=sv&input=Vi testar talsyntes</a>
+<a href='{{ server }}textprocessing/?lang=sv&input=Vi+testar+talsyntes'>{{ server }}textprocessing/?lang=sv&input=Vi testar talsyntes</a>
 
 <p/>
 Tokenisation example:
 <br>
-<a href='{{ server }}wikispeech/textprocessing/?lang=en&input=A+test&textprocessor=basic_en&process=tokenise'>{{ server }}/wikispeech/textprocessing/?lang=en&input=A test&textprocessor=basic_en&process=tokenise</a>
+<a href='{{ server }}textprocessing/?lang=en&input=A+test&textprocessor=basic_en&process=tokenise'>{{ server }}textprocessing/?lang=en&input=A test&textprocessor=basic_en&process=tokenise</a>
 
 <p/>
 Basic synthesis example:
 <br>
-<a href='{{ server }}wikispeech/?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite'>{{ server }}wikispeech/?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite</a>
+<a href='{{ server }}?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite'>{{ server }}?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite</a>
 
 <hr>
 Other tests:
 <br>
 <a href='{{ server }}test.html'>{{ server }}test.html</a>
 <br>
-<a href='{{ server }}wikispeech/workflow_demo/test.html'>{{ server }}wikispeech/workflow_demo/test.html</a>
+<a href='{{ server }}workflow_demo/test.html'>{{ server }}workflow_demo/test/html</a>
 
 
 
@@ -80,5 +80,5 @@ Other tests:
 {{ vInfo.builtBy }} <br/>
 {{ vInfo.startedAt }} <br/>
 <br>
-<!-- hhmts start -->Last modified: Tue Nov 14 14:02:45 CET 2017 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Thu Nov 16 15:45:50 GMT 2017 <!-- hhmts end -->
 </body> </html>
