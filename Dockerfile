@@ -6,8 +6,8 @@ WORKDIR "/wikispeech"
 
 RUN git clone https://github.com/stts-se/wikispeech_mockup.git
 
-RUN mkdir -p /wikispeech_mockup/wikispeech_server/tmp
-RUN ln -s /wikispeech_mockup/docker/ws-postponed-start /wikispeech/bin/
+RUN mkdir -p /wikispeech/wikispeech_mockup/wikispeech_server/tmp
+RUN ln -s /wikispeech/wikispeech_mockup/docker/ws-postponed-start /wikispeech/bin/
 
 
 # BUILD INFO
