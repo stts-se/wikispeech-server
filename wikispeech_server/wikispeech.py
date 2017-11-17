@@ -187,10 +187,16 @@ def list_languages():
     return Response(json_data, mimetype='application/json')
 
 @app.route('/', methods=["GET", "POST"])
+@app.route('/wikispeech', methods=["GET", "POST"])
 def wikispeech():
     global hostname
 
-
+    hostname = request.url
+    log.debug("request.url: %s" % hostname)
+    if not hostname.endswith("/"):
+        hostname = hostname+"/"
+    log.debug("hostname: %s" % hostname)
+        
     lang = getParam("lang")
     input = getParam("input")
     input_type = getParam("input_type", "text")
@@ -214,7 +220,6 @@ def wikispeech():
     log.debug("WIKISPEECH CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input))
 
     supported_languages = getSupportedLanguages()
-    hostname = request.url_root
 
     if not lang or not input:
         return render_template("usage.html", server=hostname, languages=supported_languages, vInfo = vInfo)
@@ -673,9 +678,12 @@ def static_proxy_audio(path):
 #  serve test file if needed (should usually be behind proxy)
 
 @app.route('/test.html')
+@app.route('/wikispeech/test.html')
 def static_test():
     log.info("Looking for static file %s" % "test.html")
-    hostname = "http://localhost:10000"
+    #HB this is wrong (won't work on morf)
+    #hostname = "http://localhost:10000"
+    hostname = request.url_root
     return render_template("test.html", server=hostname)
 
 

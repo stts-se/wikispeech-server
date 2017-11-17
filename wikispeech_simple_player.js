@@ -2,7 +2,7 @@
 
 
 //Default, if the html does not set ws_host 
-ws_host = "http://localhost:10000";
+//HB ws_host = "http://localhost:10000";
 
 //Default, if getSupportedLanguages fails
 supported_languages = ["en"];
@@ -54,7 +54,8 @@ function addPlayButtonToP() {
 
 function getSupportedLanguages() {
 
-    var url = ws_host+"/languages";
+    //HB 171117 var url = ws_host+"/languages";
+    var url = ws_host+"languages";
     console.log("Getting supported_languages from "+url);
 
     var xhr = new XMLHttpRequest();
@@ -137,7 +138,8 @@ function play(id) {
     console.log(text);
 
 
-    var url = ws_host+"/";
+    //HB 171117 var url = ws_host+"/";
+    var url = ws_host;
     var params = "lang="+lang+"&input_type="+input_type+"&input="+encodeURIComponent(text);
 
     //HB 9/3 testing to switch English voice
