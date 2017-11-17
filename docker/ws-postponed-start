@@ -28,7 +28,7 @@ for i1 in `seq $TIMEOUT` ; do
 	    result=$?
 	    if [ $result -eq 0 ] ; then
 		echo "[$CMD] All required servers up and running, starting wikispeech" 2>&1
-		if cd /wikispeech_mockup ; then
+		if cd /wikispeech/wikispeech_mockup ; then
 		    python3 bin/wikispeech docker/config/docker-compose.conf
 		    exit $?
 		else
