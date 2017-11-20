@@ -193,6 +193,8 @@ def wikispeech():
 
     hostname = request.url
     log.debug("request.url: %s" % hostname)
+    log.info("request: %s" % request)
+    log.info("request.url: %s" % hostname)
     if not hostname.endswith("/"):
         hostname = hostname+"/"
     log.debug("hostname: %s" % hostname)
