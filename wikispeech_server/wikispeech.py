@@ -191,10 +191,15 @@ def list_languages():
 def wikispeech():
     global hostname
 
-    hostname = request.url
-    log.debug("request.url: %s" % hostname)
+    # hostname = request.url
+    from urllib.parse import urlparse
+    parsed_uri = urlparse(request.url)
+    hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+
+    # log.debug("request.url: %s" % hostname)
     log.info("request: %s" % request)
-    log.info("request.url: %s" % hostname)
+    log.info("request.url: %s" % request.url)
+    log.info("hostname: %s" % hostname)
     if not hostname.endswith("/"):
         hostname = hostname+"/"
     log.debug("hostname: %s" % hostname)
