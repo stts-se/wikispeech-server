@@ -55,11 +55,6 @@ function addPlayButtonToP() {
 function getSupportedLanguages() {
 
     //HB 171117 var url = ws_host+"/languages";
-    from urllib.parse import urlparse
-    parsed_uri = urlparse(request.url)
-    ws_host = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    if not ws_host.endswith("/"):
-        ws_host = ws_host+"/"
     var url = ws_host+"languages";
     console.log("Getting supported_languages from "+url);
 
