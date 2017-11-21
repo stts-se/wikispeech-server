@@ -29,7 +29,10 @@ tr.selected{
 <script type="text/javascript">
 window.onload = function() {
  // NOTE Change this!
- ws_host = "http://localhost:10000";
+ // ws_host = "http://localhost:10000";
+ wloc = window.location;
+ws_host = wloc.protocol + "//" + wloc.hostname + ":" + wloc.port + "/";
+console.log(ws_host);
 
 useOriginalText=true;
 getSupportedLanguages();

@@ -6,8 +6,11 @@
 
 <script type="text/javascript" src="wikispeech_simple_player.js"></script>
 <script type="text/javascript">
-window.onload = function() {
- ws_host = "{{ server }}";
+ window.onload = function() {
+ // ws_host = "{{ server }}";
+ wloc = window.location;
+ ws_host = wloc.protocol + "//" + wloc.hostname + ":" + wloc.port + "/";
+ console.log(ws_host);
  addPlayButtonToP();
 };
 </script>

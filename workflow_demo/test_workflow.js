@@ -3,12 +3,14 @@
 
 
 lexicon_name = "wikispeech_testdb:enu";
-
+wloc = window.location;
+ws_host = wloc.protocol + "//" + wloc.hostname + ":" + wloc.port;
+console.log(ws_host);
 
 function getLexiconList() {
     var params = {};
     $.get(
-	ws_host+'/lexserver/lexicon/list',
+	ws_host+'lexserver/lexicon/list',
         params,
         function(response) {
 	    console.log(response);
@@ -381,7 +383,7 @@ function tokeniseHtmlText(lang) {
     }
     
     $.get(
-        ws_host+'/textprocessing/',
+        ws_host+'textprocessing/',
         params,
         function(response) {
 	    console.log(response);
@@ -788,7 +790,7 @@ function validateTranscription(t, lang) {
 
     
     $.get(
-        ws_host+'/lexserver/validation/validateentry',
+        ws_host+'lexserver/validation/validateentry',
         params,
         function(response) {
 	    console.log("validateTranscription: response = "+response);
@@ -889,7 +891,7 @@ function playTranscription(t,lang) {
 
     $.ajax(
 	{
-            url: ws_host+'/lexserver/validation/validateentry',
+            url: ws_host+'lexserver/validation/validateentry',
             data: params,
             success: function(response) {
 		console.log(response);
@@ -967,7 +969,7 @@ function searchLexicon(search_term, lang) {
     }
     
     $.get(
-        ws_host+'/lexserver/lexicon/lookup',
+        ws_host+'lexserver/lexicon/lookup',
         params,
         function(response) {
 	    console.log(response);
@@ -1048,7 +1050,7 @@ function wordsInLex(words, lang) {
     }
 
     $.get(
-        ws_host+'/lexserver/lexicon/lookup',
+        ws_host+'lexserver/lexicon/lookup',
         params,
         function(response) {
 
@@ -1169,7 +1171,7 @@ function updateEntry(entry) {
     //console.log(JSON.stringify(params));
     
     $.ajax({
-	url: ws_host+'/lexserver/lexicon/updateentry?entry='+entry_string,
+	url: ws_host+'lexserver/lexicon/updateentry?entry='+entry_string,
 	//data: params,
 	type: "GET",
 	contentType: "application/json",
