@@ -201,6 +201,8 @@ def wikispeech():
     log.info("hostname: %s" % hostname)
     if not hostname.endswith("/"):
         hostname = hostname+"/"
+    if "wikispeech.morf.se" in hostname: ## HL 20171121: force https for wikispeech.morf.se
+        hostname = hostname.replace("http://","https://")
     log.debug("hostname: %s" % hostname)
         
     lang = getParam("lang")
