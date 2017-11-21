@@ -191,7 +191,6 @@ def list_languages():
 def wikispeech():
     global hostname
 
-    # hostname = request.url
     from urllib.parse import urlparse
     parsed_uri = urlparse(request.url)
     hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
