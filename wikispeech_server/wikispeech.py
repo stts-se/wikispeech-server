@@ -103,7 +103,7 @@ def ping():
     return resp
 
 class VersionInfo(object):
-    def __init__(self, buildTimestamp, builtBy, appName, startedAt):
+    def __init__(self, buildTimestamp, builtBy, appName, startedAt, gitRelease):
         self.buildTimestamp = buildTimestamp
         self.builtBy = builtBy
         self.appName = appName
@@ -114,7 +114,7 @@ class VersionInfo(object):
 
 
 def versionInfo():
-    buildTimestamp = "Build timestamp: undefined"
+    buildTimestamp = "Build timestamp: " + startedAt
     builtBy = "Built by: python standalone"
     appName = "Application name: wikispeech"
     appNamePrefix = "Application name: "
@@ -134,7 +134,7 @@ def versionInfo():
                 elif re.match(buildTimePrefix, l):
                     buildTimestamp = l
 
-    info = VersionInfo(buildTimestamp, builtBy, appName, startedAt)
+    info = VersionInfo(buildTimestamp, builtBy, appName, "Started: " + startedAt)
     return info
     
 
@@ -148,7 +148,7 @@ def genStartedAtString():
     if local_tz != None:
         now = now.replace(tzinfo=local_tz)
     now = now.astimezone(pytz.utc)
-    return 'Started: {:%Y-%m-%d %H:%M:%S %Z}'.format(now)
+    return '{:%Y-%m-%d %H:%M:%S %Z}'.format(now)
 
 startedAt = genStartedAtString()
 vInfo = versionInfo()
