@@ -63,8 +63,10 @@ def test_all_settings():
                     "output_type": "test"
                 }
 
-                r = test_client.post("%ssynthesis/" % (host), data=payload)
-                #log.debug(r.url)
+                url = "%ssynthesis/" % (host)
+                r = test_client.post(url, data=payload)
+                if r.status_code != 200:
+                    log.fatal("test call to URL %s failed, server error: %s" % (url, r))
                 res = json.loads(r.data.decode('utf-8'))
                 log.debug(res)
                 log.debug("DONE %s" % voice_name)
