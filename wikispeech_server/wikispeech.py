@@ -21,6 +21,8 @@ import datetime
 import pytz
 from pytz import timezone
 
+import subprocess
+
 #################
 #
 # Test opusenc before anything else
@@ -103,14 +105,16 @@ def ping():
     return resp
 
 class VersionInfo(object):
-    def __init__(self, buildTimestamp, builtBy, appName, startedAt, gitRelease):
+    def __init__(self, buildTimestamp, builtBy, appName, startedAt, gitRelease, gitTimestamp):
         self.buildTimestamp = buildTimestamp
         self.builtBy = builtBy
         self.appName = appName
         self.startedAt = startedAt
+        self.gitRelease = gitRelease
+        self.gitTimestamp = gitTimestamp
 
     def string(self):
-        return self.appName + "\n" + self.buildTimestamp + "\n" + self.builtBy + "\n" + self.startedAt
+        return self.appName + "\n" + self.buildTimestamp + "\n" + self.gitRelease + "\n" + self.gitTimestamp + "\n" + self.builtBy + "\n" + self.startedAt
 
 
 def versionInfo():
@@ -118,6 +122,8 @@ def versionInfo():
     builtBy = "Built by: python standalone"
     appName = "Application name: wikispeech"
     appNamePrefix = "Application name: "
+    gitRelease = ""
+    gitTimestamp = ""
     builtByPrefix = "Built by: "
     buildTimePrefix = "Build timestamp: "
     buildInfoFile = "/wikispeech/.wikispeech_build_info.txt"
@@ -133,8 +139,27 @@ def versionInfo():
                     builtBy = l
                 elif re.match(buildTimePrefix, l):
                     buildTimestamp = l
+                elif re.match(gitReleasePrefix, l):
+                    gitRelease = l
+                elif re.match(gitTimestampPrefix, l):
+                    gitTimestamp = l
 
-    info = VersionInfo(buildTimestamp, builtBy, appName, "Started: " + startedAt)
+    if gitRelease == "":
+        gitRelease = "Git release: unknown"
+        try:
+            out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
+            gitRelease = "Git release: %s" % out
+        except:
+            log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
+    if gitTimestamp == "":
+        gitTimestamp = "Git timestamp: unknown"
+        try:
+            out = subprocess.check_output(["git", "log", "-1", "--pretty=format:%ad %h", "--date=format:%Y-%m-%d %H:%M:%S %z"]).decode("utf-8") 
+            gitTimestamp = "Git timestamp: %s" % out
+        except:
+            log.info("couldn't retrieve git timestamp: %s" % sys.exc_info()[1])
+
+    info = VersionInfo(buildTimestamp, builtBy, appName, "Started: " + startedAt, gitRelease, gitTimestamp)
     return info
     
 
