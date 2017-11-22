@@ -122,8 +122,8 @@ def versionInfo():
     builtBy = "Built by: python standalone"
     appName = "Application name: wikispeech"
     appNamePrefix = "Application name: "
-    gitRelease = ""
-    gitTimestamp = ""
+    gitRelease = "Git release: unknown"
+    gitTimestamp = "Git timestamp: unknown"
     builtByPrefix = "Built by: "
     buildTimePrefix = "Build timestamp: "
     buildInfoFile = "/wikispeech/.wikispeech_build_info.txt"
@@ -144,15 +144,13 @@ def versionInfo():
                 elif re.match(gitTimestampPrefix, l):
                     gitTimestamp = l
 
-    if gitRelease == "":
-        gitRelease = "Git release: unknown"
+    if ": unknown" in gitRelease: 
         try:
             out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
             gitRelease = "Git release: %s" % out
         except:
             log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
-    if gitTimestamp == "":
-        gitTimestamp = "Git timestamp: unknown"
+    if ": unknown" in gitTimestamp: 
         try:
             out = subprocess.check_output(["git", "log", "-1", "--pretty=format:%ad %h", "--date=format:%Y-%m-%d %H:%M:%S %z"]).decode("utf-8") 
             gitTimestamp = "Git timestamp: %s" % out
