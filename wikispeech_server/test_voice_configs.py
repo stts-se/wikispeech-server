@@ -1,5 +1,10 @@
 import sys
 import json
+if __name__ == "__main__":
+    import os
+    sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/..")
+    print(sys.path)
+    
 import wikispeech_server.wikispeech as ws
 import wikispeech_server.log as log
 
@@ -43,12 +48,17 @@ def test_all_settings():
             tp_name = textproc_config["name"]
 
             log.debug("START %s" % tp_name)
-            r = test_client.get("%stextprocessing/?input=test.&lang=%s&textprocessor=%s" % (host, lang, tp_name))
-            tmp = json.loads(r.data.decode('utf-8'))                             
+            url = "%stextprocessing/?input=test.&lang=%s&textprocessor=%s" % (host, lang, tp_name)
+            log.debug("url: %s" % url)
+            r = test_client.get(url)
+            tmp = json.loads(r.data.decode('utf-8'))
+            
             #tmp = r.data.decode('utf-8')                             
             log.debug("TP OUTPUT: %s" % tmp)
 
-            r = test_client.get("%ssynthesis/voices/%s" % (host,lang))
+            url = "%ssynthesis/voices/%s" % (host,lang)
+            log.debug("trying url: %s" % url)
+            r = test_client.get(url)
             voices = json.loads(r.data.decode('utf-8'))
 
             for voice in voices:
