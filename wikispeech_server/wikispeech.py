@@ -118,14 +118,16 @@ class VersionInfo(object):
 
 
 def versionInfo():
-    buildTimestamp = "Build timestamp: " + startedAt
-    builtBy = "Built by: python standalone"
-    appName = "Application name: wikispeech"
     appNamePrefix = "Application name: "
-    gitRelease = "Git release: unknown"
-    gitTimestamp = "Git timestamp: unknown"
     builtByPrefix = "Built by: "
     buildTimePrefix = "Build timestamp: "
+    gitReleasePrefix = "Git release: "
+    gitTimestampPrefix = "Git timestamp: "
+    buildTimestamp = buildTimePrefix + startedAt
+    builtBy = builtByPrefix + "python standalone"
+    appName = appNamePrefix + "wikispeech"
+    gitRelease = gitReleasePrefix + "unknown"
+    gitTimestamp = gitTimestampPrefix + "unknown"
     buildInfoFile = "/wikispeech/.wikispeech_build_info.txt"
     if os.path.isfile(buildInfoFile):
         with open(buildInfoFile) as fp:  
@@ -147,13 +149,13 @@ def versionInfo():
     if ": unknown" in gitRelease: 
         try:
             out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
-            gitRelease = "Git release: %s" % out
+            gitRelease = (gitReleasePrefix + " %s") % out
         except:
             log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
     if ": unknown" in gitTimestamp: 
         try:
             out = subprocess.check_output(["git", "log", "-1", "--pretty=format:%ad %h", "--date=format:%Y-%m-%d %H:%M:%S %z"]).decode("utf-8") 
-            gitTimestamp = "Git timestamp: %s" % out
+            gitTimestamp = (gitTimestampPrefix + " %s") % out
         except:
             log.info("couldn't retrieve git timestamp: %s" % sys.exc_info()[1])
 
