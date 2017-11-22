@@ -21,7 +21,7 @@ RUN echo "Application name: wikispeech"  >> $BUILD_INFO_FILE
 RUN echo -n "Git release: " >> $BUILD_INFO_FILE
 RUN cd /wikispeech/wikispeech_mockup && git describe --tags >> $BUILD_INFO_FILE
 RUN echo -n "Git timestamp: " >> $BUILD_INFO_FILE
-RUN cd /wikispeech/wikispeech_mockup && git log -1 "--pretty=format:%ad %h" "--date=format:%Y-%m-%d %H:%M:%S %z" >> $BUILD_INFO_FILE
+RUN cd /wikispeech/wikispeech_mockup && git log -1 "--pretty=format:%ai %h" >> $BUILD_INFO_FILE
 
 ## RUNTIME SETTINGS
 

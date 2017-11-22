@@ -6,3 +6,5 @@ wikispeech_server/adapters/__pycache__/
 wikispeech_server/__pycache__/
 docker/compose/.env
 Dockerfile.OLD
+
+wikispeech_server/hanna*.conf

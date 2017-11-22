@@ -154,7 +154,7 @@ def versionInfo():
             log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
     if ": unknown" in gitTimestamp: 
         try:
-            out = subprocess.check_output(["git", "log", "-1", "--pretty=format:%ad %h", "--date=format:%Y-%m-%d %H:%M:%S %z"]).decode("utf-8") 
+            out = subprocess.check_output(["git", "log", "-1", "--pretty=format:%ai %h"]).decode("utf-8") 
             gitTimestamp = (gitTimestampPrefix + " %s") % out
         except:
             log.info("couldn't retrieve git timestamp: %s" % sys.exc_info()[1])
