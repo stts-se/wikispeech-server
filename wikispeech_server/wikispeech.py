@@ -148,7 +148,7 @@ def genStartedAtString():
     if local_tz != None:
         now = now.replace(tzinfo=local_tz)
     now = now.astimezone(pytz.utc)
-    return 'Started at: {:%Y-%m-%d %H:%M:%S %Z}'.format(now)
+    return 'Started: {:%Y-%m-%d %H:%M:%S %Z}'.format(now)
 
 startedAt = genStartedAtString()
 vInfo = versionInfo()
