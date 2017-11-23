@@ -112,19 +112,7 @@ def versionInfo():
         with open(buildInfoFile) as fp:  
             res = fp.readlines()
             fp.close()
-            for l in lines:
-                l = l.strip()
-                if re.match(appNamePrefix, l):
-                    appName = l
-                elif re.match(builtByPrefix, l):
-                    builtBy = l
-                elif re.match(buildTimePrefix, l):
-                    buildTimestamp = l
-                elif re.match(gitReleasePrefix, l):
-                    gitRelease = l
-                elif re.match(gitTimestampPrefix, l):
-                    gitTimestamp = l
-                    
+            
     else:
         res.append("Build timestamp: " + startedAt)
         res.append("Built by: python standalone")
