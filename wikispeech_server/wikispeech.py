@@ -110,9 +110,11 @@ def versionInfo():
     buildInfoFile = "/wikispeech/.wikispeech_build_info.txt"
     if os.path.isfile(buildInfoFile):
         with open(buildInfoFile) as fp:  
-            res = fp.readlines()
+            lines = fp.readlines()
             fp.close()
-            
+            for l in lines:
+                res.append(l.strip())
+                    
     else:
         res.append("Build timestamp: " + startedAt)
         res.append("Built by: python standalone")
