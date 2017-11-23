@@ -132,7 +132,7 @@ def versionInfo():
 
         try:
             out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
-            res.append((gitReleasePrefix + " %s") % out)
+            res.append(("Git release: %s") % out)
         except:
             log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
             res.append("Git release: unknown");
