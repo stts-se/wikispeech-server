@@ -118,7 +118,7 @@ def versionInfo():
     else:
         res.append("Application name: wikispeech")
         res.append("Build timestamp: n/a")
-        res.append("Built by: python runtime")
+        res.append("Built by: user")
 
         try:
             out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
