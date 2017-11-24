@@ -14,8 +14,8 @@ RUN ln -s /wikispeech/wikispeech_mockup/docker/ws-postponed-start /wikispeech/bi
 
 # BUILD INFO
 ENV BUILD_INFO_FILE /wikispeech/.wikispeech_build_info.txt
-RUN echo "Application name: wikispeech"  >> $BUILD_INFO_FILE
-RUN echo -n "Build timestamp: " > $BUILD_INFO_FILE
+RUN echo "Application name: wikispeech"  > $BUILD_INFO_FILE
+RUN echo -n "Build timestamp: " >> $BUILD_INFO_FILE
 RUN date --utc "+%Y-%m-%d %H:%M:%S %Z" >> $BUILD_INFO_FILE
 RUN echo "Built by: docker" >> $BUILD_INFO_FILE
 RUN echo -n "Git release: " >> $BUILD_INFO_FILE
