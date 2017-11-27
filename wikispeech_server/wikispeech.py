@@ -660,10 +660,12 @@ from flask import send_from_directory
 
 @app.route('/audio/<path:path>')
 def static_proxy_audio(path):
-    audio_file_name = "tmp/"+path
+    audio_tmpdir = config.config.get("Audio settings","audio_tmpdir")
+    audio_file_name = audio_tmpdir+"/"+path
     log.info("Looking for audio file %s" % audio_file_name)
     # send_static_file will guess the correct MIME type
-    return send_from_directory("tmp", path)
+    #return send_from_directory("tmp", path)
+    return send_from_directory(os.getcwd()+"/"+audio_tmpdir, path)
 
 ############################################
 #
