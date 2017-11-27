@@ -104,65 +104,32 @@ def ping():
     resp.headers["Content-type"] = "text/plain"
     return resp
 
-class VersionInfo(object):
-    def __init__(self, buildTimestamp, builtBy, appName, startedAt, gitRelease, gitTimestamp):
-        self.buildTimestamp = buildTimestamp
-        self.builtBy = builtBy
-        self.appName = appName
-        self.startedAt = startedAt
-        self.gitRelease = gitRelease
-        self.gitTimestamp = gitTimestamp
-
-    def string(self):
-        return self.appName + "\n" + self.buildTimestamp + "\n" + self.gitRelease + "\n" + self.gitTimestamp + "\n" + self.builtBy + "\n" + self.startedAt
-
 
 def versionInfo():
-    appNamePrefix = "Application name: "
-    builtByPrefix = "Built by: "
-    buildTimePrefix = "Build timestamp: "
-    gitReleasePrefix = "Git release: "
-    gitTimestampPrefix = "Git timestamp: "
-    buildTimestamp = buildTimePrefix + startedAt
-    builtBy = builtByPrefix + "python standalone"
-    appName = appNamePrefix + "wikispeech"
-    gitRelease = gitReleasePrefix + "unknown"
-    gitTimestamp = gitTimestampPrefix + "unknown"
+    res = []
     buildInfoFile = "/wikispeech/.wikispeech_build_info.txt"
     if os.path.isfile(buildInfoFile):
         with open(buildInfoFile) as fp:  
             lines = fp.readlines()
             fp.close()
             for l in lines:
-                l = l.strip()
-                if re.match(appNamePrefix, l):
-                    appName = l
-                elif re.match(builtByPrefix, l):
-                    builtBy = l
-                elif re.match(buildTimePrefix, l):
-                    buildTimestamp = l
-                elif re.match(gitReleasePrefix, l):
-                    gitRelease = l
-                elif re.match(gitTimestampPrefix, l):
-                    gitTimestamp = l
+                res.append(l.strip())
+                    
+    else:
+        res.append("Application name: wikispeech")
+        res.append("Build timestamp: n/a")
+        res.append("Built by: user")
 
-    if ": unknown" in gitRelease: 
         try:
             out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
-            gitRelease = (gitReleasePrefix + " %s") % out
+            res.append(("Git release: %s") % out)
         except:
             log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
-    if ": unknown" in gitTimestamp: 
-        try:
-            out = subprocess.check_output(["git", "log", "-1", "--pretty=format:%ai %h"]).decode("utf-8") 
-            gitTimestamp = (gitTimestampPrefix + " %s") % out
-        except:
-            log.info("couldn't retrieve git timestamp: %s" % sys.exc_info()[1])
+            res.append("Git release: unknown");
 
-    info = VersionInfo(buildTimestamp, builtBy, appName, "Started: " + startedAt, gitRelease, gitTimestamp)
-    return info
+    res.append("Started: " + startedAt)
+    return res
     
-
 
 
 def genStartedAtString():
@@ -180,7 +147,7 @@ vInfo = versionInfo()
 
 @app.route('/version')
 def version():
-    resp = make_response(vInfo.string())
+    resp = make_response("\n".join(vInfo))
     resp.headers["Content-type"] = "text/plain"
     return resp
     
@@ -255,7 +222,7 @@ def wikispeech():
     supported_languages = getSupportedLanguages()
 
     if not lang or not input:
-        return render_template("usage.html", server=hostname, languages=supported_languages, vInfo = vInfo)
+        return render_template("usage.html", server=hostname, languages=supported_languages)
 
     if lang not in supported_languages:
         return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
