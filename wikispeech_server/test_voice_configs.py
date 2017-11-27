@@ -11,7 +11,8 @@ import wikispeech_server.log as log
 
 log.info("RUNNING VOICE CONFIG TESTS")
 
-host = "http://localhost:10000/"
+#HB 171127 host = "http://localhost:10000/"
+host = "/"
 test_client = ws.app.test_client()
 
 
