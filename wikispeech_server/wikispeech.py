@@ -29,14 +29,14 @@ import subprocess
 #
 ################
 
-log.debug("\nOPUSENC\n\nChecking that opusenc is installed on your system..")
+log.info("\nOPUSENC\n\nChecking that opusenc is installed on your system..")
 retval = os.system("opusenc -V")
 if retval != 0:
     os.system("opusenc -V")
     log.error("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
     sys.exit(1)
 else:
-    log.debug("opusenc found.\n\nEND OPUSENC\n")
+    log.info("opusenc found.\n\nEND OPUSENC\n")
 
 
 ###############
@@ -46,6 +46,7 @@ else:
 ###############
 
 
+textprocessors = []
 def loadTextprocessor(tp_config):
     try:
         tp = Textprocessor(tp_config)        
@@ -53,22 +54,13 @@ def loadTextprocessor(tp_config):
     except TextprocessorException as e:
         log.warning("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
 
+voices = []
 def loadVoice(voice_config):
     try:
         v = Voice(voice_config)        
         voices.append(v)
     except VoiceException as e:
         log.warning("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))
-
-
-
-
-textprocessors = []
-for tp_config in textprocessor_configs:
-    loadTextprocessor(tp_config)
-voices = []
-for voice_config in voice_configs:
-    loadVoice(voice_config)
 
 
 
@@ -814,7 +806,7 @@ def saveAndConvertAudio(audio_url,presynth=False):
     convertcmd = "opusenc %s %s" % (tmpwav, tmpopus)
     log.debug("convertcmd: %s" % convertcmd)
     if log.log_level != "debug":
-        convertcmd = convertcmd # +" &> /dev/null"
+        convertcmd = "opusenc --quiet %s %s" % (tmpwav, tmpopus)
     retval = os.system(convertcmd)
     if retval != 0:
         log.error("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")

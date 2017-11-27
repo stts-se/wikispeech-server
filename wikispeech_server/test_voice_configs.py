@@ -3,10 +3,11 @@ import json
 if __name__ == "__main__":
     import os
     sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/..")
-    print(sys.path)
+    #print(sys.path)
     
 import wikispeech_server.wikispeech as ws
 import wikispeech_server.log as log
+
 
 log.info("RUNNING VOICE CONFIG TESTS")
 

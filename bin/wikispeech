@@ -6,9 +6,15 @@ import wikispeech_server.wikispeech as ws
 import wikispeech_server.config as config
 
 
-
-
 ws.log.log_level = config.config.get("Server","log_level")
+
+#HB 171127 load calls moved here from wikispeech_server/wikispeech.py
+print("Trying to load textprocessors and voices defined in wikispeech_server/voice_config.py")
+for tp_config in ws.textprocessor_configs:
+    ws.loadTextprocessor(tp_config)
+for voice_config in ws.voice_configs:
+    ws.loadVoice(voice_config)
+
 
 try:
     run_tests = config.config.getboolean("Tests","run_startup_tests")
@@ -16,7 +22,7 @@ except:
     run_tests = False
     
 if run_tests:
-    ws.log.info("RUNNING SELF-TESTS...")
+    print("run_startup_tests set to True.\nRUNNING TESTS...")
 
     try:
         ws.test_config()        
