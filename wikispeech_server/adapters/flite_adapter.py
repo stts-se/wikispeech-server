@@ -29,12 +29,13 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
     segments = infh.read().strip().split(" ")
     infh.close()
     prevword = None
-    prevwordend = "0"
+    prevwordend = 0
     words = []
     addtime = 0
     for segment in segments:
         log.debug(segment)
-        (symbol,endtime,word) = segment.split("|")
+        (symbol,endtime_str,word) = segment.split("|")
+        endtime = float(endtime_str)
         if prevword == "0":
             prevword = "sil"
 
@@ -57,11 +58,11 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
         #pau|1.199|0
 
         if prevword and prevword != "sil" and word != prevword:
-            words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
+            words.append({"orth":prevword, "endtime":prevwordend+addtime} )
 
 
-        if float(endtime) < float(prevwordend):            
-            addtime += float(prevwordend)
+        if endtime < prevwordend:            
+            addtime += prevwordend
             log.debug("New addtime: %f" % addtime)
 
 
@@ -73,7 +74,7 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
     if prevword == "0":
         prevword = "sil"
     if prevword and prevword != "sil" and word != prevword:
-        words.append({"orth":prevword, "endtime":str(float(prevwordend)+addtime)} )
+        words.append({"orth":prevword, "endtime":prevwordend+addtime} )
 
     audio_url = "%s%s/%s" % (hostname, "audio", wavfile_name)
     log.debug("flite_adapter returning audio_url: %s" % audio_url) 
