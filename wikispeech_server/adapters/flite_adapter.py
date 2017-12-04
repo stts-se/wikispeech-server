@@ -1,4 +1,4 @@
-import os, re
+import os, re, io
 import wikispeech_server.log as log
 import wikispeech_server.config as config
 
@@ -14,10 +14,16 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
 
     #send ssml to flite
     tmpdir = config.config.get("Audio settings","audio_tmpdir")
+    ssmlfile_name = "flite_ssml.txt"
     wavfile_name = "flite_out.wav"
     timingfile_name = "flite_out.timing"
-    #outfile = "%s/flite_out" % tmpdir
-    cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s/%s > %s/%s" % (voice, ssml, tmpdir, wavfile_name, tmpdir, timingfile_name)
+
+    ssml_fh = io.open("%s/%s" % (tmpdir,ssmlfile_name),"w",encoding="utf-8")
+    ssml_fh.write(ssml)
+    ssml_fh.close()
+    
+    #cmd = u"./engines/flite -voice %s -psdur -ssml -t '%s' -o %s/%s > %s/%s" % (voice, ssml, tmpdir, wavfile_name, tmpdir, timingfile_name)
+    cmd = u"./engines/flite -voice %s -psdur -ssml -f %s/%s -o %s/%s > %s/%s" % (voice, tmpdir, ssmlfile_name, tmpdir, wavfile_name, tmpdir, timingfile_name)
     log.debug(cmd)
     os.system(cmd)
 
@@ -28,6 +34,7 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
     infh = open(tmpdir+"/"+timingfile_name)
     segments = infh.read().strip().split(" ")
     infh.close()
+    #beginning = True
     prevword = None
     prevwordend = 0
     words = []
@@ -38,7 +45,7 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
         endtime = float(endtime_str)
         if prevword == "0":
             prevword = "sil"
-
+            
        
         #log.debug("prevwordend: %f" % float(prevwordend))
         #log.debug("endtime: %f" % float(endtime))
@@ -57,9 +64,11 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
         #ow|0.934|hello
         #pau|1.199|0
 
-        if prevword and prevword != "sil" and word != prevword:
+        #if prevword and prevword != "sil" and word != prevword:
+        #Add pauses except the first
+        if prevword and word != prevword:
             words.append({"orth":prevword, "endtime":prevwordend+addtime} )
-
+            #beginning = False
 
         if endtime < prevwordend:            
             addtime += prevwordend
@@ -73,9 +82,17 @@ def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:1000
     #last word
     if prevword == "0":
         prevword = "sil"
-    if prevword and prevword != "sil" and word != prevword:
+    #if prevword and prevword != "sil" and word != prevword:
+    #Add final pause
+    if prevword and word != prevword:
         words.append({"orth":prevword, "endtime":prevwordend+addtime} )
 
+
+    #Skip first silence
+    if words[0]["orth"] == "sil":
+        words = words[1:]
+
+        
     audio_url = "%s%s/%s" % (hostname, "audio", wavfile_name)
     log.debug("flite_adapter returning audio_url: %s" % audio_url) 
 
@@ -95,17 +112,32 @@ def utt2ssml(utterance):
                 tokens = phrase["tokens"]
                 for token in tokens:
                     words = token["words"]
-                    for word in words:
-                        orth = word["orth"]
-                        if "trans" in word:
-                            ws_trans = word["trans"]
-                            log.debug("WS_TRANS: %s" % ws_trans)
-                            flite_trans = map2flite(ws_trans)
-                            log.debug("FLITE_TRANS: %s" % flite_trans)
-                            ssml = """<phoneme ph="%s">%s</phoneme>""" % (flite_trans, orth)
-                        else:
-                            ssml = orth
+                    if "mtu" in token:
+                        ws_trans = ""
+                        for word in words:
+                            orth = word["orth"]
+                            if "trans" in word:
+                                ws_trans += word["trans"]
+                        log.debug("WS_TRANS: %s" % ws_trans)
+                        flite_trans = map2flite(ws_trans)
+                        log.debug("FLITE_TRANS: %s" % flite_trans)
+                        ssml = """<phoneme ph="%s">%s</phoneme>""" % (flite_trans, orth)
                         ssml_list.append(ssml)
+                        
+
+                    else:
+                        for word in words:
+                            orth = word["orth"]
+                            if "trans" in word:
+                                ws_trans = word["trans"]
+                                log.debug("WS_TRANS: %s" % ws_trans)
+                                flite_trans = map2flite(ws_trans)
+                                log.debug("FLITE_TRANS: %s" % flite_trans)
+                                ssml = """<phoneme ph="%s">%s</phoneme>""" % (flite_trans, orth)
+                            else:
+                                log.debug("ORTH appended to ssml: %s" % orth)
+                                ssml = orth
+                            ssml_list.append(ssml)
                 if "boundary" in phrase:
                     ssml = "<break/>"
                     ssml_list.append(ssml)
