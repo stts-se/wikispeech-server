@@ -24,8 +24,9 @@ This is a test.
 <p lang="en">
 This is a monkey.
 </p>
+<div>The following example doesn't work right (T178673)</div>
 <p lang="en">
-Bob Dylan
+On May 28 at #105.
 </p>
 <h3>ar</h3>
 <p lang="ar">
@@ -256,14 +257,14 @@ Dom gav en dom om en dom.
 </p>
 
 <!-- arabic ssml doesn't seem to work.. -->
-<!--
+
 <hr>
-<h5>Normal text</h5>
+<h5>Arabic normal text</h5>
 
 <p lang="ar">
 إلى المملكة المغربية
 </p>
-<h5>SSML markup</h5>
+<h5>Arabic SSML markup</h5>
 <p lang="ar" class="ssml">
 <?xml version="1.0" encoding="utf-8"?>
 <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
@@ -272,24 +273,31 @@ Dom gav en dom om en dom.
                    http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
          xml:lang="ar">
   
-  <phoneme alphabet="x-sampa" ph="' i0 - l a">
+  <phoneme alphabet="x-sampa" ph="' i . l a">
 إلى
   </phoneme> 
-  <phoneme alphabet="x-sampa" ph="' a l - m a m - l a - k a"> 
+  <phoneme alphabet="x-sampa" ph="' a l . m a m . l a . k a"> 
 المملكة  
   </phoneme> 
-  <phoneme alphabet="x-sampa" ph="' a l - m a - g r I0 - b ii0 - y a"> 
+  <phoneme alphabet="x-sampa" ph="' a l . m a . g r I . b i: . y a"> 
 المغربية  
   </phoneme>.
 
 </speak>
 
 </p>
--->
+
+<h5>Arabic SSML markup (doesn't work because of > in transcription)</h5>
+<p lang="ar" class="ssml">
+<?xml version="1.0" encoding="utf-8"?>
+<speak xml:lang="ar" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
+<phoneme alphabet="x-sampa" ph="' a l . &gt; a: . n a">' a l . &gt; a: . n a</phoneme>
+</speak>
+</p>
 
 <hr>
 <audio id="audio_player"></audio>
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Fri Nov 17 15:10:15 GMT 2017 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Tue Dec  5 13:11:14 GMT 2017 <!-- hhmts end -->
 </body> </html>

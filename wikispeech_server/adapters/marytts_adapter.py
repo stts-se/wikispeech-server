@@ -262,9 +262,12 @@ def synthesise_json(lang,voice,input):
 
 #Called from marytts_preproc
 def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
-    phoneme_elements = re.findall("(<phoneme [^>]+>)", ssml)
+    #cause of T180337 (synthesis fails on transcriptions containing ">")
+    #phoneme_elements = re.findall("(<phoneme [^>]+>)", ssml)
+    #.+? means shortest match
+    phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
     for element in phoneme_elements:
-        #log.debug(element)
+        log.debug(element)
         trans = re.findall("ph=\"(.+)\">", element)[0]
         log.debug("ws_trans: %s" % trans)
         mary_trans = mapperMapToMary(trans.replace("&quot;","\""), lang, tp_config)
