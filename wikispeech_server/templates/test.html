@@ -279,7 +279,7 @@ Dom gav en dom om en dom.
   <phoneme alphabet="x-sampa" ph="' a l . m a m . l a . k a"> 
 المملكة  
   </phoneme> 
-  <phoneme alphabet="x-sampa" ph="' a l . m a . g r I . b i: . y a"> 
+  <phoneme alphabet="x-sampa" ph="' a l . m a . G r I . b i: . y a"> 
 المغربية  
   </phoneme>.
 
@@ -287,17 +287,24 @@ Dom gav en dom om en dom.
 
 </p>
 
-<h5>Arabic SSML markup (doesn't work because of > in transcription)</h5>
+<h5>Arabic SSML markup (test to see that glottal stop ">" works)</h5>
 <p lang="ar" class="ssml">
 <?xml version="1.0" encoding="utf-8"?>
 <speak xml:lang="ar" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
-<phoneme alphabet="x-sampa" ph="' a l . &gt; a: . n a">' a l . &gt; a: . n a</phoneme>
+<phoneme alphabet="x-sampa" ph="' a l . &gt; a: . n a">الآن</phoneme>
 </speak>
+</p>
+
+<h5>Arabic text that doesn't work right in workflow demo</h5>
+<p lang="ar">
+
+الموسوعة الحرة التي يستطيع الجميع تحريرها. توجد الآن 520,523 مقالة بالعربية.
+
 </p>
 
 <hr>
 <audio id="audio_player"></audio>
 <hr>
 <address></address>
-<!-- hhmts start -->Last modified: Tue Dec  5 13:11:14 GMT 2017 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Wed Dec  6 16:58:11 GMT 2017 <!-- hhmts end -->
 </body> </html>

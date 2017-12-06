@@ -272,7 +272,13 @@ def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
         log.debug("ws_trans: %s" % trans)
         mary_trans = mapperMapToMary(trans.replace("&quot;","\""), lang, tp_config)
         log.debug("mary_trans: %s" % mary_trans)
-        ssml = re.sub(trans, mary_trans.replace("\"", "&quot;"), ssml)
+        mary_trans = mary_trans.replace("\"", "&quot;")
+        mary_trans = mary_trans.replace("<", "&lt;")
+        log.debug("mary_trans(2): %s" % mary_trans)
+
+        ssml = re.sub(trans, mary_trans, ssml)
+
+
     #log.debug("MAPPED SSML: %s" % ssml)
     return ssml
 
