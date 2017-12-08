@@ -350,13 +350,15 @@ def maryxml2tokensET(maryxmlstring):
                         #endtime_seconds = endtime/1000.0
                         #token = (orth,endtime_seconds)
                     elif child.tag == "{http://mary.dfki.de/2002/MaryXML}mtu":
+                        log.debug("Found mtu token")
                         log.debug(child.attrib)
                         #The expanded words of the mtu
                         expanded = "".join(child.itertext()).strip()
+                        log.debug("expanded: %s" % expanded)
                         #The original orthography
                         #TODO return both
                         orth = child.attrib["orig"]
-                        log.debug("ORTH: %s" % orth)
+                        log.debug("orig orth: %s" % orth)
                         tokendur = 0
                         for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
                             #log.debug ph.attrib
@@ -664,7 +666,7 @@ def dropHeader(maryxml):
 #Called from utt2maryxml
 def ws2mary(utterance, voice):
 
-    #log.debug(utterance)
+    log.debug("Input utterance to ws2mary: %s" % utterance)
     
     lang = utterance["lang"]
 
@@ -723,7 +725,10 @@ def ws2mary(utterance, voice):
                         #HB 171109 Arabic token and word orths can differ if word has been vocalised.
                         #Does it matter at all for any other?
                         if lang == "ar":
-                            token_element.text = token["token_orth"]
+                            if "mtu" in token and token["mtu"] == True:
+                                token_element.text = word["orth"]
+                            else:
+                                token_element.text = token["token_orth"]
                         else:
                             token_element.text = word["orth"]
 
