@@ -72,7 +72,7 @@ started in https://github.com/stts-se/wikispeech_mockup/wiki
 
 ## Apache setup:
 
-#### 1. (required)
+#### 1. (optional - for access through apache)
 Link the audio file directory in ```<webroot>```, as defined in default.conf or your local configuration file:
 ```
 $ cd <webroot>; sudo ln -s <audio_tmpdir> <audio_url_prefix>
