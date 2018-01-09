@@ -4,6 +4,8 @@
 
 ## Prerequisites:
 ```
+git clone https://github.com/stts-se/wikispeech_mockup.git
+cd wikispeech_mockup
 sudo apt install opus-tools python3-pip
 sudo pip3 install -r requirements.txt
 
