@@ -149,6 +149,12 @@ def synthesise(lang,voice,input, presynth=False, hostname=None):
         return synthesise_default(lang,voice,input)
 
 
+#HB 180109
+#As a way of testing for the marytts out of memory error,
+#set this to false to not get output_tokens from marytts
+#If this works without causing marytts error, it's an indication of where the problem lies..
+getOutputTokens = True
+
 
 def synthesise_default(lang,voice,input):
 
@@ -166,30 +172,32 @@ def synthesise_default(lang,voice,input):
     maryxml = utt2maryxml(xmllang, input, voice)
     log.debug("MARYXML: %s" % maryxml)
      
+    #HB 180109 TEST
+    if getOutputTokens:
+        params = {
+            "INPUT_TYPE":"INTONATION",
+            #"INPUT_TYPE":"ALLOPHONES",
+            "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
+            "LOCALE":locale,
+            "VOICE":voice["name"],
+            "INPUT_TEXT":maryxml
+        }
+        r = requests.post(marytts_url,params=params)
 
-    params = {
-        "INPUT_TYPE":"INTONATION",
-        #"INPUT_TYPE":"ALLOPHONES",
-        "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
-        "LOCALE":locale,
-        "VOICE":voice["name"],
-        "INPUT_TEXT":maryxml
-    }
-    r = requests.post(marytts_url,params=params)
+        log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
 
-    log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
+        xml = r.text.encode("utf-8")
 
-    xml = r.text.encode("utf-8")
+        log.debug("REPLY: %s" % xml)
 
-    log.debug("REPLY: %s" % xml)
-
-    #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
-    r.raise_for_status()
+        #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
+        r.raise_for_status()
 
 
 
-    output_tokens = maryxml2tokensET(xml)
-
+        output_tokens = maryxml2tokensET(xml)
+    else:
+        output_tokens = []
 
 
     params = {
