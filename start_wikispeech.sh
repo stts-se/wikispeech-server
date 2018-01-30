@@ -22,6 +22,7 @@ if [ $# -eq 0 ]; then
 	echo -n ""
     else
 	echo "No gitrepos folder found in default location!"
+	printUsage
 	exit 1
     fi
     
@@ -30,6 +31,7 @@ if [ $# -eq 0 ]; then
 	echo -n ""
     else
 	echo "No pronlex folder found in default location!"
+	printUsage
 	exit 1
     fi
 elif [ $# -eq 2 ]; then
