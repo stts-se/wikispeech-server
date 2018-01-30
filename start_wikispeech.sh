@@ -1,19 +1,47 @@
-gitrepos=`ls -d $HOME/git* $HOME/private/git* 2> >(grep -v 'No such file' >&2) | egrep "(git|git_repos|gitrepos)$" | head -1`
-if [ $gitrepos ]; then
-    echo "gitrepos folder: $gitrepos"
+CMD=`basename $0`
+
+printUsage() {
+    echo "Usage:" 2>&1
+    echo "  $ $CMD <gitroot> <pronlex>" 2>&1
+    echo "    <gitroot> - root folder for git repositories mishkal, marytts and wikispeech_mockup (default \$HOME/gitrepos or \$HOME/git_repos or \$HOME/git)" 2>&1
+    echo "    <pronlex> - location of the pronlex git repository (default \$HOME/go/src/github.com/stts-se/pronlex or <gitroot>pronlex)" 2>&1
+}
+
+while getopts "h" opt; do
+    case $opt in
+    h) printUsage && exit 1;;
+    \?) ERR=1 && echo "" 2>&1
+    esac
+done
+
+shift $(( OPTIND - 1 ))
+
+if [ $# -eq 0 ]; then
+    gitrepos=`ls -d $HOME/git* 2> >(grep -v 'No such file' >&2) | egrep "(git|git_repos|gitrepos)$" | head -1`
+    if [ $gitrepos ] && [ -d $gitrepos ]; then
+	echo -n ""
+    else
+	echo "No gitrepos folder found in default location!"
+	exit 1
+    fi
+    
+    pronlex=`ls -d ~/go/src/github.com/stts-se/pronlex $gitrepos/pronlex 2> >(grep -v 'No such file' >&2) | egrep pronlex$`
+    if [ $pronlex ] && [ -d $pronlex ]; then
+	echo -n ""
+    else
+	echo "No pronlex folder found in default location!"
+	exit 1
+    fi
+elif [ $# -eq 2 ]; then
+    gitrepos=$1
+    pronlex=$2
 else
-    echo "No gitrepos folder found!"
+    echo "[$CMD] invalid arguments: $*" 2>&1
+    printUsage
     exit 1
 fi
 
-pronlex=`ls -d $gitrepos/pronlex ~/go/src/github.com/stts-se/pronlex 2> >(grep -v 'No such file' >&2) | egrep pronlex$`
-
-if [ $pronlex ]; then
-    echo -n ""
-else
-    echo "No pronlex folder found!"
-    exit 1
-fi
+echo "gitrepos folder: $gitrepos"
 echo "pronlex folder: $pronlex"
 
 echo "starting pronlex"
