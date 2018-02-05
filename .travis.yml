@@ -19,7 +19,7 @@ install:
 # command to run tests
 script:
  - docker build https://github.com/stts-se/pronlex.git -t pronlex
- - docker build https://github.com/HannaLindgren/marytts.git -t marytts
+ - docker build https://github.com/stts-se/marytts.git -t marytts
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/bin/setup /appdir
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
