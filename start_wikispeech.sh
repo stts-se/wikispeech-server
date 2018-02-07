@@ -4,7 +4,7 @@ printUsage() {
     echo "Usage:" 2>&1
     echo "  $ $CMD <gitroot> <pronlex>" 2>&1
     echo "    <gitroot> - root folder for git repositories mishkal, marytts and wikispeech_mockup (default \$HOME/gitrepos or \$HOME/git_repos or \$HOME/git)" 2>&1
-    echo "    <pronlex> - location of the pronlex git repository (default \$HOME/go/src/github.com/stts-se/pronlex or <gitroot>pronlex)" 2>&1
+    echo "    <pronlex> - location of the pronlex git repository (default \$HOME/go/src/github.com/stts-se/pronlex or <gitroot>/pronlex)" 2>&1
 }
 
 while getopts "h" opt; do
