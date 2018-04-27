@@ -47,7 +47,7 @@ echo "gitrepos folder: $gitrepos"
 echo "pronlex folder: $pronlex"
 
 echo "starting pronlex"
-cd $pronlex/ && nohup bash install/start_server.sh ~/wikispeech/standalone &> pronlex.log &
+cd $pronlex/ && nohup bash install/start_server.sh -a ~/wikispeech/standalone &> pronlex.log &
 
 echo "starting mishkal"
 cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &> mishkal.log &
