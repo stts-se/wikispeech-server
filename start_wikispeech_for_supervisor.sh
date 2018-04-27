@@ -7,7 +7,7 @@ do
 done  
 echo ""
 
-if sh clear_audio_cache.sh wikispeech_server/hanna-morf2010.conf; then
+if sh clear_audio_cache.sh -q wikispeech_server/hanna-morf2010.conf; then
     python3 bin/wikispeech
 else
     echo "Couldn't clear audio cache!" 1>&2
