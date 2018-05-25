@@ -1,4 +1,4 @@
-processNames="pronlex|wikispeech|marytts|mishkal"
+processNames="pronlex|wikispeech|marytts|tts_server|mishkal"
 cmd=`basename $0`
 
 #ps --sort pid -eo "%p	%a" -A | egrep "$processNames" | sed 's/-cp .*//' | egrep -v "grep .E" | egrep -v "$cmd" | sed 's/  */\t/g' | sed 's/\t/¤/g'
