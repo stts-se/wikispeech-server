@@ -1,4 +1,4 @@
-import re, requests
+import re, requests, os
 
 import wikispeech_server.log as log
 import wikispeech_server.config as config
@@ -49,6 +49,23 @@ class Voice(object):
                 raise VoiceException(msg)
             else:
                 log.info("Voice found at url %s" % url)
+        elif self.engine == "ahotts":
+            cwdir = os.getcwd()
+            tmpdir = config.config.get("Audio settings","audio_tmpdir")
+            ahotts_dir = config.config.get("Services", "ahotts_dir")
+            ahotts_server_ip = config.config.get("Services", "ahotts_server_ip")
+            ahotts_server_port = config.config.get("Services", "ahotts_server_port")
+            ahotts_command = "cd %s/bin; echo \"Hasierako proba\" > ahotts_test.txt; ./tts_client -IP=%s -Port=%s -InputFile=ahotts_test.txt -OutputFile=ahotts_test.wav ; mv ahotts_test.wav %s/%s/ahotts_test.wav ; rm ahotts_test.txt" % (ahotts_dir, ahotts_server_ip, ahotts_server_port, cwdir, tmpdir)
+            os.system(ahotts_command)
+            try:
+                wavfile=open('%s/%s/ahotts_test.wav'%(cwdir, tmpdir),'r')
+                wavfile.close()
+                os.remove('%s/%s/ahotts_test.wav'%(cwdir, tmpdir))
+            except:
+                msg = "AhoTTS server not found at IP %s and Port %s" % (ahotts_server_ip,ahotts_server_port)
+                log.error(msg)
+                raise VoiceException(msg)
+            
 
     def getMaryttsVoicenames(self, response):
         names = []
