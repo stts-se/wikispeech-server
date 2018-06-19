@@ -249,14 +249,15 @@ voice_configs = [
     }
     ,
 
-    # TEST BASQUE
-    # {
-    #     "lang":"eu",
-    #     "name":"ahotts",
-    #     "engine":"ahotts",
-    #     "adapter":"adapters.ahotts_adapter"
-    # }
-    # ,
+    #BASQUE
+
+    {
+        "lang":"eu",
+        "name":"ahotts-eu-female",
+        "engine":"ahotts",
+        "adapter":"adapters.ahotts_adapter"
+    }
+    ,
 
 
 

@@ -436,8 +436,9 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
         #TODO clean this up to always use process(utt)
         if component_name == "tokenise":
-            utt = process(text)
+            utt = process(text,lang=lang)
             utt["lang"] = lang
+            utt["original_text"] = text
             #Simple mechanism to do only tokenisation
             #Build on this to do partial processing in other ways
             if getParam("process", "none") == "tokenise":

@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 import re, json, sys
 
-
+import wikispeech_server.log as log
 
 test1 = """
 Token1 token2, token3 token4. Token5 token6. Xxx yyy.
@@ -34,11 +34,11 @@ Token9.
 
 end_paragraph = "</p>|\n\n"
 #Svårt att läsa med positive lookbehind och lookahead, men det fungerar
-end_sentence = "</s>|(?<=[.?!:]) (?=[A-ZÅÄÖ0-9])"
-end_phrase = "</phrase>|(?<=[(),;-]) "
+end_sentence = "</s>|(?<=[.?!:]) (?=[A-ZÑÅÄÁÉÍÓÚ0-9])"
+end_phrase = "</phrase>|(?<=[),;-]) | (?=[(])"
 
 end_token = "</token>| "
-punctuation = "[(),;.?!-]"
+punctuation = "[(),;.¿?¡!-]"
 
 
 
@@ -145,7 +145,7 @@ def tokeniseOLD(text, add_text=False):
     return utt
 
 
-def tokenise(text, add_text=False):
+def tokenise(text, add_text=False, lang='en'):
     text = text.strip()
     pars = re.split(end_paragraph, text)
     paragraphs = []
@@ -183,6 +183,8 @@ def tokenise(text, add_text=False):
 
         paragraphs.append(p)
 
+        if lang=='eu':
+            end_sentence = "</s>|(?<=[?!:]) (?=[A-ZÑÅÄÁÉÍÓÚ0-9])"
         sents = re.split(end_sentence,par)                            
         
         for sent in sents:

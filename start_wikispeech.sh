@@ -3,7 +3,7 @@ CMD=`basename $0`
 printUsage() {
     echo "Usage:" 2>&1
     echo "  $ $CMD <gitroot> <pronlex>" 2>&1
-    echo "    <gitroot> - root folder for git repositories mishkal, marytts and wikispeech_mockup (default \$HOME/gitrepos or \$HOME/git_repos or \$HOME/git)" 2>&1
+    echo "    <gitroot> - root folder for git repositories mishkal, marytts, ahotts and wikispeech_mockup (default \$HOME/gitrepos or \$HOME/git_repos or \$HOME/git)" 2>&1
     echo "    <pronlex> - location of the pronlex git repository (default \$HOME/go/src/github.com/stts-se/pronlex or <gitroot>/pronlex)" 2>&1
 }
 
@@ -54,6 +54,9 @@ cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &> mis
 
 echo "starting marytts"
 cd $gitrepos/marytts && nohup ./gradlew run &> marytts.log &
+
+echo "starting ahotts"
+cd $gitrepos/ahotts && nohup bin/tts_server -IP=127.0.0.1 -Port=1200 &> ahotts.log &
 
 echo "clearing wikispeech audio cache"
 cd $gitrepos/wikispeech_mockup && bash clear_audio_cache.sh -q || exit 1
