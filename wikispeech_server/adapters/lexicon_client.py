@@ -151,12 +151,24 @@ class Lexicon(object):
 
 
     def test(self):
-        url = "%s/%s?lexicons=%s" % (self.base_url, "lookup", self.lexicon_name)
+        url = "%s/list" % self.base_url
         log.debug("LEXICON URL: %s" % url)
+        print("LEXICON URL: %s" % url)
         try:
             r = requests.get(url)
             response = r.text
             response_json = json.loads(response)
+            print(response_json)
+            exists = False
+            print(response_json)
+            for lex in response_json:
+                if lex['name'] == self.lexicon_name:
+                    exists = True
+            if not exists:
+                msg = "Lexicon does not exist: %s" % (self.lexicon_name)
+                log.error(msg)
+                raise LexiconException(msg)
+                
         except json.JSONDecodeError:
             msg = "Unable to create lexicon client for %s. Response was: %s" % (self.lexicon_name, response)
             log.error(msg)
