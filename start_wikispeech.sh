@@ -56,7 +56,7 @@ echo "starting marytts"
 cd $gitrepos/marytts && nohup ./gradlew run &> marytts.log &
 
 echo "starting ahotts"
-cd $gitrepos/ahotts && nohup bin/tts_server -IP=127.0.0.1 -Port=1200 &> ahotts.log &
+cd $gitrepos/AhoTTS-eu-Wikispeech && nohup bin/tts_server -IP=127.0.0.1 -Port=1200 &> ahotts.log &
 
 echo "clearing wikispeech audio cache"
 cd $gitrepos/wikispeech_mockup && bash clear_audio_cache.sh -q || exit 1
@@ -75,4 +75,4 @@ cd $gitrepos/wikispeech_mockup && nohup python3 bin/wikispeech &> wikispeech.log
 
 echo ""
 echo "check log files for process details"
-echo " - in each git folder : pronlex.log / mishkal.log / marytts.log / wikispeech.log"
+echo " - in each git folder : pronlex.log / mishkal.log / marytts.log / ahotts.log / wikispeech.log"
