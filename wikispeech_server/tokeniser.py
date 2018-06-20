@@ -185,6 +185,8 @@ def tokenise(text, add_text=False, lang='en'):
 
         if lang=='eu':
             end_sentence = "</s>|(?<=[?!:]) (?=[A-ZÑÅÄÁÉÍÓÚ0-9])"
+        else:
+            end_sentence = "</s>|(?<=[.?!:]) (?=[A-ZÑÅÄÁÉÍÓÚ0-9])"
         sents = re.split(end_sentence,par)                            
         
         for sent in sents:
