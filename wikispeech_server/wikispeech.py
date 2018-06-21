@@ -99,7 +99,7 @@ def ping():
 
 def versionInfo():
     res = []
-    buildInfoFile = "/wikispeech/.wikispeech_build_info.txt"
+    buildInfoFile = "/wikispeech/wikispeech_server/build_info.txt"
     if os.path.isfile(buildInfoFile):
         with open(buildInfoFile) as fp:  
             lines = fp.readlines()
@@ -114,10 +114,10 @@ def versionInfo():
 
         try:
             out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
-            res.append(("Git release: %s") % out)
+            res.append(("Release: %s") % out)
         except:
             log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
-            res.append("Git release: unknown");
+            res.append("Release: unknown");
 
     res.append("Started: " + startedAt)
     return res

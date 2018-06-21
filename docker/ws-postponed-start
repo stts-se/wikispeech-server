@@ -4,7 +4,7 @@ CMD=`basename $0`
 
 TIMEOUT=600
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
     echo "USAGE: bash $CMD <dependency servers>" >&2
     echo "EXAMPLE: bash $CMD localhost:8787 localhost:59125 localhost:1200" >&2   
     exit 1

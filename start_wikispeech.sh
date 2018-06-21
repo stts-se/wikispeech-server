@@ -61,6 +61,7 @@ cd $gitrepos/AhoTTS-eu-Wikispeech && nohup bin/tts_server -IP=127.0.0.1 -Port=12
 echo "clearing wikispeech audio cache"
 cd $gitrepos/wikispeech_mockup && bash clear_audio_cache.sh -q || exit 1
 
+exit 0
 sleep=60
 echo "waiting $sleep secs before starting main wikispeech server"
 for i in `seq 1 $sleep`;
