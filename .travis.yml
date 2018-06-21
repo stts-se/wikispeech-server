@@ -7,6 +7,11 @@ before_install:
  # fail on any non-zero exit value
  - set -e
 
+notifications:
+  slack:
+    on_success: change
+    on_failure: change
+
 env:
  - RELEASE="docker_update"
 
