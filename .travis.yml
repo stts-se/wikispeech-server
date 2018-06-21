@@ -24,6 +24,7 @@ install:
 
 # command to run tests
 script:
+ - cd /
  - set -e
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis /wikispeech/pronlex/bin/setup /appdir
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis &
