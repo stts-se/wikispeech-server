@@ -17,7 +17,7 @@ install:
  - pip install -r requirements.txt
  - cd .travis
  - docker build https://github.com/stts-se/pronlex.git#docker_update -t pronlex:travis --build-arg RELEASE=docker_update
- - docker build https://github.com/stts-se/marytts.git#$docker_update -t marytts:travis --build-arg RELEASE=docker_update
+ - docker build https://github.com/stts-se/marytts.git#docker_update -t marytts:travis --build-arg RELEASE=docker_update
 
 # command to run tests
 script:
