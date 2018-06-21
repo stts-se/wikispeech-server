@@ -18,13 +18,11 @@ env:
 install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
- - cd .travis
  - docker build https://github.com/stts-se/pronlex.git#$RELEASE -t pronlex:travis --build-arg RELEASE=$RELEASE
  - docker build https://github.com/stts-se/marytts.git#$RELEASE -t marytts:travis --build-arg RELEASE=$RELEASE
 
 # command to run tests
 script:
- - cd /
  - set -e
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis /wikispeech/pronlex/bin/setup /appdir
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis &
