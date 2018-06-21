@@ -15,32 +15,50 @@ before_install:
 install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
+ - cd .travis
+ - echo "pronlex building from  $TRAVIS_BRANCH"
+ - docker build https://github.com/stts-se/pronlex.git#$TRAVIS_BRANCH -t pronlex:travis --build-arg RELEASE=$TRAVIS_BRANCH
+ - unset -e
+ - |
+   if [ $? -eq 0 ]; then
+      echo "pronlex branch $TRAVIS_BRANCH"
+   else
+      set -e
+      echo "pronlex building from master"
+      docker build https://github.com/stts-se/pronlex.git -t pronlex:travis --build-arg RELEASE=$TRAVIS_BRANCH
+      echo "pronlex branch master"
+      unset -e
+   fi
+  - echo "marytts building from  $TRAVIS_BRANCH"
+  - docker build https://github.com/stts-se/marytts.git#$TRAVIS_BRANCH -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
+  - |
+    if [ $? -eq 0 ]; then
+      echo "marytts branch $TRAVIS_BRANCH"
+    else
+      set -e
+      echo "marytts building from master"
+      docker build https://github.com/stts-se/marytts.git -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
+      echo "marytts branch master"
+      unset -e
+    fi
 
 # command to run tests
- - cd .travis
 script:
- - |
-   if [ ! docker build git://github.com/stts-se/pronlex.git:$TRAVIS_BRANCH -t pronlex ]; then
-      docker build https://github.com/stts-se/pronlex.git -t pronlex
-   fi
-# - |
-#   if [ ! docker build git://github.com/stts-se/marytts.git:$TRAVIS_BRANCH -t pronlex ]; then
-#      docker build https://github.com/stts-se/marytts.git -t pronlex
-#   fi
- - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
- - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
+ - set -e
+ - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis /wikispeech/pronlex/bin/setup /appdir
+ - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis &
  - export pronlex_pid=$!
- - echo "pronlex running on pid $pronlex_pid"
+ - echo "pronlex running with pid $pronlex_pid"
  - sleep 20
- - docker run -p 59125:59125 -t marytts &
+ - docker run -p 59125:59125 -t marytts:travis &
  - export marytts_pid=$!
- - echo "marytts running on pid $marytts_pid"
+ - echo "marytts running with pid $marytts_pid"
  - sleep 20
  - python3 bin/wikispeech docker/config/travis.conf &
  - export wikispeech_pid=$!  
- - echo "wikispeech running on pid $wikispeech_pid"
+ - echo "wikispeech running with pid $wikispeech_pid"
  - sleep 20
  - sh exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
  - sh exit_server_and_fail_if_not_running.sh marytts $marytts_pid
  - sh exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
- 
+ - 
