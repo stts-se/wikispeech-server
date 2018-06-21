@@ -61,5 +61,4 @@ script:
  - sh exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
  - sh exit_server_and_fail_if_not_running.sh marytts $marytts_pid
  - sh exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
- - 
 
