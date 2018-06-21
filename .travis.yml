@@ -18,12 +18,11 @@ install:
 
 # command to run tests
 script:
- - echo $TRAVIS_BRANCH
- # - export BRANCH=`git rev-parse --abbrev-ref HEAD` ## use same branch/tag if it exists, otherwise master
  - |
    if [ ! docker build git://github.com/stts-se/pronlex.git:$TRAVIS_BRANCH -t pronlex ]; then
       docker build git://github.com/stts-se/pronlex.git -t pronlex
    fi
+ - |
    if [ ! docker build git://github.com/stts-se/marytts.git:$TRAVIS_BRANCH -t pronlex ]; then
       docker build git://github.com/stts-se/marytts.git -t pronlex
    fi
