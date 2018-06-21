@@ -113,10 +113,13 @@ def versionInfo():
         res.append("Built by: user")
 
         try:
-            out = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
-            res.append(("Release: %s") % out)
+            tag = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
+            branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("utf-8").strip()
+            print(tag)
+            print(branch)
+            res.append( ("Release: %s on branch %s") % (tag, branch) )
         except:
-            log.info("couldn't retrieve git release info: %s" % sys.exc_info()[1])
+            log.warning("couldn't retrieve git release info: %s" % sys.exc_info()[1])
             res.append("Release: unknown");
 
     res.append("Started: " + startedAt)
