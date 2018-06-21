@@ -16,7 +16,7 @@ install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
  - cd .travis
- - echo "pronlex building from  $TRAVIS_BRANCH"
+ - echo "pronlex building from $TRAVIS_BRANCH"
  - docker build https://github.com/stts-se/pronlex.git#$TRAVIS_BRANCH -t pronlex:travis --build-arg RELEASE=$TRAVIS_BRANCH
  - unset -e
  - |
@@ -29,7 +29,7 @@ install:
       echo "pronlex branch master"
       unset -e
    fi
-  - echo "marytts building from  $TRAVIS_BRANCH"
+  - echo "marytts building from $TRAVIS_BRANCH"
   - docker build https://github.com/stts-se/marytts.git#$TRAVIS_BRANCH -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
   - |
     if [ $? -eq 0 ]; then
@@ -62,3 +62,4 @@ script:
  - sh exit_server_and_fail_if_not_running.sh marytts $marytts_pid
  - sh exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
  - 
+
