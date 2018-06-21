@@ -51,7 +51,7 @@ done
 
 echo "[$CMD] All required servers up and running, starting wikispeech" 2>&1
 
-wsroot="/wikispeech/wikispeech_mockup"
+wsroot="/wikispeech/wikispeech_server"
 if cd $wsroot ; then
     python3 bin/wikispeech docker/config/docker-compose.conf
     res=$?
