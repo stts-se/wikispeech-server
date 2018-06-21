@@ -39,7 +39,7 @@ install:
      echo "marytts building from master"
      docker build https://github.com/stts-se/marytts.git -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
      echo "marytts branch master"
-     unset -e
+     set +e
    fi
 
 # command to run tests
