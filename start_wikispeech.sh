@@ -1,3 +1,7 @@
+#!/bash
+
+set -e
+
 CMD=`basename $0`
 
 printUsage() {
@@ -55,13 +59,14 @@ cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &> mis
 echo "starting marytts"
 cd $gitrepos/marytts && nohup ./gradlew run &> marytts.log &
 
-echo "starting ahotts"
-cd $gitrepos/AhoTTS-eu-Wikispeech && nohup bin/tts_server -IP=127.0.0.1 -Port=1200 &> ahotts.log &
+#echo "starting ahotts"
+#cd $gitrepos/AhoTTS-eu-Wikispeech && nohup bin/tts_server -IP=127.0.0.1 -Port=1200 &> ahotts.log &
+
+# echo "TESTING | not starting wikispeech" && exit 0
 
 echo "clearing wikispeech audio cache"
 cd $gitrepos/wikispeech_mockup && bash clear_audio_cache.sh -q || exit 1
 
-exit 0
 sleep=60
 echo "waiting $sleep secs before starting main wikispeech server"
 for i in `seq 1 $sleep`;
@@ -76,4 +81,5 @@ cd $gitrepos/wikispeech_mockup && nohup python3 bin/wikispeech &> wikispeech.log
 
 echo ""
 echo "check log files for process details"
-echo " - in each git folder : pronlex.log / mishkal.log / marytts.log / ahotts.log / wikispeech.log"
+#echo " - in each git folder : pronlex.log / mishkal.log / marytts.log / ahotts.log / wikispeech.log"
+echo " - in each git folder : pronlex.log / mishkal.log / marytts.log / wikispeech.log"

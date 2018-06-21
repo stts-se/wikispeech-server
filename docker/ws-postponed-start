@@ -11,6 +11,7 @@ if [ $# -lt 1 ]; then
 fi
 
 for s in $*; do
+    found=0
     host=`echo $s|cut -f1 -d:`
     port=`echo $s|cut -f2 -d:`
 
@@ -28,20 +29,21 @@ for s in $*; do
 	
 	if [ $res -eq 0 ]; then
 	    echo "[$CMD] Service dependency up and running: $s" 2>&1
+	    found=1
 	    exitcode=0
 	    break
-	#elif [ $res -eq 56 ]; then
-	#    curl $s
-	#    echo "[$CMD] Service dependency failed (error code $res): $s" 2>&1
-	#    exitcode=1
-	#    exit 1
 	else
+	    exitcode=$?
 	    curl $s # repeat to get error msg		
 	fi
 	sleep 5
     done
-    if [ $exitcode -eq 1 ]; then
-       echo "[$CMD] Service dependency failed: $s" 2>&1
+    if [ $exitcode -ne 0 ]; then
+       echo "[$CMD] Service dependency failed (exitcode $exitcode) $s" 2>&1
+       exit 1
+    fi
+    if [ $found -ne 1 ]; then
+       echo "[$CMD] Service dependency failed (timeout): $s" 2>&1
        exit 1
     fi
 done

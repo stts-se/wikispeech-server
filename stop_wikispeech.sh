@@ -1,3 +1,5 @@
+#!/bash
+
 processNames="pronlex|wikispeech|marytts|tts_server|mishkal"
 cmd=`basename $0`
 
