@@ -16,33 +16,8 @@ install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
  - cd .travis
- - export BRANCH=docker_update
- - echo "pronlex building from $BRANCH"
- - docker build https://github.com/stts-se/pronlex.git#$BRANCH -t pronlex:travis --build-arg RELEASE=$BRANCH
- - set +e
- - |
-   if [ $? -eq 0 ]; then
-      echo "pronlex branch $BRANCH"
-   else
-      set -e
-      echo "pronlex building from master"
-      docker build https://github.com/stts-se/pronlex.git -t pronlex:travis --build-arg RELEASE=$BRANCH
-      echo "pronlex branch master"
-      set +e
-   fi
- - echo "marytts building from $BRANCH"
- - docker build https://github.com/stts-se/marytts.git#$BRANCH -t marytts:travis --build-arg RELEASE=$BRANCH
- - |
-   if [ $? -eq 0 ]; then
-     echo "marytts branch $BRANCH"
-   else
-     set -e
-     echo "marytts building from master"
-     docker build https://github.com/stts-se/marytts.git -t marytts:travis --build-arg RELEASE=$BRANCH
-     echo "marytts branch master"
-     set +e
-   fi
-   cd /
+ - docker build https://github.com/stts-se/pronlex.git#docker_update -t pronlex:travis --build-arg RELEASE=docker_update
+ - docker build https://github.com/stts-se/marytts.git#$docker_update -t marytts:travis --build-arg RELEASE=docker_update
 
 # command to run tests
 script:
