@@ -33,17 +33,19 @@ for s in $*; do
 	    exitcode=0
 	    break
 	else
-	    exitcode=$?
-	    curl $s # repeat to get error msg		
+	    exit=$?
+	    exitcode=1
+	    #curl $s # repeat to get error msg		
+	    echo "[$CMD] Service dependency failed (exitcode $exit): $s" 2>&1
 	fi
 	sleep 5
     done
-    if [ $exitcode -ne 0 ]; then
-       echo "[$CMD] Service dependency failed (exitcode $exitcode) $s" 2>&1
-       exit 1
-    fi
     if [ $found -ne 1 ]; then
        echo "[$CMD] Service dependency failed (timeout): $s" 2>&1
+       exit 1
+    fi
+    if [ $exitcode -ne 0 ]; then
+       echo "[$CMD] Service dependency failed: $s" 2>&1
        exit 1
     fi
 done
