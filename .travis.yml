@@ -29,18 +29,18 @@ install:
       echo "pronlex branch master"
       unset -e
    fi
-  - echo "marytts building from $TRAVIS_BRANCH"
-  - docker build https://github.com/stts-se/marytts.git#$TRAVIS_BRANCH -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
-  - |
-    if [ $? -eq 0 ]; then
-      echo "marytts branch $TRAVIS_BRANCH"
-    else
-      set -e
-      echo "marytts building from master"
-      docker build https://github.com/stts-se/marytts.git -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
-      echo "marytts branch master"
-      unset -e
-    fi
+ - echo "marytts building from $TRAVIS_BRANCH"
+ - docker build https://github.com/stts-se/marytts.git#$TRAVIS_BRANCH -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
+ - |
+   if [ $? -eq 0 ]; then
+     echo "marytts branch $TRAVIS_BRANCH"
+   else
+     set -e
+     echo "marytts building from master"
+     docker build https://github.com/stts-se/marytts.git -t marytts:travis --build-arg RELEASE=$TRAVIS_BRANCH
+     echo "marytts branch master"
+     unset -e
+   fi
 
 # command to run tests
 script:
