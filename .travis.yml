@@ -16,8 +16,7 @@ install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
  - cd .travis
- - git rev-parse --abbrev-ref HEAD
- - export BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ - export BRANCH=docker_update
  - echo "pronlex building from $BRANCH"
  - docker build https://github.com/stts-se/pronlex.git#$BRANCH -t pronlex:travis --build-arg RELEASE=$BRANCH
  - set +e
