@@ -34,9 +34,9 @@ for s in $*; do
 	    break
 	else
 	    exit=$?
-	    exitcode=1
+	    #exitcode=1
 	    #curl $s # repeat to get error msg		
-	    echo "[$CMD] Service dependency failed (exitcode $exit): $s" 2>&1
+	    #echo "[$CMD] Service dependency failed (exitcode $exit): $s" 2>&1
 	fi
 	sleep 5
     done
