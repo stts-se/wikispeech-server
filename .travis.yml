@@ -5,7 +5,7 @@ services:
   - docker
 before_install:
  # fail on any non-zero exit value
- - set -e
+ #- set -e
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
