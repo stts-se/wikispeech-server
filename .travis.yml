@@ -7,6 +7,9 @@ before_install:
  # fail on any non-zero exit value
  - set -e
 
+env:
+ - RELEASE="docker_update"
+
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
 # dist: trusty
@@ -16,8 +19,8 @@ install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
  - cd .travis
- - docker build https://github.com/stts-se/pronlex.git#docker_update -t pronlex:travis --build-arg RELEASE=docker_update
- - docker build https://github.com/stts-se/marytts.git#docker_update -t marytts:travis --build-arg RELEASE=docker_update
+ - docker build https://github.com/stts-se/pronlex.git#$RELEASE -t pronlex:travis --build-arg RELEASE=$RELEASE
+ - docker build https://github.com/stts-se/marytts.git#$RELEASE -t marytts:travis --build-arg RELEASE=$RELEASE
 
 # command to run tests
 script:
