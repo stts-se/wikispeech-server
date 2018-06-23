@@ -23,7 +23,7 @@ env:
 install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
- - set + e
+ - set +e
  - echo "pronlex building from $RELEASE"
  - docker build https://github.com/stts-se/pronlex.git#$RELEASE -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
  - |
