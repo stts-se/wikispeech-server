@@ -13,7 +13,10 @@ notifications:
     on_failure: change
 
 env:
- - RELEASE="docker_update"
+ - RELEASE="docker_updatex"
+ - PRONLEX=sttsse/pronlex
+ - MARYTTS=sttsse/marytts
+ - TAG=wikispeech_mockup_travis
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
@@ -23,25 +26,48 @@ env:
 install:
  - sudo apt install opus-tools
  - pip install -r requirements.txt
- - docker build https://github.com/stts-se/pronlex.git#$RELEASE -t pronlex:travis --build-arg RELEASE=$RELEASE
- - docker build https://github.com/stts-se/marytts.git#$RELEASE -t marytts:travis --build-arg RELEASE=$RELEASE
+ - set + e
+ - echo "pronlex building from $RELEASE"
+ - docker build https://github.com/stts-se/pronlex.git#$RELEASE -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
+ - |
+   if [ $? -eq 0 ]; then
+     echo "pronlex branch $RELEASE"
+   else
+     set -e
+     echo "pronlex building from master"
+     docker build https://github.com/stts-se/pronlex.git -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
+     echo "pronlex branch master"
+     set +e
+   fi
+ - echo "marytts building from $RELEASE"
+ - docker build https://github.com/stts-se/marytts.git#$RELEASE -t $MARYTTS:$TAG --build-arg RELEASE=$RELEASE
+ - |
+   if [ $? -eq 0 ]; then
+     echo "marytts branch $RELEASE"
+   else
+     set -e
+     echo "marytts building from master"
+     docker build https://github.com/stts-se/marytts.git -t $MARYTTS:$TAG --build-arg RELEASE=$RELEASE
+     echo "marytts branch master"
+     set +e
+   fi
 
 # command to run tests
-script:
- - set -e
- - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis /wikispeech/pronlex/bin/setup /appdir
- - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex:travis &
- - export pronlex_pid=$!
- - echo "pronlex running with pid $pronlex_pid"
- - sleep 20
- - docker run -p 59125:59125 -t marytts:travis &
- - export marytts_pid=$!
- - echo "marytts running with pid $marytts_pid"
- - sleep 20
- - python3 bin/wikispeech docker/config/travis.conf &
- - export wikispeech_pid=$!  
- - echo "wikispeech running with pid $wikispeech_pid"
- - sleep 20
- - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
- - sh .travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
- - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
+# script:
+#  - set -e
+#  - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG /wikispeech/pronlex/bin/setup /appdir
+#  - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG &
+#  - export pronlex_pid=$!
+#  - echo "pronlex running with pid $pronlex_pid"
+#  - sleep 20
+#  - docker run -p 59125:59125 -t $MARYTTS:$TAG &
+#  - export marytts_pid=$!
+#  - echo "marytts running with pid $marytts_pid"
+#  - sleep 20
+#  - python3 bin/wikispeech docker/config/travis.conf &
+#  - export wikispeech_pid=$!  
+#  - echo "wikispeech running with pid $wikispeech_pid"
+#  - sleep 20
+#  - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
+#  - sh .travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
+#  - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
