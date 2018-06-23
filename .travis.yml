@@ -3,9 +3,8 @@ python:
   - "3.6.3"
 services:
   - docker
-before_install:
- # fail on any non-zero exit value
- - set -e
+#before_install:
+# - set -e
 
 notifications:
   slack:
@@ -21,8 +20,8 @@ env:
 # group: deprecated-2017Q4
  
 install:
- - sudo apt install opus-tools
- - pip install -r requirements.txt
+ #- sudo apt install opus-tools
+ #- pip install -r requirements.txt
  - set +e
  - echo "pronlex building from $RELEASE"
  - docker build https://github.com/stts-se/pronlex.git#$RELEASE -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
