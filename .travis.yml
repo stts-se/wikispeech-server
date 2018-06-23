@@ -23,7 +23,10 @@ install:
  - set -e
  #- sudo apt install opus-tools
  #- pip install -r requirements.txt
- - |
+
+# command to run tests
+script:
+  - |
    set +e
    echo "pronlex building from $RELEASE"
    docker build https://github.com/stts-se/pronlex.git#$RELEASE -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
@@ -50,8 +53,6 @@ install:
      set +e
    fi
 
-# command to run tests
-# script:
 #  - set -e
 #  - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG /wikispeech/pronlex/bin/setup /appdir
 #  - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG &
