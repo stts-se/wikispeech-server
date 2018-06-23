@@ -21,8 +21,8 @@ env:
  
 install:
  - set -e
- #- sudo apt install opus-tools
- #- pip install -r requirements.txt
+ - sudo apt install opus-tools
+ - pip install -r requirements.txt
 
 # command to run tests
 script:
@@ -52,20 +52,20 @@ script:
      echo "marytts built from master"
      set +e
    fi
-#  - set -e
-#  - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG /wikispeech/pronlex/bin/setup /appdir
-#  - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG &
-#  - export pronlex_pid=$!
-#  - echo "pronlex running with pid $pronlex_pid"
-#  - sleep 20
-#  - docker run -p 59125:59125 -t $MARYTTS:$TAG &
-#  - export marytts_pid=$!
-#  - echo "marytts running with pid $marytts_pid"
-#  - sleep 20
-#  - python3 bin/wikispeech docker/config/travis.conf &
-#  - export wikispeech_pid=$!  
-#  - echo "wikispeech running with pid $wikispeech_pid"
-#  - sleep 20
-#  - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
-#  - sh .travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
-#  - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
+ - set -e
+ - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG /wikispeech/pronlex/bin/setup /appdir
+ - docker run -v /appdir:/appdir -p 8787:8787 -t $PRONLEX:$TAG &
+ - export pronlex_pid=$!
+ - echo "pronlex running with pid $pronlex_pid"
+ - sleep 20
+ - docker run -p 59125:59125 -t $MARYTTS:$TAG &
+ - export marytts_pid=$!
+ - echo "marytts running with pid $marytts_pid"
+ - sleep 20
+ - python3 bin/wikispeech docker/config/travis.conf &
+ - export wikispeech_pid=$!  
+ - echo "wikispeech running with pid $wikispeech_pid"
+ - sleep 20
+ - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
+ - sh .travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
+ - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
