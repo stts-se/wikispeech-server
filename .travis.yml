@@ -25,8 +25,8 @@ install:
 
 # command to run tests
 script:
- - git clone https://github.com/stts-se/pronlex.git#$RELEASE || git clone https://github.com/stts-se/pronlex.git
- - git clone https://github.com/stts-se/marytts.git#$RELEASE || git clone https://github.com/stts-se/marytts.git
+ - git clone https://github.com/stts-se/pronlex.git $RELEASE || git clone https://github.com/stts-se/pronlex.git
+ - git clone https://github.com/stts-se/marytts.git $RELEASE || git clone https://github.com/stts-se/marytts.git
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
  - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
