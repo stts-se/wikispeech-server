@@ -25,19 +25,9 @@ install:
 
 # command to run tests
 script:
- - | # build pronlex from $RELEASE if it exists, otherwise master
-   echo "pronlex building from $RELEASE"
-   git clone https://github.com/stts-se/pronlex.git
-   cd pronlex
-   git checkout $RELEASE || echo "$RELEASE not found, fallback to master"
-   cd ..
-   docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
- - | # build marytts from $RELEASE if it exists, otherwise master
-   echo "marytts building from $RELEASE"
-   git clone https://github.com/stts-se/marytts.git
-   cd marytts
-   git checkout $RELEASE || echo "$RELEASE not found, fallback to master"
-   cd ..
+ - git clone https://github.com/stts-se/pronlex.git#$RELEASE || git clone https://github.com/stts-se/pronlex.git
+ - git clone https://github.com/stts-se/marytts.git#$RELEASE || git clone https://github.com/stts-se/marytts.git
+ - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
    docker build marytts -t marytts --build-arg RELEASE=$RELEASE
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
