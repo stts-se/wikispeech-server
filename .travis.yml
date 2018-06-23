@@ -26,8 +26,8 @@ install:
 
 # command to run tests
 script:
+  - set +e
   - |
-   set +e
    echo "pronlex building from $RELEASE"
    docker build https://github.com/stts-se/pronlex.git#$RELEASE -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
    if [ $? -eq 0 ]; then
@@ -39,8 +39,8 @@ script:
      echo "pronlex branch master"
      set +e
    fi
+ set +e
  - |
-   set +e
    echo "marytts building from $RELEASE"
    docker build https://github.com/stts-se/marytts.git#$RELEASE -t $MARYTTS:$TAG --build-arg RELEASE=$RELEASE
    if [ $? -eq 0 ]; then
