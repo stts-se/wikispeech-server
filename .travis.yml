@@ -20,12 +20,13 @@ env:
 # group: deprecated-2017Q4
  
 install:
+ - set -e
  #- sudo apt install opus-tools
  #- pip install -r requirements.txt
- - set +e
- - echo "pronlex building from $RELEASE"
- - docker build https://github.com/stts-se/pronlex.git#$RELEASE -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
  - |
+   set +e
+   echo "pronlex building from $RELEASE"
+   docker build https://github.com/stts-se/pronlex.git#$RELEASE -t $PRONLEX:$TAG --build-arg RELEASE=$RELEASE
    if [ $? -eq 0 ]; then
      echo "pronlex branch $RELEASE"
    else
@@ -35,9 +36,10 @@ install:
      echo "pronlex branch master"
      set +e
    fi
- - echo "marytts building from $RELEASE"
- - docker build https://github.com/stts-se/marytts.git#$RELEASE -t $MARYTTS:$TAG --build-arg RELEASE=$RELEASE
  - |
+   set +e
+   echo "marytts building from $RELEASE"
+   docker build https://github.com/stts-se/marytts.git#$RELEASE -t $MARYTTS:$TAG --build-arg RELEASE=$RELEASE
    if [ $? -eq 0 ]; then
      echo "marytts branch $RELEASE"
    else
