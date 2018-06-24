@@ -7,7 +7,7 @@ before_install:
  - set -e
 
 notifications:
-  slack:
+  email:
     on_success: change
     on_failure: change
 
