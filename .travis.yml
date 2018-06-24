@@ -25,24 +25,38 @@ install:
 
 # command to run tests
 script:
- - git clone -b $RELEASE --single-branch https://github.com/stts-se/pronlex.git || git clone https://github.com/stts-se/pronlex.git
- - git clone - b $RELEASE --single-branch https://github.com/stts-se/marytts.git || git clone https://github.com/stts-se/marytts.git
+ - set -e
+ 
+ - git clone https://github.com/stts-se/pronlex.git
+ - cd pronlex
+ - git checkout $RELEASE || echo "No such release for pronlex: $RELEASE. Using master."
+ - cd ..
+ - git clone https://github.com/stts-se/marytts.git
+ - cd marytts
+ - git checkout $RELEASE || echo "No such release for marytts: $RELEASE. Using master."
+ - cd ..
+ 
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
  - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
+ 
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
  - echo "pronlex running with pid $pronlex_pid"
  - sleep 20
+ 
  - docker run -p 59125:59125 -t marytts &
  - export marytts_pid=$!
  - echo "marytts running with pid $marytts_pid"
  - sleep 20
+ 
  - python3 bin/wikispeech docker/config/travis.conf &
  - export wikispeech_pid=$!  
  - echo "wikispeech running with pid $wikispeech_pid"
  - sleep 20
+ 
  - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
  - sh .travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
  - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
+ 
  - docker build . -t wikispeech
