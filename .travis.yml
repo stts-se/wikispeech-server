@@ -13,6 +13,7 @@ notifications:
 
 env:
  - RELEASE=docker_update
+ - RELEASE=docker_update DO_IMPORT=1
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
@@ -39,6 +40,11 @@ script:
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
  - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
+ 
+ - |
+   if [ -v DO_IMPORT ]; then
+     docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /appdir /appdir $RELEASE || docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /appdir /appdir master
+   fi
  
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
