@@ -29,11 +29,11 @@ script:
  
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
- - git checkout $RELEASE || echo "No such release for pronlex: $RELEASE. Using master."
+ - git checkout $RELEASE || echo "No such release for pronlex: ${RELEASE}. Using master."
  - cd ..
  - git clone https://github.com/stts-se/marytts.git
  - cd marytts
- - git checkout $RELEASE || echo "No such release for marytts: $RELEASE. Using master."
+ - git checkout $RELEASE || echo "No such release for marytts: ${RELEASE}. Using master."
  - cd ..
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
