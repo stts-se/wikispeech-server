@@ -47,6 +47,10 @@ To test the config file, the script can be run with a config file as argument:
 python3 bin/wikispeech <config-file>
 ```
 
+## For developers:
+
+If you are developing for Wikispeech, and need to make changes to this repository, make sure you run a test build using `build_and_test.sh` before you make a pull request. Don't run more than one instance of this script at once, and make sure no wikispeech servers are already running on the default ports.
+
 
 ## Test:
 

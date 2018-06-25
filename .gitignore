@@ -9,3 +9,5 @@ Dockerfile.OLD
 
 wikispeech_server/hanna*.conf
 wikispeech.log
+
+.build

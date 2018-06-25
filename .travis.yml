@@ -48,17 +48,17 @@ script:
  
  - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
- - echo "pronlex running with pid $pronlex_pid"
+ - echo "pronlex started with pid $pronlex_pid"
  - sleep 20
  
  - docker run -p 59125:59125 -t marytts &
  - export marytts_pid=$!
- - echo "marytts running with pid $marytts_pid"
+ - echo "marytts started with pid $marytts_pid"
  - sleep 20
  
  - python3 bin/wikispeech docker/config/travis.conf &
  - export wikispeech_pid=$!  
- - echo "wikispeech running with pid $wikispeech_pid"
+ - echo "wikispeech started with pid $wikispeech_pid"
  - sleep 20
  
  - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid

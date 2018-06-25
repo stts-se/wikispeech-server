@@ -7,7 +7,7 @@ cmd=`basename $0`
 
 psargs="--sort pid -Af"
 pids=""
-for proc in `ps $psargs | egrep "$processNames|PID" | sed 's/-cp .*//' | egrep -v "grep .E" | egrep -v "$cmd" | sed 's/  */\t/g' | sed 's/\t/¤/g'`; do
+for proc in `ps $psargs | egrep "$processNames|PID" | sed 's/-cp .*//' | egrep -v "grep .E|$cmd|git-receive-pack|docker.*build" | sed 's/  */\t/g' | sed 's/\t/¤/g'`; do
     proc=`echo $proc | tr '¤' '\t'`
     pid=`echo $proc | cut -f2 -d' '|egrep -v PID`
     echo $proc
