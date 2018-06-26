@@ -32,11 +32,9 @@ script:
  - echo $HOME
  - ls -ld $HOME
  - ls -l $HOME
- - ls -ld /wikispeech
- - ls -l /wikispeech
- - echo "DEBUG MODE, forced exit"
- - exit 1
-
+ - ls -ld $HOME/wikispeech
+ - ls -l $HOME/wikispeech
+ 
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
@@ -48,17 +46,17 @@ script:
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
  - docker run -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-NOVOLUMES
- - docker run -v /wikispeech/appdir:/wikispeech/appdir -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-WITHVOLUMES
+ - docker run -v $HOME/appdir:/wikispeech/appdir -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-WITHVOLUMES
  - docker run -t pronlex ls -l /wikispeech/appdir
- - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
+ - docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
  
  - |
    if [ -v DO_IMPORT ]; then
-     docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir $RELEASE || docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir master
+     docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir $HOME/appdir $RELEASE || docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir $HOME/appdir master
    fi
  
  - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
- - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex &
+ - docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
  - sleep 20
