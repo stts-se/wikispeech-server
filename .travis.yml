@@ -32,6 +32,7 @@ script:
  - echo $HOME
  - ls -ld $HOME
  - ls -l $HOME
+ - mkdir $HOME/wikispeech
  - ls -ld $HOME/wikispeech
  - ls -l $HOME/wikispeech
  
