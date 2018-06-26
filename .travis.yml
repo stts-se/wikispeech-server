@@ -28,6 +28,15 @@ install:
 script:
  - set -e
  
+ - export HOME=`pwd`
+ - echo $HOME
+ - ls -ld $HOME
+ - ls -l $HOME
+ - ls -ld /wikispeech
+ - ls -l /wikispeech
+ - echo "DEBUG MODE, forced exit"
+ - exit 1
+
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
@@ -36,9 +45,6 @@ script:
  - cd marytts
  - git checkout $RELEASE || echo "No such release for marytts. Using master."
  - cd ..
- 
- - ls -ld /wikispeech
- - ls -l /wikispeech
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
  - docker run -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-NOVOLUMES
