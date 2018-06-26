@@ -1,3 +1,4 @@
+# build script for Wikispeech
 # mimic travis build tests, always run before pushing!
 
 set -e
@@ -21,8 +22,8 @@ git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && 
 git checkout $RELEASE || echo "No such release for marytts. Using master."
 cd ..
  
-docker build pronlex -t sttsse/pronlex:travis --build-arg RELEASE=$RELEASE
-docker build marytts -t sttsse/marytts:travis --build-arg RELEASE=$RELEASE
+docker build --no-cache pronlex -t sttsse/pronlex:buildtest --build-arg RELEASE=$RELEASE
+docker build --no-cache marytts -t sttsse/marytts:buildtest --build-arg RELEASE=$RELEASE
 
 docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
  
@@ -45,6 +46,6 @@ sh $basedir/.travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeec
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
  
-docker build . --no-cache -t sttsse/wikispeech:travis --build-arg RELEASE=$RELEASE
+docker build . --no-cache -t sttsse/wikispeech:buildtest --build-arg RELEASE=$RELEASE
 
 
