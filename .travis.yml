@@ -28,7 +28,7 @@ install:
 script:
  - set -e
  
- - mkdir /wikispeech
+ - sudo mkdir /wikispeech
  - sudo useradd -u 8877 wikispeech
  - sudo usermod -m -d /wikispeech wikispeech
  - sudo chown -R wikispeech.wikispeech /wikispeech
