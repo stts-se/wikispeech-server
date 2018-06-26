@@ -38,8 +38,7 @@ script:
  - cd ..
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
- - docker run -t pronlex ls -l /wikispeech
- - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
+ - docker run -t pronlex ls -ld /wikispeech
  - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
  
  - |
@@ -47,6 +46,7 @@ script:
      docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir $RELEASE || docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir master
    fi
  
+ - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
  - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
