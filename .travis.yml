@@ -28,25 +28,17 @@ install:
 script:
  - set -e
  
- - export HOME=`pwd`
- - echo $HOME
- - ls -ld $HOME
- - ls -l $HOME
- - mkdir $HOME/wikispeech
- - ls -ld $HOME/wikispeech
- - ls -l $HOME/wikispeech
- 
+ - useradd -u 8877 wikispeech
+ - usermod -m -d /wikispeech wikispeech
+ - chown -R wikispeech.wikispeech /wikispeech
+ - su wikispeech
+
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
  - cd ..
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
- - docker run -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-NOVOLUMES
- - ls -ld $HOME/wikispeech/appdir
- - docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -t pronlex ls -ld /wikispeech/appdir
- - docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-WITHVOLUMES
- - docker run -t pronlex ls -l /wikispeech/appdir
  - docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
  
  - |
