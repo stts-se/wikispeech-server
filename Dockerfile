@@ -57,8 +57,8 @@ RUN cat $BUILD_INFO_FILE
 
 ############# RUNTIME SETTINGS #############
 WORKDIR $BASEDIR
-RUN chown -R wikispeech.wikispeech /wikispeech
-USER wikispeech
+#RUN chown -R wikispeech.wikispeech /wikispeech
+#USER wikispeech
 EXPOSE 10000
 
 CMD python3 bin/wikispeech docker/config/docker.conf
