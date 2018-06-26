@@ -11,7 +11,7 @@ mkdir -p .build
 cd .build
 
 for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|mishkal' | egrep -v 'docker.*build' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
-    kill $proc || "Couldn't kill $pid"
+    kill $proc || "Couldn't kill $pid" && ps --sort pid -Af | egrep $proc
 done
 
 git clone https://github.com/stts-se/pronlex.git && cd pronlex || cd pronlex && git pull
@@ -25,14 +25,14 @@ cd ..
 docker build --no-cache pronlex -t sttsse/pronlex:buildtest --build-arg RELEASE=$RELEASE
 docker build --no-cache marytts -t sttsse/marytts:buildtest --build-arg RELEASE=$RELEASE
 
-docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
+docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t sttsse/pronlex:buildtest /wikispeech/pronlex/bin/setup /wikispeech/appdir
  
-docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
+docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t sttsse/pronlex:buildtest &
 export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
 sleep 20
  
-docker run -p 59125:59125 -t marytts &
+docker run -p 59125:59125 -t sttsse/marytts:buildtest &
 export marytts_pid=$!
 echo "marytts started with pid $marytts_pid"
 sleep 20

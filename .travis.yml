@@ -39,14 +39,14 @@ script:
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
  - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
- - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /appdir
+ - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
  
  - |
    if [ -v DO_IMPORT ]; then
-     docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /appdir /appdir $RELEASE || docker run -v /appdir:/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /appdir /appdir master
+     docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir $RELEASE || docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir master
    fi
  
- - docker run -v /appdir:/appdir -p 8787:8787 -t pronlex &
+ - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
  - sleep 20
