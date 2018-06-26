@@ -38,7 +38,6 @@ script:
  - cd ..
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
- - docker run -t pronlex ls -ld /wikispeech
  - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
  
  - |
