@@ -43,13 +43,15 @@ script:
  
  - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
  - docker run -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-NOVOLUMES
- - docker run -v $HOME/appdir:/wikispeech/appdir -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-WITHVOLUMES
+ - ls -ld $HOME/wikispeech/appdir
+ - docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -t pronlex ls -ld /wikispeech/appdir
+ - docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -t pronlex mkdir -p /wikispeech/appdir/symbol_sets-WITHVOLUMES
  - docker run -t pronlex ls -l /wikispeech/appdir
- - docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
+ - docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
  
  - |
    if [ -v DO_IMPORT ]; then
-     docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir $HOME/appdir $RELEASE || docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir $HOME/appdir master
+     docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir $HOME/wikispeech/appdir $RELEASE || docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir $HOME/wikispeech/appdir master
    fi
  
  - git clone https://github.com/stts-se/marytts.git
@@ -58,7 +60,7 @@ script:
  - cd ..
 
  - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
- - docker run -v $HOME/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex &
+ - docker run -v $HOME/wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
  - sleep 20
