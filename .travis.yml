@@ -28,10 +28,10 @@ install:
 script:
  - set -e
  
- - useradd -u 8877 wikispeech
- - usermod -m -d /wikispeech wikispeech
- - chown -R wikispeech.wikispeech /wikispeech
- - su wikispeech
+ - sudo useradd -u 8877 wikispeech
+ - sudo usermod -m -d /wikispeech wikispeech
+ - sudo chown -R wikispeech.wikispeech /wikispeech
+ - sudo su wikispeech
 
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
