@@ -3,6 +3,15 @@ language: go
 go:
   - 1.9.x
 
+# java is for marytts
+language: java
+jdk:
+  - openjdk8
+
+language: python
+  python:
+   - "3.6"
+
 services:
   - docker
 before_install:
@@ -32,8 +41,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install:
- - sudo apt-cache search jdk8
- - sudo apt install opus-tools python3 pip3 openjdk8
+ - sudo apt install opus-tools
  - pip install -r requirements.txt
 
 # command to run tests
