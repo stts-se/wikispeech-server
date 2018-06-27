@@ -53,6 +53,7 @@ script:
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
+ - go get ./...
  - bash install/setup.sh /tmp/appdir
  - bash install/start_server.sh -a /tmp/appdir &
  - export pronlex_pid=$!
