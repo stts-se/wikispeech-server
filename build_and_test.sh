@@ -2,11 +2,12 @@
 # mimic travis build tests, always run before pushing!
 
 set -e
-RELEASE=master
+RELEASE=docker_user
 
 basedir=`dirname $0`
 basedir=`realpath $basedir`
 cd $basedir
+builddir="${basedir}/.build"
 mkdir -p .build
 cd .build
 
@@ -22,21 +23,27 @@ git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && 
 git checkout $RELEASE || echo "No such release for marytts. Using master."
 cd ..
  
-docker build --no-cache pronlex -t sttsse/pronlex:buildtest --build-arg RELEASE=$RELEASE
-docker build --no-cache marytts -t sttsse/marytts:buildtest --build-arg RELEASE=$RELEASE
-
-docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t sttsse/pronlex:buildtest /wikispeech/pronlex/bin/setup /wikispeech/appdir
- 
-docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t sttsse/pronlex:buildtest &
+export GOPATH=`go env GOPATH`
+export PATH=$PATH:$GOPATH/bin
+cd $GOPATH/src/github.com/stts-se/pronlex
+go get ./...
+rm -rf ${builddir}/appdir
+bash install/setup.sh ${builddir}/appdir
+bash install/start_server.sh -a ${builddir}/.build/appdir &
 export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
 sleep 20
- 
-docker run -p 59125:59125 -t sttsse/marytts:buildtest &
+
+cd ${builddir}
+cd marytts
+./gradlew check
+./gradlew assembleDist
+./gradlew test
+./gradlew run &
 export marytts_pid=$!
 echo "marytts started with pid $marytts_pid"
 sleep 20
- 
+
 cd $basedir && python3 bin/wikispeech docker/config/travis.conf &
 export wikispeech_pid=$!  
 echo "wikispeech started with pid $wikispeech_pid"

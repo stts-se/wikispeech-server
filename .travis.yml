@@ -1,6 +1,8 @@
-language: python
-python:
-  - "3.6.3"
+# go is for pronlex
+language: go
+go:
+  - 1.9.x
+
 services:
   - docker
 before_install:
@@ -13,55 +15,51 @@ notifications:
 
 env:
  - RELEASE=docker_user
- #- RELEASE=docker_user DO_IMPORT=1
+ - RELEASE=docker_user DO_IMPORT=1
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
 # dist: trusty
 # group: deprecated-2017Q4
  
+# for marytts
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
 install:
- - sudo apt install opus-tools
+ - sudo apt install opus-tools python3 pip openjdk8
  - pip install -r requirements.txt
 
 # command to run tests
 script:
  - set -e
  
- #- sudo mkdir /wikispeech
- - sudo useradd -u 8877 wikispeech
- - sudo usermod -m -d /wikispeech wikispeech
- - sudo chown -R wikispeech.wikispeech /wikispeech
- - sudo su wikispeech
-
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
+ - bash install/setup.sh /tmp/appdir
+ - bash install/start_server.sh -a /tmp/appdir &
+ - export pronlex_pid=$!
+ - echo "pronlex started with pid $pronlex_pid"
+ - sleep 20
  - cd ..
- 
- - docker build pronlex -t pronlex --build-arg RELEASE=$RELEASE
- - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/setup /wikispeech/appdir
- 
- - |
-   if [ -v DO_IMPORT ]; then
-     docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir $RELEASE || docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex /wikispeech/pronlex/bin/import_all /wikispeech/appdir /wikispeech/appdir master
-   fi
  
  - git clone https://github.com/stts-se/marytts.git
  - cd marytts
  - git checkout $RELEASE || echo "No such release for marytts. Using master."
- - cd ..
-
- - docker build marytts -t marytts --build-arg RELEASE=$RELEASE
- - docker run -v /wikispeech/appdir:/wikispeech/appdir -p 8787:8787 -t pronlex &
- - export pronlex_pid=$!
- - echo "pronlex started with pid $pronlex_pid"
- - sleep 20
- 
- - docker run -p 59125:59125 -t marytts &
+ - ./gradlew check
+ - ./gradlew assembleDist
+ - ./gradlew test
+ - ./gradlew run &
  - export marytts_pid=$!
  - echo "marytts started with pid $marytts_pid"
  - sleep 20
+ - cd ..
  
  - python3 bin/wikispeech docker/config/travis.conf &
  - export wikispeech_pid=$!  
