@@ -15,27 +15,26 @@ for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|mish
     kill $proc || "Couldn't kill $pid" && ps --sort pid -Af | egrep $proc
 done
 
-git clone https://github.com/stts-se/pronlex.git && cd pronlex || cd pronlex && git pull
-git checkout $RELEASE || echo "No such release for pronlex. Using master."
-cd ..
- 
-git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && git pull
-git checkout $RELEASE || echo "No such release for marytts. Using master."
-cd ..
- 
 export GOPATH=`go env GOPATH`
 export PATH=$PATH:$GOPATH/bin
-cd $GOPATH/src/github.com/stts-se/pronlex
+cd $GOPATH/src/github.com/stts-se/
+git clone https://github.com/stts-se/pronlex.git && cd pronlex || cd pronlex && git pull
+git checkout $RELEASE || echo "No such release for pronlex. Using master."
 go get ./...
+
 rm -rf ${builddir}/appdir
 bash install/setup.sh ${builddir}/appdir
-bash install/start_server.sh -a ${builddir}/.build/appdir &
+echo ${builddir}/appdir
+bash install/start_server.sh -a ${builddir}/appdir #&
 export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
 sleep 20
 
-cd ${builddir}
-cd marytts
+git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && git pull
+git checkout $RELEASE || echo "No such release for marytts. Using master."
+cd ..
+ 
+cd $basedir/marytts
 ./gradlew check
 ./gradlew assembleDist
 ./gradlew test

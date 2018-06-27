@@ -32,7 +32,8 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install:
- - sudo apt install opus-tools python3 pip openjdk8
+ - sudo apt-cache search jdk8
+ - sudo apt install opus-tools python3 pip3 openjdk8
  - pip install -r requirements.txt
 
 # command to run tests
