@@ -49,8 +49,6 @@ script:
  - set -e
  - export basedir=`pwd`
  
- #- export GOPATH=`go env GOPATH`
- #- export PATH=$PATH:$GOPATH/bin
  - mkdir -p $GOPATH/src/github.com/stts-se && cd $GOPATH/src/github.com/stts-se/
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
