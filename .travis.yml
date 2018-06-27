@@ -1,7 +1,7 @@
 # go is for pronlex
 language: go
 go:
-  - 1.9.x
+  - 1.10.x
 
 # java is for marytts
 language: java
