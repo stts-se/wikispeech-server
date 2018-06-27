@@ -1,18 +1,16 @@
-matrix:
-  include:
-    # go is for pronlex
-    language: go
-    go:
-      - 1.10.x
+# go is for pronlex
+language: go
+go:
+  - 1.10.x
 
-    # java is for marytts
-    language: java
-    jdk:
-     - openjdk8
+# java is for marytts
+#language: java
+jdk:
+ - openjdk8
 
-    language: python
-    python:
-      - "3.6"
+#language: python
+python:
+   - "3.6"
   
 before_install:
  - set -e
@@ -42,6 +40,9 @@ cache:
 
 install:
  - sudo apt install opus-tools
+ - sudo apt-cache search python 
+ - sudo apt-cache search jdk
+ - sudo apt-cache search java
  - pip install -r requirements.txt
 
 # command to run tests
