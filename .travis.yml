@@ -1,21 +1,21 @@
-# go is for pronlex
-language: go
-go:
-  - 1.10.x
+matrix:
+  include:
+    # go is for pronlex
+    language: go
+    go:
+      - 1.10.x
 
-# java is for marytts
-#language: java
-jdk:
-  - openjdk8
+    # java is for marytts
+    language: java
+    jdk:
+     - openjdk8
 
-#language: python
-python:
-  - "3.6"
-script:
-  - pytest
+    language: python
+    python:
+      - "3.6"
+    script:
+     - pytest
   
-services:
-  - docker
 before_install:
  - set -e
 
