@@ -12,7 +12,7 @@ mkdir -p .build
 cd .build
 
 for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|mishkal' | egrep -v 'docker.*build' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
-    kill $proc || "Couldn't kill $pid" && ps --sort pid -Af | egrep $proc
+    kill $proc || "Couldn't kill $pid"
 done
 
 export GOPATH=`go env GOPATH`
@@ -25,16 +25,15 @@ go get ./...
 rm -rf ${builddir}/appdir
 bash install/setup.sh ${builddir}/appdir
 echo ${builddir}/appdir
-bash install/start_server.sh -a ${builddir}/appdir #&
+bash install/start_server.sh -a ${builddir}/appdir &
 export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
 sleep 20
 
+cd $basedir
 git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && git pull
 git checkout $RELEASE || echo "No such release for marytts. Using master."
-cd ..
  
-cd $basedir/marytts
 ./gradlew check
 ./gradlew assembleDist
 ./gradlew test
