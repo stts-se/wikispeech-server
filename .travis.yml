@@ -38,7 +38,11 @@ install:
 # command to run tests
 script:
  - set -e
+ - export basedir=`pwd`
  
+ - export GOPATH=`go env GOPATH`
+ - export PATH=$PATH:$GOPATH/bin
+ - cd $GOPATH/src/github.com/stts-se/
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
@@ -47,8 +51,8 @@ script:
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
  - sleep 20
- - cd ..
  
+ - cd $basedir
  - git clone https://github.com/stts-se/marytts.git
  - cd marytts
  - git checkout $RELEASE || echo "No such release for marytts. Using master."
@@ -59,8 +63,8 @@ script:
  - export marytts_pid=$!
  - echo "marytts started with pid $marytts_pid"
  - sleep 20
- - cd ..
  
+ - cd $basedir
  - python3 bin/wikispeech docker/config/travis.conf &
  - export wikispeech_pid=$!  
  - echo "wikispeech started with pid $wikispeech_pid"
