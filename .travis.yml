@@ -24,7 +24,7 @@ notifications:
 
 env:
  - RELEASE=docker_user
- - RELEASE=docker_user DO_IMPORT=1
+ # TODO ADD WHEN IT WORKS : - RELEASE=docker_user DO_IMPORT=1
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
@@ -51,15 +51,10 @@ script:
  
  #- export GOPATH=`go env GOPATH`
  #- export PATH=$PATH:$GOPATH/bin
- #- cd $GOPATH/src/github.com/stts-se/
+ - mkdir -p $GOPATH/src/github.com/stts-se && cd $GOPATH/src/github.com/stts-se/
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
- - echo $GOPATH
- - export GOPATH=`go env GOPATH`
- - echo $GOPATH
- - ls $GOPATH/src/github.com/stts-se/pronlex/lexserver/demo_files
- - ls /home/travis/gopath/src/github.com/stts-se/pronlex/lexserver/demo_files
  - bash install/setup.sh /tmp/appdir
  - bash install/start_server.sh -a /tmp/appdir &
  - export pronlex_pid=$!
