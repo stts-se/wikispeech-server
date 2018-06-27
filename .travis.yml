@@ -11,7 +11,9 @@ jdk:
 #language: python
 python:
   - "3.6"
-
+script:
+  - pytest
+  
 services:
   - docker
 before_install:
@@ -42,7 +44,7 @@ cache:
 
 install:
  - sudo apt install opus-tools
- - pip3.6 install -r requirements.txt
+ - pip install -r requirements.txt
 
 # command to run tests
 script:
