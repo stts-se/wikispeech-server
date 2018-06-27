@@ -3,20 +3,19 @@
 processNames="pronlex|wikispeech|marytts|tts_server|mishkal"
 cmd=`basename $0`
 
-#ps --sort pid -eo "%p	%a" -A | egrep "$processNames" | sed 's/-cp .*//' | egrep -v "grep .E" | egrep -v "$cmd" | sed 's/  */\t/g' | sed 's/\t/¤/g'
+exclude="$cmd|git-receive-pack|docker.*build|installDist|grep .E $processNames"
 
 psargs="--sort pid -Af"
 pids=""
-for proc in `ps $psargs | egrep "$processNames|PID" | sed 's/-cp .*//' | egrep -v "grep .E|$cmd|git-receive-pack|docker.*build" | sed 's/  */\t/g' | sed 's/\t/¤/g'`; do
+for proc in `ps $psargs | egrep "PID|$processNames" | sed 's/-cp .*//' | egrep -v "$exclude" | sed 's/  */\t/g' | sed 's/\t/¤/g'`; do
     proc=`echo $proc | tr '¤' '\t'`
     pid=`echo $proc | cut -f2 -d' '|egrep -v PID`
-    #echo $proc
     pids="$pids $pid"
 done
 
 nPids="`echo $pids | tr ' ' '\012' | egrep -v "^$" | wc -l`"
 if [ $nPids -ne 0 ]; then
-    ps -Af --sort pid | egrep "PID|$processNames" | sed 's/-cp .*//' | egrep -v "grep .E" | egrep -v "$cmd" 2>&1
+    ps $psargs | egrep "PID|$processNames" | sed 's/-cp .*//' | egrep -v "$exclude" 2>&1
     echo ""
     echo "Kill all $nPids proccesses? $pids"
     echo -n " [y/N] "
