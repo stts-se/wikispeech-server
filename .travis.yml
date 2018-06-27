@@ -49,9 +49,9 @@ script:
  - set -e
  - export basedir=`pwd`
  
- - export GOPATH=`go env GOPATH`
- - export PATH=$PATH:$GOPATH/bin
- - cd $GOPATH/src/github.com/stts-se/
+ #- export GOPATH=`go env GOPATH`
+ #- export PATH=$PATH:$GOPATH/bin
+ #- cd $GOPATH/src/github.com/stts-se/
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
