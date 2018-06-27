@@ -4,11 +4,11 @@ go:
   - 1.10.x
 
 # java is for marytts
-language: java
+#language: java
 jdk:
   - openjdk8
 
-language: python
+#language: python
 python:
   - "3.6"
 
