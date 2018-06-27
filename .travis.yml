@@ -40,6 +40,7 @@ cache:
 
 install:
  - sudo apt install opus-tools
+ - pip install --upgrade pip
  - sudo apt-cache search python 
  - sudo apt-cache search jdk
  - sudo apt-cache search java
