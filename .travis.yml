@@ -42,7 +42,7 @@ cache:
 
 install:
  - sudo apt install opus-tools
- - pip install -r requirements.txt
+ - pip3 install -r requirements.txt
 
 # command to run tests
 script:
