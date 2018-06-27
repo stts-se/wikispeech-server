@@ -13,8 +13,6 @@ matrix:
     language: python
     python:
       - "3.6"
-    script:
-     - pytest
   
 before_install:
  - set -e
