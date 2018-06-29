@@ -39,11 +39,10 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install:
- - sudo apt install opus-tools
+ - sudo apt install golang-1.10 opus-tools
+ - sudo apt-cache search jdk
+ - sudo apt-cache search golang
  - sudo pip install --upgrade pip
- - sudo useradd -m -u 8877 wikispeech
- - sudo pip install -r requirements.txt
- - sudo apt install golang-1.10
  - pip install -r requirements.txt
 
 # command to run tests
