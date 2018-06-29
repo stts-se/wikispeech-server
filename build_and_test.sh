@@ -12,7 +12,7 @@ mkdir -p .build
 cd .build
 
 for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|mishkal' | egrep -v 'docker.*build' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
-    kill $proc || "Couldn't kill $pid"
+    kill $proc || echo "Couldn't kill $pid"
 done
 
 export GOPATH=`go env GOPATH`
