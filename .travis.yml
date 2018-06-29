@@ -45,9 +45,7 @@ install:
  - export PATH=/usr/local/go/bin:$PATH
  - export GOPATH=$HOME/go
  - export GOROOT=/usr/local/go
- - which go
- - go version
- - go env
+ - which go && go version && go env
 
  - sudo apt install opus-tools
  - sudo pip install --upgrade pip
