@@ -39,7 +39,8 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install:
- - sudo apt install opus-tools openjdk-8-jdk
+ - sudo apt install opus-tools
+ - sudo apt remove golang
  - sudo pip install --upgrade pip
  - pip install -r requirements.txt
  - wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
