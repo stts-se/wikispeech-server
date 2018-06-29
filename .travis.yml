@@ -41,11 +41,9 @@ cache:
 install:
  - sudo apt install opus-tools
  - sudo pip install --upgrade pip
- - sudo apt-cache search python 
- - sudo apt-cache search jdk
- - sudo apt-cache search java
  - sudo useradd -m -u 8877 wikispeech
  - sudo pip install -r requirements.txt
+ - sudo apt install golang-1.10
  - pip install -r requirements.txt
 
 # command to run tests
