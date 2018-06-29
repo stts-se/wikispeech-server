@@ -9,7 +9,6 @@ basedir=`realpath $basedir`
 cd $basedir
 builddir="${basedir}/.build"
 mkdir -p .build
-cd .build
 
 for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|mishkal' | egrep -v 'docker.*build' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
     kill $proc || echo "Couldn't kill $pid"
@@ -30,7 +29,7 @@ export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
 sleep 20
 
-cd $basedir
+cd $builddir
 git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && git pull
 git checkout $RELEASE || echo "No such release for marytts. Using master."
  
