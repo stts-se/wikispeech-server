@@ -45,7 +45,9 @@ install:
  - wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
  - sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
  - export PATH=$PATH:/usr/local/go/bin
+ - export GOROOT=$HOME/go1.10.3
  - echo $GOROOT
+ - go version
 
 # command to run tests
 script:
@@ -56,7 +58,6 @@ script:
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
- - go version
  - go get ./...
  - bash install/setup.sh /tmp/appdir
  - bash install/start_server.sh -a /tmp/appdir &
