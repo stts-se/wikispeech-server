@@ -45,6 +45,7 @@ install:
  - sudo apt-cache search jdk
  - sudo apt-cache search java
  - sudo pip install -r requirements.txt
+ - sudo pip install requests
 
 # command to run tests
 script:
