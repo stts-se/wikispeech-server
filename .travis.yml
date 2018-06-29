@@ -39,9 +39,9 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install:
- - sudo apt install golang-1.10 opus-tools
  - sudo apt-cache search jdk
  - sudo apt-cache search golang
+ - sudo apt install golang-1.10 opus-tools
  - sudo pip install --upgrade pip
  - pip install -r requirements.txt
 
