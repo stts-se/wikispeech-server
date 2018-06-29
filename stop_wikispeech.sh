@@ -3,7 +3,7 @@
 processNames="pronlex|wikispeech|marytts|tts_server|mishkal"
 cmd=`basename $0`
 
-exclude="$cmd|git-receive-pack|docker.*build|installDist|grep .E $processNames"
+exclude="$cmd|git-receive-pack|docker.*build|installDist|grep .E PID"
 
 psargs="--sort pid -Af"
 pids=""
