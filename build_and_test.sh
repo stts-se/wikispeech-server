@@ -2,7 +2,7 @@
 # mimic travis build tests, always run before pushing!
 
 set -e
-RELEASE=docker_user
+RELEASE=master
 
 basedir=`dirname $0`
 basedir=`realpath $basedir`
