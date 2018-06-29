@@ -21,7 +21,7 @@ notifications:
     on_failure: change
 
 env:
- - RELEASE=docker_user GOROOT=$HOME/go1.10.3
+ - RELEASE=docker_user
  # TODO; lägg till senare - RELEASE=docker_user DO_IMPORT=1
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
@@ -39,17 +39,16 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install:
- - sudo apt install opus-tools
- - sudo apt remove golang
- - sudo pip install --upgrade pip
- - pip install -r requirements.txt
  - wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
  - sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
  - export PATH=/usr/local/go/bin:$PATH
- - mkdir $GOROOT
  - echo $GOROOT
  - which go
  - go version
+
+ - sudo apt install opus-tools
+ - sudo pip install --upgrade pip
+ - pip install -r requirements.txt
 
 # command to run tests
 script:
