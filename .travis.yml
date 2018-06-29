@@ -46,7 +46,8 @@ install:
  - sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
  - export PATH=$PATH:/usr/local/go/bin
  - export GOROOT=$HOME/go1.10.3
- - echo $GOROOT
+ - which go
+ #- echo $GOROOT
  - go version
 
 # command to run tests
