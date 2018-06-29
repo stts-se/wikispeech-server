@@ -45,9 +45,6 @@ install:
  - export PATH=/usr/local/go/bin:$PATH
  - export GOPATH=$HOME/go
  - export GOROOT=/usr/local/go
- - export GOTOOLDIR="/home/travis/.gimme/versions/go1.10.2.linux.amd64/pkg/tool/linux_amd64"
- - mkdir -p $GOTOOLDIR
- - echo $GOROOT
  - which go
  - go version
  - go env
