@@ -2,8 +2,7 @@ FROM buildpack-deps
 
 ############# INITIAL SETUP/INSTALLATION #############
 # non-root user
-RUN useradd -u 8877 wikispeech
-#RUN usermod -m -d /wikispeech wikispeech
+RUN useradd -m -u 8877 wikispeech
 
 # setup apt
 RUN apt-get update -y && apt-get upgrade -y && apt-get install apt-utils -y
