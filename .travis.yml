@@ -44,7 +44,8 @@ install:
  - sudo apt-cache search python 
  - sudo apt-cache search jdk
  - sudo apt-cache search java
- - pip install --user -r requirements.txt
+ - useradd -u 8877 wikispeech
+ - su wikispeech && pip install --user -r requirements.txt
 
 # command to run tests
 script:
