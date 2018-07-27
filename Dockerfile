@@ -25,7 +25,6 @@ ENV LC_ALL C.UTF-8
 
 ############# WIKISPEECH #############
 ENV BASEDIR /wikispeech/wikispeech_server
-WORKDIR $BASEDIR
 
 # local copy of https://github.com/stts-se/wikispeech_mockup.git 
 COPY . $BASEDIR

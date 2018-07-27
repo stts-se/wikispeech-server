@@ -251,13 +251,13 @@ voice_configs = [
 
     #BASQUE
 
-    # {
-    #     "lang":"eu",
-    #     "name":"ahotts-eu-female",
-    #     "engine":"ahotts",
-    #     "adapter":"adapters.ahotts_adapter"
-    # }
-    # ,
+    {
+        "lang":"eu",
+        "name":"ahotts-eu-female",
+        "engine":"ahotts",
+        "adapter":"adapters.ahotts_adapter"
+    }
+    ,
 
 
 

@@ -59,8 +59,8 @@ cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &> mis
 echo "starting marytts"
 cd $gitrepos/marytts && nohup ./gradlew run &> marytts.log &
 
-#echo "starting ahotts"
-#cd $gitrepos/AhoTTS-eu-Wikispeech && nohup bin/tts_server -IP=127.0.0.1 -Port=1200 &> ahotts.log &
+echo "starting ahotts"
+cd $gitrepos/AhoTTS-eu-Wikispeech && nohup bin/tts_server -IP=127.0.0.1 -Port=1201 &> ahotts.log && nohup python ahotts-httpserver.py localhost 1200 &> ahotts.log &
 
 # echo "TESTING | not starting wikispeech" && exit 0
 
