@@ -2,7 +2,7 @@
 # mimic travis build tests, always run before pushing!
 
 set -e
-RELEASE=master
+RELEASE=ahotts-merge
 
 basedir=`dirname $0`
 basedir=`realpath $basedir`

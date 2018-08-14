@@ -21,8 +21,8 @@ notifications:
     on_failure: change
 
 env:
- - RELEASE=master
- - RELEASE=master DO_IMPORT=1
+ - RELEASE=ahotts-merge
+ - RELEASE=ahotts-merge DO_IMPORT=1
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
