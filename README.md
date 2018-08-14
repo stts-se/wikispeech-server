@@ -38,6 +38,7 @@ The file contains settings for:
 * Services
   * lexicon: url to lexicon server. (default: http://localhost:8787)
   * marytts: url to marytts server. (default: http://localhost:59125/process)
+  * ahotts: various configs for ahotts server. (default: http://localhost:1200)
 * Tests
   * run_startup_test: Run or don't run a lot of tests - they may fail if configuration is incorrect, or lexicon/marytts servers are not found. (default: True)
   * quit_on_error: Quit if a test fails. (default: False)
