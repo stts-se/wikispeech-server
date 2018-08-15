@@ -14,21 +14,6 @@ for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|mish
     kill $proc || echo "Couldn't kill $pid"
 done
 
-## AHOTTS
-cd $builddir
-git clone https://github.com/Elhuyar/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
-git checkout $RELEASE || echo "No such release for ahotts. Using master."
-if [ ! -f bin/tts_server ]; then
-    sh script_compile_all_linux.sh && mkdir -p txt wav
-fi
-cp $basedir/start_ahotts_wikispeech.sh .
-sh start_ahotts_wikispeech.sh &
-export ahotts_pid=$!
-echo "ahotts started with pid $ahotts_pid"
-#echo "TESTING -- exit after ahotts" && exit 1
-sleep 20
-
-
 ## PRONLEX
 export GOPATH=`go env GOPATH`
 export PATH=$PATH:$GOPATH/bin
@@ -43,6 +28,19 @@ echo ${builddir}/appdir
 bash install/start_server.sh -a ${builddir}/appdir &
 export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
+sleep 20
+
+## AHOTTS
+cd $builddir
+git clone https://github.com/Elhuyar/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
+git checkout $RELEASE || echo "No such release for ahotts. Using master."
+if [ ! -f bin/tts_server ]; then
+    sh script_compile_all_linux.sh && mkdir -p txt wav
+fi
+cp $basedir/start_ahotts_wikispeech.sh .
+sh start_ahotts_wikispeech.sh &
+export ahotts_pid=$!
+echo "ahotts started with pid $ahotts_pid"
 sleep 20
 
 ## MARYTTS
