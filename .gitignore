@@ -11,3 +11,4 @@ wikispeech_server/hanna*.conf
 wikispeech.log
 
 .build
+log
