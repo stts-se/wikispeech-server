@@ -76,6 +76,8 @@ cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &>> $l
 echo "starting marytts"
 cd $gitrepos/marytts && nohup ./gradlew run &>> $logdir/marytts.log &
 
+# echo "TESTING -- not starting ahotts, wikispeech" && exit 0
+
 echo "starting ahotts"
 cp $gitrepos/wikispeech_mockup/start_ahotts_wikispeech.sh $gitrepos/AhoTTS-eu-Wikispeech/
 cd $gitrepos/AhoTTS-eu-Wikispeech && nohup sh start_ahotts_wikispeech.sh &>> $logdir/ahotts.log &

@@ -6,12 +6,11 @@ import requests
 from flask import Flask, request, json, Response, make_response, render_template, redirect
 from flask_cors import CORS
 
-
+import wikispeech_server.config as config
 from wikispeech_server.voice_config import textprocessor_configs, voice_configs
 
 from wikispeech_server.options import *
 import wikispeech_server.adapters.lexicon_client as lexicon_client
-import wikispeech_server.config as config
 import wikispeech_server.log as log
 from wikispeech_server.textprocessor import Textprocessor, TextprocessorException
 from wikispeech_server.voice import Voice, VoiceException

@@ -250,7 +250,6 @@ voice_configs = [
     ,
 
     #BASQUE
-
     {
         "lang":"eu",
         "name":"ahotts-eu-female",
@@ -260,11 +259,7 @@ voice_configs = [
     ,
 
 
-
     # ARABIC
-
-    # HL commented out Arabic 2017-09-11
-    # HB put it back 2017-09-14
     {
         "lang":"ar",
         "name":"ar-nah-hsmm",

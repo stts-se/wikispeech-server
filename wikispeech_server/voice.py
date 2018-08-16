@@ -6,7 +6,6 @@ import wikispeech_server.config as config
 from wikispeech_server.adapters.lexicon_client import Lexicon, LexiconException
 from wikispeech_server.adapters.mapper_client import Mapper, MapperException
 
-from wikispeech_server.adapters.ahotts_adapter import socket_write_filelength_file,socket_read_filelength_file
 
 
 class VoiceException(Exception):
@@ -53,6 +52,7 @@ class Voice(object):
             else:
                 log.info("Voice found at url %s" % url)
         elif self.engine == "ahotts":
+            from wikispeech_server.adapters.ahotts_adapter import socket_write_filelength_file,socket_read_filelength_file
             cwdir = os.getcwd()
             tmpdir = config.config.get("Audio settings","audio_tmpdir")
             ahotts_server_ip = config.config.get("Services", "ahotts_server_ip")
