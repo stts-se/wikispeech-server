@@ -15,7 +15,7 @@ component "3. Lexicon" as Lexicon #lightblue
 url of Lexicon is [[Lexicon.svg]]
 
 component "4. Synthesis" as Synthesis
-component "5. Recordings" as Recordings
+'component "5. Recordings" as Recordings
 
 
 interface WikispeechApi #lightblue
@@ -27,7 +27,7 @@ url of WikispeechApi is [[WikispeechApi.svg]]
 interface TextprocessingApi
 interface LexiconApi
 interface SynthesisApi
-interface RecordingApi
+'interface RecordingApi
 'database Recordings
 
 Client -- WikispeechApi : "Send text/html/textId\nReceive audio+markup"
@@ -45,8 +45,10 @@ Wikispeech <--> TextprocessingApi : "Send text/html\nReceive linguistic markup"
 Wikispeech <--> SynthesisApi : "Send linguistic markup\nReceive audio+speech markup"
 SynthesisApi -- Synthesis
 
-Wikispeech <--> RecordingApi : "Send text id\nReceive audio+speech markup"
-RecordingApi -- Recordings
+Synthesis -- TTSEngine
+
+'Wikispeech <--> RecordingApi : "Send text id\nReceive audio+speech markup"
+'RecordingApi -- Recordings
 
 'NLP <--> TextprocessingApi
 'NLP <--> LexiconApi
