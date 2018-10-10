@@ -1,7 +1,9 @@
 @startuml
 
 title
-Wikispeech: Basic interaction diagram
+<size:20>**Wikispeech: Basic interaction diagram**</size>
+<size:14>October 2018</size>
+<size:14></size>
 end title
 
 component "Client\n(Browser javascript/other http client)" as Client
@@ -42,9 +44,5 @@ end note
 TextprocessingApi -- Textprocessing
 Textprocessing <--> LexiconApi
 LexiconApi -- Lexicon
-
-legend
-October 2018
-end legend
 
 @enduml
