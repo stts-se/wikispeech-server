@@ -1,0 +1,50 @@
+@startuml
+
+title
+Wikispeech: Basic interaction diagram
+end title
+
+component "Client\n(Browser javascript/other http client)" as Client
+
+component "1. Wikispeech" as Wikispeech
+component "2. Textprocessing" as Textprocessing #lightblue
+url of Textprocessing is [[textprocessing2.svg]]
+
+component "3. Lexicon" as Lexicon #lightblue
+url of Lexicon is [[Lexicon.svg]]
+
+component "4. TTSAdapter" as Synthesis
+
+interface WikispeechApi #lightblue
+url of WikispeechApi is [[WikispeechApi.svg]]
+
+interface TextprocessingApi
+interface LexiconApi
+interface SynthesisApi
+
+Client -- WikispeechApi : "Send text/html/textId\nReceive audio+markup"
+
+WikispeechApi -- Wikispeech
+
+Wikispeech <--> TextprocessingApi : "Send text/html\nReceive linguistic markup"
+
+
+
+Wikispeech <--> SynthesisApi : "Send linguistic markup\nReceive audio+speech markup"
+SynthesisApi -- Synthesis
+
+Synthesis -- TTSEngine
+
+note right
+MaryTTS or other engines
+end note
+
+TextprocessingApi -- Textprocessing
+Textprocessing <--> LexiconApi
+LexiconApi -- Lexicon
+
+legend
+October 2018
+end legend
+
+@enduml
