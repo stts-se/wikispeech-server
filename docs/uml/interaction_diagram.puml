@@ -1,14 +1,14 @@
 @startuml
 
 title
-<size:20>**Wikispeech: Basic interaction diagram**</size>
+<size:20>**Wikispeech server: Basic interaction diagram**</size>
 <size:14>October 2018</size>
 <size:14></size>
 end title
 
 component "Client\n(Browser javascript/other http client)" as Client
 
-component "1. Wikispeech" as Wikispeech
+component "1. Wikispeech server" as Wikispeech
 component "2. Textprocessing" as Textprocessing #lightblue
 url of Textprocessing is [[textprocessing2.svg]]
 
