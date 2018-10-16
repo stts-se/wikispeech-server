@@ -174,6 +174,26 @@ textprocessor_configs = [
          }
      ]
     }
+    ,
+
+
+    {"name":"marytts_textproc_ar", "lang":"ar",
+     "components":[
+         {
+             "module":"adapters.marytts_adapter",
+             "call":"marytts_preproc",
+             "mapper": {
+                 "from":"ar_ws-sampa",
+                 "to":"ar_sampa_mary"
+             },
+         },
+         {
+             "module":"adapters.lexicon_client",
+             "call":"lexLookup",
+             "lexicon":"wikispeech_testdb:ar" 
+         }
+     ]
+    }
 
 ]
 
