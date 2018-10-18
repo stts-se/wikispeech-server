@@ -47,8 +47,7 @@ install:
  - export GOROOT=/usr/local/go
  - which go && go version && go env
 
- - sudo apt list | egrep opus
- - sudo apt install opus-tools
+ - sudo apt-get install opus-tools
  - sudo pip install --upgrade pip
  - pip install -r requirements.txt
 
