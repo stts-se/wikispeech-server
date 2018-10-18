@@ -57,7 +57,7 @@ textprocessor_configs = [
     }
     ,
 
-    {"name":"marytts_textproc_nb", "lang":"nb",
+    {"name":"test_textproc_nb", "lang":"nb",
      "components":[
          {
              "module":"adapters.marytts_adapter",
@@ -177,7 +177,7 @@ textprocessor_configs = [
     ,
 
 
-    {"name":"marytts_textproc_ar", "lang":"ar",
+    {"name":"test_textproc_ar", "lang":"ar",
      "components":[
          {
              "module":"adapters.marytts_adapter",
