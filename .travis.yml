@@ -6,7 +6,7 @@
 # java is for marytts
 #language: java
 jdk:
- - openjdk8
+ - openjdk11
 
 language: python
 python:
