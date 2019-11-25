@@ -5,6 +5,13 @@ import wikispeech_server.log as log
 import urllib.parse
 
 
+#HB 191125
+#Testing to include part-of-speech tags from lexicon instead of from textprocessing
+#If there is a real pos tagger at work this should change.
+#Also if pos tag is set by user
+includePostag = True
+
+
 def cleanupOrth(orth):
 
     orig = orth
@@ -107,6 +114,11 @@ def getLexiconByName(lexicon_name):
 
 def convertResponse(response_json):
     trans_dict = {}
+
+    if includePostag:
+        trans_dict["postags"] = {}
+
+    
     #with list response:
     if type(response_json) == type([]):
         for response_item in response_json:
@@ -114,14 +126,21 @@ def convertResponse(response_json):
             if not response_item["status"]["name"] == "delete":
                 response_orth = response_item["strn"]
                 first_trans = response_item["transcriptions"][0]["strn"]
+                if includePostag:
+                    pos = response_item["partOfSpeech"]
                 if response_item["preferred"] == True:
                     log.debug("ORTH: %s, PREFERRED TRANS: %s" % (response_orth,first_trans))
                     trans_dict[response_orth] = first_trans
+                    if includePostag:
+                        trans_dict["postags"][response_orth] = pos
                 else:
                     #only add the first reading if none is preferred
                     if not response_orth in trans_dict:
                         log.debug("ORTH: %s, FIRST TRANS: %s" % (response_orth,first_trans))
                         trans_dict[response_orth] = first_trans
+                        if includePostag:
+                            trans_dict["postags"][response_orth] = pos
+
     return trans_dict
 
 
@@ -133,6 +152,8 @@ def addTransFromResponse(tokenlist, responseDict):
             ph = responseDict[orth]
             t["trans"] = ph
             t["g2p_method"] = "lexicon"
+            if includePostag:
+                t["pos"] = responseDict["postags"][orth]
         else:
             log.debug("No trans for %s" % orth)
     
