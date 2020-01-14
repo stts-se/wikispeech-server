@@ -1553,6 +1553,11 @@ def synthesise(lang, voice, utterance, presynth=False, hostname=None):
     """
 
     response=requests.post("http://"+ahotts_server_ip+":"+ahotts_server_port+"/ahotts_getaudio",data={'text':input.encode('latin-1')+'\n'.encode('latin-1'),'lang':lang,'voice':voice,'speed':ahotts_speed})
+    url="http://"+ahotts_server_ip+":"+ahotts_server_port+"/ahotts_getaudio"
+    data={'text':input.encode('latin-1')+'\n'.encode('latin-1'),'lang':lang,'voice':voice,'speed':ahotts_speed}
+    #print(url)
+    #print(data)
+    
     if response.status_code==200:
         files=response.json()
         wavfile=files['wav']
