@@ -15,6 +15,7 @@ for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|ahot
 done
 
 ## PRONLEX
+cd $builddir
 export GOPATH=`go env GOPATH`
 export PATH=$PATH:$GOPATH/bin
 cd $GOPATH/src/github.com/stts-se/
@@ -43,16 +44,6 @@ git checkout $RELEASE || echo "No such release for marytts. Using master."
 export marytts_pid=$!
 echo "marytts started with pid $marytts_pid"
 sleep 20
-
-## WIKISPEECH MINIMAL
-cd $basedir && python3 bin/wikispeech docker/config/travis-min.conf &
-export wikispeech_pid=$!  
-echo "wikispeech started with pid $wikispeech_pid"
-sleep 30
- 
-sh $basedir/.travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
-
-# echo "TESTING -- not starting ahotts, wikispeech (full)" && exit 1
 
 
 ## AHOTTS
