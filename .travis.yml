@@ -58,6 +58,8 @@ script:
  
  # AHOTTS
  - cd $basedir
+ - hostname -I
+ - hostname -i
  - git clone https://github.com/stts-se/AhoTTS-eu-Wikispeech.git
  - cd AhoTTS-eu-Wikispeech
  - git checkout $RELEASE || echo "No such release for ahotts. Using master."
