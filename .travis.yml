@@ -82,13 +82,13 @@ script:
  - echo "marytts started with pid $marytts_pid"
  - sleep 20
  
- # WIKISPEECH MINIMAL
- - cd $basedir
- - python3 bin/wikispeech docker/config/travis-min.conf &
- - export wikispeech_pid=$!  
- - echo "wikispeech started with pid $wikispeech_pid"
- - sleep 20
- - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
+ # # WIKISPEECH MINIMAL
+ # - cd $basedir
+ # - python3 bin/wikispeech docker/config/travis-min.conf &
+ # - export wikispeech_pid=$!  
+ # - echo "wikispeech started with pid $wikispeech_pid"
+ # - sleep 20
+ # - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
  
  # AHOTTS
  - cd $basedir
