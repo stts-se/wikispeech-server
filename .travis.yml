@@ -66,6 +66,7 @@ script:
  - export ahotts_pid=$!
  - echo "ahotts started with pid $ahotts_pid"
  - sleep 20
+ - python ahotts_testcall.py "test call for ahotts"
 
  # PRONLEX
  - mkdir -p $GOPATH/src/github.com/stts-se && cd $GOPATH/src/github.com/stts-se/
