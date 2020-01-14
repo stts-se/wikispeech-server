@@ -271,13 +271,15 @@ voice_configs = [
 
     #BASQUE
 
-    {
-         "lang":"eu",
-         "name":"ahotts-eu-female",
-         "engine":"ahotts",
-         "adapter":"adapters.ahotts_adapter"
-    }
-    ,
+    # HL commented out Basque in master 2020-01-14
+    
+    # {
+    #      "lang":"eu",
+    #      "name":"ahotts-eu-female",
+    #      "engine":"ahotts",
+    #      "adapter":"adapters.ahotts_adapter"
+    # }
+    # ,
 
 
 
