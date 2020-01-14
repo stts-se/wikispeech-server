@@ -25,7 +25,6 @@ go get ./...
 
 rm -rf ${builddir}/appdir
 bash install/setup.sh ${builddir}/appdir
-#bash install/import.sh lexdata ${builddir}/appdir schemaversion_3.1
 echo ${builddir}/appdir
 bash install/start_server.sh -a ${builddir}/appdir &
 export pronlex_pid=$!

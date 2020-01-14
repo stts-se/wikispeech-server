@@ -63,7 +63,6 @@ script:
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
  - go get ./...
  - bash install/setup.sh /tmp/appdir
- # - bash install/import.sh lexdata /tmp/appdir schemaversion_3.1
  - bash install/start_server.sh -a /tmp/appdir &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
