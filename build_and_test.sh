@@ -61,7 +61,6 @@ git checkout $RELEASE || echo "No such release for ahotts. Using master."
 if [ ! -f bin/tts_server ]; then
     sh script_compile_all_linux.sh && mkdir -p txt wav
 fi
-cp $basedir/start_ahotts_wikispeech.sh .
 sh start_ahotts_wikispeech.sh &
 export ahotts_pid=$!
 echo "ahotts started with pid $ahotts_pid"
