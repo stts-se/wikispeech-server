@@ -14,6 +14,18 @@ for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|ahot
     kill $proc || echo "Couldn't kill $pid"
 done
 
+## AHOTTS
+cd $builddir
+git clone https://github.com/stts-se/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
+git checkout $RELEASE || echo "No such release for ahotts. Using master."
+if [ ! -f bin/tts_server ]; then
+    sh script_compile_all_linux.sh && mkdir -p txt wav
+fi
+sh start_ahotts_wikispeech.sh &
+export ahotts_pid=$!
+echo "ahotts started with pid $ahotts_pid"
+sleep 20
+
 ## PRONLEX
 cd $builddir
 export GOPATH=`go env GOPATH`
@@ -44,26 +56,12 @@ export marytts_pid=$!
 echo "marytts started with pid $marytts_pid"
 sleep 20
 
-
-## AHOTTS
-cd $builddir
-git clone https://github.com/stts-se/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
-git checkout $RELEASE || echo "No such release for ahotts. Using master."
-if [ ! -f bin/tts_server ]; then
-    sh script_compile_all_linux.sh && mkdir -p txt wav
-fi
-sh start_ahotts_wikispeech.sh &
-export ahotts_pid=$!
-echo "ahotts started with pid $ahotts_pid"
-sleep 20
-
-
 ## WIKISPEECH FULL
 cd $basedir && python3 bin/wikispeech docker/config/travis.conf &
 export wikispeech_pid=$!  
 echo "wikispeech started with pid $wikispeech_pid"
 sleep 20
- 
+
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh ahotts $$ahotts_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
