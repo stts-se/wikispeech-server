@@ -39,8 +39,6 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install:
- - hostname -I
- - hostname -i
  - sudo apt-get purge golang* || echo "No old golang packages to delete"
  - wget https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz
  - sudo tar -C /usr/local -xzf go1.13.6.linux-amd64.tar.gz
@@ -65,6 +63,7 @@ script:
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
  - go get ./...
  - bash install/setup.sh /tmp/appdir
+ # - bash install/import.sh lexdata /tmp/appdir schemaversion_3.1
  - bash install/start_server.sh -a /tmp/appdir &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
