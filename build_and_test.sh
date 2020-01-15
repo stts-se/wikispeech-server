@@ -14,6 +14,7 @@ for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|ahot
     kill $proc || echo "Couldn't kill $pid"
 done
 
+
 ## AHOTTS
 cd $builddir
 git clone https://github.com/stts-se/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
@@ -25,6 +26,8 @@ sh start_ahotts_wikispeech.sh &
 export ahotts_pid=$!
 echo "ahotts started with pid $ahotts_pid"
 sleep 20
+python ahotts_testcall.py "test call for ahotts"
+
 
 ## PRONLEX
 cd $builddir
@@ -43,6 +46,7 @@ export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
 sleep 20
 
+
 ## MARYTTS
 cd $builddir
 git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && git pull
@@ -56,17 +60,25 @@ export marytts_pid=$!
 echo "marytts started with pid $marytts_pid"
 sleep 20
 
+
 ## WIKISPEECH FULL
 cd $basedir && python3 bin/wikispeech docker/config/travis.conf &
 export wikispeech_pid=$!  
 echo "wikispeech started with pid $wikispeech_pid"
 sleep 20
 
+
+# FINALLY
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
-sh $basedir/.travis/exit_server_and_fail_if_not_running.sh ahotts $$ahotts_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
  
+# kill ahotts
+#sh $basedir/.travis/exit_server_and_fail_if_not_running.sh ahotts $ahotts_pid
+for proc in `ps --sort pid|egrep 'tts_server|ahotts|python' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
+    kill $proc || echo "Couldn't kill $pid"
+done
+
 docker build . --no-cache -t sttsse/wikispeech:buildtest --build-arg RELEASE=$RELEASE
 
 
