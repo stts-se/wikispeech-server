@@ -40,6 +40,7 @@ cache:
 
 install:
  - sudo apt-get purge golang* || echo "No old golang packages to delete"
+ - sudo apt-get install python2
  - wget https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz
  - sudo tar -C /usr/local -xzf go1.13.6.linux-amd64.tar.gz
  - export PATH=/usr/local/go/bin:$PATH

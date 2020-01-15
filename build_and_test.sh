@@ -75,7 +75,7 @@ sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
  
 # kill ahotts
 #sh $basedir/.travis/exit_server_and_fail_if_not_running.sh ahotts $ahotts_pid
-for proc in `ps --sort pid|egrep 'tts_server|ahotts|python' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
+for proc in `ps -f --sort pid|egrep 'tts_server|ahotts|python' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
     kill $proc || echo "Couldn't kill $pid"
 done
 
