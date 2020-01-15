@@ -10,7 +10,7 @@ jdk:
 
 language: python
 python:
-   - "3."
+   - "3.6"
   
 before_install:
  - set -e
