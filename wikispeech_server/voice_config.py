@@ -270,23 +270,16 @@ voice_configs = [
     ,
 
     #BASQUE
-
-    # HL commented out Basque in master 2020-01-14
-    
-    # {
-    #      "lang":"eu",
-    #      "name":"ahotts-eu-female",
-    #      "engine":"ahotts",
-    #      "adapter":"adapters.ahotts_adapter"
-    # }
-    # ,
-
+    {
+        "lang":"eu",
+        "name":"ahotts-eu-female",
+        "engine":"ahotts",
+        "adapter":"adapters.ahotts_adapter"
+    }
+    ,
 
 
     # ARABIC
-
-    # HL commented out Arabic 2017-09-11
-    # HB put it back 2017-09-14
     {
         "lang":"ar",
         "name":"ar-nah-hsmm",

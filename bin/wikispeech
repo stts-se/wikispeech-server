@@ -13,7 +13,11 @@ print("Trying to load textprocessors and voices defined in wikispeech_server/voi
 for tp_config in ws.textprocessor_configs:
     ws.loadTextprocessor(tp_config)
 for voice_config in ws.voice_configs:
-    ws.loadVoice(voice_config)
+    # Skip ahotts if it's not defined in user config
+    if voice_config.get("engine") == "ahotts" and not config.config.get("Services", "ahotts_server_ip", fallback = None):
+        ws.log.info("Skipping voice %s" % voice_config.get("name"))
+    else:
+        ws.loadVoice(voice_config)
 
 
 try:
