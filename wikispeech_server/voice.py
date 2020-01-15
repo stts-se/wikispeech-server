@@ -51,7 +51,7 @@ class Voice(object):
                 raise VoiceException(msg)
             else:
                 log.info("Voice found at url %s" % url)
-        elif self.engine == "ahotts":
+        elif self.engine == "ahotts" and config.config.get("Services", "ahotts_server_ip") != None:
             from wikispeech_server.adapters.ahotts_adapter import socket_write_filelength_file,socket_read_filelength_file
             cwdir = os.getcwd()
             tmpdir = config.config.get("Audio settings","audio_tmpdir")
