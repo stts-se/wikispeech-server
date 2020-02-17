@@ -1,4 +1,8 @@
-import os, re, io
+import sys, os, re, io
+
+if __name__ == "__main__":
+    sys.path.append(".")
+
 import wikispeech_server.log as log
 import wikispeech_server.config as config
 
@@ -6,7 +10,7 @@ def preproc(utt):
     #Nothing to be done here .. Maybe there will be?
     return utt
 
-def synthesise(lang, voice, input, presynth=False, hostname="http:localhost:10000"):
+def synthesise(lang, voice, input, presynth=False, hostname=None):
     voice = voice["flite_voice"]
     #convert utt to ssml
     ssml = utt2ssml(input)

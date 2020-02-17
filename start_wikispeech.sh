@@ -5,7 +5,11 @@ set -e
 CMD=`basename $0`
 
 gitrepos=`ls -d $HOME/git* 2> >(grep -v 'No such file' >&2) | egrep "(git|git_repos|gitrepos)$" | head -1`
-pronlex=`ls -d ~/go/src/github.com/stts-se/pronlex $gitrepos/pronlex 2> >(grep -v 'No such file' >&2) | egrep pronlex$`
+
+#HB If more than one location, use the first
+#pronlex=`ls -d ~/go/src/github.com/stts-se/pronlex $gitrepos/pronlex 2> >(grep -v 'No such file' >&2) | egrep pronlex$`
+pronlex=`ls -d ~/go/src/github.com/stts-se/pronlex $gitrepos/pronlex 2> >(grep -v 'No such file' >&2) | egrep pronlex$ | head -1`
+
 lexserverappdir="$HOME/wikispeech/standalone"    
 
 printUsage() {
@@ -81,7 +85,7 @@ cd $gitrepos/marytts && nohup ./gradlew run &>> $logdir/marytts.log &
 echo "starting ahotts"
 cd $gitrepos/AhoTTS-eu-Wikispeech && nohup sh start_ahotts_wikispeech.sh &>> $logdir/ahotts.log &
 
-# echo "TESTING -- not starting wikispeech" && exit 0
+echo "TESTING -- not starting wikispeech" && exit 0
 
 echo "clearing wikispeech audio cache"
 cd $gitrepos/wikispeech_mockup && bash clear_audio_cache.sh -q || exit 1

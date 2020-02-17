@@ -599,7 +599,6 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
     
     voices = list_voices_by_language(lang)
-    #log.debug(voices)
     voice = None
     if voice_name == "default_voice":
         if len(voices) > 0:
@@ -615,34 +614,29 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
 
 
-
-    #log.debug(voice)
-
     #Import the defined module and function
-    #TODO drop synthesise for voice[function] (?)
-
     mod = import_module("wikispeech_server."+voice["adapter"])
     log.debug(str(mod))
     log.debug(str(dir(mod)))
 
-    process = getattr(mod, "synthesise")
+    #This use of getattr makes it possible to define the method to call in the voice_config.
+    #Not used now and not sure it will ever be a useful thing to do. Leaving this here anyway just to illustrate that it can be done.
+    #These lines could, as they are now, be replaced by
+    #(audio_file, output_tokens) = mod.synthesise(lang, voice, input, presynth=presynth, hostname=hostname)
     
+    #method_name =  voice["method_name"]
+    method_name = "synthesise"
+    process = getattr(mod, method_name)
     log.debug("PROCESS: %s" % process)
-
-    #process = getattr(__import__(voice["adapter"]), "synthesise")
-
-
-
     (audio_file, output_tokens) = process(lang, voice, input, presynth=presynth, hostname=hostname)
+
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
+    #Feb 2020 We're talking now about not returning url but audio data in json instead. So this could change.
     if output_type != "test":
         audio_file = saveAndConvertAudio(audio_file, presynth)
 
-
-    #audio_url = "%s/%s" % (config.config.get("Audio settings","audio_url_prefix"), audio_file)
-    #HB T180685: Remove audio_url_prefix from wikispeech config
     audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
     log.debug("audio_url: %s" % audio_url)
 

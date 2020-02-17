@@ -1477,7 +1477,9 @@ def synthesise(lang, voice, utterance, presynth=False, hostname=None):
     log.info("Text: %s" % input)
     words = get_orth(utterance)
     log.info("Words: %s" % words)
+
     hashstring=input+'&Lang='+lang+'&Voice='+voice['name']
+    
     try:
         hash_object=hashlib.md5(hashstring.encode('latin-1'))
     except:
@@ -1636,6 +1638,7 @@ def get_orth(utterance):
 if __name__ == "__main__":
     input = {
         "lang": "eu",
+        "original_text": "test",
         "paragraphs": [
             {
                 "sentences": [
@@ -1662,7 +1665,10 @@ if __name__ == "__main__":
 
     lang = "eu"
     log.log_level = "debug"
-    voice = "ahotts-eu-female"
+
+    #HB voice['name'] is used in synthesise?
+    voice = {"name": "ahotts-eu-female"}
+    #voice = "ahotts-eu-female"
     
     (audio_url, tokens) = synthesise(lang, voice, input)
     log.debug("AUDIO URL: %s" % audio_url)
