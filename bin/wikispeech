@@ -11,11 +11,18 @@ ws.log.log_level = config.config.get("Server","log_level")
 #HB 171127 load calls moved here from wikispeech_server/wikispeech.py
 print("Trying to load textprocessors and voices defined in wikispeech_server/voice_config.py")
 for tp_config in ws.textprocessor_configs:
-    ws.loadTextprocessor(tp_config)
+    if tp_config.get("disabled") == True:
+        print("Didn't load %s, disabled in voice_config.py" % tp_config.get("name"))
+    else:
+        ws.loadTextprocessor(tp_config)
+
+
 for voice_config in ws.voice_configs:
     # Skip ahotts if it's not defined in user config
     if voice_config.get("engine") == "ahotts" and not config.config.get("Services", "ahotts_server_ip", fallback = None):
         ws.log.info("Skipping voice %s" % voice_config.get("name"))
+    elif voice_config.get("disabled") == True:
+        print("Didn't load %s, disabled in voice_config.py" % voice_config.get("name"))
     else:
         ws.loadVoice(voice_config)
 

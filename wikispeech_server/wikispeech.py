@@ -48,7 +48,7 @@ else:
 textprocessors = []
 def loadTextprocessor(tp_config):
     try:
-        tp = Textprocessor(tp_config)        
+        tp = Textprocessor(tp_config)
         textprocessors.append(tp)
     except TextprocessorException as e:
         log.warning("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
@@ -77,17 +77,25 @@ CORS(app)
 
 
 
-
-
+###############################################################
+#
+# API
+#
+# /ping
+# /version
+# /options
+# /languages
+# /, /wikispeech
+# /textprocessing
+# /synthesis
 
 
 
 ################################################################
 #
-# wikispeech api
+# /ping
 #
-# POST: curl -d "lang=en" -d "input=test." http://localhost:10000/
-# GET:  curl "http://localhost:10000/?lang=en&input=test."
+# GET:  curl "http://localhost:10000/ping"
 
 @app.route('/ping')
 def ping():
@@ -96,6 +104,18 @@ def ping():
     return resp
 
 
+################################################################
+#
+# /version
+#
+# GET:  curl "http://localhost:10000/version"
+
+@app.route('/version')
+def version():
+    resp = make_response("\n".join(vInfo))
+    resp.headers["Content-type"] = "text/plain"
+    return resp
+    
 def versionInfo():
     res = []
     buildInfoFile = "/wikispeech/wikispeech_server/build_info.txt"
@@ -136,15 +156,19 @@ def genStartedAtString():
     now = now.astimezone(pytz.utc)
     return '{:%Y-%m-%d %H:%M:%S %Z}'.format(now)
 
+#These are set when running the server
 startedAt = genStartedAtString()
 vInfo = versionInfo()
 
-@app.route('/version')
-def version():
-    resp = make_response("\n".join(vInfo))
-    resp.headers["Content-type"] = "text/plain"
-    return resp
-    
+
+
+################################################################
+#
+# /options
+#
+# GET:  curl "http://localhost:10000/options"
+# OPTIONS: http OPTIONS "http://localhost:10000/"
+
 
 
 @app.route('/', methods=["OPTIONS"])
@@ -166,11 +190,27 @@ def wikispeech_options2():
     resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
     return resp
 
+################################################################
+#
+# /languages
+#
+# GET:  curl "http://localhost:10000/languages"
 
 @app.route('/languages', methods=["GET"])
 def list_languages():
     json_data = json.dumps(getSupportedLanguages())
     return Response(json_data, mimetype='application/json')
+
+
+################################################################
+#
+# /, /wikispeech
+#
+# POST: curl -d "lang=en" -d "input=test." http://localhost:10000/
+# GET:  curl "http://localhost:10000/?lang=en&input=test."
+# POST: curl -d "lang=en" -d "input=test." http://localhost:10000/wikispeech/
+# GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
+
 
 @app.route('/', methods=["GET", "POST"])
 @app.route('/wikispeech', methods=["GET", "POST"])
@@ -267,7 +307,7 @@ def getSupportedLanguages():
 
 ##############################################
 #
-# textprocessing api
+# /textprocessing
 #
 # POST: curl -d "lang=en" -d "input=test." http://localhost:10000/textprocessing/
 # GET:  curl "http://localhost:10000/textprocessing/?lang=en&input=test."
@@ -314,23 +354,6 @@ def get_tp_config_by_name(name):
             return tp.config
     return None
 
-def list_tp_configs_by_languageOLD(lang):
-    l = []
-    for tp_config in textprocessor_configs:
-        if tp_config["lang"] == lang:
-            l.append(tp_config)
-    return l
-
-def get_tp_config_by_nameOLD(name):
-    for tp_config in textprocessor_configs:
-        log.debug("get_tp_config_by_name: %s" % tp_config)
-        log.debug("name: %s, wanted: %s" % (tp_config["name"], name))
-        if tp_config["name"] == name:
-            log.debug("RETURNING: %s" % tp_config)
-            return tp_config
-    return None
-
-
 
 
 @app.route('/textprocessing/', methods=["OPTIONS"])
@@ -362,6 +385,8 @@ def textprocessing():
     
     if input_type in ["text","ssml"]:
         markup = textproc(lang,textprocessor_name, input, input_type=input_type)
+        #If "markup" is a string, just return it, it's an error message to the client.
+        #TODO nicer way to handle error messages
         if type(markup) == type(""):
             log.debug("RETURNING MESSAGE: %s" % markup)
             return markup
@@ -375,13 +400,6 @@ def textprocessing():
         return "output_type %s not supported" % output_type
 
 
-def textprocSupportedLanguages_OLD():
-    supported_languages = []
-    for t in textprocessor_configs:
-        if t["lang"] not in supported_languages:
-            supported_languages.append(t["lang"])
-    return supported_languages
-#HB 170413 Changed to look at list of loaded textprocessors, instead of textprocessor_configs
 def textprocSupportedLanguages():
     supported_languages = []
     for t in textprocessors:
@@ -412,40 +430,42 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
     log.debug("TEXTPROCESSOR: %s" % textprocessor)
 
+    #Loop over the list of components, modifying the utt structure created by the first component
     for component in textprocessor["components"]:
 
         module_name = component["module"]
-        component_name = component["call"]
+        call = component["call"]
 
         log.debug("MODULE: %s" % module_name)
-        log.debug("COMPONENT: %s" % component_name)
+        log.debug("CALL: %s" % call)
 
-        #Import the defined module and function
-        #mod = import_module(module_name)
-        #HB testing
+        #Import the module..
         mod = import_module("wikispeech_server."+module_name)
-        #log.debug(mod)
-        #log.debug(dir(mod))
-        process = getattr(mod, component_name)
+        #Get the method to call (instead of defining the call in voice_config we could always use the same method name..) 
+        process = getattr(mod, call)
         log.debug("PROCESS: %s" % process)
 
-        #TODO clean this up to always use process(utt)
-        if component_name == "tokenise":
+        #TODO clean this up to always use process(utt,lang,component)
+        #The first component needs to accept text and return a tokenised utterance (at the moment calls "tokenise" or "marytts_preproc")
+        #If this is always true it should be a requirement, now it is just assumed
+        if call == "tokenise":
             utt = process(text,lang=lang)
             utt["lang"] = lang
             utt["original_text"] = text
             #Simple mechanism to do only tokenisation
             #Build on this to do partial processing in other ways
+            #HB 200217 not used atm but leaving it for now as a reminder
             if getParam("process", "none") == "tokenise":
                 return utt
 
-        elif component_name == "marytts_preproc":
+        elif call == "marytts_preproc":
             utt = process(text, lang, component, input_type=input_type)
+
+
+        #Following the first component, they take and return an utterance
         else:
-            try:
-                utt = process(utt)
-            except:
-                utt = process(utt, lang, component)
+            utt = process(utt, lang=lang, componentConfig=component)
+
         log.debug(str(utt))
 
     return utt
@@ -456,19 +476,13 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
 ###################################################################################
 #
-# synthesis api
+# /synthesis
 #
-# POST: curl -d "lang=en" -d "input={"s": {"phrase": {"boundary": {"@breakindex": "5", "@tone": "L-L%"}, "t": [{"#text": "test", "@accent": "!H*", "@g2p_method": "lexicon", "@ph": "' t E s t", "@pos": "NN", "syllable": {"@accent": "!H*", "@ph": "t E s t", "@stress": "1", "ph": [{"@p": "t"}, {"@p": "E"}, {"@p": "s"}, {"@p": "t"}]}}, {"#text": ".", "@pos": "."}]}}}" http://localhost:10000/textprocessing/
-# GET:  curl 'http://localhost:10000/textprocessing/?lang=en&input={"s": {"phrase": {"boundary": {"@breakindex": "5", "@tone": "L-L%"}, "t": [{"#text": "test", "@accent": "\!H\*", "@g2p_method": "lexicon", "@ph": "\' t E s t", "@pos": "NN", "syllable": {"@accent": "\!H\*", "@ph": "t E s t", "@stress": "1", "ph": [{"@p": "t"}, {"@p": "E"}, {"@p": "s"}, {"@p": "t"}]}}, {"#text": ".", "@pos": "."}]}}}'
-#
-#
-#
-#curl  -X POST -H "Content-Type: application/json" -d "lang=en" -d 'input={"s":{"phrase":{"boundary":{"@breakindex":"5","@tone":"L-L%"},"t":[{"#text":"test","@g2p_method":"lexicon","@ph":"\'+t+E+s+t","@pos":"NN","syllable":{"@ph":"t+E+s+t","@stress":"1","ph":[{"@p":"t"},{"@p":"E"},{"@p":"s"},{"@p":"t"}]}},{"#text":".","@pos":"."}]}}}' http://localhost:10000/textprocessing/
 
-#curl -X POST -H "Content-Type: application/json" -d '{"key":"val"}' URL
-#curl -X POST -H "Content-Type: application/json" -d "lang=en" --data-binary @test.json http://localhost:10000/synthesis/
+#Example call using HTTPie:
+#http 'http://localhost:10000/synthesis/?lang=en&input={ "lang": "en-US", "paragraphs": [ { "sentences": [ { "phrases": [ { "boundary": { "breakindex": "5", "tone": "L-L%" }, "tokens": [ { "token_orth": "test", "words": [ { "accent": "!H*", "g2p_method": "lexicon", "orth": "test", "pos": "", "trans": "t E s t" } ] } ] } ] } ] } ]}'
 
-#nej ingen av dessa funkar..
+
 
 @app.route('/synthesis/languages', methods=["GET"])
 def list_synthesisSupportedLanguages():
@@ -499,19 +513,6 @@ def list_voices_by_language(lang):
             v.append(voice.config)
     return v
 
-def list_voices_by_languageOLD(lang):
-    v = []
-    for voice in voice_configs:
-        if voice["lang"] == lang:
-            v.append(voice)
-    return v
-
-def synthesisSupportedLanguages_OLD():
-    langs = []
-    for voice in voice_configs:
-        if voice["lang"] not in langs:
-            langs.append(voice["lang"])
-    return langs
 
 def synthesisSupportedLanguages():
     langs = []
@@ -554,16 +555,13 @@ def synthesis():
         return resp
 
 
-
-
-    #log.debug "SYNTHESIS CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input)
-
     if lang not in synthesisSupportedLanguages():
         return "synthesis does not support language %s" % lang
 
-    #The input is a json string, needs to be a python dictionary
     input = json.loads(input)
     result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname)
+    #If result is a string, it is an error message to the client.
+    #TODO nicer way of dealing with messages
     if type(result) == type(""):
         log.debug("RETURNING MESSAGE: %s" % result)
         return result
@@ -573,7 +571,7 @@ def synthesis():
 
 def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/"):
 
-
+    #TODO? Add a simple transcription input type?
     #if input_type not in ["markup","transcription"]:
     if input_type not in ["markup"]:
         return "Synthesis cannot handle input_type %s" % input_type
@@ -617,7 +615,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
-    #Feb 2020 We're talking now about not returning url but audio data in json instead. So this could change.
+    #Feb 2020 We're talking now about not returning url but audio data in json instead. So this should change.
     if output_type != "test":
         audio_file = saveAndConvertAudio(audio_file)
 

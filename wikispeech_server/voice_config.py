@@ -1,7 +1,9 @@
 
 
 textprocessor_configs = [
-    {"name":"marytts_textproc_sv", "lang":"sv",
+
+    {"name":"marytts_textproc_sv",
+     "lang":"sv",
      "components":[
          {
              "module":"adapters.marytts_adapter",
@@ -36,7 +38,32 @@ textprocessor_configs = [
          }
      ]
     }
-    ,        
+    ,
+
+    {
+        "name":"new_sv_test",
+        "lang":"sv",
+        "disabled": True,
+        "components":
+        [
+            {
+                "module":"tokeniser",
+                "call":"tokenise"
+            }
+            ,
+            {
+                "module":"adapters.transcriber",
+                "call":"transcribe",
+                "lexicon":"sv_se_nst_lex:sv-se.nst",
+                "decompname": "sv_nst",
+                "g2p_name": "sws"
+            }
+        ]
+    }
+    ,
+
+
+    
     {"name":"marytts_textproc_nb", "lang":"nb",
      "components":[
          {
@@ -217,6 +244,18 @@ voice_configs = [
     #{"lang":"sv", "name":"espeak_mbrola_sv1", "engine":"espeak", "adapter":"adapters.espeak_adapter", "espeak_mbrola_voice":"mb-sw1", "espeak_voice":"mb-sw1", "program":{"command":'espeak -v mb-sw1'}}
     #,
 
+    {
+        "name":"new_sv_test",
+        "lang":"sv",
+        "engine":"nnmnkwii",
+        "disabled": True,
+        "adapter":"adapters.nnmnkwii_adapter",
+        "nnmnkwii_url":"http://localhost:8484"
+    }
+    ,
+
+
+    
     # NORWEGIAN
 
     {
@@ -283,6 +322,7 @@ voice_configs = [
     {
         "lang":"ar",
         "name":"ar-nah-hsmm",
+        #"disabled": True,
         "engine":"marytts",
         "adapter":"adapters.marytts_adapter",
         "mapper": {

@@ -45,16 +45,14 @@ def marytts_preproc(text, lang, tp_config, input_type="text"):
     #The very simple fix is to insert space before the hyphen
     text = re.sub(r"([0-9]+)-tal",r"\1 -tal", text)
         
-    payload = {
+    params = {
         "INPUT_TYPE": mary_input_type,
-        #"OUTPUT_TYPE": "WORDS",
         "OUTPUT_TYPE": "INTONATION",
-        #"OUTPUT_TYPE": "ALLOPHONES",
         "LOCALE": locale,
         "INPUT_TEXT": text
     }
-    #Using output_type PHONEMES/INTONATION/ALLOPHONES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
-    r = requests.get(marytts_url, params=payload)
+    #Using marytts output_type PHONEMES/INTONATION/ALLOPHONES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
+    r = requests.get(marytts_url, params=params)
     log.debug("CALLING MARYTTS: %s" % r.url)
     if r.status_code != 200:
         log.debug("marytts call failed with error %d" % r.status_code)
@@ -63,75 +61,10 @@ def marytts_preproc(text, lang, tp_config, input_type="text"):
     
 
     xml = r.text
-    
-    #log.debug "REPLY:", xml
     (marylang, utt) = maryxml2utt(xml, tp_config)
 
     return utt
 
-
-
-def marytts_preproc_tokenised_TOREMOVE(lang, utt):
-    if lang == "en":
-        locale = "en_US"
-    else:
-        locale = lang
-
-    maryxml = tokeniser.utt2maryxml_TOKENS(lang,utt)
-
-    payload = {
-        "INPUT_TYPE":"TOKENS",
-        #"OUTPUT_TYPE":"WORDS",
-        "OUTPUT_TYPE":"PHONEMES",
-        "LOCALE":locale,
-        "INPUT_TEXT":maryxml
-    }
-    #Using output_type PHONEMES means that marytts will phonetise the words first, and lexLookup will change the transcription if a word is found
-    r = requests.get(marytts_url, params=payload)
-    log.debug("CALLING MARYTTS: %s" % r.url)
-    
-    xml = r.text
-    log.debug("REPLY: %s" % xml)
-    (marylang, utt) = maryxml2utt(xml)
-    log.debug("marytts_preproc_tokenised returns %s" % utt)
-    return utt
-
-
-
-def marytts_postproc(lang, utt):
-    if lang == "en":
-        locale = "en_US"
-        xmllang = "en"
-    elif lang == "nb":
-        locale = "no"
-        xmllang = "no"
-    else:
-        locale = lang
-        xmllang = lang
-
-    #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
-    xml = utt2maryxml(xmllang, utt)
-
-    payload = {
-        #"INPUT_TYPE":"PHONEMES",
-        "INPUT_TYPE":"INTONATION",
-        "OUTPUT_TYPE":"ALLOPHONES",
-        "LOCALE":locale,
-        "INPUT_TEXT":xml
-    }
-    r = requests.post(marytts_url, params=payload)
-    log.debug("CALLING MARYTTS: %s" % r.url)
-
-    #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
-    r.raise_for_status()
-
-
-    
-    xml = r.text
-    log.debug("REPLY: %s" % xml)
-    (marylang, utt) = maryxml2utt(xml)
-    log.debug("marytts_postproc returning: %s" % utt)
-    return utt
 
 
 
@@ -175,7 +108,7 @@ def synthesise(lang,voice,input, hostname=None):
     output_tokens = maryxml2tokensET(xml)
 
 
-    #2) Call marytts (again..) to get the audio
+    #2) Call marytts (again..) to get the audio. We tried earlier with a marytts output_type "WIKISPEECH_JSON" to get tokens, timing, and audio in one call to marytts, but without success. At some point, try again, if we want to keep using marytts.
     params = {
         "INPUT_TYPE":"INTONATION",
         "OUTPUT_TYPE":"AUDIO",
@@ -184,10 +117,16 @@ def synthesise(lang,voice,input, hostname=None):
         "VOICE":voice["name"],
         "INPUT_TEXT":maryxml
     }
-    audio_r = requests.get(marytts_url,params=params)
-    log.debug("MARYTTS audio_r: %s" % audio_r)
-    audio_url = audio_r.url
+    #Actually doing synthesis here with call to marytts (possibly in future if we're returning audio data to client instead of url to file)
+    #audio_r = requests.get(marytts_url,params=params)
+    #audio_url = audio_r.url
 
+    #Create the url. The call to marytts will be done in wikispeech.saveAndConvertAudio
+    req = requests.Request('GET', marytts_url, params=params)
+    prepped = req.prepare()
+    audio_url = prepped.url
+
+    
     log.debug("runMarytts AUDIO_URL: %s" % audio_url)
 
     return (audio_url, output_tokens)
@@ -221,26 +160,6 @@ def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
         
 
 
-def dropMaryHeader_TOREMOVE(utt):
-    utt = utt["maryxml"]["p"]
-    return utt
-
-def addMaryHeader_TOREMOVE(utt,lang):
-    newutt = {"maryxml": {
-        "@xmlns": "http://mary.dfki.de/2002/MaryXML", 
-        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance", 
-        "@version": "0.5", 
-        "@xml:lang": lang, 
-        "p": utt
-    }}
-    return newutt
-
-
-def json2utt_TOREMOVE(jsonstring):
-    return json.loads(jsonstring)
-
-def utt2json_TOREMOVE(utt):
-    return json.dumps(utt)
 
 
 #Called from synthesise_default
@@ -328,67 +247,6 @@ def maryxml2tokensET(maryxmlstring):
     #return (output_tokens, lang)
     return output_tokens
 
-def maryxml2uttET_TOREMOVE(maryxmlstring):
-    log.debug("MARYXMLSTRING: %s" % maryxmlstring)
-    root = ET.fromstring(maryxmlstring)
-    #root = doc.getroot()
-    lang = root.attrib['{http://www.w3.org/XML/1998/namespace}lang']
-    #lang = utt2["maryxml"]["@xml:lang"]
-    log.debug("ROOT: %s" % root)
-    ps = root.findall(".//{http://mary.dfki.de/2002/MaryXML}p")
-    utt = []
-    for p in ps:
-        log.debug("P: %s" % p)
-        #ss = p.findall(".//{http://mary.dfki.de/2002/MaryXML}s")
-        ss = p.findall(".//{http://mary.dfki.de/2002/MaryXML}s")
-        log.debug("SS: %s" % ss)
-        paragraph = []
-        utt.append(paragraph)
-        for s in ss:
-            sentence = []
-            paragraph.append(sentence)
-            log.debug("S: %s" % s)
-            phrases = s.findall(".//{http://mary.dfki.de/2002/MaryXML}phrase")
-
-            if len(phrases) == 0:
-                phrases = [s]
-
-
-            for phrase in phrases:
-                log.debug("PHRASE: %s" % phrase)
-                for child in phrase:
-                    log.debug("CHILD: %s" % child.tag)
-                    if child.tag == "{http://mary.dfki.de/2002/MaryXML}t":
-                        #orth = child.text.strip()
-                        orth = "".join(child.itertext()).strip()
-                        #log.debug "ORTH:", orth
-                        for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
-                            pass
-                        token = orth
-                    elif child.tag == "{http://mary.dfki.de/2002/MaryXML}mtu":
-                        #orth = child.text.strip()
-                        log.debug("MTU attrib: %s" % child.attrib)
-                        #orth = child.attrib['{http://mary.dfki.de/2002/MaryXML}orig']
-                        orth = child.attrib['orig']
-                        #log.debug "ORTH:", orth
-                        for ph in child.findall(".//{http://mary.dfki.de/2002/MaryXML}ph"):
-                            pass
-                        token = orth
-                    elif child.tag == "{http://mary.dfki.de/2002/MaryXML}boundary":
-                        orth = "PAUSE"
-                        orth = ""
-                        #log.debug "ORTH:", orth
-                        #log.debug child.attrib
-                        #endtime += child.attrib['{http://mary.dfki.de/2002/MaryXML}duration']
-                        token = orth
-                    sentence.append(token)
-            log.debug("SENTENCE: %s" % sentence)
-    log.debug("UTT: %s" % utt)
-    return (utt, lang)
-
-
-##############
-# moved from new_maryxml_converter_with_mapper.py
 
 #Called from marytts_preproc, marytts_postproc
 def maryxml2utt(xml, voice):    

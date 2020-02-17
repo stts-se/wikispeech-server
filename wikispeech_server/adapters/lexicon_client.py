@@ -54,7 +54,7 @@ def loadLexicon(lexicon_name):
         lexica.append(lexicon)
     return lexicon
 
-#legacy call (from wikilex)
+
 def lexLookup(utt, lang, componentConfig):
     lexicon_name = componentConfig["lexicon"]
 
