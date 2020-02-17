@@ -24,7 +24,7 @@ done
 
 ## AHOTTS
 cd $builddir
-git clone https://github.com/stts-se/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
+git clone https://github.com/Elhuyar/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
 git checkout $RELEASE || echo "No such release for ahotts. Using master."
 if [ ! -f bin/tts_server ]; then
     sh script_compile_all_linux.sh && mkdir -p txt wav
