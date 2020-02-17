@@ -142,27 +142,12 @@ def marytts_postproc(lang, utt):
 
 
 
-def synthesise(lang,voice,input, presynth=False, hostname=None):
-    if presynth:
-        return synthesise_json(lang,voice,input)
-    else:
-        return synthesise_default(lang,voice,input)
-
-
-#HB 180109
-#As a way of testing for the marytts out of memory error,
-#set this to false to not get output_tokens from marytts
-#If this works without causing marytts error, it's an indication of where the problem lies..
-getOutputTokens = True
-
-
-def synthesise_default(lang,voice,input):
+def synthesise(lang,voice,input, hostname=None):
 
     if lang == "nb":
         xmllang = "no"
     else:
         xmllang = lang
-
     if "marytts_locale" in voice:
         locale = voice["marytts_locale"]
     else:
@@ -172,99 +157,42 @@ def synthesise_default(lang,voice,input):
     maryxml = utt2maryxml(xmllang, input, voice)
     log.debug("MARYXML: %s" % maryxml)
      
-    #HB 180109 TEST
-    if getOutputTokens:
-        params = {
-            "INPUT_TYPE":"INTONATION",
-            #"INPUT_TYPE":"ALLOPHONES",
-            "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
-            "LOCALE":locale,
-            "VOICE":voice["name"],
-            "INPUT_TEXT":maryxml
-        }
-        r = requests.post(marytts_url,params=params)
-
-        log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
-
-        xml = r.text.encode("utf-8")
-
-        log.debug("REPLY: %s" % xml)
-
-        #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
-        r.raise_for_status()
-
-
-
-        output_tokens = maryxml2tokensET(xml)
-    else:
-        output_tokens = []
-
-
+    #1) Call marytts to get output_tokens with timing
     params = {
         "INPUT_TYPE":"INTONATION",
-        #"INPUT_TYPE":"ALLOPHONES",
+        "OUTPUT_TYPE":"REALISED_ACOUSTPARAMS",
+        "LOCALE":locale,
+        "VOICE":voice["name"],
+        "INPUT_TEXT":maryxml
+    }
+    r = requests.post(marytts_url,params=params)
+
+    log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
+    xml = r.text.encode("utf-8")
+    log.debug("REPLY: %s" % xml)
+    #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
+    r.raise_for_status()
+    output_tokens = maryxml2tokensET(xml)
+
+
+    #2) Call marytts (again..) to get the audio
+    params = {
+        "INPUT_TYPE":"INTONATION",
         "OUTPUT_TYPE":"AUDIO",
         "AUDIO":"WAVE_FILE",
         "LOCALE":lang,
         "VOICE":voice["name"],
         "INPUT_TEXT":maryxml
     }
-    #actually synthesising it here so should be no problem saving the audio and returning link to that rather than the marytts synthesising url
-    #As it is it will be synthesised again when the audio tag is put on page
     audio_r = requests.get(marytts_url,params=params)
+    log.debug("MARYTTS audio_r: %s" % audio_r)
     audio_url = audio_r.url
 
-    #log.debug("runMarytts AUDIO_URL: %s" % audio_url)
+    log.debug("runMarytts AUDIO_URL: %s" % audio_url)
 
     return (audio_url, output_tokens)
 
 
-def synthesise_json(lang,voice,input):
-
-    if lang == "nb":
-        xmllang = "no"
-    else:
-        xmllang = lang
-
-    if "marytts_locale" in voice:
-        locale = voice["marytts_locale"]
-    else:
-        locale = lang
-
-    #xmllang, not lang, here. Marytts needs the xml:lang to match first part of LOCALE..
-    maryxml = utt2maryxml(xmllang, input)
-    log.debug("MARYXML: %s" % maryxml)
-     
-    #BUGFIX TODO
-    #url = 'https://demo.morf.se/marytts/process'
-    #url = "%s/%s" % (voice["server"]["url"], "process")
-
-    #url = "http://morf.se:59125/process"
-    #url = "http://localhost:59125/process"
-    
-
-    params = {"INPUT_TYPE":"ALLOPHONES",
-              "OUTPUT_TYPE":"WIKISPEECH_JSON",
-              "LOCALE":locale,
-              "VOICE":voice["name"],
-              "INPUT_TEXT":maryxml}
-    r = requests.post(marytts_url,params=params)
-
-    log.debug("runMarytts PARAMS URL (length %d): %s" % (len(r.url), r.url))
-
-    json = r.json()
-
-    log.debug("REPLY: %s" % json)
-
-    #Should raise an error if status is not OK (In particular if the url-too-long issue appears)
-    r.raise_for_status()
-
-    audio_url = json["audio"]
-    output_tokens = json["tokens"]
-
-    #log.debug("runMarytts AUDIO_URL: %s" % audio_url)
-
-    return (audio_url, output_tokens)
 
 
 

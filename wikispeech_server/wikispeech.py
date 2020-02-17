@@ -197,13 +197,6 @@ def wikispeech():
     output_type = getParam("output_type", "json")
 
 
-    #For use with synthesis only
-    presynth = getParam("presynth", False)
-    if presynth == "True":
-        presynth = True
-    else:
-        presynth = False
-
 
 
     textprocessor_name = getParam("textprocessor", "default_textprocessor")
@@ -235,7 +228,7 @@ def wikispeech():
         return "input_type %s not supported" % input_type
 
     if output_type == "json":
-        result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname, presynth=presynth)
+        result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname)
         if type(result) == type(""):
             log.debug("RETURNING MESSAGE: %s" % result)
             return result
@@ -550,7 +543,7 @@ def synthesis():
     voice_name = getParam("voice", "default_voice")
     input_type = getParam("input_type", "markup")
     output_type = getParam("output_type", "json")
-    presynth = getParam("presynth", False)
+
 
 
     if lang == None or input == None:
@@ -563,12 +556,6 @@ def synthesis():
 
 
 
-
-    if presynth == "True":
-        presynth = True
-    else:
-        presynth=False
-
     #log.debug "SYNTHESIS CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input)
 
     if lang not in synthesisSupportedLanguages():
@@ -576,7 +563,7 @@ def synthesis():
 
     #The input is a json string, needs to be a python dictionary
     input = json.loads(input)
-    result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname,presynth=presynth)
+    result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname)
     if type(result) == type(""):
         log.debug("RETURNING MESSAGE: %s" % result)
         return result
@@ -584,10 +571,7 @@ def synthesis():
     return Response(json_data, mimetype='application/json')
 
 
-def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/", presynth=False):
-
-    #presynth for use with marytts WIKISPEECH_JSON output type
-    #presynth = True
+def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/"):
 
 
     #if input_type not in ["markup","transcription"]:
@@ -622,20 +606,20 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #This use of getattr makes it possible to define the method to call in the voice_config.
     #Not used now and not sure it will ever be a useful thing to do. Leaving this here anyway just to illustrate that it can be done.
     #These lines could, as they are now, be replaced by
-    #(audio_file, output_tokens) = mod.synthesise(lang, voice, input, presynth=presynth, hostname=hostname)
+    #(audio_file, output_tokens) = mod.synthesise(lang, voice, input, hostname=hostname)
     
     #method_name =  voice["method_name"]
     method_name = "synthesise"
     process = getattr(mod, method_name)
     log.debug("PROCESS: %s" % process)
-    (audio_file, output_tokens) = process(lang, voice, input, presynth=presynth, hostname=hostname)
+    (audio_file, output_tokens) = process(lang, voice, input, hostname=hostname)
 
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
     #Feb 2020 We're talking now about not returning url but audio data in json instead. So this could change.
     if output_type != "test":
-        audio_file = saveAndConvertAudio(audio_file, presynth)
+        audio_file = saveAndConvertAudio(audio_file)
 
     audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
     log.debug("audio_url: %s" % audio_url)
@@ -766,10 +750,9 @@ def checkInputAndOutputTokens(input_string,output_token_list):
 
 
 
-def saveAndConvertAudio(audio_url,presynth=False):
+def saveAndConvertAudio(audio_url):
     global config
 
-    log.debug("PRESYNTH: %s, type: %s" % (presynth, type(presynth)) )
 
     tmpdir = config.config.get("Audio settings","audio_tmpdir")
     log.debug("TMPDIR: %s" % tmpdir)
@@ -777,26 +760,18 @@ def saveAndConvertAudio(audio_url,presynth=False):
     fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
     tmpwav = fh.name    
     
-    if presynth:
-        fh.close()
-        #The "url" is actually a filename at this point
-        cmd = "mv %s %s" % (audio_url, tmpwav)
-        log.debug(cmd)
-        os.system(cmd)
 
-    else:
-
-        log.debug("audio_url:\n%s" % audio_url)
-        r = requests.get(audio_url)
-        log.debug(r.headers['content-type'])
-
-        audio_data = r.content
-
-        fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
-        tmpwav = fh.name    
-
-        fh.write(audio_data)
-        fh.close()
+    log.debug("audio_url:\n%s" % audio_url)
+    r = requests.get(audio_url)
+    log.debug(r.headers['content-type'])
+    
+    audio_data = r.content
+    
+    fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
+    tmpwav = fh.name    
+    
+    fh.write(audio_data)
+    fh.close()
 
     #tmpwav is now the synthesised wav file
     #tmpopus = "%s/%s.opus" % (tmpdir, tmpfilename)

@@ -1,7 +1,7 @@
 import os, re
 
 
-def synthesise(lang, voice, input, presynth=False):
+def synthesise(lang, voice, input):
     mbrola_voice = voice["espeak_mbrola_voice"]
     voice = voice["espeak_voice"]
     #convert utt to ssml

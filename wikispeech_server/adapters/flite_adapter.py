@@ -10,7 +10,7 @@ def preproc(utt):
     #Nothing to be done here .. Maybe there will be?
     return utt
 
-def synthesise(lang, voice, input, presynth=False, hostname=None):
+def synthesise(lang, voice, input, hostname=None):
     voice = voice["flite_voice"]
     #convert utt to ssml
     ssml = utt2ssml(input)

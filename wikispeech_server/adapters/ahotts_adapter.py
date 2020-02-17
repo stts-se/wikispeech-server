@@ -64,7 +64,7 @@ def socket_read_filelength_file(tts_socket):
     return b''.join(chunks)
 
 
-def synthesise(lang, voice, utterance, presynth=False, hostname=None):
+def synthesise(lang, voice, utterance, hostname=None):
     log.info("Utterance: %s" % utterance)
     input = utterance['original_text']
     log.info("Text: %s" % input)
