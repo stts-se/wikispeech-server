@@ -1,0 +1,43 @@
+{
+    "textprocessor_configs": [
+	{
+            "name":"basic_en",
+            "lang":"en",
+            "components":[
+		{
+                    "module":"tokeniser",
+                    "call":"tokenise"
+		}
+            ]
+	}
+	,
+	
+	
+	{
+            "name":"basic_eu",
+            "lang":"eu",
+            "components":[
+		{
+                    "module":"tokeniser",
+                    "call":"tokenise"
+		}
+            ]
+	}
+    ],
+    
+    "voice_configs": [
+	{
+            "lang":"en",
+            "name":"cmu-slt-flite",
+            "engine":"flite",
+            "adapter":"adapters.flite_adapter",
+            "flite_voice":"slt"
+	},
+	{
+            "lang":"eu",
+            "name":"ahotts-eu-female",
+            "engine":"ahotts",
+            "adapter":"adapters.ahotts_adapter"
+	}
+    ]
+}

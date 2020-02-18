@@ -1,0 +1,51 @@
+{
+    "textprocessor_configs": [
+	{
+            "name":"new_sv_test",
+            "lang":"sv",
+	    "skip_test": true,
+            "components":
+            [
+		{
+                    "module":"tokeniser",
+                    "call":"tokenise"
+		}
+		,
+		{
+                    "module":"adapters.transcriber",
+                    "call":"transcribe",
+                    "lexicon":"sv_se_nst_lex:sv-se.nst",
+                    "decompname": "sv_nst",
+                    "g2p_name": "sws"
+		}
+            ]
+	}
+	,
+	{
+            "name":"ws_textproc_en",
+            "lang":"en",
+            "components":[
+		{
+                    "module":"tokeniser",
+                    "call":"tokenise"
+		},
+		{
+                    "module":"adapters.lexicon_client",
+                    "call":"lexLookup",
+                    "lexicon":"wikispeech_testdb:enu"
+		}
+            ]
+	}
+	
+    ],
+    "voice_configs": [
+	{
+            "name":"new_sv_test",
+            "lang":"sv",
+            "engine":"nnmnkwii",
+            "adapter":"adapters.nnmnkwii_adapter",
+            "nnmnkwii_url":"http://localhost:8484",
+	    "skip_test": true
+	}
+    ]
+}
