@@ -174,14 +174,14 @@ class Lexicon(object):
     def test(self):
         url = "%s/list" % self.base_url
         log.debug("LEXICON URL: %s" % url)
-        print("LEXICON URL: %s" % url)
+        #print("LEXICON URL: %s" % url)
         try:
             r = requests.get(url)
             response = r.text
             response_json = json.loads(response)
-            print(response_json)
+            #print(response_json)
             exists = False
-            print(response_json)
+            #print(response_json)
             for lex in response_json:
                 if lex['name'] == self.lexicon_name:
                     exists = True

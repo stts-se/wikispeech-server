@@ -9,7 +9,7 @@ import wikispeech_server.config as config
 ws.log.log_level = config.config.get("Server","log_level")
 
 #HB 171127 load calls moved here from wikispeech_server/wikispeech.py
-print("Trying to load textprocessors and voices defined in wikispeech_server/voice_config.py")
+print("Loading textprocessors and voices")
 for tp_config in ws.textprocessor_configs:
     if tp_config.get("disabled") == True:
         print("Didn't load %s, disabled in voice_config.py" % tp_config.get("name"))
@@ -25,6 +25,7 @@ for voice_config in ws.voice_configs:
         print("Didn't load %s, disabled in voice_config.py" % voice_config.get("name"))
     else:
         ws.loadVoice(voice_config)
+print("Done loading textprocessors and voices")
 
 
 try:

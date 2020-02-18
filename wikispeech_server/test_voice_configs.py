@@ -49,6 +49,10 @@ def test_all_settings():
             log.debug(textproc_config)
             tp_name = textproc_config["name"]
 
+            if "skip_test" in textproc_config and textproc_config["skip_test"] == True:
+                log.info("SKIPPING synthesis test with %s" % (tp_name))
+                continue
+            
             log.debug("START %s" % tp_name)
             url = "%stextprocessing/?input=test.&lang=%s&textprocessor=%s" % (host, lang, tp_name)
             log.debug("url: %s" % url)
@@ -68,6 +72,12 @@ def test_all_settings():
                 voice_name = voice["name"]
                 log.debug("START %s" % voice_name)
 
+                if "skip_test" in voice and voice["skip_test"] == True:
+                    log.info("SKIPPING synthesis test with %s (%s)" % (voice_name, voice["engine"]))
+                    continue
+
+
+                
                 payload = {
                     "input": json.dumps(tmp),
                     "lang": lang,

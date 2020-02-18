@@ -1,13 +1,12 @@
 #-*- coding: utf-8 -*-
 import sys, os, re
 from tempfile import NamedTemporaryFile
-from importlib import import_module
+#from importlib import import_module
 import requests
 from flask import Flask, request, json, Response, make_response, render_template, redirect
 from flask_cors import CORS
 
 import wikispeech_server.config as config
-from wikispeech_server.voice_config import textprocessor_configs, voice_configs
 
 from wikispeech_server.options import *
 import wikispeech_server.adapters.lexicon_client as lexicon_client
@@ -19,8 +18,82 @@ import os.path
 import datetime
 import pytz
 from pytz import timezone
-
 import subprocess
+
+
+###
+#change from import to load json, to allow for different voice config files!
+from wikispeech_server.voice_config import textprocessor_configs, voice_configs
+
+use_json_conf = False
+if config.config.has_option("Voice config", "config_files_location"):
+    use_json_conf = True
+
+def remove_comments(json_like):
+    """
+    Removes C-style comments from *json_like* and returns the result.  Example::
+        >>> test_json = '''\
+        {
+            "foo": "bar", // This is a single-line comment
+            "baz": "blah" /* Multi-line
+            Comment */
+        }'''
+        >>> remove_comments('{"foo":"bar","baz":"blah",}')
+        '{\n    "foo":"bar",\n    "baz":"blah"\n}'
+    """
+    comments_re = re.compile(
+        r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+        re.DOTALL | re.MULTILINE
+    )
+    def replacer(match):
+        s = match.group(0)
+        if s[0] == '/': return ""
+        return s
+    return comments_re.sub(replacer, json_like)
+
+
+
+if use_json_conf:
+    textprocessor_configs = []
+    voice_configs = []
+
+    cf_dir = "wikispeech_server"
+    if config.config.has_option("Voice config", "config_files_location"):
+        cf_dir = config.config.get("Voice config", "config_files_location")
+
+    #The testing config file should always be there 
+    config_files = ["voice_config_for_testing.json"]
+    if config.config.has_option("Voice config", "config_files"):
+        #print(config.config.get("Voice config", "config_files"))
+        cfs = config.config.get("Voice config", "config_files").split("\n")
+        for cf in cfs:
+            if cf not in config_files and cf != "":
+                config_files.append(cf)
+
+    for config_file in config_files:
+        if os.path.isfile(config_file):
+            path = config_file
+        elif os.path.isfile("%s/%s" % (cf_dir, config_file)):
+            path = "%s/%s" % (cf_dir, config_file)
+        else:
+            print("Config file %s or %s not found" % (config_file, "%s/%s" % (cf_dir, config_file)))
+            sys.exit()
+        with open(path) as json_file:
+            log.info("Reading config file: %s" % path)
+            json_like = json_file.read()
+            json_str = remove_comments(json_like)
+            #cf = json.load(json_file)
+            cf = json.loads(json_str)
+            if "textprocessor_configs" in cf:
+                for tconf in cf["textprocessor_configs"]:
+                    textprocessor_configs.append(tconf)
+            if "voice_configs" in cf:
+                for vconf in cf["voice_configs"]:
+                    voice_configs.append(vconf)
+
+#print(voice_configs)
+#sys.exit()
+
 
 #################
 #
@@ -439,8 +512,19 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         log.debug("MODULE: %s" % module_name)
         log.debug("CALL: %s" % call)
 
-        #Import the module..
-        mod = import_module("wikispeech_server."+module_name)
+
+        if "directory" in component:
+            if not os.path.isdir(component["directory"]):
+                print("ERROR: directory %s not found" % component["directory"])
+                sys.exit()
+            directory = component["directory"]
+        else:
+            directory = "wikispeech_server"
+
+
+        mod = import_module(directory, module_name)
+
+        
         #Get the method to call (instead of defining the call in voice_config we could always use the same method name..) 
         process = getattr(mod, call)
         log.debug("PROCESS: %s" % process)
@@ -597,9 +681,19 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
 
     #Import the defined module and function
-    mod = import_module("wikispeech_server."+voice["adapter"])
-    log.debug(str(mod))
-    log.debug(str(dir(mod)))
+    if "directory" in voice:
+        if not os.path.isdir(voice["directory"]):
+            print("ERROR: directory %s not found" % voice["directory"])
+            sys.exit()
+        directory = voice["directory"]
+    else:
+        directory = "wikispeech_server"
+
+    #mod = import_module("wikispeech_server."+voice["adapter"])
+    #log.debug(str(mod))
+    #log.debug(str(dir(mod)))
+
+    mod = import_module(directory, voice["adapter"])
 
     #This use of getattr makes it possible to define the method to call in the voice_config.
     #Not used now and not sure it will ever be a useful thing to do. Leaving this here anyway just to illustrate that it can be done.
@@ -819,6 +913,29 @@ def getParam(param,default=None):
     return value
 
 
+def import_module(directory, module_name):
+                
+    #print("Importing module '%s'" % module_name)
+
+    #HB 200218
+    #Add directory to sys.path
+    #if not directory in sys.path:
+    #    sys.path.insert(0,directory)
+    #print(sys.path)
+    #Import the module..
+    #mod = import_module(module_name)
+    #The above doesn't work in all cases..
+    
+    #HB 200218 This seems to work.. 
+    import importlib.util
+    module_file = "%s/%s.py" % (directory, re.sub("\.", "/", "%s" % (module_name)))
+    spec = importlib.util.spec_from_file_location(module_name, module_file)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    return mod
+
+        
 
 
 
