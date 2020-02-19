@@ -36,6 +36,7 @@
 	{
             "lang":"eu",
             "name":"ahotts-eu-female",
+	    "disabled":false,
             "engine":"ahotts",
             "adapter":"adapters.ahotts_adapter"
 	}

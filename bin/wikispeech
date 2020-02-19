@@ -76,10 +76,39 @@ if run_tests:
 
 
         
-ws.log.info("Loaded textprocessors: %s" % ws.textprocessors)
+ws.log.info("Loaded textprocessors:")
+info = []
+for tp in ws.textprocessors:
+    if tp.isDefault():
+        default = "default"
+    else:
+        default = ""
+    if "config_file" in tp.config:
+        config_file = tp.config["config_file"]
+    else:
+        config_file = "wikispeech_server/voice_config.py"
+        
+    info.append("%-4s\t%-20s\t%-8s\t%-20s" % (tp.lang, tp.name, default, config_file))
+
+ws.log.info("\n%-4s\t%-20s\t%-8s\t%-20s\n%s\n" % ("Lang", "Name", "Default", "Config file", "\n".join(info)))
+
 ws.log.info("Loaded textprocessors for languages: %s" % ws.textprocSupportedLanguages())
 
-ws.log.info("Loaded voices: %s" % ws.voices)
+ws.log.info("Loaded voices:")
+info = []
+for v in ws.voices:
+    if v.isDefault():
+        default = "default"
+    else:
+        default = ""
+    if "config_file" in v.config:
+        config_file = v.config["config_file"]
+    else:
+        config_file = "wikispeech_server/voice_config.py"
+    info.append("%-4s\t%-20s\t%-8s\t%-20s" % (v.lang, v.name, default, config_file))
+
+ws.log.info("\n%-4s\t%-20s\t%-8s\t%-20s\n%s\n" % ("Lang", "Name", "Default", "Config file", "\n".join(info)))
+
 ws.log.info("Loaded voices for languages: %s" % ws.synthesisSupportedLanguages())
 
 ws.log.info("Supported languages: %s" % ws.getSupportedLanguages())

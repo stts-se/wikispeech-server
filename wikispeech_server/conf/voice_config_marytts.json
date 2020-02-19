@@ -1,84 +1,95 @@
 {
     "textprocessor_configs": [
-	{"name":"marytts_textproc_sv",
-	 "lang":"sv",
-	 "components":[
-             {
-		 "module":"adapters.marytts_adapter",
-		 "call":"marytts_preproc",
-		 "mapper": {
-                     "from":"sv-se_ws-sampa",
-                     "to":"sv-se_sampa_mary"
-		 }
-             },
-             {
-		 "module":"adapters.lexicon_client",
-		 "call":"lexLookup",
-		 "lexicon":"sv_se_nst_lex:sv-se.nst"
-             }
-	 ]
+	{
+	    "name":"marytts_textproc_sv",
+	    "lang":"sv",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.marytts_adapter",
+		    "call":"marytts_preproc",
+		    "mapper": {
+			"from":"sv-se_ws-sampa",
+			"to":"sv-se_sampa_mary"
+		    }
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"sv_se_nst_lex:sv-se.nst"
+		}
+	    ]
 	}
 	,
-	{"name":"marytts_textproc_nb", "lang":"nb",
-	 "components":[
-             {
-		 "module":"adapters.marytts_adapter",
-		 "call":"marytts_preproc"
-		 ,
-		 "mapper": {
-                     "from":"nb-no_ws-sampa",
-                     "to":"nb-no_sampa_mary"
-		 }
-             },
-             {
-		 "module":"adapters.lexicon_client",
-		 "call":"lexLookup",
-		 "lexicon":"no_nob_nst_lex:nb-no.nst"
-             }
-	 ]
+	{
+	    "name":"marytts_textproc_nb",
+	    "lang":"nb",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.marytts_adapter",
+		    "call":"marytts_preproc"
+		    ,
+		    "mapper": {
+			"from":"nb-no_ws-sampa",
+			"to":"nb-no_sampa_mary"
+		    }
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"no_nob_nst_lex:nb-no.nst"
+		}
+	    ]
 	}
 	,
-	{"name":"marytts_textproc_en", "lang":"en",
-	 "components":[
-             {
-		 "module":"adapters.marytts_adapter",
-		 "call":"marytts_preproc",
-		 "mapper": {
-                     "from":"en-us_ws-sampa",
-                     "to":"en-us_sampa_mary"
-		 }
-             },
-             {
-		 "module":"adapters.lexicon_client",
-		 "call":"lexLookup",
-		 "lexicon":"en_am_cmu_lex:en-us.cmu"
-             }
-	 ]
+	{
+	    "name":"marytts_textproc_en",
+	    "lang":"en",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.marytts_adapter",
+		    "call":"marytts_preproc",
+		    "mapper": {
+			"from":"en-us_ws-sampa",
+			"to":"en-us_sampa_mary"
+		    }
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"en_am_cmu_lex:en-us.cmu"
+		}
+	    ]
 	}
 	,
-	{"name":"marytts_textproc_ar", "lang":"ar",
-	 "components":[
-             {
-		 "module":"adapters.marytts_adapter",
-		 "call":"marytts_preproc",
-		 "mapper": {
-                     "from":"ar_ws-sampa",
-                     "to":"ar_sampa_mary"
-		 }
-             },
-             {
-		 "module":"adapters.lexicon_client",
-		 "call":"lexLookup",
-		 "lexicon":"ar_ar_tst_lex:ar-test" 
-             }
-	 ]
+	{
+	    "name":"marytts_textproc_ar",
+	    "lang":"ar",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.marytts_adapter",
+		    "call":"marytts_preproc",
+		    "mapper": {
+			"from":"ar_ws-sampa",
+			"to":"ar_sampa_mary"
+		    }
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"ar_ar_tst_lex:ar-test" 
+		}
+	    ]
 	}
-
+	
 	
     ],
     
     "voice_configs": [
-
+	
 	//These 3 marytts voices are also defined in voice_config_for_testing.json. Hopefully that can be removed at some point..
 	{
             "lang":"sv",

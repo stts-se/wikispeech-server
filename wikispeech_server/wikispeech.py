@@ -28,71 +28,10 @@ from wikispeech_server.voice_config import textprocessor_configs, voice_configs
 use_json_conf = False
 if config.config.has_option("Voice config", "config_files_location"):
     use_json_conf = True
-
-def remove_comments(json_like):
-    """
-    Removes C-style comments from *json_like* and returns the result.  Example::
-        >>> test_json = '''\
-        {
-            "foo": "bar", // This is a single-line comment
-            "baz": "blah" /* Multi-line
-            Comment */
-        }'''
-        >>> remove_comments('{"foo":"bar","baz":"blah",}')
-        '{\n    "foo":"bar",\n    "baz":"blah"\n}'
-    """
-    comments_re = re.compile(
-        r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
-        re.DOTALL | re.MULTILINE
-    )
-    def replacer(match):
-        s = match.group(0)
-        if s[0] == '/': return ""
-        return s
-    return comments_re.sub(replacer, json_like)
-
-
-
-if use_json_conf:
-    textprocessor_configs = []
-    voice_configs = []
-
-    cf_dir = "wikispeech_server"
-    if config.config.has_option("Voice config", "config_files_location"):
-        cf_dir = config.config.get("Voice config", "config_files_location")
-
-    #The testing config file should always be there 
-    config_files = ["voice_config_for_testing.json"]
-    if config.config.has_option("Voice config", "config_files"):
-        #print(config.config.get("Voice config", "config_files"))
-        cfs = config.config.get("Voice config", "config_files").split("\n")
-        for cf in cfs:
-            if cf not in config_files and cf != "":
-                config_files.append(cf)
-
-    for config_file in config_files:
-        if os.path.isfile(config_file):
-            path = config_file
-        elif os.path.isfile("%s/%s" % (cf_dir, config_file)):
-            path = "%s/%s" % (cf_dir, config_file)
-        else:
-            print("Config file %s or %s not found" % (config_file, "%s/%s" % (cf_dir, config_file)))
-            sys.exit()
-        with open(path) as json_file:
-            log.info("Reading config file: %s" % path)
-            json_like = json_file.read()
-            json_str = remove_comments(json_like)
-            #cf = json.load(json_file)
-            cf = json.loads(json_str)
-            if "textprocessor_configs" in cf:
-                for tconf in cf["textprocessor_configs"]:
-                    textprocessor_configs.append(tconf)
-            if "voice_configs" in cf:
-                for vconf in cf["voice_configs"]:
-                    voice_configs.append(vconf)
-
-#print(voice_configs)
-#sys.exit()
+    #if use_json_conf, the json files defined in *.conf will be loaded, replacing voice_config.py
+    
+###
+    
 
 
 #################
@@ -111,32 +50,6 @@ else:
     log.info("opusenc found.\n\nEND OPUSENC\n")
 
 
-###############
-#
-# Load textprocessors and voices
-#
-###############
-
-
-textprocessors = []
-def loadTextprocessor(tp_config):
-    try:
-        tp = Textprocessor(tp_config)
-        textprocessors.append(tp)
-    except TextprocessorException as e:
-        log.warning("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
-
-voices = []
-def loadVoice(voice_config):
-    try:
-        v = Voice(voice_config)        
-        voices.append(v)
-    except VoiceException as e:
-        log.warning("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))
-
-
-
-    
 
 ################
 #
@@ -295,9 +208,9 @@ def wikispeech():
     hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
 
     # log.debug("request.url: %s" % hostname)
-    log.info("request: %s" % request)
+    log.debug("request: %s" % request)
     log.info("request.url: %s" % request.url)
-    log.info("hostname: %s" % hostname)
+    log.debug("hostname: %s" % hostname)
     if not hostname.endswith("/"):
         hostname = hostname+"/"
     if "wikispeech.morf.se" in hostname: ## HL 20171121: force https for wikispeech.morf.se
@@ -482,25 +395,12 @@ def textprocSupportedLanguages():
 
 def textproc(lang, textprocessor_name, text, input_type="text"):
 
-    tp_configs = list_tp_configs_by_language(lang)
-    textprocessor = None
-    if textprocessor_name == "default_textprocessor":
-        for tp in tp_configs:
-            if tp["lang"] == lang:
-                textprocessor = tp
-                break
-        if textprocessor == None:
-            return "ERROR: No textprocessor available for language %s" % lang
-    else:
-        for tp in tp_configs:
-            if tp["name"] == textprocessor_name:
-                textprocessor = tp
-                break
-        if textprocessor == None:
-            #example http://localhost/?lang=sv&input=test&textprocessor=undefined
-            return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
 
+    textprocessor = getTextprocessorByName(textprocessor_name, lang)
 
+    if textprocessor == None:
+        #example http://localhost/?lang=sv&input=test&textprocessor=undefined
+        return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
     log.debug("TEXTPROCESSOR: %s" % textprocessor)
 
     #Loop over the list of components, modifying the utt structure created by the first component
@@ -663,20 +563,9 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     ##if input_type == "transcription":
         
 
-    
-    voices = list_voices_by_language(lang)
-    voice = None
-    if voice_name == "default_voice":
-        if len(voices) > 0:
-            voice = voices[0]
-        if voice == None:
-            return "No voice available for language %s" % lang
-    else:
-        for v in voices:
-            if v["name"] == voice_name:
-                voice = v
-        if voice == None:
-            return "ERROR: voice %s not defined for language %s." % (voice_name, lang)
+    voice = getVoiceByName(voice_name, lang)
+    if voice == None:
+        return "ERROR: voice %s not defined for language %s." % (voice_name, lang)
 
 
 
@@ -789,6 +678,146 @@ def lexserver_proxy(url):
     return Response(stream_with_context(req.iter_content()), content_type = req.headers['content-type'])
 
 
+###############
+#
+# Load textprocessors and voices
+#
+###############
+
+
+textprocessors = []
+def loadTextprocessor(tp_config):
+    try:
+        tp = Textprocessor(tp_config)
+        textprocessors.append(tp)
+    except TextprocessorException as e:
+        log.warning("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
+
+voices = []
+def loadVoice(voice_config):
+    try:
+        v = Voice(voice_config)        
+        voices.append(v)
+    except VoiceException as e:
+        log.warning("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))
+
+
+def loadJsonConfigurationFiles():
+    global textprocessor_configs, voice_configs
+    textprocessor_configs = []
+    voice_configs = []
+
+    cf_dir = "wikispeech_server"
+    if config.config.has_option("Voice config", "config_files_location"):
+        cf_dir = config.config.get("Voice config", "config_files_location")
+
+    #The testing config file should always be there 
+    config_files = ["voice_config_for_testing.json"]
+    if config.config.has_option("Voice config", "config_files"):
+        #print(config.config.get("Voice config", "config_files"))
+        cfs = config.config.get("Voice config", "config_files").split("\n")
+        for cf in cfs:
+            if cf not in config_files and cf != "":
+                config_files.append(cf)
+
+    for config_file in config_files:
+        if os.path.isfile(config_file):
+            path = config_file
+        elif os.path.isfile("%s/%s" % (cf_dir, config_file)):
+            path = "%s/%s" % (cf_dir, config_file)
+        else:
+            print("Config file %s or %s not found" % (config_file, "%s/%s" % (cf_dir, config_file)))
+            sys.exit()
+        with open(path) as json_file:
+            log.info("Reading config file: %s" % path)
+            json_like = json_file.read()
+            json_str = remove_comments(json_like)
+            #cf = json.load(json_file)
+            cf = json.loads(json_str)
+            if "textprocessor_configs" in cf:
+                for tconf in cf["textprocessor_configs"]:
+                    #Is the tp name already in the list?
+                    addTp = True
+                    for tc in textprocessor_configs:
+                        if tc["name"] == tconf["name"]:
+                            log.warning("Textprocessor %s defined more than once: file %s" % (tconf["name"], path))
+                            addTp = False
+                    if addTp:
+                        tconf["config_file"] = path
+                        textprocessor_configs.append(tconf)
+
+            if "voice_configs" in cf:
+                for vconf in cf["voice_configs"]:
+                    #Is the voice name already in the list?
+                    addVoice = True
+                    for vc in voice_configs:
+                        if vc["name"] == vconf["name"]:
+                            log.warning("Voice %s defined more than once: file %s" % (vconf["name"], path))
+                            addVoice = False
+                    if addVoice:
+                        vconf["config_file"] = path
+                        voice_configs.append(vconf)
+
+def remove_comments(json_like):
+    """
+    Removes C-style comments from *json_like* and returns the result.  Example::
+        >>> test_json = '''\
+        {
+            "foo": "bar", // This is a single-line comment
+            "baz": "blah" /* Multi-line
+            Comment */
+        }'''
+        >>> remove_comments('{"foo":"bar","baz":"blah",}')
+        '{\n    "foo":"bar",\n    "baz":"blah"\n}'
+    """
+    comments_re = re.compile(
+        r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+        re.DOTALL | re.MULTILINE
+    )
+    def replacer(match):
+        s = match.group(0)
+        if s[0] == '/': return ""
+        return s
+    return comments_re.sub(replacer, json_like)
+
+
+
+def getTextprocessorByName(textprocessor_name, lang):        
+    tp_configs = list_tp_configs_by_language(lang)
+    textprocessor = None
+    if textprocessor_name == "default_textprocessor":
+        for tp in tp_configs:
+            textprocessor = tp
+            #break #returns the first tp matching lang
+            if "default" in tp and tp["default"] == True:
+                return textprocessor # returns the first 'default'.
+        #If no 'default', returns first tp matching lang 
+        return tp_configs[0]
+    else:
+        for tp in tp_configs:
+            if tp["name"] == textprocessor_name:
+                textprocessor = tp
+                break #returns the first tp matching name
+    return textprocessor
+
+
+def getVoiceByName(voice_name, lang):
+    voices = list_voices_by_language(lang)
+    voice = None
+    if voice_name == "default_voice":
+        for v in voices:
+            if "default" in v and v["default"] == True:
+                return v # returns the first 'default'.
+        #If no 'default', returns first voice matching lang 
+        return voices[0]
+    else:
+        for v in voices:
+            if v["name"] == voice_name:
+                voice = v
+    return voice
+
+
+    
 
 
 ###################################################################
@@ -1088,6 +1117,8 @@ def test_config():
     log.debug("\nEND TEST CONFIG\n")
         
 
+if use_json_conf:
+    loadJsonConfigurationFiles()
     
 
 if __name__ == '__main__':

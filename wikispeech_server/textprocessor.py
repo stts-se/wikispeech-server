@@ -42,11 +42,26 @@ class Textprocessor(object):
                 
             self.components.append(component)
 
+    def isDefault(self):
+        if "default" in self.config and self.config["default"] == True:
+            return True
+        return False
+        
+
+            
     def __repr__(self):
-        return '{"name":"%s", "lang":"%s"}' % (self.name, self.lang)
+        l = []
+        l.append("name:%s" % self.name)
+        l.append("lang:%s" % self.lang)
+        if self.isDefault():
+            l.append("default: True")
+        if "config_file" in self.config:
+            l.append("config_file: %s" % (self.config["config_file"]))
+        
+        return "{%s}" % ", ".join(l)
 
     def __str__(self):
-        return '{"name":"%s", "lang":"%s"}' % (self.name, self.lang)
+        return self.__repr__()
 
 class TextprocComponentException(Exception):
     pass
@@ -89,6 +104,7 @@ if __name__ == "__main__":
     tp_config = {
         "name":"wikitextproc_sv",
         "lang":"sv",
+        "default": True,
         "components":[
             {
                 "module":"adapters.marytts_adapter",
@@ -108,5 +124,9 @@ if __name__ == "__main__":
     try:
         tp = Textprocessor(tp_config)
         log.info("Created textprocessor %s from %s" % (tp, tp_config))
+
+        print(tp)
+        print(tp.isDefault())
+        
     except TextprocessorException as e:
         log.error("Failed to create textprocessor for %s\nException message was:\n%s" % (tp_config, e))

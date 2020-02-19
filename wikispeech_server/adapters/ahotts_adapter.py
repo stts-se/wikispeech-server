@@ -65,11 +65,11 @@ def socket_read_filelength_file(tts_socket):
 
 
 def synthesise(lang, voice, utterance, hostname=None):
-    log.info("Utterance: %s" % utterance)
+    log.debug("Utterance: %s" % utterance)
     input = utterance['original_text']
-    log.info("Text: %s" % input)
+    log.debug("Text: %s" % input)
     words = get_orth(utterance)
-    log.info("Words: %s" % words)
+    log.debug("Words: %s" % words)
 
     hashstring=input+'&Lang='+lang+'&Voice='+voice['name']
     

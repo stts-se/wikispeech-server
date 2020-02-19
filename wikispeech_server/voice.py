@@ -31,6 +31,7 @@ class Voice(object):
 
     def testVoice(self):
         log.info("Testing voice %s" % self.name)
+
         if self.engine == "marytts":
             voice_host = config.config.get("Services", "marytts")
             url = re.sub("process","voices",voice_host)
@@ -51,6 +52,8 @@ class Voice(object):
                 raise VoiceException(msg)
             else:
                 log.info("Voice found at url %s" % url)
+
+
         elif self.engine == "ahotts" and config.config.get("Services", "ahotts_server_ip") != None:
             from wikispeech_server.adapters.ahotts_adapter import socket_write_filelength_file,socket_read_filelength_file
             cwdir = os.getcwd()
@@ -59,55 +62,13 @@ class Voice(object):
             ahotts_server_port = config.config.get("Services", "ahotts_server_port")
             ahotts_speed = config.config.get("Services", "ahotts_speed")
 
-            """ Call to socket, does not work properly in docker compose environment
-            # Write text to file
-            inputfilename="%s/%s/ahotts_test.txt" % (cwdir,tmpdir)
-            inputfile=open(inputfilename,"wb")
-            inputfile.write("Hasierako proba".encode('latin-1')+'\n'.encode('latin-1'))
-            inputfile.close()
-            # Open socket
-            socketa=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            ipa=socket.gethostbyname(ahotts_server_ip)
-            print (ipa)
-            socketa.connect((ipa,int(ahotts_server_port)))
-            # Write options
-            options_struct=struct.Struct('4s 4s 4s 1024s 1024s 1024s ?')
-            options_struct_packed=options_struct.pack(self.lang.encode('utf-8'),"".encode('utf-8'),ahotts_speed.encode('utf-8'),"".encode('utf-8'),"wav/ahotts_test.pho".encode('utf-8'),"wav/ahotts_test.wrd".encode('utf-8'),True)
-            totalsent=0
-            while totalsent<len(options_struct_packed):
-                sent=socketa.send(options_struct_packed[totalsent:])
-                if sent==0:
-                    raise RuntimeError("socket connection broken")
-                totalsent=totalsent+sent
-            # Write text file length + text file
-            socket_write_filelength_file(socketa,inputfilename)
-            # Read wav file
-            wavfilename="%s/%s/ahotts_test.wav" % (cwdir,tmpdir)
-            wavfile=open(wavfilename,"wb")
-            wavfile.write(socket_read_filelength_file(socketa))
-            wavfile.close()
-            # Read pho file
-            socket_read_filelength_file(socketa)
-            # Read wrd file
-            wrdfilename="%s/%s/ahotts_test.wrd" % (cwdir,tmpdir)
-            wrdfile=open(wrdfilename,"wb")
-            wrdfile.write(socket_read_filelength_file(socketa))
-            wrdfile.close()
-            # Close socket
-            socketa.close()
             try:
-                wavfile=open(wavfilename,'r')
-                wavfile.close()
-                os.remove(inputfilename)
-                os.remove(wavfilename)
-                os.remove(wrdfilename)
+                response=requests.post("http://"+ahotts_server_ip+":"+ahotts_server_port+"/ahotts_getaudio",data={'text':"Hasierako proba".encode('latin-1'),'lang':self.lang,'voice':self.name,'speed':ahotts_speed})
             except:
-                msg = "AhoTTS server not found at IP %s and Port %s" % (ahotts_server_ip,ahotts_server_port)
+                msg = "Ahotts server not found at %s:%s" % (ahotts_server_ip, ahotts_server_port)
                 log.error(msg)
                 raise VoiceException(msg)
-            """
-
-            response=requests.post("http://"+ahotts_server_ip+":"+ahotts_server_port+"/ahotts_getaudio",data={'text':"Hasierako proba".encode('latin-1'),'lang':self.lang,'voice':self.name,'speed':ahotts_speed})
+                
             if response.status_code==200:
                 files=response.json()
                 wavfile=files['wav']
@@ -128,6 +89,22 @@ class Voice(object):
                 log.error(msg)
                 raise VoiceException(msg)
 
+        elif self.engine == "nnmnkwii":
+            url = self.config["url"]
+            try:
+                response=requests.get(url)
+                assert response.status_code == 200
+            except:
+                msg = "nnmnkwii server not found at url %s" % (url)
+                log.error(msg)
+                raise VoiceException(msg)
+            log.info("Test successful for voice %s" % self.name)
+            
+        else:
+            log.warning("No test implemented for voice %s" % self.name)
+
+
+            
     def getMaryttsVoicenames(self, response):
         names = []
         lines = response.split("\n")
@@ -137,14 +114,24 @@ class Voice(object):
             names.append(name)
         return names
 
+    def isDefault(self):
+        if "default" in self.config and self.config["default"] == True:
+            return True
+        return False
+    
     def __repr__(self):
-        #return {"name":self.name, "lang":self.lang}
-        return "{name:%s, lang:%s}" % (self.name, self.lang)
+        l = []
+        l.append("name:%s" % self.name)
+        l.append("lang:%s" % self.lang)
+        if self.isDefault():
+            l.append("default: True")
+        if "config_file" in self.config:
+            l.append("config_file: %s" % (self.config["config_file"]))
+        
+        return "{%s}" % ", ".join(l)
 
     def __str__(self):
-        return {"name":self.name, "lang":self.lang}
-        #return "{name:%s, lang:%s}" % (self.name, self.lang)
-
+        return self.__repr__()
 
 
 

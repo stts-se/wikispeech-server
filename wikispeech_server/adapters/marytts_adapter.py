@@ -593,7 +593,7 @@ def addToElementIfExists(element, item, attribute, drop_prefix=""):
 #Called from buildWord
 def mapperMapFromMary(trans, lang, voice):
 
-    log.info("mapperMapFromMary( %s , %s , %s )" % (trans, lang, voice))
+    log.debug("mapperMapFromMary( %s , %s , %s )" % (trans, lang, voice))
 
     if "mapper" in voice:
         #Bad names.. It should be perhaps "external" and "internal" instead of "from" and "to"
@@ -601,7 +601,7 @@ def mapperMapFromMary(trans, lang, voice):
         from_symbol_set = voice["mapper"]["to"]
     
     else:
-        log.info("No marytts mapper defined for language %s" % lang)
+        log.debug("No marytts mapper defined for language %s" % lang)
         return trans
 
     ## hl remove quote_plus 20170613
@@ -635,10 +635,10 @@ def mapperMapToMary(trans, lang, voice):
         to_symbol_set = voice["mapper"]["to"]
         from_symbol_set = voice["mapper"]["from"]
 
-        log.info("marytts mapper defined for language %s\nFrom: %s\nTo: %s" % (lang, from_symbol_set, to_symbol_set))
+        log.debug("marytts mapper defined for language %s\nFrom: %s\nTo: %s" % (lang, from_symbol_set, to_symbol_set))
     
     else:        
-        log.info("No marytts mapper defined for language %s" % lang)
+        log.debug("No marytts mapper defined for language %s" % lang)
         return trans
 
     

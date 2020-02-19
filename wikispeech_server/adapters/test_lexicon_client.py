@@ -37,7 +37,7 @@ class TestLexicon(unittest.TestCase):
 
         
         result = lexicon.lookup(orth)
-        log.info("RESULT: %s" % result)
+        log.debug("RESULT: %s" % result)
 
         expected_first_trans = expected[0]['transcriptions'][0]['strn']
         result_first_trans = result[0]['transcriptions'][0]['strn']
