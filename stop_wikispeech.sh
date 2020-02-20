@@ -24,7 +24,7 @@ if [ $nPids -ne 0 ]; then
     
     if [ $isYes == 1 ]; then
 	echo -n "killing processes ..." 2>&1
-	kill $pids
+	kill -9 $pids
 	echo " done" 2>&1
     fi
 else

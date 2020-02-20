@@ -877,6 +877,9 @@ def saveAndConvertAudio(audio_url):
 
     tmpdir = config.config.get("Audio settings","audio_tmpdir")
     log.debug("TMPDIR: %s" % tmpdir)
+
+    if not os.path.isdir(tmpdir):
+        os.system("mkdir -p %s" % tmpdir)
     
     fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
     tmpwav = fh.name    
@@ -1096,6 +1099,8 @@ def test_config():
     try:
         tmpdir = config.config.get("Audio settings","audio_tmpdir")
         log.debug("TMPDIR: %s" % tmpdir)
+        if not os.path.isdir(tmpdir):
+            os.system("mkdir -p %s" % tmpdir)
         fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
         tmpfile = fh.name        
         fh.write("test".encode("utf-8"))
