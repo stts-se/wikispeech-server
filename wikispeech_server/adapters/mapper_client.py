@@ -13,7 +13,7 @@ class Mapper(object):
         self.from_symbol_set = from_symbol_set
         self.to_symbol_set = to_symbol_set
         
-        self.base_url = "%s/mapper" % config.config.get("Services", "lexicon")
+        self.base_url = "%s/mapper" % config.config.get("Services", "mapper")
 
         self.test()
 

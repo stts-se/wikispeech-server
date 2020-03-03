@@ -18,7 +18,7 @@ except:
 
 
 marytts_url = config.config.get("Services", "marytts")
-mapper_url = config.config.get("Services", "lexicon")
+mapper_url = config.config.get("Services", "mapper")
 
 
 

@@ -126,9 +126,10 @@ def convertResponse(response_json):
             if not response_item["status"]["name"] == "delete":
                 response_orth = response_item["strn"]
                 first_trans = response_item["transcriptions"][0]["strn"]
-                if includePostag:
+                pos = ""
+                if includePostag and "partOfSpeech" in response_item:
                     pos = response_item["partOfSpeech"]
-                if response_item["preferred"] == True:
+                if "preferred" in response_item and response_item["preferred"] == True:
                     log.debug("ORTH: %s, PREFERRED TRANS: %s" % (response_orth,first_trans))
                     trans_dict[response_orth] = first_trans
                     if includePostag:
