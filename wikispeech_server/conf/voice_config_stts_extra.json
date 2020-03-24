@@ -40,12 +40,32 @@
     ],
     "voice_configs": [
 	{
+            "name":"espeak-mbrola_sv_test",
+            "lang":"sv",
+            "engine":"espeak-mbrola",
+            "adapter":"adapters.espeak_adapter",
+            "espeak_mbrola_voice":"mb-sw1",
+            "espeak_voice":"mb-sw1",
+	    "skip_test": false
+	}, 
+	{
+            "name":"espeak-mbrola_en_test",
+            "lang":"en",
+            "engine":"espeak-mbrola",
+            "adapter":"adapters.espeak_adapter",
+            "espeak_mbrola_voice":"mb-en1",
+            "espeak_voice":"mb-en1",
+	    "skip_test": false
+	}, 
+
+
+	{
             "name":"new_sv_test",
             "lang":"sv",
             "engine":"nnmnkwii",
             "adapter":"adapters.nnmnkwii_adapter",
-            "nnmnkwii_url":"http://localhost:8484",
-	    "skip_test": true
+            "url":"http://localhost:8484",
+	    "skip_test": false
 	}
     ]
 }

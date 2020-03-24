@@ -17,8 +17,52 @@ from wikispeech_server.adapters.abbreviations_eu import abbreviations_eu
 from wikispeech_server.adapters.foreign_eu import foreign_eu
 from wikispeech_server.adapters.initials_eu import initials_eu
 
+from wikispeech_server.voice import VoiceException
+
 specials_eu=units_eu+initials_eu+abbreviations_eu+foreign_eu
 specials_eu.sort()
+
+
+def testVoice(voice_config):
+    #from wikispeech_server.adapters.ahotts_adapter import socket_write_filelength_file,socket_read_filelength_file
+    #cwdir = os.getcwd()
+    #tmpdir = config.config.get("Audio settings","audio_tmpdir")
+    #ahotts_server_ip = config.config.get("Services", "ahotts_server_ip")
+    #ahotts_server_port = config.config.get("Services", "ahotts_server_port")
+    #ahotts_speed = config.config.get("Services", "ahotts_speed")
+
+    lang = voice_config["lang"]
+    name = voice_config["name"]
+    
+    try:
+        response=requests.post("http://"+ahotts_server_ip+":"+ahotts_server_port+"/ahotts_getaudio",data={'text':"Hasierako proba".encode('latin-1'),'lang':lang,'voice':name,'speed':ahotts_speed})
+    except:
+        msg = "Ahotts server not found at %s:%s" % (ahotts_server_ip, ahotts_server_port)
+        log.error(msg)
+        raise VoiceException(msg)
+
+    if response.status_code==200:
+        files=response.json()
+        wavfile=files['wav']
+        wrdfile=files['wrd']
+        response2=requests.get("http://"+ahotts_server_ip+":"+ahotts_server_port+"/ahotts_downloadfile?file="+wavfile)
+        if response2.status_code==200:
+            response3=requests.get("http://"+ahotts_server_ip+":"+ahotts_server_port+"/ahotts_downloadfile?file="+wrdfile)
+            if response3.status_code!=200:
+                msg = "AhoTTS server error"
+                log.error(msg)
+                raise VoiceException(msg)
+        else:
+            msg = "AhoTTS server error"
+            log.error(msg)
+            raise VoiceException(msg)
+    else:
+        msg = "AhoTTS server error"
+        log.error(msg)
+        raise VoiceException(msg)
+
+
+
 
 def socket_write_filelength_file(tts_socket,filename):
     file_length=os.stat(filename).st_size

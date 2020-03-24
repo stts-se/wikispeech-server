@@ -6,7 +6,7 @@ import wikispeech_server.config as config
 from wikispeech_server.adapters.lexicon_client import Lexicon, LexiconException
 from wikispeech_server.adapters.mapper_client import Mapper, MapperException
 
-
+import wikispeech_server.util as util
 
 class VoiceException(Exception):
     pass
@@ -19,7 +19,21 @@ class Voice(object):
         self.engine = voice_config["engine"]
         self.adapter = voice_config["adapter"]
 
-        self.testVoice()
+        if "skip_test" in voice_config and voice_config["skip_test"] == True:
+            pass
+        else:
+            try:
+                if "directory" in voice_config:
+                    directory = voice_config["directory"]
+                else:
+                    directory = "wikispeech_server"
+                adapter = util.import_module(directory, self.config["adapter"])
+                adapter.testVoice(self.config)
+            except:
+                msg = "No test implemented OR test failed for adapter %s" % self.adapter
+                log.warning(msg)
+                raise VoiceException(msg)
+
 
         
         if "mapper" in voice_config:
@@ -29,7 +43,8 @@ class Voice(object):
                 raise VoiceException(e)
             
 
-    def testVoice(self):
+            
+    def testVoiceOLD_REMOVE(self):
         log.info("Testing voice %s" % self.name)
 
         if self.engine == "marytts":
@@ -100,6 +115,10 @@ class Voice(object):
                 raise VoiceException(msg)
             log.info("Test successful for voice %s" % self.name)
             
+        elif self.engine == "espeak-mbrola":
+            directory = "wikispeech_server"
+            adapter = util.import_module(directory, self.config["adapter"])
+            adapter.testVoice(self.config)
         else:
             log.warning("No test implemented for voice %s" % self.name)
 

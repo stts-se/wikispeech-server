@@ -11,6 +11,8 @@ import wikispeech_server.config as config
 from wikispeech_server.options import *
 import wikispeech_server.adapters.lexicon_client as lexicon_client
 import wikispeech_server.log as log
+import wikispeech_server.util as util
+
 from wikispeech_server.textprocessor import Textprocessor, TextprocessorException
 from wikispeech_server.voice import Voice, VoiceException
 
@@ -712,7 +714,10 @@ def loadJsonConfigurationFiles():
         cf_dir = config.config.get("Voice config", "config_files_location")
 
     #The testing config file should always be there 
-    config_files = ["voice_config_for_testing.json"]
+    #config_files = ["voice_config_for_testing.json"]
+    #OR maybe it shouldn't??
+    config_files = []
+    
     if config.config.has_option("Voice config", "config_files"):
         #print(config.config.get("Voice config", "config_files"))
         cfs = config.config.get("Voice config", "config_files").split("\n")
@@ -946,7 +951,9 @@ def getParam(param,default=None):
 
 
 def import_module(directory, module_name):
-                
+    return util.import_module(directory, module_name)
+
+def import_moduleOLD(directory, module_name):
     #print("Importing module '%s'" % module_name)
 
     #HB 200218

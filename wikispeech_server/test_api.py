@@ -33,7 +33,8 @@ log.debug("RUNNING API TESTS")
 log.debug("RUNNING TEST 1.1")
 
 #expected_langs = ["sv", "nb", "en", "ar"]
-expected_langs = ["sv", "nb", "en"] # HL 2017-09-11
+#expected_langs = ["sv", "nb", "en"] # HL 2017-09-11
+expected_langs = ["en"] # HB 2020-03-24
 
 r = test_client.options(host)
 res = json.loads(r.data.decode('utf-8'))
@@ -45,7 +46,7 @@ assert (type(res) == type({}))
 
 
 for lang in expected_langs:
-    assert lang in langs, "expected_lang %s not found in %s" % (expected_langs, langs)
+    assert lang in langs, "expected_lang %s not found in %s (expected_langs: %s)" % (lang, langs, expected_langs)
 
 
 test_done()
@@ -72,7 +73,7 @@ test_done()
 
 parameters = {
     "input":"test.",
-    "lang":"sv"
+    "lang":"en"
 }
 
 ## GET

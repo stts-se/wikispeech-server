@@ -1,10 +1,33 @@
 import os, re
+import wikispeech_server.log as log
 
 
-def synthesise(lang, voice, input):
+def testVoice(config):
+    voice = config["espeak_voice"]
+    espeak = "espeak-ng"
+    #espeak = "espeak"
+    try:
+        retval = os.system("%s -v %s -q test" % (espeak, voice))
+        assert retval == 0
+        log.info("Test successful for voice %s" % config["name"])
+        return True
+    except:
+        msg = "Failed command: '%s -v %s'" % (espeak, voice)
+        log.error(msg)
+        raise VoiceException(msg)
+    
+    
+
+
+def synthesise(lang, voice, input, hostname=None):
     mbrola_voice = voice["espeak_mbrola_voice"]
     voice = voice["espeak_voice"]
+
+    espeak = "espeak-ng"
+    #espeak = "espeak"
+
     #convert utt to ssml
+    print("INPUT: %s" % input)
     ssml = utt2phonemics(input)
     #ssml = utt2ssml(input)
     print(ssml)
@@ -12,14 +35,14 @@ def synthesise(lang, voice, input):
     ssml = ssml.replace('"','\\"')
 
     #send ssml to espeak and print pho file
-    outfile = "tmp/espeak_out"
-    cmd = u"espeak -v %s --pho \"%s\" > %s.pho" % (mbrola_voice, ssml, outfile)
+    tmpdir = "wikispeech_server/tmp"
+    outfile = "espeak_out"
+    cmd = u"%s -v %s --pho \"%s\" > %s/%s.pho" % (espeak, mbrola_voice, ssml, tmpdir, outfile)
     print(cmd)
     os.system(cmd)
 
     #send ssml to espeak and generate wav file (should be possible to do both things at once but apparently not?)
-    outfile = "tmp/espeak_out"
-    cmd = u"espeak -v %s \"%s\" -w %s.wav" % (voice, ssml, outfile)
+    cmd = u"%s -v %s \"%s\" -w %s/%s.wav" % (espeak, voice, ssml, tmpdir, outfile)
     print(cmd)
     os.system(cmd)
 
@@ -31,7 +54,7 @@ def synthesise(lang, voice, input):
     #TODO this doesn't work..
     #BETTER: read the pho into list of durations, then loop over words in input, add durations for each word
 
-    infh = open(outfile+".pho")
+    infh = open("%s/%s.pho" % (tmpdir, outfile))
     segments = infh.readlines()
     infh.close()
     prevword = None
@@ -77,11 +100,13 @@ def synthesise(lang, voice, input):
     #if prevword and word != prevword:
     #    words.append((prevword, str(float(prevwordend)+addtime) ))
 
-    audio_url = "http://localhost/wikispeech_server/%s.wav" % outfile
 
-
-    #return audio_url and tokens
+    
+    audio_url = "%s%s/%s.wav" % (hostname, "audio", outfile)
+    log.debug("espeak_adapter returning audio_url: %s" % audio_url) 
     return (audio_url, words)
+
+
 
 def utt2ssml(item):
     print(item)
@@ -139,8 +164,11 @@ def utt2phonemics(utterance):
                             print("WS_TRANS: %s" % ws_trans)
                             espeak_trans = map2espeak(ws_trans)
                             print("ESPEAK_TRANS: %s" % espeak_trans)
-                            phn_list.append(espeak_trans)
-    phonemics = "[["+" ".join(phn_list)+"]]"
+                            phn_list.append("[["+espeak_trans+"]]")
+                        else:
+                            phn_list.append(word["orth"])
+                            
+    phonemics = " ".join(phn_list)
     return phonemics
 
 #mary2flite
@@ -285,6 +313,7 @@ if __name__ == "__main__":
 
     
     (audio_url, tokens) = synthesise(lang, voice, input)
+    print(tokens)
     print(audio_url)
 
 

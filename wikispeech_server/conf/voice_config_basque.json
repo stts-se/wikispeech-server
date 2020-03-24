@@ -1,0 +1,24 @@
+{
+    "textprocessor_configs": [
+	{
+            "name":"basic_eu",
+            "lang":"eu",
+            "components":[
+		{
+                    "module":"tokeniser",
+                    "call":"tokenise"
+		}
+            ]
+	}
+    ],
+    
+    "voice_configs": [
+	{
+            "lang":"eu",
+            "name":"ahotts-eu-female",
+	    "disabled":false,
+            "engine":"ahotts",
+            "adapter":"adapters.ahotts_adapter"
+	}
+    ]
+}

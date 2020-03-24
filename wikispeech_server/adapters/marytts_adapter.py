@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import wikispeech_server.config as config
 import wikispeech_server.log as log
 import wikispeech_server.wikispeech as ws
+from wikispeech_server.voice import VoiceException
 
 from urllib.parse import quote
 
@@ -19,6 +20,29 @@ except:
 
 marytts_url = config.config.get("Services", "marytts")
 mapper_url = config.config.get("Services", "mapper")
+
+
+def testVoice(voice_conf):
+    voice_host = config.config.get("Services", "marytts")
+    url = re.sub("process","voices",voice_host)
+    log.debug("Calling url: %s" % url)
+    try:
+        r = requests.get(url)
+    except:
+        msg = "Marytts server not found at url %s" % (url)
+        log.error(msg)
+        raise VoiceException(msg)
+    
+    response = r.text
+    log.debug("Response:\n%s" % response)
+    marytts_voicenames = self.getMaryttsVoicenames(response)
+    if not self.name in marytts_voicenames:
+        msg = "Voice %s not found at url %s" % (self.name, url)
+        log.error(msg)
+        raise VoiceException(msg)
+    else:
+        log.info("Voice found at url %s" % url)
+        
 
 
 

@@ -6,6 +6,14 @@ if __name__ == "__main__":
 import wikispeech_server.log as log
 import wikispeech_server.config as config
 
+def testVoice(voice):
+    voice = voice["flite_voice"]
+    cmd = u"./engines/flite -voice %s test none" % (voice)
+    log.debug(cmd)
+    os.system(cmd)
+
+
+
 def preproc(utt):
     #Nothing to be done here .. Maybe there will be?
     return utt

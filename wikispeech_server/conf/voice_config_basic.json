@@ -10,19 +10,6 @@
 		}
             ]
 	}
-	,
-	
-	
-	{
-            "name":"basic_eu",
-            "lang":"eu",
-            "components":[
-		{
-                    "module":"tokeniser",
-                    "call":"tokenise"
-		}
-            ]
-	}
     ],
     
     "voice_configs": [
@@ -32,13 +19,6 @@
             "engine":"flite",
             "adapter":"adapters.flite_adapter",
             "flite_voice":"slt"
-	},
-	{
-            "lang":"eu",
-            "name":"ahotts-eu-female",
-	    "disabled":false,
-            "engine":"ahotts",
-            "adapter":"adapters.ahotts_adapter"
 	}
     ]
 }
