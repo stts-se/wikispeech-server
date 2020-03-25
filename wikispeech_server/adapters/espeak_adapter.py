@@ -9,7 +9,7 @@ def testVoice(config):
     try:
         retval = os.system("%s -v %s -q test" % (espeak, voice))
         assert retval == 0
-        log.info("Test successful for voice %s" % config["name"])
+        log.debug("Test successful for voice %s" % config["name"])
         return True
     except:
         msg = "Failed command: '%s -v %s'" % (espeak, voice)
@@ -27,10 +27,10 @@ def synthesise(lang, voice, input, hostname=None):
     #espeak = "espeak"
 
     #convert utt to ssml
-    print("INPUT: %s" % input)
+    log.debug("INPUT: %s" % input)
     ssml = utt2phonemics(input)
     #ssml = utt2ssml(input)
-    print(ssml)
+    log.debug(ssml)
 
     ssml = ssml.replace('"','\\"')
 
@@ -38,12 +38,12 @@ def synthesise(lang, voice, input, hostname=None):
     tmpdir = "wikispeech_server/tmp"
     outfile = "espeak_out"
     cmd = u"%s -v %s --pho \"%s\" > %s/%s.pho" % (espeak, mbrola_voice, ssml, tmpdir, outfile)
-    print(cmd)
+    log.debug(cmd)
     os.system(cmd)
 
     #send ssml to espeak and generate wav file (should be possible to do both things at once but apparently not?)
     cmd = u"%s -v %s \"%s\" -w %s/%s.wav" % (espeak, voice, ssml, tmpdir, outfile)
-    print(cmd)
+    log.debug(cmd)
     os.system(cmd)
 
 
@@ -66,7 +66,7 @@ def synthesise(lang, voice, input, hostname=None):
         if segment == "":
             words.append((prevword, str(float(prevwordend)+addtime) ))
             next
-        print(segment)
+        log.debug(segment)
         m = re.search("^(\S+)\t([0-9]+)", segment)
         symbol = m.group(1)
         duration = float(m.group(2))
@@ -86,7 +86,7 @@ def synthesise(lang, voice, input, hostname=None):
 
         if float(endtime) < float(prevwordend):            
             addtime += float(prevwordend)
-            print("New addtime: %f" % addtime)
+            log.debug("New addtime: %f" % addtime)
 
 
 
@@ -109,7 +109,7 @@ def synthesise(lang, voice, input, hostname=None):
 
 
 def utt2ssml(item):
-    print(item)
+    log.debug(item)
     if item["tag"] == "t":
         word = item["text"]
         if "ph" in item:
@@ -127,7 +127,7 @@ def utt2ssml(item):
     return ssml
 
 def utt2phonemicsOLD(item):
-    print("utt2phonemics: %s" % item)
+    log.debug("utt2phonemics: %s" % item)
     if item["tag"] == "t":
         word = item["text"]
         if "ph" in item:
@@ -161,9 +161,9 @@ def utt2phonemics(utterance):
                     for word in words:
                         if "trans" in word:
                             ws_trans = word["trans"]
-                            print("WS_TRANS: %s" % ws_trans)
+                            log.debug("WS_TRANS: %s" % ws_trans)
                             espeak_trans = map2espeak(ws_trans)
-                            print("ESPEAK_TRANS: %s" % espeak_trans)
+                            log.debug("ESPEAK_TRANS: %s" % espeak_trans)
                             phn_list.append("[["+espeak_trans+"]]")
                         else:
                             phn_list.append(word["orth"])
@@ -249,7 +249,7 @@ def map2espeak(phonestring):
     espeak = re.sub(r"' (.+)(@|oU|e|E)", r"\1 ' \2", espeak)
     espeak = re.sub(r"\" (.+)(@|oU|e|E)", r"\1 ' \2", espeak)
 
-    print("MAPPED %s TO %s" % (phonestring, espeak))
+    log.debug("MAPPED %s TO %s" % (phonestring, espeak))
 
 
     return espeak

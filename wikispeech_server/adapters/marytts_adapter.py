@@ -22,9 +22,11 @@ marytts_url = config.config.get("Services", "marytts")
 mapper_url = config.config.get("Services", "mapper")
 
 
-def testVoice(voice_conf):
+def testVoice(voice_config):
     voice_host = config.config.get("Services", "marytts")
     url = re.sub("process","voices",voice_host)
+    name = voice_config["name"]
+    
     log.debug("Calling url: %s" % url)
     try:
         r = requests.get(url)
@@ -35,15 +37,24 @@ def testVoice(voice_conf):
     
     response = r.text
     log.debug("Response:\n%s" % response)
-    marytts_voicenames = self.getMaryttsVoicenames(response)
-    if not self.name in marytts_voicenames:
-        msg = "Voice %s not found at url %s" % (self.name, url)
+    marytts_voicenames = getMaryttsVoicenames(response)
+    log.debug("marytts_voicenames: %s" % marytts_voicenames)
+    if not name in marytts_voicenames:
+        msg = "Voice %s not found at url %s" % (name, url)
         log.error(msg)
         raise VoiceException(msg)
     else:
         log.info("Voice found at url %s" % url)
         
 
+def getMaryttsVoicenames(response):
+    names = []
+    lines = response.split("\n")
+    for line in lines:
+        #example: stts_sv_nst-hsmm sv male hmm
+        name = line.split(" ")[0]
+        names.append(name)
+    return names
 
 
 def marytts_preproc(text, lang, tp_config, input_type="text"):

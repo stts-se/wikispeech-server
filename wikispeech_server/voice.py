@@ -1,4 +1,4 @@
-import re, requests, os, socket, struct
+import sys, re, requests, os, socket, struct
 
 import wikispeech_server.log as log
 import wikispeech_server.config as config
@@ -29,11 +29,10 @@ class Voice(object):
                     directory = "wikispeech_server"
                 adapter = util.import_module(directory, self.config["adapter"])
                 adapter.testVoice(self.config)
-            except:
-                msg = "No test implemented OR test failed for adapter %s" % self.adapter
+            except Exception as e:
+                msg = "Test failed for adapter %s. Reason: %s" % (self.adapter, e)
                 log.warning(msg)
-                raise VoiceException(msg)
-
+                raise
 
         
         if "mapper" in voice_config:
@@ -124,7 +123,7 @@ class Voice(object):
 
 
             
-    def getMaryttsVoicenames(self, response):
+    def getMaryttsVoicenamesREMOVE(self, response):
         names = []
         lines = response.split("\n")
         for line in lines:

@@ -14,7 +14,17 @@ for tp_config in ws.textprocessor_configs:
     if tp_config.get("disabled") == True:
         print("Didn't load %s, disabled in voice_config.py" % tp_config.get("name"))
     else:
-        ws.loadTextprocessor(tp_config)
+        try:
+            ws.loadTextprocessor(tp_config)
+        except:
+            print("ERROR: loadTextprocessor %s:\n%s\n%s" % (tp_config.get("name"), sys.exc_info()[0], sys.exc_info()[1]) )
+            traceback.print_tb(sys.exc_info()[2])
+            
+            if config.config.getboolean("Tests","quit_on_error"):
+                print("Exiting because of test error and Tests:quit_on_error is set to True")
+                sys.exit(1)
+            else:
+                print("Continuing anyway because Tests:quit_on_error is set to False")
 
 
 for voice_config in ws.voice_configs:
@@ -24,7 +34,18 @@ for voice_config in ws.voice_configs:
     elif voice_config.get("disabled") == True:
         print("Didn't load %s, disabled in voice_config.py" % voice_config.get("name"))
     else:
-        ws.loadVoice(voice_config)
+        try:
+            ws.loadVoice(voice_config)
+        except:
+            print("ERROR: loadVoice %s:\n%s\n%s" % (voice_config.get("name"), sys.exc_info()[0], sys.exc_info()[1]) )
+            traceback.print_tb(sys.exc_info()[2])
+            
+            if config.config.getboolean("Tests","quit_on_error"):
+                print("Exiting because of test error and Tests:quit_on_error is set to True")
+                sys.exit(1)
+            else:
+                print("Continuing anyway because Tests:quit_on_error is set to False")
+            
 print("Done loading textprocessors and voices")
 
 

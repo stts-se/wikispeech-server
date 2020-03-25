@@ -690,19 +690,24 @@ def lexserver_proxy(url):
 textprocessors = []
 def loadTextprocessor(tp_config):
     try:
+        log.info("Loading textprocessor %s" % (tp_config["name"]))
         tp = Textprocessor(tp_config)
+        log.info("Done loading textprocessor %s" % (tp_config["name"]))
         textprocessors.append(tp)
     except TextprocessorException as e:
         log.warning("Failed to load textprocessor from %s. Reason:\n%s" % (tp_config,e))
-
+        raise
+        
 voices = []
 def loadVoice(voice_config):
     try:
+        log.info("Loading voice %s" % (voice_config["name"]))
         v = Voice(voice_config)        
+        log.info("Done loading voice %s" % (voice_config["name"]))
         voices.append(v)
     except VoiceException as e:
         log.warning("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))
-
+        raise
 
 def loadJsonConfigurationFiles():
     global textprocessor_configs, voice_configs

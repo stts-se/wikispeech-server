@@ -78,7 +78,7 @@ class TextprocComponent(object):
             except MapperException as e:
                 raise TextprocComponentException(e)
         if "module" in cconfig and cconfig["module"] == "adapters.marytts_adapter":
-            log.info("Trying to create marytts component: %s" % cconfig)
+            log.debug("Trying to create marytts component: %s" % cconfig)
             #For testing marytts_adapter
             #TODO? move to test function in marytts_adapter
             try:
