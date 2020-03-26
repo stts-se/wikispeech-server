@@ -622,6 +622,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
     #HB 200326 Easiest way right now: include base64 encoding in saveAndConvertAudio
 
+    audio_data = ""
     if output_type != "test":
         (audio_file, audio_data) = saveAndConvertAudio(audio_file)
 
