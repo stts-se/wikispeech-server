@@ -21,7 +21,7 @@ import datetime
 import pytz
 from pytz import timezone
 import subprocess
-
+import base64
 
 ###
 #change from import to load json, to allow for different voice config files!
@@ -255,7 +255,7 @@ def wikispeech():
     else:
         return "input_type %s not supported" % input_type
 
-    if output_type == "json":
+    if output_type in ["json", "html"]:
         result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname)
         if type(result) == type(""):
             log.debug("RETURNING MESSAGE: %s" % result)
@@ -272,10 +272,24 @@ def wikispeech():
         if msg:
             result["message"] = msg
 
-
-
         json_data = json.dumps(result)
-        return Response(json_data, mimetype='application/json')
+
+                
+        if output_type == "json":
+            return Response(json_data, mimetype='application/json')
+
+        elif output_type == "html":
+            newtokens = []
+            starttime = 0
+            for token in result["tokens"]:
+                token["starttime"] = starttime
+                token["dur"] = token["endtime"]-starttime
+                newtokens.append(token)
+                starttime = token["endtime"]
+
+            
+            return render_template("output.html", audio_data=result["audio_data"], tokens=newtokens)
+
 
     else:
         return "output_type %s not supported" % output_type
@@ -601,21 +615,40 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
     #Feb 2020 We're talking now about not returning url but audio data in json instead. So this should change.
+
+    #HB 200325 It's a start.. Works for flite, not for marytts, because the audio_file variable is in fact a url :)
+    #So 1) Require adapters to return a local file name 2) convert the file to base64 (or opus if we want to keep it for a while) 3) optionally delete the wav file 4) return data, opus-url or wav-url depending on what was asked for, 5) clean up tmp dir on startup + sometimes (say every 10th call)? 
+    #Also remove "hostname" from call to adapter.synthesise, if needed it's better added here
+
+    #HB 200326 Easiest way right now: include base64 encoding in saveAndConvertAudio
+
     if output_type != "test":
-        audio_file = saveAndConvertAudio(audio_file)
+        (audio_file, audio_data) = saveAndConvertAudio(audio_file)
 
     audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
     log.debug("audio_url: %s" % audio_url)
 
 
+    #data = {
+    #    "audio":audio_url,
+    #    "tokens":output_tokens
+    #}
+
     data = {
         "audio":audio_url,
+        "audio_data":audio_data,
         "tokens":output_tokens
     }
 
     
     return data
 
+
+def encode_audio(wav_file):
+    f=open(wav_file, "rb")
+    enc=base64.b64encode(f.read())
+    f.close()
+    return enc
 
 ############################################
 #
@@ -906,7 +939,7 @@ def saveAndConvertAudio(audio_url):
     
     fh.write(audio_data)
     fh.close()
-
+    
     #tmpwav is now the synthesised wav file
     #tmpopus = "%s/%s.opus" % (tmpdir, tmpfilename)
     tmpopus = "%s.opus" % tmpwav
@@ -926,7 +959,16 @@ def saveAndConvertAudio(audio_url):
     log.debug("opus_url_suffix: %s" % opus_url_suffix)
 
     #return tmpopus
-    return opus_url_suffix
+
+    return_audio_data = True
+    if return_audio_data:
+        #audio_data = "data:audio/wav;base64,%s" % encode_audio(re.sub("^.*/", "wikispeech_server/tmp/", audio_file)).decode()
+        audio_data = "%s" % encode_audio(tmpwav).decode()
+    else:
+        audio_data = ""
+
+
+    return (opus_url_suffix, audio_data)
 
 
 def getTestExample(lang):

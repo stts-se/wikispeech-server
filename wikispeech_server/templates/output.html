@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+     <p class="autofocus-current-word" hidden>
+       <input type="checkbox" id="autofocus-current-word" checked>
+       <label for="autofocus-current-word">Auto-focus/auto-scroll</label>
+     </p>
+     <p class="playback-rate" hidden title="Note that increaseing the reading rate will decrease accuracy of word highlights">
+       <label for="playback-rate">Reading rate:</label>
+       <input id="playback-rate" type="range" min="0.5" max="2.0" value="1.0" step="0.1" disabled onchange='this.nextElementSibling.textContent = String(Math.round(this.valueAsNumber * 10) / 10) + "\u00D7";'>
+       <output>1&times;</output>
+     </p>
+     <p class="playback-rate-unavailable" hidden>
+       <em>(It seems your browser does not support <code>HTMLMediaElement.playbackRate</code>, so you will not be able to change the speech rate.)</em>
+     </p>
+     <p class="loading">
+       <em><img src="loader.gif" alt="Initializing audio"> Loading audio…</em>
+     </p>
+
+
+
+     <p class="passage-audio" hidden>     
+       <audio id="passage-audio" class="passage" controls src="data:audio/wav;base64,{{ audio_data }}" ></audio>
+     </p>
+     
+     <div id="passage-text" class="passage">
+       {%for i in tokens%} 
+  
+       <span data-dur="{{ i["dur"] }}" data-begin="{{ i["starttime"] }}">{{i["orth"]}}</span> 
+       {%endfor%}
+
+     </div>
+     <script src="read-along.js"></script>
+     <script src="main.js"></script>
+  </body>
+</html>
