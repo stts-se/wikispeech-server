@@ -117,7 +117,7 @@ if __name__ == "__main__":
             {
                 "module":"adapters.lexicon_client",
                 "call":"lexLookup",
-                "lexicon":"wikispeech_testdb:sv"
+                "lexicon":"wikispeech_lexserver_demo:sv"
             }
         ]
     }

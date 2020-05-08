@@ -2,7 +2,7 @@
 
 
 
-lexicon_name = "wikispeech_testdb:enu";
+lexicon_name = "wikispeech_lexserver_demo:enu";
 wloc = window.location;
 ws_host = wloc.protocol + "//" + wloc.hostname + ":" + wloc.port;
 console.log(ws_host);
@@ -1026,13 +1026,13 @@ function wordsInLex(words, lang) {
     //TODO hardcoded lexicon
     /*
     if ( lang == "sv" ) {
-	var lexicons = "wikispeech_testdb:sv";
+	var lexicons = "wikispeech_lexserver_demo:sv";
     } 
     else if ( lang == "en" ) {
-	var lexicons = "wikispeech_testdb:enu";
+	var lexicons = "wikispeech_lexserver_demo:enu";
     }
     else if ( lang == "nb" ) {
-	var lexicons = "wikispeech_testdb:nb";
+	var lexicons = "wikispeech_lexserver_demo:nb";
     }
     else {
 	console.log("WARNING: no lexicon defined for lang "+lang);

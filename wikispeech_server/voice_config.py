@@ -34,7 +34,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"wikispeech_testdb:sv"
+             "lexicon":"wikispeech_lexserver_demo:sv"
          }
      ]
     }
@@ -98,7 +98,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"wikispeech_testdb:nb"
+             "lexicon":"wikispeech_lexserver_demo:nb"
          }
      ]
     }
@@ -136,7 +136,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"wikispeech_testdb:enu"
+             "lexicon":"wikispeech_lexserver_demo:enu"
          }
      ]
     }
@@ -153,7 +153,7 @@ textprocessor_configs = [
             {
                 "module":"adapters.lexicon_client",
                 "call":"lexLookup",
-                "lexicon":"wikispeech_testdb:enu"
+                "lexicon":"wikispeech_lexserver_demo:enu"
             }
         ]
     }
@@ -217,7 +217,7 @@ textprocessor_configs = [
          {
              "module":"adapters.lexicon_client",
              "call":"lexLookup",
-             "lexicon":"wikispeech_testdb:ar" 
+             "lexicon":"wikispeech_lexserver_demo:ar" 
          }
      ]
     }

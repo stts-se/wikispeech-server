@@ -1038,7 +1038,7 @@ def import_moduleOLD(directory, module_name):
 
 
 def test_lexicon_client():
-    lexicon = "wikispeech_testdb:sv"
+    lexicon = "wikispeech_lexserver_demo:sv"
     sent = "apa hund färöarna"
     trans = {}
     trans["apa"] = '"" A: . p a'
