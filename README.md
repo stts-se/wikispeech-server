@@ -33,6 +33,9 @@ The file contains settings for:
   * server port (default: 10000)
   * log_level (default: warning)
   * debug_mode: python flask setting to reload when files are edited. (default: False)
+* Voice config
+  * config_files_location: Folder for config files (default: wikispeech_server/conf)
+  * config_files: A list of voice config files to load
 * Audio settings
   * audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
 * Services
