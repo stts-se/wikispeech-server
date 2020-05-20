@@ -46,9 +46,9 @@ git checkout $RELEASE || echo "No such release for pronlex. Using master."
 go get ./...
 
 rm -rf ${builddir}/appdir
-bash install/setup.sh ${builddir}/appdir
+bash scripts/setup.sh -a ${builddir}/appdir -e sqlite
 echo ${builddir}/appdir
-bash install/start_server.sh -a ${builddir}/appdir &
+bash scripts/start_server.sh -a ${builddir}/appdir -e sqlite &
 export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
 sleep 20
@@ -86,6 +86,5 @@ for proc in `ps -f --sort pid|egrep 'tts_server|ahotts|python' | egrep -v  "grep
     kill $proc || echo "Couldn't kill $pid"
 done
 
-docker build . --no-cache -t sttsse/wikispeech:buildtest --build-arg RELEASE=$RELEASE
 
 
