@@ -79,8 +79,8 @@ script:
  - cd pronlex
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
  - go get ./...
- - bash install/setup.sh /tmp/appdir
- - bash install/start_server.sh -a /tmp/appdir &
+ - bash scripts/setup.sh -a /tmp/appdir -e sqlite
+ - bash scripts/start_server.sh -a /tmp/appdir -e sqlite &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
  - sleep 20
