@@ -141,4 +141,3 @@ script:
  - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $symbolset_pid
 # - sh .travis/exit_server_and_fail_if_not_running.sh ahotts $ahotts_pid
  
- - docker build . -t wikispeech

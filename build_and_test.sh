@@ -17,23 +17,23 @@ cd $basedir
 builddir="${basedir}/.build"
 mkdir -p .build
 
-for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|marytts|tts_server|ahotts|mishkal' | egrep -v 'docker.*build' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
+for proc in `ps --sort pid -Af|egrep 'pronlex|wikispeech|symbolset|marytts|tts_server|ahotts|mishkal' | egrep -v "grep .E"|sed 's/  */\t/g'|cut -f2`; do
     kill $proc || echo "Couldn't kill $pid"
 done
 
 
 ## AHOTTS
-cd $builddir
-git clone https://github.com/Elhuyar/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
-git checkout $RELEASE || echo "No such release for ahotts. Using master."
-if [ ! -f bin/tts_server ]; then
-    sh script_compile_all_linux.sh && mkdir -p txt wav
-fi
-sh start_ahotts_wikispeech.sh &
-export ahotts_pid=$!
-echo "ahotts started with pid $ahotts_pid"
-sleep 20
-python ahotts_testcall.py "test call for ahotts"
+# cd $builddir
+# git clone https://github.com/Elhuyar/AhoTTS-eu-Wikispeech.git && cd AhoTTS-eu-Wikispeech || cd AhoTTS-eu-Wikispeech && git pull
+# git checkout $RELEASE || echo "No such release for ahotts. Using master."
+# if [ ! -f bin/tts_server ]; then
+#     sh script_compile_all_linux.sh && mkdir -p txt wav
+# fi
+# sh start_ahotts_wikispeech.sh &
+# export ahotts_pid=$!
+# echo "ahotts started with pid $ahotts_pid"
+# sleep 20
+# python ahotts_testcall.py "test call for ahotts"
 
 
 ## SYMBOLSET
@@ -86,7 +86,7 @@ sleep 20
 
 
 ## WIKISPEECH FULL
-cd $basedir && python3 bin/wikispeech docker/config/travis.conf &
+cd $basedir && python3 bin/wikispeech .travis/travis-full.conf &
 export wikispeech_pid=$!  
 echo "wikispeech started with pid $wikispeech_pid"
 sleep 20
@@ -103,6 +103,3 @@ sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $symbolset_pi
 for proc in `ps -f --sort pid|egrep 'tts_server|ahotts|python' | egrep -v  "grep .E"|sed 's/  */\t/g'|cut -f2`; do
     kill $proc || echo "Couldn't kill $pid"
 done
-
-
-

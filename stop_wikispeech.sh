@@ -3,7 +3,7 @@
 processNames="pronlex|wikispeech|marytts|tts_server|ahotts-httpserver.py|start_ahotts|mishkal"
 cmd=`basename $0`
 
-exclude="$cmd|git-receive-pack|docker.*build|installDist|grep .E PID"
+exclude="$cmd|git-receive-pack|installDist|grep .E PID"
 
 psargs="--sort pid -Af"
 pids=""
