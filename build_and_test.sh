@@ -65,6 +65,9 @@ go get ./...
 rm -rf ${builddir}/appdir
 bash scripts/setup.sh -a ${builddir}/appdir -e sqlite
 echo ${builddir}/appdir
+
+bash scripts/import.sh -e sqlite -f lexdata -a ${builddir}/appdir -r $RELEASE
+
 bash scripts/start_server.sh -a ${builddir}/appdir -e sqlite &
 export pronlex_pid=$!
 echo "pronlex started with pid $pronlex_pid"
@@ -77,8 +80,15 @@ git clone https://github.com/stts-se/marytts.git && cd marytts || cd marytts && 
 git checkout $RELEASE || echo "No such release for marytts. Using master."
  
 ./gradlew check
-./gradlew assembleDist
 ./gradlew test
+./gradlew installDist
+
+## INSTALL STTS VOICES
+cp stts_voices/voice-ar-nah-hsmm-5.2.jar build/install/marytts/lib/
+cp stts_voices/voice-dfki-spike-hsmm-5.1.jar build/install/marytts/lib/
+cp stts_voices/voice-stts_no_nst-hsmm-5.2.jar build/install/marytts/lib/
+cp stts_voices/voice-stts_sv_nst-hsmm-5.2-SNAPSHOT.jar build/install/marytts/lib/
+#./gradlew assembleDist
 ./gradlew run &
 export marytts_pid=$!
 echo "marytts started with pid $marytts_pid"
@@ -86,7 +96,8 @@ sleep 20
 
 
 ## WIKISPEECH FULL
-cd $basedir && python3 bin/wikispeech .travis/travis-full.conf &
+#cd $basedir && python3 bin/wikispeech .travis/travis-min.conf &
+cd $basedir && python3 bin/wikispeech wikispeech_server/hanna-maskineri.conf &
 export wikispeech_pid=$!  
 echo "wikispeech started with pid $wikispeech_pid"
 sleep 20
