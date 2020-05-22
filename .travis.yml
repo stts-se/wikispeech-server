@@ -73,7 +73,7 @@ script:
  - sleep 20
  - python ahotts_testcall.py "test call for ahotts"
 
- # SYMBOLSET TODO
+ # SYMBOLSET 
  - cd $basedir
  - git clone https://github.com/stts-se/symbolset
  - cd symbolset
@@ -88,7 +88,6 @@ script:
  - export symbolset_pid=$!
  - echo "symbolset server started with pid $symbolset_pid"
  - sleep 2
-
 
  # PRONLEX
  - mkdir -p $GOPATH/src/github.com/stts-se && cd $GOPATH/src/github.com/stts-se/

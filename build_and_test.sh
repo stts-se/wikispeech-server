@@ -36,6 +36,23 @@ sleep 20
 python ahotts_testcall.py "test call for ahotts"
 
 
+## SYMBOLSET
+cd $builddir
+git clone https://github.com/stts-se/symbolset
+cd symbolset
+git checkout $RELEASE || echo "No such release for symbolset. Using master."
+cd server
+git clone https://github.com/stts-se/lexdata.git
+cd lexdata
+git checkout $RELEASE || echo "No such release for lexdata. Using master."
+cd ..
+bash setup.sh lexdata ss_files
+go run *.go -ss_files ss_files &
+export symbolset_pid=$!
+echo "symbolset server started with pid $symbolset_pid"
+sleep 2
+
+
 ## PRONLEX
 cd $builddir
 export GOPATH=`go env GOPATH`
@@ -79,6 +96,7 @@ sleep 20
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
+sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $symbolset_pid
  
 # kill ahotts
 #sh $basedir/.travis/exit_server_and_fail_if_not_running.sh ahotts $ahotts_pid
