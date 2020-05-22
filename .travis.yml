@@ -90,6 +90,7 @@ script:
  - sleep 2
 
  # PRONLEX
+ - cd $basedir
  - mkdir -p $GOPATH/src/github.com/stts-se && cd $GOPATH/src/github.com/stts-se/
  - git clone https://github.com/stts-se/pronlex.git
  - cd pronlex
