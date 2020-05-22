@@ -1,10 +1,6 @@
-# go is for pronlex
-#language: go
-#go:
-#  - "1.10"
+os: linux
+dist: bionic
 
-# java is for marytts
-#language: java
 jdk:
  - openjdk11
 
