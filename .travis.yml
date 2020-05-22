@@ -18,7 +18,7 @@ notifications:
 
 env:
  - RELEASE=master
-# - RELEASE=master DO_IMPORT=1
+ - RELEASE=master DO_IMPORT=1
 
 
 # for marytts
