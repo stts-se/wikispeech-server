@@ -105,14 +105,15 @@ script:
  - git clone https://github.com/stts-se/marytts.git
  - cd marytts
  - git checkout $RELEASE || echo "No such release for marytts. Using master."
+
+ - ./gradlew check
  - ./gradlew installDist --stacktrace
 
-## INSTALL STTS VOICES
  - cp stts_voices/voice-ar-nah-hsmm-5.2.jar build/install/marytts/lib/
  - cp stts_voices/voice-dfki-spike-hsmm-5.1.jar build/install/marytts/lib/
  - cp stts_voices/voice-stts_no_nst-hsmm-5.2.jar build/install/marytts/lib/
  - cp stts_voices/voice-stts_sv_nst-hsmm-5.2-SNAPSHOT.jar build/install/marytts/lib/
- - ./gradlew check
+
 # - ./gradlew assembleDist
  - ./gradlew test
  - ./gradlew run &
