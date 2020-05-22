@@ -92,7 +92,7 @@ script:
 
  - | 
    if [ -v DO_IMPORT ]; then
-     bash scripts/import.sh lexdata /tmp/appdir/sqlite $RELEASE
+     bash scripts/import.sh -e sqlite -f lexdata -a /tmp/appdir/sqlite -r $RELEASE
    fi
 
  - bash scripts/start_server.sh -a /tmp/appdir -e sqlite &
