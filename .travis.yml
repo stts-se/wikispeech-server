@@ -22,7 +22,7 @@ notifications:
 
 env:
  - RELEASE=master
-# - RELEASE=master DO_IMPORT=1
+ - RELEASE=master DO_IMPORT=1
 
 # https://blog.travis-ci.com/2017-12-12-new-trusty-images-q4-launch
 # sudo: required
@@ -97,6 +97,12 @@ script:
  - git checkout $RELEASE || echo "No such release for pronlex. Using master."
  - go get ./...
  - bash scripts/setup.sh -a /tmp/appdir -e sqlite
+
+ - | 
+   if [ -v DO_IMPORT ]; then
+     bash scripts/import.sh lexdata /tmp/appdir/sqlite $RELEASE
+   fi
+
  - bash scripts/start_server.sh -a /tmp/appdir -e sqlite &
  - export pronlex_pid=$!
  - echo "pronlex started with pid $pronlex_pid"
@@ -115,18 +121,16 @@ script:
  - echo "marytts started with pid $marytts_pid"
  - sleep 20
  
- # # WIKISPEECH MINIMAL
- # - cd $basedir
- # - python3 bin/wikispeech docker/config/travis-min.conf &
- # - export wikispeech_pid=$!  
- # - echo "wikispeech started with pid $wikispeech_pid"
- # - sleep 20
- # - sh .travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
- 
  # WIKISPEECH FULL
  - cd $basedir
- - python3 bin/wikispeech docker/config/travis.conf &
- - export wikispeech_pid=$!  
+ - |
+    if [ -v DO_IMPORT ]; then
+     python3 bin/wikispeech docker/config/travis-full.conf &
+     export wikispeech_pid=$!
+    elif
+     python3 bin/wikispeech docker/config/travis-min.conf &
+     export wikispeech_pid=$!
+    fi
  - echo "wikispeech started with pid $wikispeech_pid"
  - sleep 20
  
