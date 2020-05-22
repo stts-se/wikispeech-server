@@ -120,10 +120,7 @@ script:
     if [ -v DO_IMPORT ]; then
      python3 bin/wikispeech .travis/travis-full.conf &
      export wikispeech_pid=$!
-    fi
-
- - |
-    if [ -z DO_IMPORT ]; then
+    else
      python3 bin/wikispeech .travis/travis-min.conf &
      export wikispeech_pid=$!
     fi
