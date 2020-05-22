@@ -123,14 +123,19 @@ script:
  
  # WIKISPEECH FULL
  - cd $basedir
+
  - |
     if [ -v DO_IMPORT ]; then
      python3 bin/wikispeech docker/config/travis-full.conf &
      export wikispeech_pid=$!
-    elif
+    fi
+
+ - |
+    if [ DO_IMPORT ]; then
      python3 bin/wikispeech docker/config/travis-min.conf &
      export wikispeech_pid=$!
     fi
+
  - echo "wikispeech started with pid $wikispeech_pid"
  - sleep 20
  
