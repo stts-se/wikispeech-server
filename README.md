@@ -40,6 +40,7 @@ The file contains settings for:
   * audio_tmpdir: output directory for soundfiles. This directory needs to exist. (default: ./wikispeech_server/tmp)
 * Services
   * lexicon: url to lexicon server. (default: http://localhost:8787)
+  * mapper: url to symbol set mapper server. (default: http://localhost:8771)
   * marytts: url to marytts server. (default: http://localhost:59125/process)
   * ahotts: various configs for ahotts server. (default: http://localhost:1200)
 * Tests
