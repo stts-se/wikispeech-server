@@ -146,8 +146,8 @@ cd /var/www/html; sudo ln -s ~/git/wikispeech-server
 
 Test:
 ```
-google-chrome http://localhost/wikispeech-server/test.html
+google-chrome http://localhost:10000/test.html
 ```
 ```
-google-chrome http://localhost/wikispeech-server/workflow_demo/test.html
+google-chrome http://localhost:10000/workflow_demo/test.html
 ```

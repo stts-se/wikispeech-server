@@ -21,8 +21,8 @@ sleep=$defaultsleep
 
 printUsage() {
     echo "Usage:" 2>&1
-    echo "  $ $CMD <gitroot> <pronlex> <lexserver appdir>" >&2
-    echo "    -g gitroot - root folder for git repositories mishkal, marytts, ahotts, symbolset and wikispeech-server (default $defaultgitrepos)" >&2
+    echo "  $ $CMD <options>" >&2
+    echo "    -g gitroot - root folder for git repositories mishkal, marytts, ahotts, symbolset, pronlex, wikispeech-server (default $defaultgitrepos)" >&2
     echo "    -d lexserver appdir - location of the lexserver installation (default $defaultlexserverappdir)" >&2
     echo "    -l logdir - log files folder (default $defaultlogdir)" >&2
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
@@ -70,9 +70,19 @@ else
     exit 1
 fi
 
+wikispeech=`ls -d $gitrepos/wikispeech*server 2> >(grep -v 'No such file' >&2) | head -1`
+if [ $wikispeech ] && [ -d $wikispeech ]; then
+    echo -n ""
+else
+    echo "[$CMD] No wikispeech git folder found in default location: $gitrepos/wikispeech-server or $gitrepos/wikispeech_server"
+    printUsage
+    exit 1
+fi
+
 mkdir -p $logdir
 
 echo "[$CMD] gitrepos folder: $gitrepos" >&2
+echo "[$CMD] wikispeech git folder: $wikispeech" >&2
 echo "[$CMD] lexserver appdir: $lexserverappdir" >&2
 echo "[$CMD] logdir: $logdir" >&2
 
@@ -96,7 +106,7 @@ cd $gitrepos/AhoTTS-eu-Wikispeech && nohup sh start_ahotts_wikispeech.sh &>> $lo
 #echo "[$CMD] TESTING -- not starting wikispeech" && exit 0
 
 echo "[$CMD] clearing wikispeech audio cache" >&2
-cd $gitrepos/wikispeech-server && bash clear_audio_cache.sh -q || exit 1
+cd $wikispeech && bash clear_audio_cache.sh -q || exit 1
 
 echo "[$CMD] waiting $sleep secs before starting main wikispeech server" >&2
 for i in `seq 1 $sleep`;
@@ -107,7 +117,7 @@ done
 echo "" >&2
 
 echo "[$CMD] starting main wikispeech server" >&2
-cd $gitrepos/wikispeech-server && nohup python3 bin/wikispeech &>> $logdir/wikispeech.log &
+cd $wikispeech && nohup python3 bin/wikispeech &>> $logdir/wikispeech.log &
 
 echo ""
 echo "[$CMD] check logs in folder $logdir for process details" >&2
