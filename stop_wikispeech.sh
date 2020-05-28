@@ -1,6 +1,6 @@
 #!/bash
 
-processNames="pronlex|wikispeech|marytts|tts_server|ahotts-httpserver.py|start_ahotts|mishkal"
+processNames="pronlex|wikispeech|marytts|tts_server|converter|ahotts-httpserver.py|start_ahotts|mishkal"
 cmd=`basename $0`
 
 exclude="$cmd|git-receive-pack|installDist|grep .E PID"
