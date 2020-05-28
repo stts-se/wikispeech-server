@@ -1182,6 +1182,6 @@ if use_json_conf:
     
 
 if __name__ == '__main__':
-    print("use wikispeech_mockup/bin/wikispeech to run")
+    print("use wikispeech-server/bin/wikispeech to run")
 
 

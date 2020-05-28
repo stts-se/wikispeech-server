@@ -1,6 +1,7 @@
 if __name__ == "__main__":
     import sys
     sys.path.append("/media/bigdisk/git/wikispeech_mockup")
+    sys.path.append("/media/bigdisk/git/wikispeech-server")
     print(sys.path)
 
 import wikispeech_server.log as log

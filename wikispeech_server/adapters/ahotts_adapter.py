@@ -126,7 +126,7 @@ def synthesise(lang, voice, utterance, hostname=None):
             hash_object=hashlib.md5(hashstring.encode())
     hashnumber=hash_object.hexdigest()
 
-    """ Call to tts_client, only works if ahotts is installed in same server as wikispeech_mockup. Better to make socket calls over the network.
+    """ Call to tts_client, only works if ahotts is installed in same server as wikispeech-server. Better to make socket calls over the network.
     inputfile=open("%s/bin/tts_%s.txt" % (ahotts_dir, hashnumber),"wb")
     inputfile.write(input.encode('latin-1')+'\n'.encode('latin-1'))
     inputfile.close()
