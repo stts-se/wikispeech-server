@@ -630,12 +630,9 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     log.debug("audio_url: %s" % audio_url)
 
 
-    #data = {
-    #    "audio":audio_url,
-    #    "tokens":output_tokens
-    #}
-
+    #T257659 Add voice to output (voice contains language, name, and other info)
     data = {
+        "voice":voice,
         "audio":audio_url,
         "audio_data":audio_data,
         "tokens":output_tokens
