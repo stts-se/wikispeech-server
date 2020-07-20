@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import sys, os, re
+import sys, os, re, glob
 from tempfile import NamedTemporaryFile
 #from importlib import import_module
 import requests
@@ -932,14 +932,12 @@ def saveAndConvertAudio(audio_url):
     
     audio_data = r.content
     
-    fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
-    tmpwav = fh.name    
+    #fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
+    #tmpwav = fh.name    
     
     fh.write(audio_data)
     fh.close()
     
-    #tmpwav is now the synthesised wav file
-    #tmpopus = "%s/%s.opus" % (tmpdir, tmpfilename)
     tmpopus = "%s.opus" % tmpwav
 
     convertcmd = "opusenc %s %s" % (tmpwav, tmpopus)
@@ -950,21 +948,20 @@ def saveAndConvertAudio(audio_url):
     if retval != 0:
         log.error("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
 
-    #remove everything before the tmpdir, to build the external url
-    #HB problem with wikimedia usage?
-    #opus_url_suffix = re.sub("^.*/%s/" % tmpdir, "%s/" % tmpdir, tmpopus)
     opus_url_suffix = re.sub("^.*/%s/" % tmpdir, "", tmpopus)
     log.debug("opus_url_suffix: %s" % opus_url_suffix)
 
-    #return tmpopus
-
     return_audio_data = True
     if return_audio_data:
-        #audio_data = "data:audio/wav;base64,%s" % encode_audio(re.sub("^.*/", "wikispeech_server/tmp/", audio_file)).decode()
-        audio_data = "%s" % encode_audio(tmpwav).decode()
+        audio_data = "%s" % encode_audio(tmpopus).decode()
     else:
         audio_data = ""
 
+
+    tmpfiles = glob.glob("%s/*" % tmpdir)
+    for f in tmpfiles:
+        os.unlink(f)
+        
 
     return (opus_url_suffix, audio_data)
 
