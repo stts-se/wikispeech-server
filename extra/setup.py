@@ -6,16 +6,16 @@ except:
     sys.exit(1)
     
 
-setup(name='wikispeech_mockup',
+setup(name='wikispeech-server',
       version='0.1',
       description='Server for wikispeech tts',
-      url='https://github.com/HaraldBerthelsen/wikispeech_mockup',
+      url='https://github.com/stts-se/wikispeech-server',
       author='Harald Berthelsen',
       author_email='haraldberthelsen@gmail.com',
       license='MIT',
       packages=[
-          'wikispeech_mockup',
-          'wikispeech_mockup.adapters'
+          'wikispeech-server',
+          'wikispeech-server.adapters'
       ],
       install_requires=[
           'requests',

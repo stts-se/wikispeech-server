@@ -11,10 +11,10 @@ mkdir -p git
 cd git
 
 #First time:
-#git clone https://github.com/stts-se/wikispeech_mockup.git
+#git clone https://github.com/stts-se/wikispeech-server.git
 
 
-cd wikispeech_mockup
+cd wikispeech-server
 git pull
 mkdir -p wikispeech_server/tmp
 
@@ -22,7 +22,7 @@ mkdir -p wikispeech_server/tmp
 pip3 install -r requirements.txt
 
 #should now work (except lexicon and marytts servers may need to be configured and/or started):
-bin/wikispeech
+python3 bin/wikispeech
 
 #To quit venv:
 #deactivate

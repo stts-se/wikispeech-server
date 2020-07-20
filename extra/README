@@ -1,4 +1,4 @@
-wikispeech_mockup
+wikispeech-server
 =========================
 
 En första kladd för att testa, fundera och ev dema.
@@ -21,7 +21,7 @@ go run ../addNSTLexToDB/addNSTLexToDB.go sv.se.nst tmp.db ~/git/wikimedia/langda
 mv tmp.db pronlex.db
 go run lexserver.go
 
-wikispeech_mockup:
+wikispeech-server:
 python3 wikispeech.py
 
 apache:
@@ -32,7 +32,7 @@ Lägg till i config-fil (ex /etc/apache2/sites-enabled/000-default.conf)
         ProxyRequests     Off
 
 sudo apache2ctrl restart
-sudo ln -s ../wikispeech_mockup <apache doc root, ex /var/www/html/>
+sudo ln -s ../wikispeech-server <apache doc root, ex /var/www/html/>
 
 ========================
 test
@@ -42,7 +42,7 @@ curl "http://localhost:10000/wikispeech/?lang=sv&input=hej,+hej."
 
 browser:
 open url "http://localhost/wikispeech/"
-open url "http://localhost/wikispeech_mockup/test.html"
+open url "http://localhost/wikispeech-server/test.html"
 
 
 
