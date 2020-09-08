@@ -134,6 +134,7 @@
 	{
             "lang":"en",
             "name":"cmu-slt-hsmm",
+	    "default":true,
             "engine":"marytts",
             "adapter":"adapters.marytts_adapter",
             "marytts_locale":"en_US",

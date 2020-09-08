@@ -192,6 +192,18 @@ def list_languages():
 
 ################################################################
 #
+# /default_voices
+#
+# GET:  curl "http://localhost:10000/default_voices"
+
+@app.route('/default_voices', methods=["GET"])
+def list_default_voices():
+    json_data = json.dumps(getDefaultVoices())
+    return Response(json_data, mimetype='application/json')
+
+
+################################################################
+#
 # /, /wikispeech
 #
 # POST: curl -d "lang=en" -d "input=test." http://localhost:10000/
@@ -306,8 +318,13 @@ def getSupportedLanguages():
             supported_languages.append(lang)
     return supported_languages
 
-
-
+def getDefaultVoices():
+    voices = []
+    for lang in getSupportedLanguages():
+        textproc = getTextprocessorByName("default_textprocessor", lang)
+        voice = getVoiceByName("default_voice", lang)
+        voices.append({"lang":lang, "default_textprocessor":textproc["name"], "default_voice":voice["name"]})
+    return voices
 
 ##############################################
 #
