@@ -7,24 +7,32 @@ import wikispeech_server.config as config
 
 
 ws.log.log_level = config.config.get("Server","log_level")
+ws.log.logger = "stderr"
+if config.config.has_option("Server","logger"):
+    ws.log.logger = config.config.get("Server", "logger")
+
+ws.log.info("Logging to %s" % ws.log.logger)
+print("Logging to %s" % ws.log.logger)
+
+
 
 #HB 171127 load calls moved here from wikispeech_server/wikispeech.py
-print("Loading textprocessors and voices")
+ws.log.info("Loading textprocessors and voices")
 for tp_config in ws.textprocessor_configs:
     if tp_config.get("disabled") == True:
-        print("Didn't load %s, disabled in voice_config.py" % tp_config.get("name"))
+        ws.log.info("Didn't load %s, disabled in voice_config.py" % tp_config.get("name"))
     else:
         try:
             ws.loadTextprocessor(tp_config)
         except:
-            print("ERROR: loadTextprocessor %s:\n%s\n%s" % (tp_config.get("name"), sys.exc_info()[0], sys.exc_info()[1]) )
-            traceback.print_tb(sys.exc_info()[2])
+            ws.log.error("loadTextprocessor %s:\n%s\n%s" % (tp_config.get("name"), sys.exc_info()[0], sys.exc_info()[1]) )
+            #ws.log.error(traceback.extract_tb(sys.exc_info()[2]))
             
             if config.config.getboolean("Tests","quit_on_error"):
-                print("Exiting because of test error and Tests:quit_on_error is set to True")
+                ws.log.fatal("Exiting because of test error and Tests:quit_on_error is set to True")
                 sys.exit(1)
             else:
-                print("Continuing anyway because Tests:quit_on_error is set to False")
+                ws.log.info("Continuing anyway because Tests:quit_on_error is set to False")
 
 
 for voice_config in ws.voice_configs:
@@ -32,21 +40,21 @@ for voice_config in ws.voice_configs:
     if voice_config.get("engine") == "ahotts" and not config.config.get("Services", "ahotts_server_ip", fallback = None):
         ws.log.info("Skipping voice %s" % voice_config.get("name"))
     elif voice_config.get("disabled") == True:
-        print("Didn't load %s, disabled in voice_config.py" % voice_config.get("name"))
+        ws.log.info("Didn't load %s, disabled in voice_config.py" % voice_config.get("name"))
     else:
         try:
             ws.loadVoice(voice_config)
         except:
-            print("ERROR: loadVoice %s:\n%s\n%s" % (voice_config.get("name"), sys.exc_info()[0], sys.exc_info()[1]) )
-            traceback.print_tb(sys.exc_info()[2])
+            ws.log.error("loadVoice %s:\n%s\n%s" % (voice_config.get("name"), sys.exc_info()[0], sys.exc_info()[1]) )
+            #traceback.print_tb(sys.exc_info()[2])
             
             if config.config.getboolean("Tests","quit_on_error"):
-                print("Exiting because of test error and Tests:quit_on_error is set to True")
+                ws.log.fatal("Exiting because of test error and Tests:quit_on_error is set to True")
                 sys.exit(1)
             else:
-                print("Continuing anyway because Tests:quit_on_error is set to False")
+                ws.log.info("Continuing anyway because Tests:quit_on_error is set to False")
             
-print("Done loading textprocessors and voices")
+ws.log.info("Done loading textprocessors and voices")
 
 
 try:
@@ -55,7 +63,7 @@ except:
     run_tests = False
     
 if run_tests:
-    print("run_startup_tests set to True.\nRUNNING TESTS...")
+    ws.log.info("run_startup_tests set to True.\nRUNNING TESTS...")
 
     try:
         ws.test_config()        
@@ -86,14 +94,14 @@ if run_tests:
 
         
     except:
-        print("Test error:\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]) )
+        ws.log.info("Test error:\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]) )
         traceback.print_tb(sys.exc_info()[2])
             
         if config.config.getboolean("Tests","quit_on_error"):
-            print("Exiting because of test error and Tests:quit_on_error is set to True")
+            ws.log.info("Exiting because of test error and Tests:quit_on_error is set to True")
             sys.exit(1)
         else:
-            print("Starting anyway because Tests:quit_on_error is set to False")
+            ws.log.info("Starting anyway because Tests:quit_on_error is set to False")
 
 
         
@@ -138,8 +146,9 @@ port_nr = config.config.getint("Server","port")
 
 
 DEBUG_MODE = False
-if config.config.has_option("Server","debug_mode"):
-    DEBUG_MODE = config.config.getboolean("Server", "debug_mode")
+if config.config.has_option("Server","flask_debug_mode"):
+    DEBUG_MODE = config.config.getboolean("Server", "flask_debug_mode")
+
 
 
 ws.log.info("port_nr set to %d" % port_nr)    

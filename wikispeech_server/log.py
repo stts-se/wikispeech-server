@@ -1,6 +1,19 @@
 import sys
+import syslog
 
+
+logger = "stderr"
 log_level = "warning"
+
+
+level_map = {
+    "fatal": syslog.LOG_CRIT,
+    "error": syslog.LOG_ERR,
+    "warning": syslog.LOG_WARNING,
+    "info": syslog.LOG_INFO,
+    "debug": syslog.LOG_DEBUG
+    }
+
 
 def log(level, msg):
 
@@ -17,7 +30,18 @@ def log(level, msg):
 
         
     if l >= ll:
-        print(msg)
+
+        if logger == "stderr":
+            sys.stderr.write(msg+"\n")
+        elif logger == "stdout":
+            print(msg)
+        elif logger == "syslog":            
+            syslog_level = level_map[level]        
+            syslog.syslog(syslog_level, msg)
+        else:
+            with open(logger,"a") as out:
+                out.write(msg+"\n")
+                
 
 def debug(msg):
     log("debug","DEBUG: "+str(msg))

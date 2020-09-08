@@ -43,7 +43,7 @@ if config.config.has_option("Voice config", "config_files_location"):
 ################
 
 log.info("\nOPUSENC\n\nChecking that opusenc is installed on your system..")
-retval = os.system("opusenc -V")
+retval = os.system('opusenc -V')
 if retval != 0:
     os.system("opusenc -V")
     log.error("ERROR: opusenc was not found. You should probably run something like\nsudo apt install opus-tools\n")
@@ -122,8 +122,8 @@ def versionInfo():
         try:
             tag = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
             branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("utf-8").strip()
-            print(tag)
-            print(branch)
+            log.info(tag)
+            log.info(branch)
             res.append( ("Release: %s on branch %s") % (tag, branch) )
         except:
             log.warning("couldn't retrieve git release info: %s" % sys.exc_info()[1])
@@ -450,7 +450,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
         if "directory" in component:
             if not os.path.isdir(component["directory"]):
-                print("ERROR: directory %s not found" % component["directory"])
+                log.fatal("directory %s not found" % component["directory"])
                 sys.exit()
             directory = component["directory"]
         else:
@@ -607,7 +607,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #Import the defined module and function
     if "directory" in voice:
         if not os.path.isdir(voice["directory"]):
-            print("ERROR: directory %s not found" % voice["directory"])
+            log.fatal("directory %s not found" % voice["directory"])
             sys.exit()
         directory = voice["directory"]
     else:
@@ -797,7 +797,7 @@ def loadJsonConfigurationFiles():
         elif os.path.isfile("%s/%s" % (cf_dir, config_file)):
             path = "%s/%s" % (cf_dir, config_file)
         else:
-            print("Config file %s or %s not found" % (config_file, "%s/%s" % (cf_dir, config_file)))
+            log.fatal("Config file %s or %s not found" % (config_file, "%s/%s" % (cf_dir, config_file)))
             sys.exit()
         with open(path) as json_file:
             log.info("Reading config file: %s" % path)
@@ -1025,27 +1025,6 @@ def getParam(param,default=None):
 
 def import_module(directory, module_name):
     return util.import_module(directory, module_name)
-
-def import_moduleOLD(directory, module_name):
-    #print("Importing module '%s'" % module_name)
-
-    #HB 200218
-    #Add directory to sys.path
-    #if not directory in sys.path:
-    #    sys.path.insert(0,directory)
-    #print(sys.path)
-    #Import the module..
-    #mod = import_module(module_name)
-    #The above doesn't work in all cases..
-    
-    #HB 200218 This seems to work.. 
-    import importlib.util
-    module_file = "%s/%s.py" % (directory, re.sub("\.", "/", "%s" % (module_name)))
-    spec = importlib.util.spec_from_file_location(module_name, module_file)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-
-    return mod
 
         
 
