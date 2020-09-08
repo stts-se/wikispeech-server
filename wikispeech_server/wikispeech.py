@@ -283,10 +283,12 @@ def wikispeech():
             starttime = 0
             for token in result["tokens"]:
                 token["starttime"] = starttime
-                token["dur"] = token["endtime"]-starttime
+                #T260293
+                token["dur"] = token["endtime"]/1000-starttime
+                #token["dur"] = token["endtime"]-starttime
                 newtokens.append(token)
-                starttime = token["endtime"]
-
+                starttime = token["endtime"]/1000
+                #starttime = token["endtime"]
             
             return render_template("output.html", audio_data=result["audio_data"], tokens=newtokens)
 
@@ -629,6 +631,9 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
     log.debug("audio_url: %s" % audio_url)
 
+    #T260293 Convert seconds to milliseconds in tokens
+    output_tokens = convertTokenTimingsToMilliseconds(output_tokens)
+
 
     #T257659 Add voice to output (voice contains language, name, and other info)
     data = {
@@ -647,6 +652,14 @@ def encode_audio(wav_file):
     enc=base64.b64encode(f.read())
     f.close()
     return enc
+
+
+#T260293
+def convertTokenTimingsToMilliseconds(tokens):
+    for token in tokens:
+        token["endtime"] = int(token["endtime"]*1000)
+    return tokens
+
 
 ############################################
 #
