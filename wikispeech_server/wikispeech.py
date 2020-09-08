@@ -633,7 +633,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #T257659 Add voice to output (voice contains language, name, and other info)
     data = {
         "voice":voice,
-        "audio":audio_url,
+        #"audio":audio_url, #The sound file is no longer returned, deleted after base64 encoding
         "audio_data":audio_data,
         "tokens":output_tokens
     }
@@ -958,6 +958,7 @@ def saveAndConvertAudio(audio_url):
         audio_data = ""
 
 
+    #Removing any remaining files in the tmpdir
     tmpfiles = glob.glob("%s/*" % tmpdir)
     for f in tmpfiles:
         os.unlink(f)
