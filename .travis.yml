@@ -71,11 +71,11 @@ script:
  - cd symbolset
  - git checkout $RELEASE || echo "No such release for symbolset. Using master."
  - cd server
- - git clone https://github.com/stts-se/lexdata.git
- - cd lexdata
- - git checkout $RELEASE || echo "No such release for lexdata. Using master."
+ - git clone https://github.com/stts-se/wikispeech-lexdata.git
+ - cd wikispeech-lexdata
+ - git checkout $RELEASE || echo "No such release for wikispeech-lexdata. Using master."
  - cd ..
- - bash setup.sh lexdata ss_files
+ - bash setup.sh wikispeech-lexdata ss_files
  - go run *.go -ss_files ss_files &
  - export symbolset_pid=$!
  - echo "symbolset server started with pid $symbolset_pid"
@@ -92,7 +92,7 @@ script:
 
  - | 
    if [ -v DO_IMPORT ]; then
-     bash scripts/import.sh -e sqlite -f lexdata -a /tmp/appdir -r $RELEASE
+     bash scripts/import.sh -e sqlite -f wikispeech-lexdata -a /tmp/appdir -r $RELEASE
    fi
 
  - bash scripts/start_server.sh -a /tmp/appdir -e sqlite &

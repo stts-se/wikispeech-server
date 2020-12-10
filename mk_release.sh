@@ -10,7 +10,7 @@ printUsage() {
 
 if [ $# -ne 2 ]; then
     printUsage
-    exit 1
+    exit l
 fi
 
 GITROOT=$1
@@ -63,7 +63,7 @@ createReleaseTag() {
     echo ""
     echo "(3) COMMANDS FOR RELEASE TAGS - COPY AND RUN!"
     
-    declare -a repos=("$GOHOME/pronlex" "$wikispeech" "$GITROOT/marytts" "$GITROOT/symbolset" "$GITROOT/ws-lexdata")
+    declare -a repos=("$GITROOT/pronlex" "$wikispeech" "$GITROOT/marytts" "$GITROOT/symbolset" "$GITROOT/wikispeech-lexdata")
     
     tagcmd="git tag -a $shorttag -m \"$longtag\""
     pushcmd="git push origin $shorttag"

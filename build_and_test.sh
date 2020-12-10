@@ -42,11 +42,11 @@ git clone https://github.com/stts-se/symbolset
 cd symbolset
 git checkout $RELEASE || echo "No such release for symbolset. Using master."
 cd server
-git clone https://github.com/stts-se/lexdata.git
-cd lexdata
-git checkout $RELEASE || echo "No such release for lexdata. Using master."
+git clone https://github.com/stts-se/wikispeech-lexdata.git
+cd wikispeech-lexdata
+git checkout $RELEASE || echo "No such release for wikispeech-lexdata. Using master."
 cd ..
-bash setup.sh lexdata ss_files
+bash setup.sh wikispeech-lexdata ss_files
 go run *.go -ss_files ss_files &
 export symbolset_pid=$!
 echo "symbolset server started with pid $symbolset_pid"
@@ -66,7 +66,7 @@ rm -rf ${builddir}/appdir
 bash scripts/setup.sh -a ${builddir}/appdir -e sqlite
 echo ${builddir}/appdir
 
-bash scripts/import.sh -e sqlite -f lexdata -a ${builddir}/appdir -r $RELEASE
+bash scripts/import.sh -e sqlite -f wikispeech-lexdata -a ${builddir}/appdir -r $RELEASE
 
 bash scripts/start_server.sh -a ${builddir}/appdir -e sqlite &
 export pronlex_pid=$!
