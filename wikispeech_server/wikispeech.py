@@ -23,6 +23,9 @@ from pytz import timezone
 import subprocess
 import base64
 
+from urllib.parse import quote
+
+
 ###
 #change from import to load json, to allow for different voice config files!
 from wikispeech_server.voice_config import textprocessor_configs, voice_configs
@@ -430,6 +433,7 @@ def textprocSupportedLanguages():
 
 def textproc(lang, textprocessor_name, text, input_type="text"):
 
+    
 
     textprocessor = getTextprocessorByName(textprocessor_name, lang)
 
@@ -437,6 +441,12 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         #example http://localhost/?lang=sv&input=test&textprocessor=undefined
         return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
     log.debug("TEXTPROCESSOR: %s" % textprocessor)
+
+    #HB 210128
+    #mapper for ssml with ipa 
+    if input_type == "ssml" and 'alphabet="ipa"' in text:
+        text = mapIpaInput(text, textprocessor)
+
 
     #Loop over the list of components, modifying the utt structure created by the first component
     for component in textprocessor["components"]:
@@ -489,6 +499,36 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
     return utt
 
+
+mapper_url = config.config.get("Services", "mapper")
+def mapIpaInput(ssml, textprocessor, sampa=None):
+    for comp in textprocessor["components"]:
+        if "mapper" in comp:
+            sampa = comp["mapper"]["from"]
+    if not sampa:
+        raise ValueError("No mapper defined in voice %s, don't know how to map ipa!" % textprocessor["name"])
+
+    phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
+    for element in phoneme_elements:
+        alphabet = re.findall("alphabet=\"([^\"]+)\"", element)[0]
+        if alphabet == "ipa":        
+            ipa_trans = re.findall("ph=\"(.+)\">", element)[0]
+
+            url = mapper_url+"/mapper/map/ipa/%s/%s" % (sampa, quote(ipa_trans))
+            r = requests.get(url)
+            response = r.text
+            try:
+                response_json = json.loads(response)
+            except json.JSONDecodeError:
+                raise        
+            sampa_trans = response_json["Result"]
+
+
+
+            ssml = re.sub('alphabet="ipa"', 'alphabet="x-sampa"', ssml)        
+            ssml = re.sub(ipa_trans, sampa_trans, ssml)
+    log.debug("mapIpaInput returns %s" % ssml)
+    return ssml
 
 
 
@@ -1083,6 +1123,7 @@ def test_lexicon_client():
 def test_textproc():
     sent = "apa"
     try:
+        #HB 210125
         res = textproc("sv","default_textprocessor", sent)
     except:
         log.error("Failed to do textprocessing.\nError type: %s\nError info:%s" % (sys.exc_info()[0], sys.exc_info()[1]))
