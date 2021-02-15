@@ -178,7 +178,11 @@ function play(id) {
 	    toggleAudioControls();
 	}
 
-	audio.setAttribute("src", response.audio);	    
+	if (response.audio_data) {
+	    audio.setAttribute("src", "data:audio/ogg;base64,"+response.audio_data);	    
+	} else {
+	    audio.setAttribute("src", response.audio);	    
+	}
 	audio.play();
 	    
     };
