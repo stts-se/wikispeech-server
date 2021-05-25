@@ -1047,10 +1047,15 @@ def saveAndConvertAudio(audio_url):
 
 
     #Removing any remaining files in the tmpdir
-    tmpfiles = glob.glob("%s/*" % tmpdir)
-    for f in tmpfiles:
-        os.unlink(f)
-        
+    #tmpfiles = glob.glob("%s/*" % tmpdir)
+    #for f in tmpfiles:
+    #    os.unlink(f)
+
+    #HB 210525
+    #BUG files dropped under "siege"
+    os.unlink(tmpwav)
+    os.unlink(tmpopus)
+    
 
     return (opus_url_suffix, audio_data)
 
