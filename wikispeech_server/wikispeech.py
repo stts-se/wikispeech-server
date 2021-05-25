@@ -262,6 +262,21 @@ def wikispeech():
         return json.dumps(getTestExample(lang))
 
 
+    if input_type == "ipa":
+        if lang == "en":
+            xmllang = "en-US"
+        else:
+            xmllang = lang
+        input = """<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                   http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
+         xml:lang="%s">
+    <phoneme alphabet="ipa" ph="%s">%s</phoneme>
+</speak>""" % (xmllang, input, "word")
+        input_type = "ssml"
+    
+
     if input_type in ["text","ssml"]:
         markup = textproc(lang, textprocessor_name, input, input_type=input_type)
         if type(markup) == type(""):
@@ -445,8 +460,10 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
     #HB 210128
     #mapper for ssml with ipa 
     if input_type == "ssml" and 'alphabet="ipa"' in text:
-        text = mapIpaInput(text, textprocessor)
-
+        try:
+            text = mapIpaInput(text, textprocessor)
+        except ValueError as e:
+            return "ERROR: %s" % e
 
     #Loop over the list of components, modifying the utt structure created by the first component
     for component in textprocessor["components"]:
@@ -510,6 +527,7 @@ def mapIpaInput(ssml, textprocessor, sampa=None):
 
     phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
     for element in phoneme_elements:
+        log.debug("Phoneme element: %s" % element)
         alphabet = re.findall("alphabet=\"([^\"]+)\"", element)[0]
         if alphabet == "ipa":        
             ipa_trans = re.findall("ph=\"(.+)\">", element)[0]
@@ -519,8 +537,8 @@ def mapIpaInput(ssml, textprocessor, sampa=None):
             response = r.text
             try:
                 response_json = json.loads(response)
-            except json.JSONDecodeError:
-                raise        
+            except:
+                raise ValueError(response)       
             sampa_trans = response_json["Result"]
 
 
