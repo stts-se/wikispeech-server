@@ -82,7 +82,7 @@ res = json.loads(r.data.decode('utf-8'))
 #print(res)
 assert ( type(res) == type({}) )
 assert ( type(res["tokens"]) == type([]) )
-assert ( type(res["audio"]) == type("") )
+assert ( type(res["audio_data"]) == type("") )
 test_done()
 
 
@@ -92,7 +92,7 @@ res = json.loads(r.data.decode('utf-8'))
 #print(res)
 assert ( type(res) == type({}) )
 assert ( type(res["tokens"]) == type([]) )
-assert ( type(res["audio"]) == type("") )
+assert ( type(res["audio_data"]) == type("") )
 test_done()
 
 
@@ -126,7 +126,7 @@ test_done()
 ## curl "http://localhost:10000/?lang=sv&input=test.&textprocessor=a_textprocessor_that_is_not_defined"
 parameters = {
     "input":"test.",
-    "lang":"sv",
+    "lang":"en",
     "textprocessor":"a_textprocessor_that_is_not_defined"
 }
 
@@ -136,7 +136,7 @@ r = test_client.get("%s" % (host), query_string=parameters)
 res = r.data.decode('utf-8')
 #print(res)
 assert ( type(res) == type("") )
-expected = "ERROR: Textprocessor a_textprocessor_that_is_not_defined not defined for language sv"
+expected = "ERROR: Textprocessor a_textprocessor_that_is_not_defined not defined for language %s" % parameters["lang"]
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
 
@@ -146,7 +146,7 @@ test_done()
 ## curl "http://localhost:10000/?lang=sv&input=test.&voice=a_voice_that_is_not_defined"
 parameters = {
     "input":"test.",
-    "lang":"sv",
+    "lang":"en",
     "voice":"a_voice_that_is_not_defined"
 }
 
@@ -198,7 +198,10 @@ r = test_client.get("%slanguages" % (host))
 res = json.loads(r.data.decode('utf-8'))
 assert ( type(res) == type([]) )
 
-expected = ["sv", "nb", "en"]
+
+#expected = ["sv", "nb", "en"]
+#Minimal: only test for english
+expected = ["en"]
 for lang in expected:    
     assert ( lang in res ), "%s not in  %s" % (lang, expected)
 test_done()
@@ -234,7 +237,13 @@ assert ( type(res) == type({}) )
 
 #expected = {'lang': 'en-US', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': 'test', 'words': [{'g2p_method': 'lexicon', 'pos': 'NN', 'trans': "' t E s t", 'accent': '!H*', 'orth': 'test'}]}, {'token_orth': '.', 'words': [{'pos': '.', 'orth': '.'}]}], 'boundary': {'breakindex': '5', 'tone': 'L-L%'}}]}]}]}
 
+#Marytts 
 expected = {'lang': 'en-US', 'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'breakindex': '5', 'tone': 'L-L%'}, 'tokens': [{'token_orth': 'test', 'words': [{'accent': '!H*', 'g2p_method': 'lexicon', 'orth': 'test', 'pos': '', 'trans': "' t E s t"}]}, {'token_orth': '.', 'words': [{'orth': '.', 'pos': '.'}]}]}]}]}]}
+
+#Flite
+#expected = {'lang': 'en', 'original_text': 'test.', 'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'punct': '.', 'token_orth': 'test.', 'words': [{'orth': 'test'}]}]}]}]}]}
+
+
 
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
@@ -276,9 +285,12 @@ ssml = """<?xml version="1.0" encoding="ISO-8859-1"?>
 
 </speak>"""
 
+testing_language = "sv"
+#testing_language = "en"
+
 parameters = {
     "input":ssml,
-    "lang":"sv",
+    "lang":"%s" % testing_language,
     "input_type":"ssml"
 }
 
@@ -290,19 +302,60 @@ r = test_client.get("%s" % (host), query_string=parameters)
 res = json.loads(r.data.decode('utf-8'))
 assert ( type(res) == type({}) )
 
-#expected = {"lang": "sv", "paragraphs": [{"sentences": [{"phrases": [{"boundary": {"breakindex": "5", "tone": "L-L%"}, "tokens": [{"token_orth": "Det", "words": [{"accent": "L+H*", "g2p_method": "userdict", "orth": "Det", "pos": "content", "trans": "\"\" d e:"}]}, {"token_orth": "h\u00e4r", "words": [{"accent": "L+H*", "g2p_method": "lexicon", "orth": "h\u00e4r", "pos": "content", "trans": "\" h {: r"}]}, {"token_orth": "\u00e4r", "words": [{"accent": "L+H*", "g2p_method": "lexicon", "orth": "\u00e4r", "pos": "content", "trans": "\" {: r"}]}, {"token_orth": "ett", "words": [{"g2p_method": "lexicon", "orth": "ett", "pos": "function", "trans": "\" E t"}]}, {"token_orth": "test", "words": [{"accent": "L+H*", "g2p_method": "lexicon", "orth": "test", "pos": "content", "trans": "\" t E s t"}]}, {"token_orth": "av", "words": [{"accent": "L+H*", "g2p_method": "rules", "orth": "av", "pos": "content", "trans": "\" A: v"}]}, {"token_orth": "SSML", "words": [{"accent": "!H*", "orth": "SSML", "pos": "content", "trans": "b a . b I . \" A: n"}]}]}]}]}]}
+if testing_language == "sv":
+    expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'breakindex': '5', 'tone': 'L-L%'}, 'tokens': [{'token_orth': 'Det', 'words': [{'accent': 'L+H*', 'orth': 'Det', 'pos': 'content', 'trans': '"" d e:'}]}, {'token_orth': 'här', 'words': [{'accent': 'L+H*', 'g2p_method': 'lexicon', 'orth': 'här', 'pos': 'AB', 'trans': '" h {: r'}]}, {'token_orth': 'är', 'words': [{'accent': 'L+H*', 'g2p_method': 'lexicon', 'orth': 'är', 'pos': 'VB', 'trans': '" {: r'}]}, {'token_orth': 'ett', 'words': [{'g2p_method': 'lexicon', 'orth': 'ett', 'pos': 'DT', 'trans': '" E t'}]}, {'token_orth': 'test', 'words': [{'accent': 'L+H*', 'g2p_method': 'lexicon', 'orth': 'test', 'pos': 'NN', 'trans': '" t E s t'}]}, {'token_orth': 'av', 'words': [{'accent': 'L+H*', 'orth': 'av', 'pos': 'content', 'trans': '" A: v'}]}, {'token_orth': 'SSML', 'words': [{'accent': '!H*', 'input_ssml_transcription': True, 'orth': 'SSML', 'pos': 'content', 'trans': 'b a . b I . " A: n'}]}]}]}]}]}
 
-#expected = {'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'breakindex': '5', 'tone': 'L-L%'}, 'tokens': [{'words': [{'pos': 'content', 'orth': 'Det', 'accent': 'L+H*', 'trans': '"" d e:'}], 'token_orth': 'Det'}, {'words': [{'pos': 'content', 'orth': 'här', 'g2p_method': 'lexicon', 'accent': 'L+H*', 'trans': '" h {: r'}], 'token_orth': 'här'}, {'words': [{'pos': 'content', 'orth': 'är', 'g2p_method': 'lexicon', 'accent': 'L+H*', 'trans': '" {: r'}], 'token_orth': 'är'}, {'words': [{'orth': 'ett', 'g2p_method': 'lexicon', 'pos': 'function', 'trans': '" E t'}], 'token_orth': 'ett'}, {'words': [{'pos': 'content', 'orth': 'test', 'g2p_method': 'lexicon', 'accent': 'L+H*', 'trans': '" t E s t'}], 'token_orth': 'test'}, {'words': [{'pos': 'content', 'orth': 'av', 'accent': 'L+H*', 'trans': '" A: v'}], 'token_orth': 'av'}, {'words': [{'pos': 'content', 'orth': 'SSML', 'accent': '!H*', 'trans': 'b a . b I . " A: n', 'input_ssml_transcription': True}], 'token_orth': 'SSML'}]}]}]}], 'lang': 'sv'}
+elif testing_language == "en":
+    expected = {'paragraphs': [{'sentences': [{'phrases': [{'tokens': [{'token_orth': '<?xml', 'words': [{'orth': '<?xml'}]}, {'token_orth': 'version="1.0"', 'words': [{'orth': 'version="1.0"'}]}, {'token_orth': 'encoding="ISO-8859-1"?><speak', 'words': [{'orth': 'encoding="ISO-8859-1"?><speak'}]}, {'token_orth': 'version="1.1"', 'words': [{'orth': 'version="1.1"'}]}, {'token_orth': 'xmlns="http://www.w3.org/2001/10/synthesis"', 'words': [{'orth': 'xmlns="http://www.w3.org/2001/10/synthesis"'}]}, {'token_orth': 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', 'words': [{'orth': 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'}]}, {'token_orth': 'xsi:schemaLocation="http://www.w3.org/2001/10/synthesis', 'words': [{'orth': 'xsi:schemaLocation="http://www.w3.org/2001/10/synthesis'}]}, {'token_orth': 'http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"', 'words': [{'orth': 'http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"'}]}, {'token_orth': 'xml:lang="sv">', 'words': [{'orth': 'xml:lang="sv">'}]}]}]}]}, {'sentences': [{'phrases': [{'tokens': [{'token_orth': 'Det', 'words': [{'orth': 'Det'}]}, {'token_orth': 'här', 'words': [{'orth': 'här'}]}, {'token_orth': 'är', 'words': [{'orth': 'är'}]}, {'token_orth': 'ett', 'words': [{'orth': 'ett'}]}, {'token_orth': 'test', 'words': [{'orth': 'test'}]}, {'token_orth': 'av', 'words': [{'orth': 'av'}]}, {'token_orth': '<phoneme', 'words': [{'orth': '<phoneme'}]}, {'token_orth': 'alphabet="x-sampa"', 'words': [{'orth': 'alphabet="x-sampa"'}]}, {'token_orth': 'ph="b', 'words': [{'orth': 'ph="b'}]}, {'token_orth': 'a', 'words': [{'orth': 'a'}]}, {'token_orth': '.', 'words': [{'orth': ''}], 'prepunct': '.'}, {'token_orth': 'b', 'words': [{'orth': 'b'}]}, {'token_orth': 'I', 'words': [{'orth': 'I'}]}, {'token_orth': '.', 'words': [{'orth': ''}], 'prepunct': '.'}, {'token_orth': '&quot;', 'words': [{'orth': '&quot'}], 'punct': ';'}]}, {'tokens': [{'token_orth': 'A:', 'words': [{'orth': 'A:'}]}, {'token_orth': 'n">SSML', 'words': [{'orth': 'n">SSML'}]}]}]}]}, {'sentences': [{'phrases': [{'tokens': [{'token_orth': '', 'words': [{'orth': ''}]}]}]}]}], 'lang': 'en', 'original_text': '<?xml version="1.0" encoding="ISO-8859-1"?>\n<speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"\n       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n       xsi:schemaLocation="http://www.w3.org/2001/10/synthesis\n                 http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"\n       xml:lang="sv">\n\n  Det här är ett test av <phoneme alphabet="x-sampa" ph="b a . b I . &quot; A: n">SSML</phoneme>\n\n</speak>'}
 
-
-expected = {'lang': 'sv', 'paragraphs': [{'sentences': [{'phrases': [{'boundary': {'breakindex': '5', 'tone': 'L-L%'}, 'tokens': [{'token_orth': 'Det', 'words': [{'accent': 'L+H*', 'orth': 'Det', 'pos': 'content', 'trans': '"" d e:'}]}, {'token_orth': 'här', 'words': [{'accent': 'L+H*', 'g2p_method': 'lexicon', 'orth': 'här', 'pos': 'AB', 'trans': '" h {: r'}]}, {'token_orth': 'är', 'words': [{'accent': 'L+H*', 'g2p_method': 'lexicon', 'orth': 'är', 'pos': 'VB', 'trans': '" {: r'}]}, {'token_orth': 'ett', 'words': [{'g2p_method': 'lexicon', 'orth': 'ett', 'pos': 'DT', 'trans': '" E t'}]}, {'token_orth': 'test', 'words': [{'accent': 'L+H*', 'g2p_method': 'lexicon', 'orth': 'test', 'pos': 'NN', 'trans': '" t E s t'}]}, {'token_orth': 'av', 'words': [{'accent': 'L+H*', 'orth': 'av', 'pos': 'content', 'trans': '" A: v'}]}, {'token_orth': 'SSML', 'words': [{'accent': '!H*', 'input_ssml_transcription': True, 'orth': 'SSML', 'pos': 'content', 'trans': 'b a . b I . " A: n'}]}]}]}]}]}
-
+    
 #print("RES:\n%s\nEXP:\n%s\n" % (res, expected))
 
 assert ( res == expected ), "%s != %s" % (res, expected)
 test_done()
 
+#HB 210128
+#Adding test here for ssml with ipa input
 
+ssml = """<?xml version="1.0" encoding="ISO-8859-1"?>
+<speak version="1.1" xmlns="http://www.w3.org/2001/10/synthesis"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
+                 http://www.w3.org/TR/speech-synthesis11/synthesis.xsd"
+       xml:lang="en-GB">
+
+  test <phoneme alphabet="ipa" ph="bæ">SSML</phoneme>
+
+</speak>"""
+
+ssml2 = """<?xml version="1.0" encoding="UTF-8" ?>
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
+  xml:lang="en-US">
+Welcome<break/>to the world of speech synthesis!
+</speak>
+"""
+
+
+#testing_language = "sv"
+testing_language = "en"
+
+parameters = {
+    "input":ssml,
+    "lang":"%s" % testing_language,
+    "input_type":"ssml"
+}
+
+r = test_client.get("%s" % (host), query_string=parameters)
+
+#print(r)
+#print(r.data)
+
+res = json.loads(r.data.decode('utf-8'))
+assert ( type(res) == type({}) )
+
+test_done()
 
 
 #3) synthesis api
