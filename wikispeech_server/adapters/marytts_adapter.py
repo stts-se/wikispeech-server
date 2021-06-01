@@ -178,6 +178,8 @@ def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
     phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
     for element in phoneme_elements:
         log.debug(element)
+
+        
         trans = re.findall("ph=\"(.+)\">", element)[0]
         log.debug("ws_trans: %s" % trans)
         mary_trans = mapperMapToMary(trans.replace("&quot;","\""), lang, tp_config)
@@ -189,7 +191,7 @@ def mapSsmlTranscriptionsToMary(ssml, lang, tp_config):
         ssml = re.sub(trans, mary_trans, ssml)
 
 
-    #log.debug("MAPPED SSML: %s" % ssml)
+    log.debug("MAPPED SSML: %s" % ssml)
     return ssml
 
         
@@ -663,12 +665,15 @@ def mapperMapFromMary(trans, lang, voice):
 
 
 #Called from mapSsmlTranscriptionsToMary, ws2mary
-def mapperMapToMary(trans, lang, voice):
+def mapperMapToMary(trans, lang, voice, alphabet="x-sampa"):
 
-    log.debug("mapperMapToMary( %s, %s, %s)" % (trans, lang, voice))
+    log.debug("mapperMapToMary( %s, %s, %s, %s)" % (trans, lang, voice, alphabet))
     if "mapper" in voice:
         to_symbol_set = voice["mapper"]["to"]
-        from_symbol_set = voice["mapper"]["from"]
+        if alphabet == "ipa":
+            from_symbol_set = "ipa"
+        else:
+            from_symbol_set = voice["mapper"]["from"]
 
         log.debug("marytts mapper defined for language %s\nFrom: %s\nTo: %s" % (lang, from_symbol_set, to_symbol_set))
     

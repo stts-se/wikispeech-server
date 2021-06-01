@@ -9,13 +9,14 @@ class MapperException(Exception):
 
 class Mapper(object):
     
-    def __init__(self, from_symbol_set, to_symbol_set):
+    def __init__(self, from_symbol_set, to_symbol_set, run_test=True):
         self.from_symbol_set = from_symbol_set
         self.to_symbol_set = to_symbol_set
         
         self.base_url = "%s/mapper" % config.config.get("Services", "mapper")
 
-        self.test()
+        if run_test:
+            self.test()
 
 
     def test(self):

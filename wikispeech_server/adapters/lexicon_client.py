@@ -164,12 +164,13 @@ class LexiconException(Exception):
 
 class Lexicon(object):
     
-    def __init__(self, lexicon_name):
+    def __init__(self, lexicon_name, run_test=True):
         self.lexicon_name = lexicon_name
         
         self.base_url = "%s/lexicon" % config.config.get("Services", "lexicon")
 
-        self.test()
+        if run_test:
+            self.test()
 
 
     def test(self):

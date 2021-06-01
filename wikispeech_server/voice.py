@@ -12,7 +12,7 @@ class VoiceException(Exception):
     pass
 
 class Voice(object):
-    def __init__(self, voice_config):
+    def __init__(self, voice_config, run_test=True):
         self.config = voice_config
         self.name = voice_config["name"]
         self.lang = voice_config["lang"]
@@ -20,6 +20,8 @@ class Voice(object):
         self.adapter = voice_config["adapter"]
 
         if "skip_test" in voice_config and voice_config["skip_test"] == True:
+            pass
+        if run_test == False:
             pass
         else:
             try:
@@ -37,7 +39,7 @@ class Voice(object):
         
         if "mapper" in voice_config:
             try:
-                self.mapper = Mapper(voice_config["mapper"]["from"], voice_config["mapper"]["to"])
+                self.mapper = Mapper(voice_config["mapper"]["from"], voice_config["mapper"]["to"], run_test)
             except MapperException as e:
                 raise VoiceException(e)
             

@@ -1,7 +1,7 @@
 if __name__ == "__main__":
-    import sys
-    sys.path.append("/media/bigdisk/git/wikispeech-server") # TODO REMOVE?
-    print(sys.path)
+    import sys, os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__))) # TODO REMOVE?
+    #print(sys.path)
 
 import wikispeech_server.log as log
 
@@ -17,10 +17,12 @@ class TextprocessorException(Exception):
     pass
 
 class Textprocessor(object):
-    def __init__(self, tp_config):
+    def __init__(self, tp_config, run_test=True):
         self.config = tp_config
         self.name = tp_config["name"]
         self.lang = tp_config["lang"]
+        self.run_test = run_test
+        #print(f"RUN TEST: {run_test}")
         self.loadComponents(tp_config["components"])
 
 
@@ -30,13 +32,13 @@ class Textprocessor(object):
 
             if "lexicon" in cconfig:
                 try:
-                    component = Lexicon(cconfig["lexicon"])
+                    component = Lexicon(cconfig["lexicon"], run_test=self.run_test)
                     component.type = "Lexicon"
                 except LexiconException as e:
                     raise TextprocessorException(e)
             else:
                 try:
-                    component = TextprocComponent(cconfig)
+                    component = TextprocComponent(cconfig, run_test=self.run_test)
                 except TextprocComponentException as e:
                     raise TextprocessorException(e)
                 
@@ -68,36 +70,39 @@ class TextprocComponentException(Exception):
 
 class TextprocComponent(object):
 
-    def __init__(self, cconfig):
+    def __init__(self, cconfig, run_test=True):
         self.type = "TextprocComponent"
         self.module = cconfig["module"]
         self.call = cconfig["call"]
         if "mapper" in cconfig:
             try:
-                self.mapper = Mapper(cconfig["mapper"]["from"], cconfig["mapper"]["to"])
+                self.mapper = Mapper(cconfig["mapper"]["from"], cconfig["mapper"]["to"], run_test)
             except MapperException as e:
                 raise TextprocComponentException(e)
         if "module" in cconfig and cconfig["module"] == "adapters.marytts_adapter":
             log.debug("Trying to create marytts component: %s" % cconfig)
             #For testing marytts_adapter
             #TODO? move to test function in marytts_adapter
-            try:
-                marytts_url = config.config.get("Services", "marytts")
-                payload = {
-                    "INPUT_TYPE": "TEXT",
-                    "OUTPUT_TYPE": "INTONATION",
-                    "LOCALE": "en_US",
-                    "INPUT_TEXT": "test"
-                }
-                r = requests.get(marytts_url, params=payload)
-                log.debug("CALLING MARYTTS: %s" % r.url)    
-                xml = r.text
-            except Exception as e:
-                raise TextprocComponentException(e)
+            if run_test:
+                try:
+                    marytts_url = config.config.get("Services", "marytts")
+                    payload = {
+                        "INPUT_TYPE": "TEXT",
+                        "OUTPUT_TYPE": "INTONATION",
+                        "LOCALE": "en_US",
+                        "INPUT_TEXT": "test"
+                    }
+                    r = requests.get(marytts_url, params=payload)
+                    log.debug("CALLING MARYTTS: %s" % r.url)    
+                    xml = r.text
+                except Exception as e:
+                    raise TextprocComponentException(e)
 
                                               
 
 if __name__ == "__main__":
+
+    run_test = False
 
     log.log_level = "debug" #debug, info, warning, error
 
@@ -117,12 +122,12 @@ if __name__ == "__main__":
             {
                 "module":"adapters.lexicon_client",
                 "call":"lexLookup",
-                "lexicon":"wikispeech_lexserver_demo:sv"
+                "lexicon":"wikispeech_lexserver_demo:svXX"
             }
         ]
     }
     try:
-        tp = Textprocessor(tp_config)
+        tp = Textprocessor(tp_config, run_test=run_test)
         log.info("Created textprocessor %s from %s" % (tp, tp_config))
 
         print(tp)

@@ -35,7 +35,13 @@ if config.config.has_option("Voice config", "config_files_location"):
     use_json_conf = True
     #if use_json_conf, the json files defined in *.conf will be loaded, replacing voice_config.py
     
-###
+#RUN TEST: set to False if we want textprocessors to load even if there is no corresponding lexicon etc (Kalle 1/6 2021)
+run_test = True
+if config.config.has_option("Tests", "load_components_on_error"):
+    #print(config.config.get("Tests", "load_components_on_error"))
+    if config.config.get("Tests", "load_components_on_error") == "True":
+        run_test = False
+
     
 
 
@@ -810,7 +816,7 @@ textprocessors = []
 def loadTextprocessor(tp_config):
     try:
         log.info("Loading textprocessor %s" % (tp_config["name"]))
-        tp = Textprocessor(tp_config)
+        tp = Textprocessor(tp_config, run_test)
         log.info("Done loading textprocessor %s" % (tp_config["name"]))
         textprocessors.append(tp)
     except TextprocessorException as e:
@@ -821,7 +827,7 @@ voices = []
 def loadVoice(voice_config):
     try:
         log.info("Loading voice %s" % (voice_config["name"]))
-        v = Voice(voice_config)        
+        v = Voice(voice_config, run_test)        
         log.info("Done loading voice %s" % (voice_config["name"]))
         voices.append(v)
     except VoiceException as e:
