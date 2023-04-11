@@ -1,225 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Wikispeech workflow demo</title>
-  <meta name="description" content="Edit, synthesise, listen loop">
+    <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Wikispeech workflow demo</title>
+	<meta name="description" content="Edit, synthesise, listen loop">
 
-  <!-- jquery css for columns -->
-  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+	<!-- jquery css for columns -->
+	<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 
-  <!-- responsivetabs -->
-  <link rel="stylesheet" href="ext/responsivetabs/css/font-awesome.css">
-  <link rel="stylesheet" href="ext/responsivetabs/css/style.css">
+	<!-- responsivetabs -->
+	<link rel="stylesheet" href="ext/responsivetabs/css/font-awesome.css">
+	<link rel="stylesheet" href="ext/responsivetabs/css/style.css">
 
-  <!-- Trumbowyg editor -->
-<!--  <link rel="stylesheet" href="ext/Trumbowyg-master/css/main.css">-->
-  <link rel="stylesheet" href="ext/Trumbowyg-master/dist/ui/trumbowyg.css">
+	<!-- Trumbowyg editor -->
+	<!--  <link rel="stylesheet" href="ext/Trumbowyg-master/css/main.css">-->
+	<link rel="stylesheet" href="ext/Trumbowyg-master/dist/ui/trumbowyg.css">
 
-<script type="text/javascript" src="ext/sorttable.js"></script>
-<style>
-tr.selected{
-    background: white;
-}
-</style>
-
-
-<script type="text/javascript" src="../wikispeech_simple_player.js"></script>
-<script type="text/javascript">
-window.onload = function() {
- // NOTE Change this!
- // ws_host = "http://localhost:10000";
- wloc = window.location;
-ws_host = wloc.protocol + "//" + wloc.hostname + ":" + wloc.port + "/";
-console.log(ws_host);
-
-useOriginalText=true;
-getSupportedLanguages();
-getLexiconList();
-};
-</script>
+	<script type="text/javascript" src="ext/sorttable.js"></script>
+	<style>
+	 tr.selected{
+	     background: white;
+	 }
+	</style>
 
 
-</head>
+	<script type="text/javascript" src="../wikispeech_simple_player.js"></script>
+	<script type="text/javascript">
+	 window.onload = function() {
+	     // NOTE Change this!
+	     // ws_host = "http://localhost:10000";
+	     wloc = window.location;
+	     ws_host = wloc.protocol + "//" + wloc.hostname + ":" + wloc.port + "/";
+	     console.log(ws_host);
+
+	     useOriginalText=true;
+	     getSupportedLanguages();
+	     getLexiconList();
+	 };
+	</script>
 
 
-<body>
-  <h1></h1>
-  <main>
-
-    <div id="tabs" class="c-tabs no-js">
-      <div class="c-tabs-nav">
-	<a href="#" class="c-tabs-nav__link is-active"><span>Input</span></a>
-	<a href="#" class="c-tabs-nav__link"><span>Synthesis</span></a>
-	<a href="#" class="c-tabs-nav__link"><span>Lexicon</span></a> 
-	<a href="#" class="c-tabs-nav__link"><span>Lexicon Entry Editor</span></a>    
-      </div>
-  
-      <div class="c-tab is-active">
-	<div class="c-tab__content">
-	  Select language:
-	  <select id="language_selector" onchange="addTestdata(this.value);">
-	    <option value="sv">sv</option>
-	    <option value="en">en</option>
-	    <option value="ar">ar</option>
-	    <option value="nb">nb</option>
-	  </select>
-	  <select id="lexicon_selector" onchange="setLexicon(this.value);">
-	  </select>
-	  <h2>Input</h2>
-	  <p>Edit html here, then synthesise or lookup words.</p>
-	  <input type="button" onclick="myTabs.goToTab(2);tokeniseHtmlText(document.getElementById('language_selector').value);" value="Start"></input>
-	  
-	  <div id="html_editor">
-          </div>
+    </head>
 
 
-	</div>	
-      </div>
-      
-      <div class="c-tab">
-	<div class="c-tab__content">
-	  <h2>Synthesis</h2>
-	  <div id="synthesis_controls">
-	    <label><input type="checkbox" id="show_controls_checkbox" onchange="toggleAudioControls();" checked>Show audio controls</label>
-	  </div>
-	  <div id="synthesis_container">
-	  </div>
-	</div>
-      </div>
-      
+    <body>
+	<h1></h1>
+	<main>
 
-      <div class="c-tab">
-	<div class="c-tab__content">
-	  <h2>Lexicon</h2>
-
-	  <div data-role="main" class="ui-content">
-	    <div class="ui-grid-a">
-	      <div class="ui-block-a" style="overflow-y:scroll; height:50em;">
-		<h3>Words sortable table</h3>
-		
-		<table id="words_table" class="sortable">
-		  <thead>
-		    <tr>
-		      <th>Word</th>
-		      <th>Freq</th>
-		      <th style="width: 30em;">Transcription</th> 
-		      <th>In lex</th>
-		      <th>In ssml</th>
-		      <th>Multiple</th>
-		      <th>Listen</th>
-		    </tr>
-		  </thead>
-		  <tbody>
-		  </tbody>
-		</table>
-	      </div>
-	      
-	      <div class="ui-block-b">
-		<h3>Detail of selected word</h3>
-		<div id="selected_word_detail">
-		  <div>
-		    <h4 id="selected_word" style="display: inline-block; width: 30em;"></h4>
-		    <input type="button" value="Save" onclick="updateLexicon($('#selected_word')[0].innerHTML);">
-		    <input type="button" value="Open in Entry editor" onclick="myTabs.goToTab(3);searchLexicon($('#selected_word')[0].innerHTML, document.getElementById('language_selector').value);">
-		    <div>
-		      <h4>Lexicon entries</h4>
-		      <table>
-			<thead>
-			  <tr>
-			    <th>Nr</th>
-			    <th style="width: 30em;">Transcription</th>
-			    <th>Listen</th>
-			    <th>Language</th>
-			    <th>Pos</th>
-			    <th>wordParts</th>
-			    <th>preferred</th>
-			    <th>tag</th>
-			  </tr>
-			</thead>
-			<tbody id="selected_table">
-			</tbody>
-		      </table>
-		      <h4>SSML transcription</h4>		      
-		      <input type="text" id="ssml_transcription_input" class="makeSSML" onkeyup="makeSSMLReplacementString();"></input>
-		      <input type="button" value="listen" onclick="playSSML(document.getElementById('ssml_transcription_input').value, document.getElementById('language_selector').value);">
-		      <h4>SSML replacement string</h4>		      
-		      <div id="ssml_replacement"></div>
-		      <h4>Autotrans</h4>		      
-		      <div id="autotrans"></div>
-		      <h4>Validation</h4>
-		      <table>
-			<thead>
-			  <tr>
-			    <th>id</th>
-			    <th>level</th>
-			    <th>ruleName</th>
-			    <th style="width: 30em;">Message</th>
-			    <th>timestamp</th>
-			  </tr>
-			</thead>
-			<tbody id="validation"></tbody>
-		      </table>
-		    </div>
-		  </div>
+	    <div id="tabs" class="c-tabs no-js">
+		<div class="c-tabs-nav">
+		    <a href="#" class="c-tabs-nav__link is-active"><span>Input</span></a>
+		    <a href="#" class="c-tabs-nav__link"><span>Synthesis</span></a>
+		    <a href="#" class="c-tabs-nav__link"><span>Lexicon</span></a> 
+		    <a href="#" class="c-tabs-nav__link"><span>Lexicon Entry Editor</span></a>    
 		</div>
-	      </div>
+		
+		<div class="c-tab is-active">
+		    <div class="c-tab__content">
+			Select language:
+			<select id="language_selector" onchange="addTestdata(this.value);">
+			    <option value="sv">sv</option>
+			    <option value="en">en</option>
+			    <option value="ar">ar</option>
+			    <option value="nb">nb</option>
+			</select>
+			<select id="lexicon_selector" onchange="setLexicon(this.value);">
+			</select>
+			<h2>Input</h2>
+			<p>Edit html here, then synthesise or lookup words.</p>
+			<input type="button" onclick="myTabs.goToTab(2);tokeniseHtmlText(document.getElementById('language_selector').value);" value="Start"></input>
+			
+			<div id="html_editor">
+			</div>
+
+
+		    </div>	
+		</div>
+		
+		<div class="c-tab">
+		    <div class="c-tab__content">
+			<h2>Synthesis</h2>
+			<div id="synthesis_controls">
+			    <label><input type="checkbox" id="show_controls_checkbox" onchange="toggleAudioControls();" checked>Show audio controls</label>
+			</div>
+			<div id="synthesis_container">
+			</div>
+		    </div>
+		</div>
+		
+
+		<div class="c-tab">
+		    <div class="c-tab__content">
+			<h2>Lexicon</h2>
+
+			<div data-role="main" class="ui-content">
+			    <div class="ui-grid-a">
+				<div class="ui-block-a" style="overflow-y:scroll; height:50em;">
+				    <h3>Words sortable table</h3>
+				    
+				    <table id="words_table" class="sortable">
+					<thead>
+					    <tr>
+						<th>Word</th>
+						<th>Freq</th>
+						<th style="width: 30em;">Transcription</th> 
+						<th>In lex</th>
+						<th>In ssml</th>
+						<th>Multiple</th>
+						<th>Listen</th>
+					    </tr>
+					</thead>
+					<tbody>
+					</tbody>
+				    </table>
+				</div>
+				
+				<div class="ui-block-b">
+				    <h3>Detail of selected word</h3>
+				    <div id="selected_word_detail">
+					<div>
+					    <h4 id="selected_word" style="display: inline-block; width: 30em;"></h4>
+					    <input type="button" value="Save" onclick="updateLexicon($('#selected_word')[0].innerHTML);">
+					    <input type="button" value="Open in Entry editor" onclick="myTabs.goToTab(3);searchLexicon($('#selected_word')[0].innerHTML, document.getElementById('language_selector').value);">
+					    <div>
+						<h4>Lexicon entries</h4>
+						<table>
+						    <thead>
+							<tr>
+							    <th>Nr</th>
+							    <th style="width: 30em;">Transcription</th>
+							    <th>Listen</th>
+							    <th>Language</th>
+							    <th>Pos</th>
+							    <th>wordParts</th>
+							    <th>preferred</th>
+							    <th>tag</th>
+							</tr>
+						    </thead>
+						    <tbody id="selected_table">
+						    </tbody>
+						</table>
+						<h4>SSML transcription</h4>		      
+						<input type="text" id="ssml_transcription_input" class="makeSSML" onkeyup="makeSSMLReplacementString();"></input>
+						<input type="button" value="listen" onclick="playSSML(document.getElementById('ssml_transcription_input').value, document.getElementById('language_selector').value);">
+						<h4>SSML replacement string</h4>		      
+						<div id="ssml_replacement"></div>
+						<h4>Autotrans</h4>		      
+						<div id="autotrans"></div>
+						<h4>Validation</h4>
+						<table>
+						    <thead>
+							<tr>
+							    <th>id</th>
+							    <th>level</th>
+							    <th>ruleName</th>
+							    <th style="width: 30em;">Message</th>
+							    <th>timestamp</th>
+							</tr>
+						    </thead>
+						    <tbody id="validation"></tbody>
+						</table>
+					    </div>
+					</div>
+				    </div>
+				</div>
+			    </div>
+			</div>
+		    </div>
+
+		</div>
+		<div class="c-tab">
+		    <div class="c-tab__content">
+			<h2>Lexicon entry editor</h2>
+			<p>
+			    The lexicon entry editor displays editable and uneditable information for the lexicon entry. Uses json schema. Validation of fields. 
+			</p>
+			<div>
+			    <input type="text" id="search_term">
+			    <input type="button" value="search" onclick="searchLexicon($('#search_term').val(), document.getElementById('language_selector').value);">
+			</div>
+			<hr/>
+			<div>
+			    <input type="button" value="Update Lexicon" onclick="updateEntries();">	    
+			</div>
+			<hr/>
+			
+			<div id="entry_editor_holder"></div>
+
+
+		    </div>
+		</div>
+
+
 	    </div>
-	  </div>
-	</div>
+	    
+	</main>
+	<hr>
+	<address></address>
+	<!-- hhmts start -->Last modified: Thu Nov 16 14:45:01 GMT 2017 <!-- hhmts end -->
 
-      </div>
-      <div class="c-tab">
-	<div class="c-tab__content">
-	  <h2>Lexicon entry editor</h2>
-	  <p>
-	    The lexicon entry editor displays editable and uneditable information for the lexicon entry. Uses json schema. Validation of fields. 
-	  </p>
-	  <div>
-	    <input type="text" id="search_term">
-	    <input type="button" value="search" onclick="searchLexicon($('#search_term').val(), document.getElementById('language_selector').value);">
-	  </div>
-	  <hr/>
-	  <div>
-	    <input type="button" value="Update Lexicon" onclick="updateEntries();">	    
-	  </div>
-	  <hr/>
-	  
-	  <div id="entry_editor_holder"></div>
+	<script src="ext/responsivetabs/js/tabs.js"></script>
+	<script>
+	 var myTabs = tabs({
+	     el: '#tabs',
+	     tabNavigationLinks: '.c-tabs-nav__link',
+	     tabContentContainers: '.c-tab'
+	 });
+	 
+	 myTabs.init();
+	</script>
 
 
-	</div>
-      </div>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+	<script src="ext/Trumbowyg-master/dist/trumbowyg.js"></script>
+	<script>
+	 /** Default editor configuration **/
+	 $('#html_editor').trumbowyg();
+	</script>
 
-
-    </div>
-    
-  </main>
-  <hr>
-  <address></address>
-  <!-- hhmts start -->Last modified: Thu Nov 16 14:45:01 GMT 2017 <!-- hhmts end -->
-
-  <script src="ext/responsivetabs/js/tabs.js"></script>
-  <script>
-    var myTabs = tabs({
-    el: '#tabs',
-    tabNavigationLinks: '.c-tabs-nav__link',
-    tabContentContainers: '.c-tab'
-    });
-    
-    myTabs.init();
-  </script>
-
-  <script src="ext/jquery/jquery-3.1.0.min.js"></script>
-  <script src="ext/Trumbowyg-master/dist/trumbowyg.js"></script>
-  <script>
-    /** Default editor configuration **/
-    $('#html_editor').trumbowyg();
-  </script>
-
-  <script src="ext/json-editor/jsoneditor.js"></script>
-  <script src="ext/json-editor/initialise.js"></script>
+	<script src="ext/json-editor/jsoneditor.js"></script>
+	<script src="ext/json-editor/initialise.js"></script>
 
   <script src="test_workflow.js"></script>
   <script src="add_testdata.js"></script>
