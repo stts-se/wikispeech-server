@@ -308,6 +308,14 @@ voice_configs = [
     }
     ,
 
+    {
+        "lang":"en",
+        "name":"en_us_ljspeech",
+        "engine":"matcha",
+        "adapter":"adapters.matcha_adapter"
+    }
+    ,
+
     #BASQUE
     {
         "lang":"eu",

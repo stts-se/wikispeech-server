@@ -6,20 +6,20 @@
 ```
 git clone https://github.com/stts-se/wikispeech-server.git
 cd wikispeech-server
-sudo apt install opus-tools python3-pip
-sudo pip3 install -r requirements.txt
+sudo apt install opus-tools
+
+python3 -v venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
 
 mkdir wikispeech_server/tmp
 ```
 
-Normally, `python3-setuptools` should be installed automatically as a dependency for `python3-pip`, but some cases have been reported where you need to install this separately (debian-9.1):
-
-```
-sudo apt install python3-setuptools
-```
+Make sure you always run `source venv/bin/activate` before running any server-related code in this repository.
 
 ## Usage:
 ```
+source venv/bin/activate
 python3 bin/wikispeech
 ```
 
@@ -50,6 +50,7 @@ The file contains settings for:
 
 To test the config file, the script can be run with a config file as argument:
 ```
+source venv/bin/activate
 python3 bin/wikispeech <config-file>
 ```
 

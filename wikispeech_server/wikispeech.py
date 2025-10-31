@@ -692,7 +692,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     method_name = "synthesise"
     process = getattr(mod, method_name)
     log.debug("PROCESS: %s" % process)
-    (audio_file, output_tokens) = process(lang, voice, input, hostname=hostname)
+    (audio_url_0, output_tokens) = process(lang, voice, input, hostname=hostname)
 
 
     #Get audio from synthesiser, convert to opus, save locally, return url
@@ -707,7 +707,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
     audio_data = ""
     if output_type != "test":
-        (audio_file, audio_data) = saveAndConvertAudio(audio_file)
+        (audio_file, audio_data) = saveAndConvertAudio(audio_url_0)
 
     audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
     log.debug("audio_url: %s" % audio_url)
@@ -719,6 +719,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #T257659 Add voice to output (voice contains language, name, and other info)
     data = {
         "voice":voice,
+        "audio": audio_url,
         #"audio":audio_url, #The sound file is no longer returned, deleted after base64 encoding
         "audio_data":audio_data,
         "tokens":output_tokens
@@ -738,7 +739,8 @@ def encode_audio(wav_file):
 #T260293
 def convertTokenTimingsToMilliseconds(tokens):
     for token in tokens:
-        token["endtime"] = int(token["endtime"]*1000)
+        if "endtime" in token:
+            token["endtime"] = int(token["endtime"]*1000)
     return tokens
 
 
@@ -1017,8 +1019,7 @@ def saveAndConvertAudio(audio_url):
         os.system("mkdir -p %s" % tmpdir)
     
     fh = NamedTemporaryFile(mode='w+b', dir=tmpdir, delete=False)
-    tmpwav = fh.name    
-    
+    tmpwav = fh.name  
 
     log.debug("audio_url:\n%s" % audio_url)
     r = requests.get(audio_url)
@@ -1060,7 +1061,7 @@ def saveAndConvertAudio(audio_url):
     #HB 210525
     #BUG files dropped under "siege"
     os.unlink(tmpwav)
-    os.unlink(tmpopus)
+    #os.unlink(tmpopus)
     
 
     return (opus_url_suffix, audio_data)

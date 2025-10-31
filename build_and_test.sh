@@ -83,7 +83,7 @@ git checkout $RELEASE || echo "No such release for marytts. Using master."
 ./gradlew test
 ./gradlew installDist
 
-## INSTALL STTS VOICES
+## INSTALL STTS MARYTTS VOICES
 cp stts_voices/voice-ar-nah-hsmm-5.2.jar build/install/marytts/lib/
 cp stts_voices/voice-dfki-spike-hsmm-5.1.jar build/install/marytts/lib/
 cp stts_voices/voice-stts_no_nst-hsmm-5.2.jar build/install/marytts/lib/
@@ -107,7 +107,7 @@ sleep 20
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh wikispeech $wikispeech_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh marytts $marytts_pid
 sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $pronlex_pid
-sh $basedir/.travis/exit_server_and_fail_if_not_running.sh pronlex $symbolset_pid
+sh $basedir/.travis/exit_server_and_fail_if_not_running.sh symbolset $symbolset_pid
  
 # kill ahotts
 #sh $basedir/.travis/exit_server_and_fail_if_not_running.sh ahotts $ahotts_pid

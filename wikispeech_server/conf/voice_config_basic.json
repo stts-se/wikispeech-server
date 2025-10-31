@@ -9,6 +9,16 @@
                     "call":"tokenise"
 		}
             ]
+	},
+	{
+            "name":"basic_sv",
+            "lang":"sv",
+            "components":[
+		{
+                    "module":"tokeniser",
+                    "call":"tokenise"
+		}
+            ]
 	}
     ],
     

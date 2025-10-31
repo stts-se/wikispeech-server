@@ -25,10 +25,12 @@ def synthesise(lang, voice, input, hostname=None):
     log.debug(ssml)
 
     #send ssml to flite
+    import uuid
+    uid = uuid.uuid4()
     tmpdir = config.config.get("Audio settings","audio_tmpdir")
-    ssmlfile_name = "flite_ssml.txt"
-    wavfile_name = "flite_out.wav"
-    timingfile_name = "flite_out.timing"
+    ssmlfile_name = f"flite_ssml_{uid}.txt"
+    wavfile_name = f"flite_out_{uid}.wav"
+    timingfile_name = f"flite_out_{uid}.timing"
 
     ssml_fh = io.open("%s/%s" % (tmpdir,ssmlfile_name),"w",encoding="utf-8")
     ssml_fh.write(ssml)
@@ -107,7 +109,7 @@ def synthesise(lang, voice, input, hostname=None):
         
     audio_url = "%s%s/%s" % (hostname, "audio", wavfile_name)
     log.debug("flite_adapter returning audio_url: %s" % audio_url) 
-
+    
     #return audio_url and tokens
     return (audio_url, words)
 
@@ -231,8 +233,7 @@ def map2flite(phonestring):
     flite = re.sub(" \. "," ", flite)
 
     log.debug("MAPPED %s TO %s" % (phonestring, flite))
-
-
+    
     return flite
 
 if __name__ == "__main__":
