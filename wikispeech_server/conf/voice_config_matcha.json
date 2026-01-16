@@ -28,14 +28,14 @@
 	},
 	{
             "lang":"sv",
-            "name":"sv_se_nst_TMH_test",
+            "name":"sv_se_nst_male1",
             "engine":"matcha",
             "adapter":"adapters.matcha_adapter",
 	    "skip_test": false
 	},
 	{
             "lang":"sv",
-            "name":"sv_se_nst_STTS_test",
+            "name":"sv_se_nst_vc_female1",
             "engine":"matcha",
             "adapter":"adapters.matcha_adapter",
 	    "skip_test": false,

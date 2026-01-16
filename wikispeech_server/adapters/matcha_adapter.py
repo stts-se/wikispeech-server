@@ -136,6 +136,7 @@ def mapToMatcha(trans,lang,voice):
         response_json = json.loads(response)
         #log.debug("RESPONSE_JSON: %s" % response_json)
         new_trans = response_json["result"]
+        new_trans = new_trans.replace(".","") # TODO should be added to map table, but it's not allowed atm jan 2026 /HL
     except:
         log.error("unable to map %s, from %s to %s. response was %s" % (trans, from_symbol_set, to_symbol_set, response))
         raise
