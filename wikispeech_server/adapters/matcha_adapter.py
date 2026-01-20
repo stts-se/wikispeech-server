@@ -92,7 +92,7 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
         raise Exception(f"Expected one item back from matcha_tts, found {len(obj)}")
     
     res = obj[0]
-    audio_url = os.path.join(matcha_url, "static",res["audio"])
+    audio_url = os.path.join(matcha_url, "static", res["audio"])
 
     log.info("matcha AUDIO_URL: %s" % audio_url)
 
@@ -102,12 +102,15 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
             token["endtime"] = token["end_time"]
             token.pop("end_time")
             token.pop("start_time")
-        if "phonemes" in token:
-            inputPhonemes = token["phonemes"]
-            mapped = mapFromMatcha(inputPhonemes, lang, voice_config)
-            token["phonemes"] = mapped
-            if "input" in token and token["input"] == inputPhonemes:
-                token["input"] = mapped
+        #if "phonemes" in token:
+            #inputPhonemes = token["phonemes"]
+            #mapped, err = mapFromMatcha(inputPhonemes, lang, voice_config)
+            #if err is None:
+            #    token["phonemes"] = mapped
+            #    if "input" in token and token["input"] == inputPhonemes:
+            #        token["input"] = mapped
+            #else:
+            #    token["error"] = err
         tokens.append(token)
     
     return (audio_url, tokens)
@@ -166,13 +169,21 @@ def mapFromMatcha(trans,lang,voice):
     #log.debug("RESPONSE: %s" % response)
     try:
         response_json = json.loads(response)
-        #log.debug("RESPONSE_JSON: %s" % response_json)
-        new_trans = response_json["result"]
+        log.info("RESPONSE_JSON: %s" % response_json)
+        if type(response_json) == dict:
+            response_json = [response_json]
+        for rj in response_json:
+            if "type" in rj and rj["type"] == "error":
+                msg = "unable to map %s, from %s to %s. response was %s" % (trans, from_symbol_set, to_symbol_set, response)
+                log.error(msg)
+                return "", msg
+            else:
+                new_trans = rj["result"]
     except:
         log.error("unable to map %s, from %s to %s. response was %s" % (trans, from_symbol_set, to_symbol_set, response))
         raise
     log.info("NEW TRANS: %s" % new_trans)
-    return new_trans
+    return new_trans, None
 
 
 if __name__ == "__main__":
