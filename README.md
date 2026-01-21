@@ -23,6 +23,10 @@ source venv/bin/activate
 python3 bin/wikispeech
 ```
 
+## Installation with microservices
+
+[stts-se.github.io/wikispeech/wikispeech1.html](https://stts-se.github.io/wikispeech/wikispeech1.html)
+
 ## Configuration:
 
 For local configuration, make a copy of wikispeech_server/default.conf,
