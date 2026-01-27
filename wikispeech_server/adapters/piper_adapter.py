@@ -10,32 +10,32 @@ import wikispeech_server.config as config
 from wikispeech_server.voice import VoiceException
 
 mapper_url = config.config.get("Services", "mapper")
-matcha_url = config.config.get("Services", "matcha")
+piper_url = config.config.get("Services", "piper")
 
 from urllib.parse import quote
 
 def testVoice(voice_config):
-    matcha_url = config.config.get("Services", "matcha")
-    url = matcha_url + "/voices/"
+    piper_url = config.config.get("Services", "piper")
+    url = piper_url + "/voices/"
     name = voice_config["name"]
 
     log.debug("Calling url: %s" % url)
     try:
         r = requests.get(url)
     except:
-        msg = "Matcha server not found at url %s" % (url)
+        msg = "Piper server not found at url %s" % (url)
         log.error(msg)
         raise VoiceException(msg)
     
     log.debug("Response:\n%s" % r.text)
     voicenames = getVoicenames(r)
-    log.debug("matcha voicenames: %s" % voicenames)
+    log.debug("piper voicenames: %s" % voicenames)
     if not name in voicenames:
-        msg = "Matcha voice %s not found at url %s" % (name, url)
+        msg = "Piper voice %s not found at url %s" % (name, url)
         log.error(msg)
         raise VoiceException(msg)
     else:
-        log.info("Matcha voice found at url %s" % url)
+        log.info("Piper voice found at url %s" % url)
         
 
 def getVoicenames(response):
@@ -46,7 +46,7 @@ def getVoicenames(response):
     return names
 
 
-def utt2matcha(input,lang,voice_config):
+def utt2piper(input,lang,voice_config):
     chunks = []
     for p0 in input["paragraphs"]:
         for s in p0["sentences"]:
@@ -59,7 +59,7 @@ def utt2matcha(input,lang,voice_config):
                         }
                         if "trans" in w:
                             inputTrans = w['trans']
-                            trans = mapToMatcha(inputTrans,lang,voice_config)
+                            trans = mapToPiper(inputTrans,lang,voice_config)
                             token["phonemes"] = trans
                             if "g2p_method" in w:
                                 token["g2p_method"] = w["g2p_method"]
@@ -70,8 +70,8 @@ def utt2matcha(input,lang,voice_config):
     return chunks
 
 def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaking_rate=1.0):
-    url = matcha_url + "/synthesize/"
-    tokens = utt2matcha(input,lang,voice_config)
+    url = piper_url + "/synthesize/"
+    tokens = utt2piper(input,lang,voice_config)
     if speaker_id is None:
         speaker_id = -1
     params = {
@@ -86,15 +86,15 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     r = requests.post(url, json=params)
     if not r.ok:
         from http.client import responses
-        raise Exception(f"Matcha request returned status code {r.status_code} {responses[r.status_code]}")
+        raise Exception(f"Piper request returned status code {r.status_code} {responses[r.status_code]}")
     obj = r.json()
     if len(obj) != 1:
-        raise Exception(f"Expected one item back from matcha_tts, found {len(obj)}")
+        raise Exception(f"Expected one item back from piper_tts, found {len(obj)}")
     
     res = obj[0]
-    audio_url = os.path.join(matcha_url, "static", res["audio"])
+    audio_url = os.path.join(piper_url, "static", res["audio"])
 
-    log.info("matcha AUDIO_URL: %s" % audio_url)
+    log.info("piper AUDIO_URL: %s" % audio_url)
 
     tokens = []
     for token in res["tokens"]:
@@ -104,7 +104,7 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
             token.pop("start_time")
         #if "phonemes" in token:
             #inputPhonemes = token["phonemes"]
-            #mapped, err = mapFromMatcha(inputPhonemes, lang, voice_config)
+            #mapped, err = mapFromPiper(inputPhonemes, lang, voice_config)
             #if err is None:
             #    token["phonemes"] = mapped
             #    if "input" in token and token["input"] == inputPhonemes:
@@ -115,16 +115,16 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     
     return (audio_url, tokens)
 
-def mapToMatcha(trans,lang,voice):
-    log.info("matcha_adapter.mapToMatcha( %s , %s , %s )" % (trans, lang, voice))
+def mapToPiper(trans,lang,voice):
+    log.info("piper_adapter.mapToPiper( %s , %s , %s )" % (trans, lang, voice))
 
     if "mapper" in voice:
         #Bad names.. It should be perhaps "external" and "internal" instead of "from" and "to"
         to_symbol_set = voice["mapper"]["to"]
         from_symbol_set = voice["mapper"]["from"]
-        log.info("matcha_adapter.mapToMatcha %s -> %s" % (from_symbol_set, to_symbol_set))    
+        log.info("piper_adapter.mapToPiper %s -> %s" % (from_symbol_set, to_symbol_set))    
     else:
-        log.info("No matcha mapper defined for language %s" % lang)
+        log.info("No piper mapper defined for language %s" % lang)
         return trans
 
     url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote(trans))
@@ -147,16 +147,16 @@ def mapToMatcha(trans,lang,voice):
     return new_trans
 
 
-def mapFromMatcha(trans,lang,voice):
-    log.info("matcha_adapter.mapFromMatcha( %s , %s , %s )" % (trans, lang, voice))
+def mapFromPiper(trans,lang,voice):
+    log.info("piper_adapter.mapFromPiper( %s , %s , %s )" % (trans, lang, voice))
 
     if "mapper" in voice:
         #Bad names.. It should be perhaps "external" and "internal" instead of "from" and "to"
         to_symbol_set = voice["mapper"]["from"]
         from_symbol_set = voice["mapper"]["to"]
-        log.info("matcha_adapter.mapFromMatcha %s -> %s" % (from_symbol_set, to_symbol_set))    
+        log.info("piper_adapter.mapFromPiper %s -> %s" % (from_symbol_set, to_symbol_set))    
     else:
-        log.info("No matcha mapper defined for language %s" % lang)
+        log.info("No piper mapper defined for language %s" % lang)
         return trans
 
     url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote(trans))

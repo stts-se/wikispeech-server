@@ -12,8 +12,9 @@ if [ -z $defaultgitrepos ]; then
     defaultgitrepos=$HOME/gitrepos
 fi
 defaultlexserverappdir="$HOME/wikispeech/sqlite"    
-defaultsleep=10
+defaultsleep=20
 defaultmatchaconfig=config_sample.env
+defaultpiperconfig=config_sample.env
 defaultwikispeechconfig=wikispeech_server/config-sample.conf
 
 doTail=0
@@ -21,6 +22,7 @@ gitrepos=$defaultgitrepos
 logdir=$defaultlogdir
 lexserverappdir=$defaultlexserverappdir
 matchaconfig=$defaultmatchaconfig
+piperconfig=$defaultpiperconfig
 wikispeechconfig=$defaultwikispeechconfig
 sleep=$defaultsleep
 
@@ -32,11 +34,12 @@ printUsage() {
     echo "    -l logdir - log files folder (default $defaultlogdir)" >&2
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
     echo "    -m matcha - matcha config file (default $defaultmatchaconfig)" >&2
+    echo "    -p piper - piper config file (default $defaultpiperconfig)" >&2    
     echo "    -w wikispeech - wikispeech config file (default $defaultwikispeechconfig)" >&2
     echo "    -t tail wikispeech log after startup" >&2
 }
 
-while getopts "htg:l:d:s:m:w:" opt; do
+while getopts "htg:l:d:s:m:p:w:" opt; do
     case $opt in
 	h) printUsage && exit 1;;
 	t) doTail=1;;
@@ -54,6 +57,9 @@ while getopts "htg:l:d:s:m:w:" opt; do
 	    ;;
 	m)
 	    matchaconfig=$OPTARG
+	    ;;
+	p)
+	    piperconfig=$OPTARG
 	    ;;
 	w)
 	    wikispeechconfig=$OPTARG
@@ -89,6 +95,10 @@ if [[ $matchaconfig == *"/"* ]]; then
     matchaconfig=`realpath $matchaconfig`
 fi
 
+if [[ $piperconfig == *"/"* ]]; then
+    piperconfig=`realpath $piperconfig`
+fi
+
 if [[ $wikispeechconfig == *"/"* ]]; then
     wikispeechconfig=`realpath $wikispeechconfig`
 fi
@@ -117,6 +127,9 @@ cd $gitrepos/symbolset/server && go run . -ss_files $lexserverappdir/symbol_sets
 
 echo "[$CMD] starting matcha tts using config file $matchaconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate && uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &> $logdir/matcha.log &
+
+echo "[$CMD] starting piper tts using config file $piperconfig" >&2
+cd $gitrepos/wikispeech-tts-wrappers/piper_server && source .venv/bin/activate && uvicorn piper_server:app --env-file $piperconfig --port 8010 &> $logdir/piper.log &
 
 # echo "[$CMD] starting mishkal" >&2
 # cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &> $logdir/mishkal.log &

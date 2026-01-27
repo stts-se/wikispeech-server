@@ -1,7 +1,7 @@
 {
     "textprocessor_configs": [
 	{
-	    "name":"matcha_textproc_sv",
+	    "name":"piper_textproc_sv",
 	    "lang":"sv",
 	    "default": true,
 	    "components":[
@@ -21,36 +21,40 @@
     "voice_configs": [
 	{
             "lang":"en",
-            "name":"en_us_ljspeech",
-            "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "name":"en_US-bryce-medium",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
+	    "skip_test": false
+	},
+	{
+            "lang":"ar",
+            "name":"ar_JO-kareem-medium",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
 	    "skip_test": false
 	},
 	{
             "lang":"sv",
             "name":"sv_se_nst_male1",
-            "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
 	    "skip_test": false,
 	    "mapper": {
 		"from":"sv-se_ws-sampa",
 		"to":"sv-se_matcha_ipa_from_ws"
-	    },
-	    "disabled": true
+	    }
 	},
 	{
             "lang":"sv",
-            "name":"sv_se_nst_vc_female1",
-            "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "name":"sv_se_nst_female1",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
 	    "skip_test": false,
 	    "default": true,
 	    "mapper": {
 		"from":"sv-se_ws-sampa",
 		"to":"sv-se_matcha_ipa_from_ws"
-	    },
-	    "disabled": true
+	    }
 	}
-	
     ]
 }
