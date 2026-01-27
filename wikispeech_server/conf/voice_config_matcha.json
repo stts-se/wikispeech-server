@@ -39,7 +39,18 @@
 	},
 	{
             "lang":"sv",
-            "name":"sv_se_nst_vc_female1",
+            "name":"sv_se_nst_female1",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_adapter",
+	    "skip_test": false,
+	    "mapper": {
+		"from":"sv-se_ws-sampa",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	},
+	{
+            "lang":"sv",
+            "name":"sv_se_nst_female2_vc",
             "engine":"matcha",
             "adapter":"adapters.matcha_adapter",
 	    "skip_test": false,

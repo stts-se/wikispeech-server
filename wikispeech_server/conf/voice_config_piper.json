@@ -35,7 +35,7 @@
 	},
 	{
             "lang":"sv",
-            "name":"sv_se_nst_male1",
+            "name":"sv_se_nst_male1_p",
             "engine":"piper",
             "adapter":"adapters.piper_adapter",
 	    "skip_test": false,
@@ -46,7 +46,7 @@
 	},
 	{
             "lang":"sv",
-            "name":"sv_se_nst_female1",
+            "name":"sv_se_nst_female1_p",
             "engine":"piper",
             "adapter":"adapters.piper_adapter",
 	    "skip_test": false,

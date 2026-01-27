@@ -864,7 +864,7 @@ def loadJsonConfigurationFiles():
             path = "%s/%s" % (cf_dir, config_file)
         else:
             log.fatal("Config file %s or %s not found" % (config_file, "%s/%s" % (cf_dir, config_file)))
-            sys.exit()
+            sys.exit(1)
         with open(path) as json_file:
             log.info("Reading config file: %s" % path)
             json_like = json_file.read()
@@ -877,7 +877,8 @@ def loadJsonConfigurationFiles():
                     addTp = True
                     for tc in textprocessor_configs:
                         if tc["name"] == tconf["name"]:
-                            log.warning("Textprocessor %s defined more than once: file %s" % (tconf["name"], path))
+                            log.fatal("Textprocessor %s defined more than once: file %s" % (tconf["name"], path))
+                            sys.exit(1)
                             addTp = False
                     if addTp:
                         tconf["config_file"] = path
@@ -889,10 +890,16 @@ def loadJsonConfigurationFiles():
                     addVoice = True
                     for vc in voice_configs:
                         if vc["name"] == vconf["name"]:
-                            log.warning("Voice %s defined more than once: file %s" % (vconf["name"], path))
+                            log.fatal("Voice %s defined more than once: file %s" % (vconf["name"], path))
+                            sys.exit(1)
                             addVoice = False
+                        # if vc["name"] == vconf["name"] and vc["engine"] == vconf["engine"]:
+                        #     log.fatal("%s voice %s defined more than once: file %s" % (vc['engine'], vconf["name"], path))
+                        #     sys.exit(1)
+                        #     addVoice = False
                     if addVoice:
                         vconf["config_file"] = path
+                        vconf["longname"] = f"{vconf['engine']}:{vconf['name']}"
                         voice_configs.append(vconf)
 
 def remove_comments(json_like):
