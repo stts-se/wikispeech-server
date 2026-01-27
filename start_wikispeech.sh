@@ -16,6 +16,7 @@ defaultsleep=10
 defaultmatchaconfig=config_sample.env
 defaultwikispeechconfig=wikispeech_server/config-sample.conf
 
+doTail=0
 gitrepos=$defaultgitrepos
 logdir=$defaultlogdir
 lexserverappdir=$defaultlexserverappdir
@@ -32,11 +33,13 @@ printUsage() {
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
     echo "    -m matcha - matcha config file (default $defaultmatchaconfig)" >&2
     echo "    -w wikispeech - wikispeech config file (default $defaultwikispeechconfig)" >&2
+    echo "    -t tail wikispeech log after startup" >&2
 }
 
-while getopts "hg:l:d:s:m:w:" opt; do
+while getopts "htg:l:d:s:m:w:" opt; do
     case $opt in
 	h) printUsage && exit 1;;
+	t) doTail=1;;
 	g)
 	    gitrepos=$OPTARG
 	    ;;
@@ -142,3 +145,7 @@ cd $wikispeech && source .venv/bin/activate && nohup python3 bin/wikispeech $wik
 
 echo ""
 echo "[$CMD] check logs in folder $logdir for process details" >&2
+
+if [ $doTail -eq 1 ]; then
+    tail -f $logdir/wikispeech.log
+fi

@@ -25,13 +25,6 @@
             "engine":"matcha",
             "adapter":"adapters.matcha_adapter",
 	    "skip_test": false
-	},
-	{
-            "lang":"sv",
-            "name":"sv_se_nst_male1",
-            "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
-	    "skip_test": false
 	}
     ]
 }
