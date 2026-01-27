@@ -10,3 +10,6 @@ wikispeech.log
 
 .build
 log
+
+.venv
+venv
