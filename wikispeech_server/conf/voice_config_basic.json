@@ -19,6 +19,16 @@
                     "call":"tokenise"
 		}
             ]
+	},
+	{
+            "name":"basic_ar",
+            "lang":"ar",
+            "components":[
+		{
+                    "module":"tokeniser",
+                    "call":"tokenise"
+		}
+            ]
 	}
     ],
     
