@@ -3,23 +3,23 @@
 [![Build Status](https://travis-ci.com/stts-se/wikispeech-server.svg?branch=master)](https://app.travis-ci.com/stts-se/wikispeech-server)
 
 ## Prerequisites:
-```
+``` sh
 git clone https://github.com/stts-se/wikispeech-server.git
 cd wikispeech-server
 sudo apt install opus-tools
 
-python3 -v venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
 
 mkdir wikispeech_server/tmp
 ```
 
-Make sure you always run `source venv/bin/activate` before running any server-related code in this repository.
+Make sure you always run `source .venv/bin/activate` before running any server-related code in this repository.
 
 ## Usage:
-```
-source venv/bin/activate
+``` sh
+source .venv/bin/activate
 python3 bin/wikispeech
 ```
 
@@ -53,8 +53,8 @@ The file contains settings for:
   * quit_on_error: Quit if a test fails. (default: False)
 
 To test the config file, the script can be run with a config file as argument:
-```
-source venv/bin/activate
+``` sh
+source .venv/bin/activate
 python3 bin/wikispeech <config-file>
 ```
 
