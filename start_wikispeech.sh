@@ -27,7 +27,7 @@ sleep=$defaultsleep
 printUsage() {
     echo "Usage:" 2>&1
     echo "  $ $CMD <options>" >&2
-    echo "    -g gitroot - root folder for git repositories mishkal, marytts, ahotts, symbolset, pronlex, wikispeech-server (default $defaultgitrepos)" >&2
+    echo "    -g gitroot - root folder for git repositories symbolset, pronlex, wikispeech-tts-wrappers, wikispeech-server (default $defaultgitrepos)" >&2
     echo "    -d lexserver appdir - location of the lexserver installation (default $defaultlexserverappdir)" >&2
     echo "    -l logdir - log files folder (default $defaultlogdir)" >&2
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
@@ -115,7 +115,7 @@ cd $gitrepos/pronlex/ && nohup bash scripts/start_server.sh -e sqlite -a $lexser
 echo "[$CMD] starting symbolset mapper" >&2
 cd $gitrepos/symbolset/server && go run . -ss_files $lexserverappdir/symbol_sets &> $logdir/mapper.log &
 
-echo "[$CMD] starting matcha tts" >&2
+echo "[$CMD] starting matcha tts using config file $matchaconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate && uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &> $logdir/matcha.log &
 
 # echo "[$CMD] starting mishkal" >&2
@@ -130,7 +130,7 @@ cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate 
 # echo "[$CMD] TESTING -- not starting wikispeech" && exit 0
 
 echo "[$CMD] clearing wikispeech audio cache" >&2
-cd $wikispeech && bash clear_audio_cache.sh -q || exit 1
+cd $wikispeech && bash clear_audio_cache.sh -q $wikispeechconfig || exit 1
 
 echo "[$CMD] waiting $sleep secs before starting main wikispeech server" >&2
 for i in `seq 1 $sleep`;
@@ -140,7 +140,7 @@ do
 done  
 echo "" >&2
 
-echo "[$CMD] starting main wikispeech server" >&2
+echo "[$CMD] starting main wikispeech server using config file $wikispeechconfig" >&2
 cd $wikispeech && source .venv/bin/activate && nohup python3 bin/wikispeech $wikispeechconfig &> $logdir/wikispeech.log &
 
 echo ""
