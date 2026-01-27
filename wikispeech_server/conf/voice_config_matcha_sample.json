@@ -1,0 +1,37 @@
+{
+    "textprocessor_configs": [
+	{
+	    "name":"matcha_textproc_sv",
+	    "lang":"sv",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"tokeniser",
+		    "call":"tokenise"
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"sv_se_braxen_lex:sv-se.braxen"
+		}
+	    ]
+	}
+    ],
+    
+    "voice_configs": [
+	{
+            "lang":"en",
+            "name":"en_us_ljspeech",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_adapter",
+	    "skip_test": false
+	},
+	{
+            "lang":"sv",
+            "name":"sv_se_nst_male1",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_adapter",
+	    "skip_test": false
+	}
+    ]
+}

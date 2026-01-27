@@ -828,9 +828,9 @@ def loadTextprocessor(tp_config):
 voices = []
 def loadVoice(voice_config):
     try:
-        log.info("Loading voice %s" % (voice_config["name"]))
+        log.info("Loading %s voice %s" % (voice_config["engine"], voice_config["name"]))
         v = Voice(voice_config, run_test)        
-        log.info("Done loading voice %s" % (voice_config["name"]))
+        log.info("Done loading %s voice %s" % (voice_config["engine"], voice_config["name"]))
         voices.append(v)
     except VoiceException as e:
         log.warning("Failed to load voice from %s. Reason:\n%s" % (voice_config,e))

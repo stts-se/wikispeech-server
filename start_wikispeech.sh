@@ -11,14 +11,16 @@ defaultgitrepos=`ls -d $HOME/git* 2> >(grep -v 'No such file' >&2) | egrep "(git
 if [ -z $defaultgitrepos ]; then
     defaultgitrepos=$HOME/gitrepos
 fi
-defaultlexserverappdir="$HOME/wikispeech"    
-defaultsleep=30
+defaultlexserverappdir="$HOME/wikispeech/sqlite"    
+defaultsleep=10
 defaultmatchaconfig=config_sample.env
+defaultwikispeechconfig=wikispeech_server/config-sample.conf
 
 gitrepos=$defaultgitrepos
 logdir=$defaultlogdir
 lexserverappdir=$defaultlexserverappdir
 matchaconfig=$defaultmatchaconfig
+wikispeechconfig=$defaultwikispeechconfig
 sleep=$defaultsleep
 
 printUsage() {
@@ -27,11 +29,12 @@ printUsage() {
     echo "    -g gitroot - root folder for git repositories mishkal, marytts, ahotts, symbolset, pronlex, wikispeech-server (default $defaultgitrepos)" >&2
     echo "    -d lexserver appdir - location of the lexserver installation (default $defaultlexserverappdir)" >&2
     echo "    -l logdir - log files folder (default $defaultlogdir)" >&2
-    echo "    -m matcha - matcha config file (default $defaultmatchaconfig)" >&2
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
+    echo "    -m matcha - matcha config file (default $defaultmatchaconfig)" >&2
+    echo "    -w wikispeech - wikispeech config file (default $defaultwikispeechconfig)" >&2
 }
 
-while getopts "hg:l:d:s:m:" opt; do
+while getopts "hg:l:d:s:m:w:" opt; do
     case $opt in
 	h) printUsage && exit 1;;
 	g)
@@ -40,14 +43,17 @@ while getopts "hg:l:d:s:m:" opt; do
 	d)
 	    lexserverappdir=$OPTARG
 	    ;;
-	m)
-	    matchaconfig=$OPTARG
-	    ;;
 	l)
 	    logdir=$OPTARG
 	    ;;
 	s)
 	    sleep=$OPTARG
+	    ;;
+	m)
+	    matchaconfig=$OPTARG
+	    ;;
+	w)
+	    wikispeechconfig=$OPTARG
 	    ;;
 	\?) ERR=1 && echo "" >&2
     esac
@@ -76,6 +82,14 @@ else
     exit 1
 fi
 
+if [[ $matchaconfig == *"/"* ]]; then
+    matchaconfig=`realpath $matchaconfig`
+fi
+
+if [[ $wikispeechconfig == *"/"* ]]; then
+    wikispeechconfig=`realpath $wikispeechconfig`
+fi
+
 wikispeech=`ls -d $gitrepos/wikispeech*server 2> >(grep -v 'No such file' >&2) | head -1`
 if [ $wikispeech ] && [ -d $wikispeech ]; then
     echo -n ""
@@ -93,22 +107,22 @@ echo "[$CMD] lexserver appdir: $lexserverappdir" >&2
 echo "[$CMD] logdir: $logdir" >&2
 
 echo "[$CMD] starting pronlex" >&2
-cd $gitrepos/pronlex/ && nohup bash scripts/start_server.sh -e sqlite -a $lexserverappdir &>> $logdir/pronlex.log &
+cd $gitrepos/pronlex/ && nohup bash scripts/start_server.sh -e sqlite -a $lexserverappdir &> $logdir/pronlex.log &
 
 echo "[$CMD] starting symbolset mapper" >&2
-cd $gitrepos/symbolset/server && go run . -ss_files $lexserverappdir/symbol_sets &>> $logdir/mapper.log &
+cd $gitrepos/symbolset/server && go run . -ss_files $lexserverappdir/symbol_sets &> $logdir/mapper.log &
 
 echo "[$CMD] starting matcha tts" >&2
-cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate && uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &>> $logdir/matcha.log &
+cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate && uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &> $logdir/matcha.log &
 
 # echo "[$CMD] starting mishkal" >&2
-# cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &>> $logdir/mishkal.log &
+# cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &> $logdir/mishkal.log &
 
 # echo "[$CMD] starting marytts" >&2
-# cd $gitrepos/marytts && nohup ./gradlew run &>> $logdir/marytts.log &
+# cd $gitrepos/marytts && nohup ./gradlew run &> $logdir/marytts.log &
 
 # echo "[$CMD] starting ahotts" >&2
-# cd $gitrepos/AhoTTS-eu-Wikispeech && nohup sh start_ahotts_wikispeech.sh &>> $logdir/ahotts.log &
+# cd $gitrepos/AhoTTS-eu-Wikispeech && nohup sh start_ahotts_wikispeech.sh &> $logdir/ahotts.log &
 
 # echo "[$CMD] TESTING -- not starting wikispeech" && exit 0
 
@@ -124,7 +138,7 @@ done
 echo "" >&2
 
 echo "[$CMD] starting main wikispeech server" >&2
-cd $wikispeech && source .venv/bin/activate && nohup python3 bin/wikispeech &>> $logdir/wikispeech.log &
+cd $wikispeech && source .venv/bin/activate && nohup python3 bin/wikispeech $wikispeechconfig &> $logdir/wikispeech.log &
 
 echo ""
 echo "[$CMD] check logs in folder $logdir for process details" >&2

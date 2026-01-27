@@ -31,11 +31,11 @@ def testVoice(voice_config):
     voicenames = getVoicenames(r)
     log.debug("matcha voicenames: %s" % voicenames)
     if not name in voicenames:
-        msg = "Voice %s not found at url %s" % (name, url)
+        msg = "Matcha voice %s not found at url %s" % (name, url)
         log.error(msg)
         raise VoiceException(msg)
     else:
-        log.info("Voice found at url %s" % url)
+        log.info("Matcha voice found at url %s" % url)
         
 
 def getVoicenames(response):
