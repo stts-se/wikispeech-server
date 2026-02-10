@@ -15,6 +15,7 @@ defaultlexserverappdir="$HOME/wikispeech/sqlite"
 defaultsleep=20
 defaultmatchaconfig=config_sample.env
 defaultpiperconfig=config_sample.env
+defaulttextprocconfig=config_sample.env
 defaultwikispeechconfig=wikispeech_server/config-sample.conf
 
 doTail=0
@@ -23,6 +24,7 @@ logdir=$defaultlogdir
 lexserverappdir=$defaultlexserverappdir
 matchaconfig=$defaultmatchaconfig
 piperconfig=$defaultpiperconfig
+textprocconfig=$defaulttextprocconfig
 wikispeechconfig=$defaultwikispeechconfig
 sleep=$defaultsleep
 
@@ -35,14 +37,15 @@ printUsage() {
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
     echo "    -m matcha - matcha config file (default $defaultmatchaconfig)" >&2
     echo "    -p piper - piper config file (default $defaultpiperconfig)" >&2    
+    echo "    -t textproc - textproc config file (default $defaulttextprocconfig)" >&2    
     echo "    -w wikispeech - wikispeech config file (default $defaultwikispeechconfig)" >&2
-    echo "    -t tail wikispeech log after startup" >&2
+    echo "    -T tail wikispeech log after startup" >&2
 }
 
 while getopts "htg:l:d:s:m:p:w:" opt; do
     case $opt in
 	h) printUsage && exit 1;;
-	t) doTail=1;;
+	T) doTail=1;;
 	g)
 	    gitrepos=$OPTARG
 	    ;;
@@ -60,6 +63,9 @@ while getopts "htg:l:d:s:m:p:w:" opt; do
 	    ;;
 	p)
 	    piperconfig=$OPTARG
+	    ;;
+	t)
+	    textprocconfig=$OPTARG
 	    ;;
 	w)
 	    wikispeechconfig=$OPTARG
@@ -131,14 +137,8 @@ cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate 
 echo "[$CMD] starting piper tts using config file $piperconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/piper_server && source .venv/bin/activate && uvicorn piper_server:app --env-file $piperconfig --port 8010 &> $logdir/piper.log &
 
-# echo "[$CMD] starting mishkal" >&2
-# cd $gitrepos/mishkal/ && nohup python interfaces/web/mishkal-webserver.py &> $logdir/mishkal.log &
-
-# echo "[$CMD] starting marytts" >&2
-# cd $gitrepos/marytts && nohup ./gradlew run &> $logdir/marytts.log &
-
-# echo "[$CMD] starting ahotts" >&2
-# cd $gitrepos/AhoTTS-eu-Wikispeech && nohup sh start_ahotts_wikispeech.sh &> $logdir/ahotts.log &
+# echo "[$CMD] starting textproc using config file $textprocconfig" >&2
+# cd $gitrepos/wikispeech-tts-wrappers/textproc && source .venv/bin/activate && uvicorn textproc_server:app --env-file $piperconfig --port 8011 &> $logdir/textproc.log &
 
 # echo "[$CMD] TESTING -- not starting wikispeech" && exit 0
 
