@@ -14,7 +14,7 @@ def testVoice(config):
     except:
         msg = "Failed command: '%s -v %s'" % (espeak, voice)
         log.error(msg)
-        raise VoiceException(msg)
+        raise Exception(msg)
     
     
 

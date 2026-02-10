@@ -1016,7 +1016,7 @@ def checkInputAndOutputTokens(input_string,output_token_list):
 
 
 def saveAndConvertAudio(audio_url):
-    global config
+    #global config
 
 
     tmpdir = config.config.get("Audio settings","audio_tmpdir")

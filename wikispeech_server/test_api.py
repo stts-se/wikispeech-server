@@ -14,7 +14,7 @@ def test_done():
     i += 1
 
 def all_done():
-    global i
+    #global i
     sys.stdout.write("\n%d tests OK\n" % i)
 
 host = "/"
