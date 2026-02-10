@@ -13,7 +13,7 @@ if [ -z $defaultgitrepos ]; then
 fi
 defaultlexserverappdir="$HOME/wikispeech/sqlite"    
 defaultsleep=20
-defaultmatchaconfig=config_sample.env
+defaultmatchaconfig=config_stts.env
 defaultpiperconfig=config_sample.env
 defaulttextprocconfig=config_sample.env
 defaultwikispeechconfig=wikispeech_server/config-sample.conf
