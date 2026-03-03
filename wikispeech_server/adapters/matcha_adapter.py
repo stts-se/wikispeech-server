@@ -71,6 +71,7 @@ def utt2matcha(input,lang,voice_config):
 
 def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaking_rate=1.0):
     url = matcha_url + "/synthesize/"
+    log.info(f"matcha adapter input {input}")
     tokens = utt2matcha(input,lang,voice_config)
     if speaker_id is None:
         speaker_id = -1
@@ -89,7 +90,7 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
         raise Exception(f"Matcha request returned status code {r.status_code} {responses[r.status_code]}")
     obj = r.json()
     if len(obj) != 1:
-        raise Exception(f"Expected one item back from matcha_tts, found {len(obj)}")
+        raise Exception(f"Expected one item back from matcha_tts, found {len(obj)}: {obj[0]}      ............ {obj[1]}")
     
     res = obj[0]
     audio_url = os.path.join(matcha_url, "static", res["audio"])
