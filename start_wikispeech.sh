@@ -11,7 +11,7 @@ defaultgitrepos=`ls -d $HOME/git* 2> >(grep -v 'No such file' >&2) | egrep "(git
 if [ -z $defaultgitrepos ]; then
     defaultgitrepos=$HOME/gitrepos
 fi
-defaultlexserverappdir="$HOME/wikispeech/sqlite"    
+defaultlexserverappdir="$HOME/wikispeech/sqlite"
 defaultsleep=20
 defaultmatchaconfig=config_stts.env
 defaultpiperconfig=config_sample.env
@@ -50,7 +50,7 @@ while getopts "htg:l:d:s:m:p:w:" opt; do
 	    gitrepos=$OPTARG
 	    ;;
 	d)
-	    lexserverappdir=$OPTARG
+	    lexserverappdir=`realpath $OPTARG`
 	    ;;
 	l)
 	    logdir=$OPTARG
@@ -129,7 +129,7 @@ echo "[$CMD] starting pronlex" >&2
 cd $gitrepos/pronlex/ && nohup bash scripts/start_server.sh -e sqlite -a $lexserverappdir &> $logdir/pronlex.log &
 
 echo "[$CMD] starting symbolset mapper" >&2
-cd $gitrepos/symbolset/server && go run . -ss_files $lexserverappdir/symbol_sets &> $logdir/mapper.log &
+cd $gitrepos/symbolset/server && ./server -ss_files $lexserverappdir/symbol_sets &> $logdir/mapper.log &
 
 echo "[$CMD] starting matcha tts using config file $matchaconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate && uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &> $logdir/matcha.log &
@@ -137,8 +137,8 @@ cd $gitrepos/wikispeech-tts-wrappers/matcha_server && source .venv/bin/activate 
 echo "[$CMD] starting piper tts using config file $piperconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/piper_server && source .venv/bin/activate && uvicorn piper_server:app --env-file $piperconfig --port 8010 &> $logdir/piper.log &
 
-# echo "[$CMD] starting textproc using config file $textprocconfig" >&2
-# cd $gitrepos/wikispeech-tts-wrappers/textproc && source .venv/bin/activate && uvicorn textproc_server:app --env-file $piperconfig --port 8011 &> $logdir/textproc.log &
+echo "[$CMD] starting textproc using config file $textprocconfig" >&2
+cd $gitrepos/wikispeech-tts-wrappers/textproc && source .venv/bin/activate && uvicorn textproc_server:app --env-file $piperconfig --port 8011 &> $logdir/textproc.log &
 
 # echo "[$CMD] TESTING -- not starting wikispeech" && exit 0
 
