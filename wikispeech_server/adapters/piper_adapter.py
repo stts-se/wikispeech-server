@@ -95,7 +95,6 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     audio_url = os.path.join(piper_url, "static", res["audio"])
 
     log.info("piper AUDIO_URL: %s" % audio_url)
-    log.debug(f"piper res {res}")
 
     tokens = []
     for token in res["input"]:
@@ -114,7 +113,6 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
             #    token["error"] = err
         tokens.append(token)
 
-    log.debug(f"piper tokens {tokens}")
     return (audio_url, tokens)
 
 def mapToPiper(trans,lang,voice):
