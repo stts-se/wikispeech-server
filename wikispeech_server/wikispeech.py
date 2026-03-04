@@ -473,7 +473,6 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
     #Loop over the list of components, modifying the utt structure created by the first component
     for component in textprocessor["components"]:
-
         module_name = component["module"]
         call = component["call"]
 
@@ -492,7 +491,6 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
         mod = import_module(directory, module_name)
 
-        
         #Get the method to call (instead of defining the call in voice_config we could always use the same method name..) 
         process = getattr(mod, call)
         log.debug("PROCESS: %s" % process)
@@ -501,6 +499,7 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         #The first component needs to accept text and return a tokenised utterance (at the moment calls "tokenise" or "marytts_preproc")
         #If this is always true it should be a requirement, now it is just assumed
         if call == "tokenise":
+            log.debug("calling wikispeech.py:tokenise")
             utt = process(text,lang=lang)
             utt["lang"] = lang
             utt["original_text"] = text
@@ -511,14 +510,18 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
                 return utt
 
         elif call == "marytts_preproc":
+            log.debug("calling wikispeech.py:marytts_preproc")
             utt = process(text, lang, component, input_type=input_type)
 
+        elif call == "textproc":
+            log.debug("calling wikispeech.py:textproc")
+            utt = process(lang, component, text, input_type=input_type)
 
         #Following the first component, they take and return an utterance
         else:
             utt = process(utt, lang=lang, componentConfig=component)
 
-        log.debug(str(utt))
+        log.info(str(utt))
 
     return utt
 

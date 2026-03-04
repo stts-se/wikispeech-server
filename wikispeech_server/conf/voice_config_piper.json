@@ -10,6 +10,11 @@
 		    "call":"tokenise"
 		},
 		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "sv_se_1"
+		},
+		{
 		    "module":"adapters.lexicon_client",
 		    "call":"lexLookup",
 		    "lexicon":"sv_se_braxen_lex:sv-se.braxen"

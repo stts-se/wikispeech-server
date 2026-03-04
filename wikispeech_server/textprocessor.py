@@ -97,6 +97,16 @@ class TextprocComponent(object):
                     xml = r.text
                 except Exception as e:
                     raise TextprocComponentException(e)
+        elif "module" in cconfig and cconfig["module"] == "adapters.textproc_adapter":
+            log.debug("Trying to create textproc component: %s" % cconfig)
+            if run_test:
+                try:
+                    textproc_url = config.config.get("Services", "textproc")
+                    r = requests.get(f"{textproc_url}/list")
+                    log.debug("CALLING TEXTPROC: %s" % r.url)    
+                    res = r.text
+                except Exception as e:
+                    raise TextprocComponentException(e)
 
                                               
 
