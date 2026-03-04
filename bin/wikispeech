@@ -20,7 +20,7 @@ print("Logging to %s" % ws.log.logger)
 ws.log.info("Loading textprocessors and voices")
 for tp_config in ws.textprocessor_configs:
     if tp_config.get("disabled") == True:
-        ws.log.info("Didn't load %s, disabled in voice_config.py" % tp_config.get("name"))
+        ws.log.info("Didn't load textprocessor %s, disabled in voice_config" % tp_config.get("name"))
     else:
         try:
             ws.loadTextprocessor(tp_config)
@@ -40,7 +40,7 @@ for voice_config in ws.voice_configs:
     if voice_config.get("engine") == "ahotts" and not config.config.get("Services", "ahotts_server_ip", fallback = None):
         ws.log.info("Skipping voice %s" % voice_config.get("name"))
     elif voice_config.get("disabled") == True:
-        ws.log.info("Didn't load %s, disabled in voice_config.py" % voice_config.get("name"))
+        ws.log.info("Didn't load voice %s, disabled in voice_config" % voice_config.get("name"))
     else:
         try:
             ws.loadVoice(voice_config)

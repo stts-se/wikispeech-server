@@ -48,7 +48,7 @@ def mapFromTextprocUtt(obj):
                 "orth": t0["converted"]
             }]
         }
-            
+        # flake8: noqa            
         if "punct" in t0:
             tok["punct"]: t0["punct"]
         tokens.append(tok)
