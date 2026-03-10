@@ -532,7 +532,7 @@ def mapIpaInput(ssml, textprocessor, sampa=None):
         if "mapper" in comp:
             sampa = comp["mapper"]["from"]
     if not sampa:
-        raise ValueError("No mapper defined in voice %s, don't know how to map ipa!" % textprocessor["name"])
+        raise ValueError("No mapper defined in component %s, don't know how to map ipa!" % textprocessor["name"])
 
     phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
     for element in phoneme_elements:
@@ -547,10 +547,13 @@ def mapIpaInput(ssml, textprocessor, sampa=None):
             try:
                 response_json = json.loads(response)
             except:
-                raise ValueError(response)       
-            sampa_trans = response_json["Result"]
-
-
+                raise ValueError(response)
+            if "Result" in response_json:
+                sampa_trans = response_json["Result"]
+            elif "result" in response_json:
+                sampa_trans = response_json["result"]
+            else:
+                raise ValueError(response_json)
 
             ssml = re.sub('alphabet="ipa"', 'alphabet="x-sampa"', ssml)        
             ssml = re.sub(ipa_trans, sampa_trans, ssml)

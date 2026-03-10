@@ -156,6 +156,7 @@ def tokenise(text, add_text=False, lang='en'):
 
                     tokenlist.append(t)
                     #print("TOKEN: %s" % token)
+    #log.debug(f"tokenize returns utt {utt}")
     return utt
 
 

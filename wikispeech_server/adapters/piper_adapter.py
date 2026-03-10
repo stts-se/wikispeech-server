@@ -70,6 +70,7 @@ def utt2piper(input,lang,voice_config):
     return chunks
 
 def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaking_rate=1.0):
+    log.debug(f"piper_adapter input: {input}")
     url = piper_url + "/synthesize/"
     tokens = utt2piper(input,lang,voice_config)
     if speaker_id is None:
