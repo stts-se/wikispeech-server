@@ -115,7 +115,7 @@ jobs:
        cd piper_server
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        # workaround for pytorch
-       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' ../.venv/lib/python3.*/site-packages/dp/model/model.py
        
        uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
 
