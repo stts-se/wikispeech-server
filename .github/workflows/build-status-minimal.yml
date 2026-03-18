@@ -74,7 +74,7 @@ jobs:
       run: |
        # Start symbolset/mapper server
        cd symbolset/server
-       go run *.go -ss_files ss_files &
+       go run *.go -ss_files ss_files &> mapper.log
        
     - name: Start pronlex/lexserver server
       run: |
@@ -84,7 +84,7 @@ jobs:
        LOC=/tmp/appdir/sqlite
        ENGINE=sqlite
        PORT=8780
-       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
+       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &> pronlex.log &
 
     - name: Set up wikispeech-tts-wrappers
       run: |
@@ -130,7 +130,7 @@ jobs:
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd textproc
-       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
+       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &> textproc.log &
        sleep 2
 
     - name: Start piper server
@@ -139,7 +139,7 @@ jobs:
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd piper_server
-       uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
+       uvicorn piper_server:app --env-file config_minimal.env --port 8010 &> piper.log & 
        sleep 2
 
     - name: Start matcha server
@@ -148,7 +148,7 @@ jobs:
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd matcha_server
-       uvicorn matcha_server:app --env-file config_minimal.env --port 8009 &
+       uvicorn matcha_server:app --env-file config_minimal.env --port 8009 &> matcha.log &
        sleep 20
 
     - name: Start wikispeech-server
@@ -180,8 +180,13 @@ jobs:
        # curl -f http://localhost:10000/ping # wikispeech-server
        #echo ""
  
-    - name: Wikispeech log
+    - name: Log files
       run: |
-       # Wikispeech log
-       tail -200 wikispeech.log
+       # Log files
+       cat mapper.log
+       cat pronlex.log
+       cat textproc.log
+       cat piper.log
+       cat matcha.log
+       cat wikispeech.log       
 
