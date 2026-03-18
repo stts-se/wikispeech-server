@@ -98,10 +98,10 @@ jobs:
       run: | # Fetch models
         mkdir -p $HOME/.local/share/piper_tts
         cd $HOME/.local/share/piper_tts
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx ar_JO-kareem-medium.onnx
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json ar_JO-kareem-medium.onnx.json
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx en_US-bryce-medium.onnx
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json en_US-bryce-medium.onnx.json
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx -o ar_JO-kareem-medium.onnx
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json -o ar_JO-kareem-medium.onnx.json
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx -o en_US-bryce-medium.onnx
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json -o en_US-bryce-medium.onnx.json
 
         mkdir -p $HOME/.local/share/matcha_tts
         cd $HOME/.local/share/matcha_tts
