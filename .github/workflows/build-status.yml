@@ -136,12 +136,22 @@ jobs:
 
     - name: Ping servers
       run: |
-       sleep 30
        #curl -f http://localhost:8771/ping  # symbolset/mapper
+       #echo ""
+       
        #curl -f http://localhost:8780/ping  # pronlex/lexserver
+       #echo ""
+       
        curl -f http://localhost:8011/ping  # textproc
+       echo ""
+
        curl -f http://localhost:8010/ping  # piper
+       echo ""
+       
        curl -f http://localhost:8009/ping  # matcha
+       echo ""
+       
        # curl -f http://localhost:10000/ping # wikispeech-server
+       #echo ""
  
 
