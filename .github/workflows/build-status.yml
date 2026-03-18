@@ -33,11 +33,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv venv
-        source .venv/bin/activate
-        uv pip install flake8 pytest
-        uv pip install -r requirements.txt
-        mkdir -p wikispeech_server/tmp
+       curl -LsSf https://astral.sh/uv/install.sh | sh
+       uv venv
+       source .venv/bin/activate
+       uv pip install flake8 pytest
+       uv pip install -r requirements.txt
+       mkdir -p wikispeech_server/tmp
 
     - name: Lint with flake8
       run: |
@@ -79,7 +80,6 @@ jobs:
     - name: Set up wikispeech-tts-wrappers
       run: |
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
-       curl -LsSf https://astral.sh/uv/install.sh | sh
        cd wikispeech-tts-wrappers
        uv venv
        source .venv/bin/activate
