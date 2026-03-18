@@ -81,16 +81,17 @@ jobs:
        curl -LsSf https://astral.sh/uv/install.sh | sh
        cd wikispeech-tts-wrappers
        uv venv
-      
-    - name: Set up textproc
-      run: |
-       cd wikispeech-tts-wrappers
        source .venv/bin/activate
+       uv pip install torch --index-url https://download.pytorch.org/whl/cpu
        uv pip install -r textproc/requirements.txt
-       
-       cd textproc
-       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
-
+       uv pip install -r piper_server/requirements.txt
+       uv pip install -r matcha_server/requirements.txt
+       # workaround for pytorch
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
+       # workarounds for matcha
+       sed -i 's/MatchaTTS.load_from_checkpoint(checkpoint_path, map_location=device)/MatchaTTS.load_from_checkpoint(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/matcha/cli.py
+       sed -i 's|\(plot_spectrogram_to_numpy.*\) f"{filename}.png")|\1 folder / f"{filename}.png")|' .venv/lib/python3.*/site-packages/matcha/cli.py
+      
     # - name: Fetch models
     #   run: |
     #     mkdir -p $HOME/.local/share/piper_tts
@@ -107,19 +108,19 @@ jobs:
     #     curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o matcha_ljspeech.ckpt
     #     curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o matcha_vctk.ckpt
 
+    - name: Start textproc server
+      run: |
+       cd wikispeech-tts-wrappers
+       source .venv/bin/activate
+       cd textproc
+       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
 
     - name: Set up piper
       run: |
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
-       pip install torch --index-url https://download.pytorch.org/whl/cpu
-       uv pip install -r piper_server/requirements.txt
-       # workaround for pytorch
-       ls .venv/lib/python3.*/site-packages
-       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
-       
+       cd piper_server
        uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
-
 
     - name: Ping servers
       run: |
