@@ -95,13 +95,13 @@ jobs:
        sed -i 's|\(plot_spectrogram_to_numpy.*\) f"{filename}.png")|\1 folder / f"{filename}.png")|' .venv/lib/python3.*/site-packages/matcha/cli.py
       
     - name: Fetch models
-      run: |
+      run: | # Fetch models
         mkdir -p $HOME/.local/share/piper_tts
         cd $HOME/.local/share/piper_tts
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx ar_JO-kareem-medium.onnx
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json ar_JO-kareem-medium.onnx.json
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx en_US-bryce-medium.onnx
+        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json en_US-bryce-medium.onnx.json
 
         mkdir -p $HOME/.local/share/matcha_tts
         cd $HOME/.local/share/matcha_tts
@@ -111,7 +111,7 @@ jobs:
         curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o matcha_vctk.ckpt
 
     - name: Start textproc server
-      run: |
+      run: | # Start textproc
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd textproc
@@ -119,7 +119,7 @@ jobs:
        sleep 2
 
     - name: Start piper server
-      run: |
+      run: | # Start piper
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd piper_server
@@ -127,7 +127,7 @@ jobs:
        sleep 2
 
     - name: Start matcha server
-      run: |
+      run: | # Start matcha
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd matcha_server
@@ -135,7 +135,7 @@ jobs:
        sleep 20
 
     - name: Ping servers
-      run: |
+      run: | # Ping servers       
        #curl -f http://localhost:8771/ping  # symbolset/mapper
        #echo ""
        
