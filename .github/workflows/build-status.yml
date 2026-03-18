@@ -79,14 +79,14 @@ jobs:
       run: |
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        curl -LsSf https://astral.sh/uv/install.sh | sh
+       cd wikispeech-tts-wrappers
+       uv venv
       
     - name: Set up textproc
       run: |
        cd wikispeech-tts-wrappers
-       uv venv
        source .venv/bin/activate
        cd textproc
-       python -m pip install --upgrade pip
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        
        uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
@@ -111,10 +111,8 @@ jobs:
     - name: Set up piper
       run: |
        cd wikispeech-tts-wrappers
-       uv venv
        source .venv/bin/activate
        cd piper_server
-       python -m pip install --upgrade pip
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        # workaround for pytorch
        sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
