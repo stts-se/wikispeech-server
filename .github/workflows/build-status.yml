@@ -55,8 +55,6 @@ jobs:
        cd symbolset
        go build -v ./...
        go test -v ./...
-       #RELEASE=master
-       cd server
        git clone https://github.com/stts-se/wikispeech-lexdata.git
        cd wikispeech-lexdata
        git checkout $RELEASE || echo "No such release for lexdata. Using master."
