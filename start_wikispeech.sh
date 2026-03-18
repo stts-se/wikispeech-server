@@ -129,22 +129,42 @@ echo "[$CMD] starting pronlex" >&2
 cd $gitrepos/pronlex/ && nohup bash scripts/start_server.sh -e sqlite -a $lexserverappdir &> $logdir/pronlex.log &
 
 echo "[$CMD] starting symbolset mapper" >&2
+if [ ! -d "$lexserverappdir/symbol_sets" ]; then
+    echo "[$CMD] No symbolset dir found in lexserverappdir $lexserverappdir"
+    printUsage
+    exit 1
+fi
 cd $gitrepos/symbolset/server && ./server -ss_files $lexserverappdir/symbol_sets &> $logdir/mapper.log &
 
 echo "[$CMD] starting matcha tts using config file $matchaconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/matcha_server
 source $PWD/.venv/bin/activate
+if [ ! -f $matchaconfig ]; then
+    echo "[$CMD] matchaconfig $matchaconfig not found in $PWD"
+    printUsage
+    exit 1
+fi
 uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &> $logdir/matcha.log &
 
 echo "[$CMD] starting piper tts using config file $piperconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/piper_server
 source $PWD/.venv/bin/activate
+if [ ! -f $piperconfig ]; then
+    echo "[$CMD] piperconfig $piperconfig not found in $PWD"
+    printUsage
+    exit 1
+fi
 uvicorn piper_server:app --env-file $piperconfig --port 8010 &> $logdir/piper.log &
 
 echo "[$CMD] starting textproc using config file $textprocconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/textproc
 source $PWD/.venv/bin/activate
-uvicorn textproc_server:app --env-file $piperconfig --port 8011 &> $logdir/textproc.log &
+if [ ! -f $textprocconfig ]; then
+    echo "[$CMD] textprocconfig $textprocconfig not found in $PWD"
+    printUsage
+    exit 1
+fi
+uvicorn textproc_server:app --env-file $textprocconfig --port 8011 &> $logdir/textproc.log &
 
 # echo "[$CMD] TESTING -- not starting wikispeech" && exit 0
 
@@ -162,6 +182,11 @@ echo "" >&2
 echo "[$CMD] starting main wikispeech server using config file $wikispeechconfig" >&2
 cd $wikispeech
 source $PWD/.venv/bin/activate
+if [ ! -f $wikispeechconfig ]; then
+    echo "[$CMD] wikispeechconfig $wikispeechconfig not found in $PWD"
+    printUsage
+    exit 1
+fi
 nohup python3 bin/wikispeech $wikispeechconfig &> $logdir/wikispeech.log &
 
 echo ""
