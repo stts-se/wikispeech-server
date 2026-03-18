@@ -74,7 +74,7 @@ jobs:
       run: |
        # Start symbolset/mapper server
        cd symbolset/server
-       go run *.go -ss_files ss_files &> mapper.log
+       go run *.go -ss_files ss_files &> mapper.log &
        
     - name: Start pronlex/lexserver server
       run: |
