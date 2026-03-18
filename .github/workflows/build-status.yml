@@ -82,30 +82,30 @@ jobs:
        cd wikispeech-tts-wrappers
        uv venv
       
-    - name: Set up textproc
-      run: |
-       cd wikispeech-tts-wrappers
-       source .venv/bin/activate
-       cd textproc
-       if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    # - name: Set up textproc
+    #   run: |
+    #    cd wikispeech-tts-wrappers
+    #    source .venv/bin/activate
+    #    cd textproc
+    #    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        
-       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
+    #    uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
 
-    - name: Fetch models
-      run: |
-        mkdir -p $HOME/.local/share/piper_tts
-        cd $HOME/.local/share/piper_tts
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx
-        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json
+    # - name: Fetch models
+    #   run: |
+    #     mkdir -p $HOME/.local/share/piper_tts
+    #     cd $HOME/.local/share/piper_tts
+    #     wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx
+    #     wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json
+    #     wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx
+    #     wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json
 
-        mkdir -p $HOME/.local/share/matcha_tts
-        cd $HOME/.local/share/matcha_tts
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -o hifigan_T2_v1
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000 -o hifigan_univ_v1
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o matcha_ljspeech.ckpt
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o matcha_vctk.ckpt
+    #     mkdir -p $HOME/.local/share/matcha_tts
+    #     cd $HOME/.local/share/matcha_tts
+    #     curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -o hifigan_T2_v1
+    #     curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000 -o hifigan_univ_v1
+    #     curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o matcha_ljspeech.ckpt
+    #     curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o matcha_vctk.ckpt
 
 
     - name: Set up piper
