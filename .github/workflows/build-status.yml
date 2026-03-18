@@ -26,6 +26,7 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
+      run: python -m pip install --upgrade pip
 
     - name: Set up env
       run: |
@@ -49,52 +50,78 @@ jobs:
     #  run: |
     #    pytest
     
-    - name: Set up symbolset/mapper
-      run: |
-       git clone https://github.com/stts-se/symbolset
-       cd symbolset
-       go build -v ./...
-       go test -v ./...
-       cd server
-       git clone https://github.com/stts-se/wikispeech-lexdata.git
-       cd wikispeech-lexdata
-       git checkout $RELEASE || echo "No such release for lexdata. Using master."
-       cd ..
-       bash setup.sh wikispeech-lexdata ss_files
+    # - name: Set up symbolset/mapper
+    #   run: |
+    #    git clone https://github.com/stts-se/symbolset
+    #    cd symbolset
+    #    cd server
+    #    git clone https://github.com/stts-se/wikispeech-lexdata.git
+    #    cd wikispeech-lexdata
+    #    git checkout $RELEASE || echo "No such release for lexdata. Using master."
+    #    cd ..
+    #    bash setup.sh wikispeech-lexdata ss_files
        
-       go run *.go -ss_files ss_files &
+    #    go run *.go -ss_files ss_files &
        
-    - name: Set up pronlex/lexserver
-      run: |
-       git clone https://github.com/stts-se/pronlex
-       cd pronlex
-       APPDIR=/tmp/appdir/sqlite
-       LOC=/tmp/appdir/sqlite
-       ENGINE=sqlite
-       PORT=8780
-       bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
-       bash scripts/import.sh -e $ENGINE -f wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+    # - name: Set up pronlex/lexserver
+    #   run: |
+    #    git clone https://github.com/stts-se/pronlex
+    #    cd pronlex
+    #    APPDIR=/tmp/appdir/sqlite
+    #    LOC=/tmp/appdir/sqlite
+    #    ENGINE=sqlite
+    #    PORT=8780
+    #    bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
+    #    bash scripts/import.sh -e $ENGINE -f wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
        
-       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
+    #    bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
+    - name: Clone wikispeech-tts-wrappers
+      run: git clone https://github.com/stts-se/wikispeech-tts-wrappers
+      
     - name: Set up textproc
       run: |
-       git clone https://github.com/stts-se/wikispeech-tts-wrappers
        cd wikispeech-tts-wrappers/textproc
-       python -m pip install --upgrade pip
-       pip install flake8 pytest
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        
        uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
 
+    - name: Fetch models
+      run: |
+        mkdir -p $HOME/.local/share/piper_tts
+        cd $HOME/.local/share/piper_tts
+        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx
+        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json
+        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx
+        wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json
+
+        mkdir -p $HOME/.local/share/matcha_tts
+        cd $HOME/.local/share/matcha_tts
+        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -o hifigan_T2_v1
+        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000 -o hifigan_univ_v1
+        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o matcha_ljspeech.ckpt
+        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o matcha_vctk.ckpt
+
+
+    - name: Set up piper
+      run: |
+       cd wikispeech-tts-wrappers/piper_server
+       uv venv
+       source .venv/bin/activate
+       if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+       # workaround for pytorch
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
+       
+       uvicorn textproc_server:app --env-file config_minimal.env --port 8010 &
+
 
     - name: Ping servers
       run: |
-       curl -f http://localhost:8771/ping  # symbolset/mapper
-       curl -f http://localhost:8780/ping  # pronlex/lexserver
+       #curl -f http://localhost:8771/ping  # symbolset/mapper
+       #curl -f http://localhost:8780/ping  # pronlex/lexserver
        curl -f http://localhost:8011/ping  # textproc
+       curl -f http://localhost:8010/ping  # piper
        # curl -f http://localhost:8009/ping  # matcha
-       # curl -f http://localhost:8010/ping  # piper
        # curl -f http://localhost:10000/ping # wikispeech-server
  
 
