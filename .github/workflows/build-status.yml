@@ -177,4 +177,8 @@ jobs:
        # curl -f http://localhost:10000/ping # wikispeech-server
        #echo ""
  
+    - name: Wikispeech log
+      run: |
+       # Wikispeech log
+       tail -200 wikispeech.log
 
