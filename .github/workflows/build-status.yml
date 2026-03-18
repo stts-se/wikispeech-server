@@ -82,9 +82,10 @@ jobs:
       
     - name: Set up textproc
       run: |
-       cd wikispeech-tts-wrappers/textproc
+       cd wikispeech-tts-wrappers
        uv venv
        source .venv/bin/activate
+       cd textproc
        python -m pip install --upgrade pip
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        
@@ -109,9 +110,10 @@ jobs:
 
     - name: Set up piper
       run: |
-       cd wikispeech-tts-wrappers/piper_server
+       cd wikispeech-tts-wrappers
        uv venv
        source .venv/bin/activate
+       cd piper_server
        python -m pip install --upgrade pip
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        # workaround for pytorch
