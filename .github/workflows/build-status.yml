@@ -82,14 +82,14 @@ jobs:
        cd wikispeech-tts-wrappers
        uv venv
       
-    # - name: Set up textproc
-    #   run: |
-    #    cd wikispeech-tts-wrappers
-    #    source .venv/bin/activate
-    #    cd textproc
-    #    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Set up textproc
+      run: |
+       cd wikispeech-tts-wrappers
+       source .venv/bin/activate
+       uv pip install -r textproc/requirements.txt
        
-    #    uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
+       cd textproc
+       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
 
     # - name: Fetch models
     #   run: |
@@ -112,12 +112,11 @@ jobs:
       run: |
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
-       cd piper_server
        pip install torch --index-url https://download.pytorch.org/whl/cpu
-       if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+       uv pip install -r piper_server/requirements.txt
        # workaround for pytorch
-       ls ../.venv/lib/python3.*/site-packages
-       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' ../.venv/lib/python3.*/site-packages/dp/model/model.py
+       ls .venv/lib/python3.*/site-packages
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
        
        uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
 
