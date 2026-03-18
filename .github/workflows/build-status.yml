@@ -29,7 +29,6 @@ jobs:
 
     - name: Set up env
       run: |
-       echo "RELEASE=master" >> $GITHUB_ENV
        echo "LEXDATA_RELEASE=master" >> $GITHUB_ENV
 
     - name: Install dependencies for wikispeech-server
@@ -53,36 +52,38 @@ jobs:
     #  run: |
     #   pytest
     
-    - name: Set up symbolset/mapper + pronlex/lexserver
-      run: |
-       git clone https://github.com/stts-se/symbolset
-       git clone https://github.com/stts-se/pronlex
-       git clone https://github.com/stts-se/wikispeech-lexdata
+    # - name: Set up symbolset/mapper + pronlex/lexserver
+    #   run: |
+    #    git clone https://github.com/stts-se/symbolset
+    #    git clone https://github.com/stts-se/pronlex
+    #    git clone https://github.com/stts-se/wikispeech-lexdata
        
-       cd symbolset/server
-       bash setup.sh ../../wikispeech-lexdata ss_files
+    #    cd symbolset/server
+    #    bash setup.sh ../../wikispeech-lexdata ss_files
 
-       cd ../../pronlex
-       APPDIR=/tmp/appdir/sqlite
-       LOC=/tmp/appdir/sqlite
-       ENGINE=sqlite
-       PORT=8780
-       bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
-       bash scripts/import.sh -e $ENGINE -f ../wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+    #    cd ../../pronlex
+    #    APPDIR=/tmp/appdir/sqlite
+    #    LOC=/tmp/appdir/sqlite
+    #    ENGINE=sqlite
+    #    PORT=8780
+    #    bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
+    #    bash scripts/import.sh -e $ENGINE -f ../wikispeech-lexdata -a $APPDIR -r $LEXDATA_RELEASE -l $LOC
 
-    - name: Start symbolset/mapper server
-      run: |
-       cd pronlex
-       APPDIR=/tmp/appdir/sqlite
-       LOC=/tmp/appdir/sqlite
-       ENGINE=sqlite
-       PORT=8780
-       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
-
-    - name: Start pronlex/lexserver
-      run: |
-       cd symbolset/server
-       go run *.go -ss_files ss_files &
+    # - name: Start symbolset/mapper server
+    #   run: |
+    #    # Start symbolset/mapper server
+    #    cd symbolset/server
+    #    go run *.go -ss_files ss_files &
+       
+    # - name: Start pronlex/lexserver server
+    #   run: |
+    #    # Start pronlex/lexserver
+    #    cd pronlex
+    #    APPDIR=/tmp/appdir/sqlite
+    #    LOC=/tmp/appdir/sqlite
+    #    ENGINE=sqlite
+    #    PORT=8780
+    #    bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
     - name: Set up wikispeech-tts-wrappers
       run: |
@@ -135,14 +136,14 @@ jobs:
        uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
        sleep 2
 
-    # - name: Start matcha server
-    #   run: |
-    #    # Start matcha
-    #    cd wikispeech-tts-wrappers
-    #    source .venv/bin/activate
-    #    cd matcha_server
-    #    uvicorn matcha_server:app --env-file config_minimal.env --port 8009 &
-    #    sleep 20
+    - name: Start matcha server
+      run: |
+       # Start matcha
+       cd wikispeech-tts-wrappers
+       source .venv/bin/activate
+       cd matcha_server
+       uvicorn matcha_server:app --env-file config_minimal.env --port 8009 &
+       sleep 20
 
     - name: Start wikispeech-server
       run: |
@@ -155,11 +156,11 @@ jobs:
       run: |
        # Ping servers
 
-       curl -f http://localhost:8771/ping  # symbolset/mapper
-       echo ""
+       # curl -f http://localhost:8771/ping  # symbolset/mapper
+       # echo ""
        
-       curl -f http://localhost:8780/ping  # pronlex/lexserver
-       echo ""
+       # curl -f http://localhost:8780/ping  # pronlex/lexserver
+       # echo ""
        
        curl -f http://localhost:8011/ping  # textproc
        echo ""
@@ -167,8 +168,8 @@ jobs:
        curl -f http://localhost:8010/ping  # piper
        echo ""
        
-       #curl -f http://localhost:8009/ping  # matcha
-       #echo ""
+       curl -f http://localhost:8009/ping  # matcha
+       echo ""
        
        # curl -f http://localhost:10000/ping # wikispeech-server
        #echo ""
