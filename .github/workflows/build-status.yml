@@ -31,19 +31,20 @@ jobs:
       run: |
        echo "RELEASE=master" >> $GITHUB_ENV
 
-    # - name: Install dependencies
-    #   run: |
-    #     python -m pip install --upgrade pip
-    #     pip install flake8 pytest
-    #     if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    #     mkdir wikispeech_server/tmp
+    - name: Install dependencies
+      run: |
+        uv venv
+	source .venv/bin/activate
+        uv pip install flake8 pytest
+        uv pip install -r requirements.txt
+        mkdir -p wikispeech_server/tmp
 
-    # - name: Lint with flake8
-    #   run: |
-    #     # stop the build if there are Python syntax errors or undefined names
-    #     flake8 . --bug-report --count --select=E9,F63,F7,F82 --show-source --statistics
-    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-    #     flake8 . --bug-report --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --extend-ignore=E501,E266
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --bug-report --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --bug-report --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --extend-ignore=E501,E266
 
     #- name: Test with pytest
     #  run: |
@@ -131,6 +132,7 @@ jobs:
 
     - name: Ping servers
       run: |
+       sleep 30
        #curl -f http://localhost:8771/ping  # symbolset/mapper
        #curl -f http://localhost:8780/ping  # pronlex/lexserver
        curl -f http://localhost:8011/ping  # textproc
