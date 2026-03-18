@@ -52,31 +52,31 @@ jobs:
     #  run: |
     #   pytest
     
-    # - name: Set up symbolset/mapper
-    #   run: |
-    #    git clone https://github.com/stts-se/symbolset
-    #    cd symbolset
-    #    cd server
-    #    git clone https://github.com/stts-se/wikispeech-lexdata.git
-    #    cd wikispeech-lexdata
-    #    git checkout $RELEASE || echo "No such release for lexdata. Using master."
-    #    cd ..
-    #    bash setup.sh wikispeech-lexdata ss_files
+    - name: Set up symbolset/mapper
+      run: |
+       git clone https://github.com/stts-se/symbolset
+       cd symbolset
+       cd server
+       git clone https://github.com/stts-se/wikispeech-lexdata.git
+       cd wikispeech-lexdata
+       git checkout $RELEASE || echo "No such release for lexdata. Using master."
+       cd ..
+       bash setup.sh wikispeech-lexdata ss_files
        
-    #    go run *.go -ss_files ss_files &
+       go run *.go -ss_files ss_files &
        
-    # - name: Set up pronlex/lexserver
-    #   run: |
-    #    git clone https://github.com/stts-se/pronlex
-    #    cd pronlex
-    #    APPDIR=/tmp/appdir/sqlite
-    #    LOC=/tmp/appdir/sqlite
-    #    ENGINE=sqlite
-    #    PORT=8780
-    #    bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
-    #    bash scripts/import.sh -e $ENGINE -f wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+    - name: Set up pronlex/lexserver
+      run: |
+       git clone https://github.com/stts-se/pronlex
+       cd pronlex
+       APPDIR=/tmp/appdir/sqlite
+       LOC=/tmp/appdir/sqlite
+       ENGINE=sqlite
+       PORT=8780
+       bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
+       bash scripts/import.sh -e $ENGINE -f wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
        
-    #    bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
+       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
     - name: Set up wikispeech-tts-wrappers
       run: |
@@ -95,23 +95,25 @@ jobs:
        sed -i 's|\(plot_spectrogram_to_numpy.*\) f"{filename}.png")|\1 folder / f"{filename}.png")|' .venv/lib/python3.*/site-packages/matcha/cli.py
       
     - name: Fetch models
-      run: | # Fetch models
-        mkdir -p $HOME/.local/share/piper_tts
-        cd $HOME/.local/share/piper_tts
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx -o ar_JO-kareem-medium.onnx
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json -o ar_JO-kareem-medium.onnx.json
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx -o en_US-bryce-medium.onnx
-        curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json -o en_US-bryce-medium.onnx.json
+      run: |
+       # Fetch models
+       mkdir -p $HOME/.local/share/piper_tts
+       cd $HOME/.local/share/piper_tts
+       curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx -o ar_JO-kareem-medium.onnx
+       curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx.json -o ar_JO-kareem-medium.onnx.json
+       curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx -o en_US-bryce-medium.onnx
+       curl -f -L https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/bryce/medium/en_US-bryce-medium.onnx.json -o en_US-bryce-medium.onnx.json
 
-        mkdir -p $HOME/.local/share/matcha_tts
-        cd $HOME/.local/share/matcha_tts
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -o hifigan_T2_v1
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000 -o hifigan_univ_v1
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o matcha_ljspeech.ckpt
-        curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o matcha_vctk.ckpt
+       mkdir -p $HOME/.local/share/matcha_tts
+       cd $HOME/.local/share/matcha_tts
+       curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -o hifigan_T2_v1
+       curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000 -o hifigan_univ_v1
+       curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o matcha_ljspeech.ckpt
+       curl -f -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o matcha_vctk.ckpt
 
     - name: Start textproc server
-      run: | # Start textproc
+      run: |
+       # Start textproc
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd textproc
@@ -119,28 +121,32 @@ jobs:
        sleep 2
 
     - name: Start piper server
-      run: | # Start piper
+      run: |
+       # Start piper
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd piper_server
        uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
        sleep 2
 
-    - name: Start matcha server
-      run: | # Start matcha
-       cd wikispeech-tts-wrappers
-       source .venv/bin/activate
-       cd matcha_server
-       uvicorn matcha_server:app --env-file config_minimal.env --port 8009 &
-       sleep 20
+    # - name: Start matcha server
+    #   run: |
+    #    # Start matcha
+    #    cd wikispeech-tts-wrappers
+    #    source .venv/bin/activate
+    #    cd matcha_server
+    #    uvicorn matcha_server:app --env-file config_minimal.env --port 8009 &
+    #    sleep 20
 
     - name: Ping servers
-      run: | # Ping servers       
-       #curl -f http://localhost:8771/ping  # symbolset/mapper
-       #echo ""
+      run: |
+       # Ping servers
+
+       curl -f http://localhost:8771/ping  # symbolset/mapper
+       echo ""
        
-       #curl -f http://localhost:8780/ping  # pronlex/lexserver
-       #echo ""
+       curl -f http://localhost:8780/ping  # pronlex/lexserver
+       echo ""
        
        curl -f http://localhost:8011/ping  # textproc
        echo ""
@@ -148,8 +154,8 @@ jobs:
        curl -f http://localhost:8010/ping  # piper
        echo ""
        
-       curl -f http://localhost:8009/ping  # matcha
-       echo ""
+       #curl -f http://localhost:8009/ping  # matcha
+       #echo ""
        
        # curl -f http://localhost:10000/ping # wikispeech-server
        #echo ""
