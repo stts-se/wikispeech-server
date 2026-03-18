@@ -75,7 +75,7 @@ jobs:
        
     #    bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
-    - name: Clone wikispeech-tts-wrappers
+    - name: Set up wikispeech-tts-wrappers
       run: |
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -113,8 +113,10 @@ jobs:
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd piper_server
+       pip install torch --index-url https://download.pytorch.org/whl/cpu
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        # workaround for pytorch
+       ls ../.venv/lib/python3.*/site-packages
        sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' ../.venv/lib/python3.*/site-packages/dp/model/model.py
        
        uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
