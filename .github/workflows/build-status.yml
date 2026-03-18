@@ -64,10 +64,22 @@ jobs:
        cd symbolset/server
        go run *.go -ss_files ss_files &
        
+    - name: Install pronlex/lexserver
+      run: |
+       APPDIR=/tmp/appdir/sqlite
+       LOC=/tmp/appdir/sqlite
+       ENGINE=sqlite
+       PORT=8780
+       bash scripts/setup.sh -a $APPDIR -e sqlite -l $LOC
+       bash scripts/import.sh -e $ENGINE -f wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
+
+
+
     - name: Ping servers
       run: |
        curl -f http://localhost:8771/ping  # symbolset/mapper
-       # curl -f http://localhost:8780/ping  # pronlex
+       curl -f http://localhost:8780/ping  # pronlex/lexserver
        # curl -f http://localhost:8009/ping  # matcha
        # curl -f http://localhost:8010/ping  # piper
        # curl -f http://localhost:8011/ping  # textproc
