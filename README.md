@@ -3,14 +3,18 @@
 [![Build Status](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml)
 
 ## Prerequisites:
+**1. Install [uv](https://docs.astral.sh/uv/getting-started/installation) (optional)**
+
+**2. Set up `venv` and install requirements**
+
 ``` sh
 git clone https://github.com/stts-se/wikispeech-server.git
 cd wikispeech-server
 sudo apt install opus-tools
 
-python3 -m venv .venv
+uv venv
 source .venv/bin/activate
-python3 -m pip install -r requirements.txt
+uv pip install -r requirements.txt
 
 mkdir wikispeech_server/tmp
 ```
