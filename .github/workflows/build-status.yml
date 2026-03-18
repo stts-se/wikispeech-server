@@ -30,6 +30,7 @@ jobs:
     - name: Set up env
       run: |
        echo "RELEASE=master" >> $GITHUB_ENV
+       echo "LEXDATA_RELEASE=master" >> $GITHUB_ENV
 
     - name: Install dependencies
       run: |
@@ -52,30 +53,29 @@ jobs:
     #  run: |
     #   pytest
     
-    - name: Set up symbolset/mapper
+    - name: Set up symbolset/mapper + pronlex/lexserver
       run: |
        git clone https://github.com/stts-se/symbolset
-       cd symbolset
-       cd server
-       git clone https://github.com/stts-se/wikispeech-lexdata.git
-       cd wikispeech-lexdata
-       git checkout $RELEASE || echo "No such release for lexdata. Using master."
-       cd ..
-       bash setup.sh wikispeech-lexdata ss_files
-       
-       go run *.go -ss_files ss_files &
-       
-    - name: Set up pronlex/lexserver
-      run: |
        git clone https://github.com/stts-se/pronlex
-       cd pronlex
+       git clone https://github.com/stts-se/wikispeech-lexdata
+       
+       cd symbolset/server
+       bash setup.sh ../../wikispeech-lexdata ss_files
+
+       cd ../../pronlex
        APPDIR=/tmp/appdir/sqlite
        LOC=/tmp/appdir/sqlite
        ENGINE=sqlite
        PORT=8780
        bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
-       bash scripts/import.sh -e $ENGINE -f wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+       bash scripts/import.sh -e $ENGINE -f ../wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+
+    - name: Start symbolset/mapper + pronlex/lexserver
+      run: |
+       cd symbolset/server
+       go run *.go -ss_files ss_files &
        
+       cd ../pronlex
        bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
     - name: Set up wikispeech-tts-wrappers
