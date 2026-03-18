@@ -92,9 +92,11 @@ jobs:
        sudo apt install espeak-ng
        uv venv
        source .venv/bin/activate
-       #uv pip install -U torch==2.3.1
+       
+       # fix for circular dependency error with torch versions
        uv pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
        uv pip install torchvision==0.17.2
+       
        uv pip install -r textproc/requirements.txt
        uv pip install -r piper_server/requirements.txt
        uv pip install -r matcha_server/requirements.txt
