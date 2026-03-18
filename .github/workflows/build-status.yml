@@ -89,6 +89,7 @@ jobs:
       run: |
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        cd wikispeech-tts-wrappers
+       sudo apt install espeak-ng
        uv venv
        source .venv/bin/activate
        #uv pip install -U torch==2.3.1
