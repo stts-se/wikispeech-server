@@ -45,7 +45,7 @@ jobs:
     #  run: |
     #    pytest
     
-    - name: Install symbolset/mapper
+    - name: Set up symbolset/mapper
       run: |
        git clone https://github.com/stts-se/symbolset
        cd symbolset
@@ -58,31 +58,44 @@ jobs:
        git checkout $RELEASE || echo "No such release for lexdata. Using master."
        cd ..
        bash setup.sh wikispeech-lexdata ss_files
-
-    - name: Start symbolset/mapper server
-      run: |
-       cd symbolset/server
+       
+       cd server
        go run *.go -ss_files ss_files &
        
-    - name: Install pronlex/lexserver
+    - name: Set up pronlex/lexserver
       run: |
+       git clone https://github.com/stts-se/pronlex
+       cd pronlex
        APPDIR=/tmp/appdir/sqlite
        LOC=/tmp/appdir/sqlite
        ENGINE=sqlite
        PORT=8780
-       bash scripts/setup.sh -a $APPDIR -e sqlite -l $LOC
+       bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
        bash scripts/import.sh -e $ENGINE -f wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+       
        bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
+    - name: Set up textproc
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+      run: |
+       git clone https://github.com/stts-se/wikispeech-tts-wrappers
+       cd wikispeech-tts-wrappers/textproc
+       python -m pip install --upgrade pip
+       pip install flake8 pytest
+       if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+       
+       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &
 
 
     - name: Ping servers
       run: |
        curl -f http://localhost:8771/ping  # symbolset/mapper
        curl -f http://localhost:8780/ping  # pronlex/lexserver
+       curl -f http://localhost:8011/ping  # textproc
        # curl -f http://localhost:8009/ping  # matcha
        # curl -f http://localhost:8010/ping  # piper
-       # curl -f http://localhost:8011/ping  # textproc
        # curl -f http://localhost:10000/ping # wikispeech-server
  
 
