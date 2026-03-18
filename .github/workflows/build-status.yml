@@ -18,6 +18,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -76,9 +80,6 @@ jobs:
        bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
     - name: Set up textproc
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
       run: |
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        cd wikispeech-tts-wrappers/textproc
