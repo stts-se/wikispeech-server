@@ -1,4 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 name: Build Status
@@ -28,6 +27,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+	mkdir wikispeech_server/tmp
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -37,3 +37,31 @@ jobs:
     #- name: Test with pytest
     #  run: |
     #    pytest
+    - name: Install symbolset/mapper
+      run: |
+       git clone https://github.com/stts-se/symbolset
+       go build -v ./...
+       go test -v ./...
+       RELEASE=master
+       cd server
+       git clone https://github.com/stts-se/wikispeech-lexdata.git
+       cd wikispeech-lexdata
+       git checkout $RELEASE || echo "No such release for lexdata. Using master."
+       cd ..
+       bash setup.sh wikispeech-lexdata ss_files
+
+    - name: Start symbolset/mapper server
+      run: |
+       cd server
+       go run *.go -ss_files ss_files &
+       
+    - name: Ping servers
+      run: |
+       curl -f http://localhost:8771/ping  # symbolset/mapper
+       # curl -f http://localhost:8780/ping  # pronlex
+       # curl -f http://localhost:8009/ping  # matcha
+       # curl -f http://localhost:8010/ping  # piper
+       # curl -f http://localhost:8011/ping  # textproc
+       # curl -f http://localhost:10000/ping # wikispeech-server
+ 
+
