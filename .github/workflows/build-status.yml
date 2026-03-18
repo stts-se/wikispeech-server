@@ -76,11 +76,15 @@ jobs:
     #    bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &
 
     - name: Clone wikispeech-tts-wrappers
-      run: git clone https://github.com/stts-se/wikispeech-tts-wrappers
+      run: |
+       git clone https://github.com/stts-se/wikispeech-tts-wrappers
+       curl -LsSf https://astral.sh/uv/install.sh | sh
       
     - name: Set up textproc
       run: |
        cd wikispeech-tts-wrappers/textproc
+       uv venv
+       source .venv/bin/activate
        python -m pip install --upgrade pip
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        
@@ -106,14 +110,14 @@ jobs:
     - name: Set up piper
       run: |
        cd wikispeech-tts-wrappers/piper_server
-       python -m venv .venv
+       uv venv
        source .venv/bin/activate
        python -m pip install --upgrade pip
        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
        # workaround for pytorch
        sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
        
-       uvicorn textproc_server:app --env-file config_minimal.env --port 8010 &
+       uvicorn piper_server:app --env-file config_minimal.env --port 8010 &
 
 
     - name: Ping servers
