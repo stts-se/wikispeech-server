@@ -1,7 +1,6 @@
 # Server for wikispeech TTS
 
-[![Build Status](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status.yml)
-<!-- [![Build Status](https://travis-ci.com/stts-se/wikispeech-server.svg?branch=master)](https://app.travis-ci.com/stts-se/wikispeech-server) -->
+[![Build Status](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml)
 
 ## Prerequisites:
 ``` sh
