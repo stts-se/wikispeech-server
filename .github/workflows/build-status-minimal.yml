@@ -157,7 +157,7 @@ jobs:
        source .venv/bin/activate
        python3 bin/wikispeech .github/workflows/ws-config-minimal.conf &> wikispeech.log &
        sleep 2
-       
+ 
    - name: Log files
       run: |
        # Log files
