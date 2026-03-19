@@ -158,6 +158,16 @@ jobs:
        python3 bin/wikispeech .github/workflows/ws-config-minimal.conf &> wikispeech.log &
        sleep 2
 
+    - name: Log files
+      run: |
+       # Log files
+       cat mapper.log
+       cat pronlex.log
+       cat textproc.log
+       cat piper.log
+       cat matcha.log
+       cat wikispeech.log
+
     - name: Ping servers
       run: |
        # Ping servers
@@ -179,14 +189,3 @@ jobs:
        
        curl -f http://localhost:10000/ping # wikispeech-server
        echo ""
- 
-    - name: Log files
-      run: |
-       # Log files
-       cat mapper.log
-       cat pronlex.log
-       cat textproc.log
-       cat piper.log
-       cat matcha.log
-       cat wikispeech.log
-
