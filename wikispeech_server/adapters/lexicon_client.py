@@ -181,7 +181,7 @@ class Lexicon(object):
             r = requests.get(url)
             response = r.text
             if r.status_code != 200:
-                msg = "Unable to createlexicon client for %s at url %s. Response status_code: %s, Response string: %s" % (self.lexicon_name, self.base_url, r.status_code, response)
+                msg = "Unable to createlexicon client for %s at url %s. Response status_code: %s, Response string: %s" % (self.lexicon_name, url, r.status_code, response)
                 log.error(msg)
                 raise LexiconException(msg)
                 
@@ -198,11 +198,11 @@ class Lexicon(object):
                 raise LexiconException(msg)
                 
         except json.JSONDecodeError:
-            msg = "Unable to create lexicon client for %s at url %s. Response was: %s" % (self.lexicon_name, self.base_url, response)
+            msg = "Unable to create lexicon client for %s at url %s. Response was: %s" % (self.lexicon_name, url, response)
             log.error(msg)
             raise LexiconException(msg)
         except Exception as e:
-            msg = "Unable to create lexicon client for %s at url %s. Reason: %s" % (self.lexicon_name, self.base_url, e)
+            msg = "Unable to create lexicon client for %s at url %s. Reason: %s" % (self.lexicon_name, url, e)
             log.warning(msg)
             raise LexiconException(msg)
 

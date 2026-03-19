@@ -178,6 +178,10 @@ jobs:
        curl -f http://localhost:8780/ping  # pronlex/lexserver
        echo ""
        
+       echo "List lexicons (debug)"
+       curl -f http://localhost:8780/lexicon/list
+       echo ""
+       
        curl -f http://localhost:8011/ping  # textproc
        echo ""
 
