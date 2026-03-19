@@ -83,7 +83,6 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
         "speaker_id": speaker_id,
         "return_type":"json",
     }
-
     r = requests.post(url, json=params)
     if not r.ok:
         from http.client import responses
