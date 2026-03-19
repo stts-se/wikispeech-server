@@ -177,8 +177,8 @@ jobs:
        curl -f http://localhost:8009/ping  # matcha
        echo ""
        
-       # curl -f http://localhost:10000/ping # wikispeech-server
-       #echo ""
+       curl -f http://localhost:10000/ping # wikispeech-server
+       echo ""
  
     - name: Log files
       run: |
