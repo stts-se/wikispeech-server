@@ -155,7 +155,7 @@ def genStartedAtString():
 
 #These are set when running the server
 startedAt = genStartedAtString()
-vInfo = versionInfo()
+vInfo = "n/a" # versionInfo()
 
 
 
