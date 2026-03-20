@@ -23,22 +23,25 @@ def textproc(lang, cconfig, input, input_type="text"):
         params = {
             "name": cconfig["name"],
             "input_type":input_type,
-            "input":input,
+            "input": [{
+                    "type": "text",
+                    "text": input
+                }]
         }
+        log.debug(f"text input converted: {params['input']}")
         requrl = f"{url}?input={input}&name={cconfig['name']}&input_type={input_type}"
+        r = requests.get(requrl)
     elif input_type == "ssml":
         input_converted = mapSSMLToTextproc(input, lang, cconfig)
         log.debug(f"ssml input converted: {input_converted}")
         params = {
             "name": cconfig["name"],
             "input_type":"tokens",
-            "input":input_converted,
+            "input":input_converted
         }
-        requrl = f"{url}?input={input_converted}&name={cconfig['name']}&input_type={'tokens'}"
+        #requrl = f"{url}?input={input_converted}&name={cconfig['name']}&input_type={'tokens'}"
+        r = requests.post(url, json=params)
 
-    # TODO: should be post
-    r = requests.get(requrl)
-    #r = requests.post(url, params=params)
     if not r.ok:
         from http.client import responses
         raise Exception(f"Textproc request returned status code {r.status_code} {responses[r.status_code]}")
@@ -65,10 +68,7 @@ def mapSSMLToTextprocOLD(ssml, lang, tp_config):
 
 
 def mapSSMLToTextproc(ssml_string, lang, tp_config):
-    """
-    Parse SSML and return the resolved plain text.
-    Handles <sub alias="..."> tags.
-    """
+    print("textproc_adapter SSML input", ssml_string)
     root = ET.fromstring(ssml_string)
 
     def extract(node):
@@ -92,6 +92,18 @@ def mapSSMLToTextproc(ssml_string, lang, tp_config):
                         "text": text,
                         "type": "alias",
                         "alias": alias
+                    })
+                else:
+                    extract(child)
+            if child.tag == "phoneme":
+                # Use alias if present, otherwise fallback to inner text
+                trans = child.attrib.get("ph")
+                if trans:
+                    text = child.text.strip().lstrip()
+                    parts.append({
+                        "text": text,
+                        "type": "phonemes",
+                        "phonemes": trans
                     })
                 else:
                     extract(child)

@@ -273,11 +273,8 @@ def wikispeech():
             xmllang = "en-US"
         else:
             xmllang = lang
-        input = """<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.w3.org/2001/10/synthesis
-                   http://www.w3.org/TR/speech-synthesis/synthesis.xsd"
-         xml:lang="%s">
+        input = input.replace("\"","&quot;")
+        input = """<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="%s">
     <phoneme alphabet="ipa" ph="%s">%s</phoneme>
 </speak>""" % (xmllang, input, "word")
         input_type = "ssml"
