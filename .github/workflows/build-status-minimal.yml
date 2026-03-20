@@ -83,7 +83,7 @@ jobs:
        APPDIR=/tmp/appdir/sqlite
        LOC=/tmp/appdir/sqlite
        ENGINE=sqlite
-       PORT=8780
+       PORT=8787
        bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &> ../pronlex.log &
 
     - name: Set up wikispeech-tts-wrappers
@@ -162,46 +162,52 @@ jobs:
     - name: Log files
       run: |
        # Log files
-       echo "cat mapper.log"
+       echo "> cat mapper.log"
        cat mapper.log
  
-       echo "cat pronlex.log"
+       echo "> cat pronlex.log"
        cat pronlex.log
  
-       echo "cat textproc.log"
+       echo "> cat textproc.log"
        cat textproc.log
  
-       echo "cat piper.log"
+       echo "> cat piper.log"
        cat piper.log
  
-       echo "cat matcha.log"
+       echo "> cat matcha.log"
        cat matcha.log
  
-       echo "cat wikispeec.log"
+       echo "> cat wikispeec.log"
        cat wikispeech.log
 
     - name: Ping servers
       run: |
        # Ping servers
 
+       echo "> Ping symbolset/mapper"
        curl -f http://localhost:8771/ping  # symbolset/mapper
        echo ""
-       
+
+       echo "> Ping pronlex/lexserver"
        curl -f http://localhost:8780/ping  # pronlex/lexserver
        echo ""
-       
-       echo "List lexicons (debug)"
+
+       echo "> List lexicons (debug)"
        curl -f http://localhost:8787/lexicon/list
        echo ""
-       
+
+       echo "> Ping textproc"
        curl -f http://localhost:8011/ping  # textproc
        echo ""
 
+       echo "> Ping piper"
        curl -f http://localhost:8010/ping  # piper
        echo ""
-       
+
+       echo "> Ping matcha"
        curl -f http://localhost:8009/ping  # matcha
        echo ""
-       
+
+       echo "> Ping wikispeech-server"
        curl -f http://localhost:10000/ping # wikispeech-server
        echo ""
