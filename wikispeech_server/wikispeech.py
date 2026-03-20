@@ -411,7 +411,6 @@ def textprocessing_options():
     return resp
 
 
-
 @app.route('/textprocessing/', methods=["GET", "POST"])
 def textprocessing():
     lang = getParam("lang")
@@ -419,6 +418,7 @@ def textprocessing():
     input_type = getParam("input_type", "text")
     output_type = getParam("output_type", "json")
     input = getParam("input")
+    log.debug(f"textprocssing input: {lang} {textprocessor_name} {input_type} {input}")
 
     if lang == None or input == None:
         options = getTextprocessingOptions()

@@ -1,6 +1,7 @@
 import sys, requests, json, re
 import sys, os, re, io
 
+import xml.etree.ElementTree as ET
 
 if __name__ == "__main__":
     sys.path.append(".")
@@ -26,7 +27,8 @@ def textproc(lang, cconfig, input, input_type="text"):
         }
         requrl = f"{url}?input={input}&name={cconfig['name']}&input_type={input_type}"
     elif input_type == "ssml":
-        input_converted = mapSsmlTranscriptionsToTextproc(input, lang, cconfig)
+        input_converted = mapSSMLToTextproc(input, lang, cconfig)
+        log.debug(f"ssml input converted: {input_converted}")
         params = {
             "name": cconfig["name"],
             "input_type":"tokens",
@@ -42,12 +44,12 @@ def textproc(lang, cconfig, input, input_type="text"):
         raise Exception(f"Textproc request returned status code {r.status_code} {responses[r.status_code]}")
     
     obj = r.json()
-    log.debug("textproc adapter output: %s" % obj)
+    log.debug("textproc adapter output: %s" % json.dumps(obj, indent=4))
     res = mapFromTextprocUtt(obj)
-    log.debug("textproc adapter output converted: %s" % res)
+    log.debug("textproc adapter output converted: %s" % json.dumps(res, indent=4))
     return res
 
-def mapSsmlTranscriptionsToTextproc(ssml, lang, tp_config):
+def mapSSMLToTextprocOLD(ssml, lang, tp_config):
     #.+? means shortest match
     phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
     for element in phoneme_elements:
@@ -61,6 +63,71 @@ def mapSsmlTranscriptionsToTextproc(ssml, lang, tp_config):
 
         ssml = re.sub(trans, trans, ssml)
 
+
+def mapSSMLToTextproc(ssml_string, lang, tp_config):
+    """
+    Parse SSML and return the resolved plain text.
+    Handles <sub alias="..."> tags.
+    """
+    root = ET.fromstring(ssml_string)
+
+    def extract(node):
+        parts = []
+
+        if node.text:
+            text = node.text.strip().lstrip()
+            if len(text) > 0:
+                parts.append({
+                    "text": text,
+                    "type": "text"
+                })
+        
+        for child in node:
+            if child.tag == "sub":
+                # Use alias if present, otherwise fallback to inner text
+                alias = child.attrib.get("alias")
+                if alias:
+                    text = child.text.strip().lstrip()
+                    parts.append({
+                        "text": text,
+                        "type": "alias",
+                        "alias": alias
+                    })
+                else:
+                    extract(child)
+            elif child.text:
+                text = child.text.strip().lstrip()
+                if len(text) > 0:
+                    parts.append({
+                        "text": text,
+                        "type": "text"
+                    })
+            else:
+                raise IOException(f"Cannot handle nested input: {child}")
+
+            # Tail text (after child)
+            if child.tail:
+                text = child.tail.lstrip()
+                parts.append({
+                    "text": text,
+                    "type": "text"
+                })
+
+        return parts
+
+    return extract(root)    
+
+# <speak xml:lang="sv" version="1.0" xmlns="http:\\/\\/www.w3.org\\/2001\\/10\\/synthesis" xmlns:xsi="http:\\/\\/www.w3.org\\/2001\\/XMLSchema-instance" xsi:schemalocation="http:\\/\\/www.w3.org\\/2001\\/10\\/synthesis http:\\/\\/www.w3.org\\/TR\\/speech-synthesis\\/synthesis.xsd">
+# "All Apologies" hamnade p\\u00e5 plats sju \\u00f6ver de <sub alias="tjugo">
+# 20<\\/sub>
+#  mest spelade Nirvana-l\\u00e5tarna n\\u00e5gonsin i Storbritannien, vilket var en lista framtagen av Phonographic Performance Limited f\\u00f6r att hedra Cobains <sub alias="femtio">
+# 50<\\/sub>
+# -\\u00e5rsdag den <sub alias="tjugonde februari tjugo hundra sjutton">
+# 20 februari 2017<\\/sub>
+# .<\\/speak>
+# ",
+    
+        
     log.debug("MAPPED SSML: %s" % ssml)
     return ssml
 
@@ -69,16 +136,22 @@ def mapSsmlTranscriptionsToTextproc(ssml, lang, tp_config):
 def mapFromTextprocUtt(obj):
     tokens = []
     for i, t0 in enumerate(obj["tokens"]):
+        words = []
+        for w0 in t0["words"]:
+            w = { "orth": w0["word"]}
+            # flake8: noqa            
+            if "prepunct" in w0:
+                w["prepunct"] = w0["prepunct"]
+            # flake8: noqa            
+            if "postpunct" in w0:
+                w["postpunct"] = w0["postpunct"]
+            words.append(w)
         tok = {
             "name": f"token{i}",
-            "orth": t0["input"],
-            "words": [{
-                "orth": t0["converted"]
-            }]
+            "input_orth": t0["text"],
+            #"orth": t0["input"],
+            "words": words
         }
-        # flake8: noqa            
-        if "punct" in t0:
-            tok["punct"]: t0["punct"]
         tokens.append(tok)
 
     res = {
@@ -88,6 +161,7 @@ def mapFromTextprocUtt(obj):
             "sentences": [{
                 "name": "sent1",
                 "phrases": [{
+                    "input_orth": obj["input"],
                     "name": "phrase1",
                     "tokens": tokens
                 }]

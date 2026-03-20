@@ -48,6 +48,7 @@ def getVoicenames(response):
 
 def utt2matcha(input,lang,voice_config):
     chunks = []
+    wid=0
     for p0 in input["paragraphs"]:
         for s in p0["sentences"]:
             for p in s["phrases"]:
@@ -55,8 +56,10 @@ def utt2matcha(input,lang,voice_config):
                 for t in p["tokens"]:
                     for w in t["words"]:
                         token = {
-                            "orth": w["orth"]
+                            "orth": w["orth"],
+                            "id": wid
                         }
+                        wid+=1
                         if "trans" in w:
                             inputTrans = w['trans']
                             trans = mapToMatcha(inputTrans,lang,voice_config)
