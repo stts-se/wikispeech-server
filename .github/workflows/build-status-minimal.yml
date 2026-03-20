@@ -30,6 +30,11 @@ jobs:
     - name: Set up env
       run: |
        echo "LEXDATA_RELEASE=master" >> $GITHUB_ENV
+       echo "LEXSERVER_PORT=8787" >> $GITHUB_ENV
+       echo "TEXTPROC_PORT=8011" >> $GITHUB_ENV
+       echo "PIPER_PORT=8010" >> $GITHUB_ENV
+       echo "MATCHA_PORT=8009" >> $GITHUB_ENV
+       echo "WIKISPEECH_PORT=10000" >> $GITHUB_ENV
 
     - name: Install dependencies for wikispeech-server
       run: |
@@ -82,8 +87,7 @@ jobs:
        APPDIR=/tmp/appdir/sqlite
        LOC=/tmp/appdir/sqlite
        ENGINE=sqlite
-       PORT=8787
-       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $PORT &> ../pronlex.log &
+       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $LEXSERVER_PORT &> ../pronlex.log &
 
     - name: Set up wikispeech-tts-wrappers
       run: |
@@ -129,7 +133,7 @@ jobs:
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd textproc
-       uvicorn textproc_server:app --env-file config_sample.env --port 8011 &> ../../textproc.log &
+       uvicorn textproc_server:app --env-file config_sample.env --port $TEXTPROC_PORT &> ../../textproc.log &
        sleep 2
 
     - name: Start piper server
@@ -138,7 +142,7 @@ jobs:
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd piper_server
-       uvicorn piper_server:app --env-file config_minimal.env --port 8010 &> ../../piper.log & 
+       uvicorn piper_server:app --env-file config_minimal.env --port $PIPER_PORT &> ../../piper.log & 
        sleep 2
 
     - name: Start matcha server
@@ -147,7 +151,7 @@ jobs:
        cd wikispeech-tts-wrappers
        source .venv/bin/activate
        cd matcha_server
-       uvicorn matcha_server:app --env-file config_minimal.env --port 8009 &> ../../matcha.log &
+       uvicorn matcha_server:app --env-file config_minimal.env --port $MATCHA_PORT &> ../../matcha.log &
        sleep 20
 
     - name: Start wikispeech-server
@@ -188,21 +192,21 @@ jobs:
        echo ""
 
        echo "> Ping pronlex/lexserver"
-       curl -f http://localhost:8787/ping  # pronlex/lexserver
+       curl -f http://localhost:$LEXSERVER_PORT/ping  # pronlex/lexserver
        echo ""
 
        echo "> Ping textproc"
-       curl -f http://localhost:8011/ping  # textproc
+       curl -f http://localhost:$TEXTPROC_PORT/ping  # textproc
        echo ""
 
        echo "> Ping piper"
-       curl -f http://localhost:8010/ping  # piper
+       curl -f http://localhost:$PIPER_PORT/ping  # piper
        echo ""
 
        echo "> Ping matcha"
-       curl -f http://localhost:8009/ping  # matcha
+       curl -f http://localhost:$MATCHA_PORT/ping  # matcha
        echo ""
 
        echo "> Ping wikispeech-server"
-       curl -f http://localhost:10000/ping # wikispeech-server
+       curl -f http://localhost:$WIKISPEECH_PORT/ping # wikispeech-server
        echo ""
