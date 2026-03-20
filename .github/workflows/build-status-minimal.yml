@@ -162,11 +162,22 @@ jobs:
     - name: Log files
       run: |
        # Log files
+       echo "cat mapper.log"
        cat mapper.log
+ 
+       echo "cat pronlex.log"
        cat pronlex.log
+ 
+       echo "cat textproc.log"
        cat textproc.log
+ 
+       echo "cat piper.log"
        cat piper.log
+ 
+       echo "cat matcha.log"
        cat matcha.log
+ 
+       echo "cat wikispeec.log"
        cat wikispeech.log
 
     - name: Ping servers
@@ -179,9 +190,9 @@ jobs:
        curl -f http://localhost:8780/ping  # pronlex/lexserver
        echo ""
        
-       #echo "List lexicons (debug)"
-       #curl -f http://localhost:8780/lexicon/list
-       #echo ""
+       echo "List lexicons (debug)"
+       curl -f http://localhost:8787/lexicon/list
+       echo ""
        
        curl -f http://localhost:8011/ping  # textproc
        echo ""
