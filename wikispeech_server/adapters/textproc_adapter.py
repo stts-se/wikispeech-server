@@ -95,7 +95,7 @@ def mapSSMLToTextproc(ssml_string, lang, tp_config):
                     })
                 else:
                     extract(child)
-            if child.tag == "phoneme":
+            elif child.tag == "phoneme":
                 # Use alias if present, otherwise fallback to inner text
                 trans = child.attrib.get("ph")
                 if trans:
