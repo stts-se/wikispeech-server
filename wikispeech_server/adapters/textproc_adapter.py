@@ -67,8 +67,10 @@ def mapSSMLToTextprocOLD(ssml, lang, tp_config):
         ssml = re.sub(trans, trans, ssml)
 
 
+xmlns_re = re.compile('xmlns="[^"]+"')
 def mapSSMLToTextproc(ssml_string, lang, tp_config):
     print("textproc_adapter SSML input", ssml_string)
+    ssml_string = xmlns_re.sub("", ssml_string) 
     root = ET.fromstring(ssml_string)
 
     def extract(node):
@@ -99,7 +101,10 @@ def mapSSMLToTextproc(ssml_string, lang, tp_config):
                 # Use alias if present, otherwise fallback to inner text
                 trans = child.attrib.get("ph")
                 if trans:
-                    text = child.text.strip().lstrip()
+                    text = child.text
+                    if text is None:
+                        text = ""
+                    text = text.strip().lstrip()
                     parts.append({
                         "text": text,
                         "type": "phonemes",
@@ -149,6 +154,7 @@ def mapFromTextprocUtt(obj):
     tokens = []
     for i, t0 in enumerate(obj["tokens"]):
         words = []
+        mtu = False
         for w0 in t0["words"]:
             w = { "orth": w0["word"]}
             # flake8: noqa            
@@ -157,6 +163,10 @@ def mapFromTextprocUtt(obj):
             # flake8: noqa            
             if "postpunct" in w0:
                 w["postpunct"] = w0["postpunct"]
+            if "phonemes" in w0:
+                mtu=True
+                w["trans"] = w0["phonemes"]
+                w["g2p_method"] = "ssml"
             words.append(w)
         tok = {
             "name": f"token{i}",
@@ -164,6 +174,8 @@ def mapFromTextprocUtt(obj):
             #"orth": t0["input"],
             "words": words
         }
+        if mtu:
+            tok["mtu"] = True
         tokens.append(tok)
 
     res = {

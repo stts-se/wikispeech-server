@@ -283,7 +283,7 @@ def wikispeech():
         input = input.replace("\"","&quot;")
         input = """<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="%s">
     <phoneme alphabet="ipa" ph="%s">%s</phoneme>
-</speak>""" % (xmllang, input, "word")
+</speak>""" % (xmllang, input, "")
         input_type = "ssml"
     
 
@@ -559,6 +559,7 @@ def mapIpaInput(ssml, textprocessor, sampa=None):
             else:
                 raise ValueError(response_json)
 
+            sampa_trans = sampa_trans.replace("\"","&quot;")
             ssml = re.sub('alphabet="ipa"', 'alphabet="x-sampa"', ssml)        
             ssml = re.sub(ipa_trans, sampa_trans, ssml)
     log.debug("mapIpaInput returns %s" % ssml)

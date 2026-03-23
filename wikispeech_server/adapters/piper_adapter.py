@@ -141,7 +141,7 @@ def mapToPiper(trans,lang,voice):
     #log.debug("RESPONSE: %s" % response)
     try:
         response_json = json.loads(response)
-        #log.debug("RESPONSE_JSON: %s" % response_json)
+        log.debug("RESPONSE_JSON: %s" % response_json)
         new_trans = response_json["result"]
         new_trans = new_trans.replace(".","") # TODO should be added to map table, but it's not allowed atm jan 2026 /HL
     except:

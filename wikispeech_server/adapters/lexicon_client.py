@@ -78,7 +78,7 @@ def getTokens(utt):
                     if "mtu" in token and token["mtu"] == True:
                         for word in token["words"]:
                             #log.debug("SKIPPING %s" % word)
-                            if "g2p_method" in word:
+                            if "g2p_method" not in word:
                                 tokenlist.append(word)
                     else:
 
