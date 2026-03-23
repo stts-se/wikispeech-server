@@ -101,7 +101,7 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     log.info("piper AUDIO_URL: %s" % audio_url)
 
     tokens = []
-    for token in res["input"]:
+    for token in res["tokens"]:
         if "end_time" in token:
             token["endtime"] = token["end_time"]
             token.pop("end_time")
