@@ -94,7 +94,7 @@ jobs:
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        cd wikispeech-tts-wrappers
        sudo apt install espeak-ng
-       uv venv -python 3.10
+       uv venv --python 3.10
        source .venv/bin/activate
        
        # fix for circular dependency error with torch versions
