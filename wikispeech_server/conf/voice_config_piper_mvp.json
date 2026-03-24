@@ -1,0 +1,65 @@
+{
+    "textprocessor_configs": [
+	{
+	    "name":"piper_textproc_sv",
+	    "lang":"sv",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "sv_se_1",
+		    "mapper": {
+			"from":"sv-se_ws-sampa",
+			"to":"sv-se_matcha_ipa_from_ws"
+		    }
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"sv_se_braxen_lex:sv-se.braxen"
+		}
+	    ]
+	}
+    ],
+    
+    "voice_configs": [
+	{
+            "lang":"en",
+            "name":"en_US-bryce-medium",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
+	    "skip_test": false
+	},
+	{
+            "lang":"ar",
+            "name":"ar_JO-kareem-medium",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
+	    "skip_test": false
+	},
+	{
+            "lang":"sv",
+            "name":"sv_vc_male_mart2nik_p",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
+	    "skip_test": false,
+	    "mapper": {
+		"from":"sv-se_ws-sampa",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	},
+	{
+            "lang":"sv",
+            "name":"sv_vc_female_mart2han_p",
+            "engine":"piper",
+            "adapter":"adapters.piper_adapter",
+	    "skip_test": false,
+	    "default": true,
+	    "mapper": {
+		"from":"sv-se_ws-sampa",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	}
+    ]
+}
