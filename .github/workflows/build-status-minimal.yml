@@ -109,14 +109,14 @@ jobs:
     - name: Set up textproc
       run: |
        cd wikispeech-tts-wrappers/textproc
-       uv venv --python 3.10
+       uv venv
        source .venv/bin/activate
        uv pip install -r requirements.txt
 
     - name: Set up piper
       run: |
        cd wikispeech-tts-wrappers/piper_server
-       uv venv --python 3.10
+       uv venv
        source .venv/bin/activate
        uv pip install torch --index-url https://download.pytorch.org/whl/cpu
        # fix for circular dependency error with torch versions
