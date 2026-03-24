@@ -946,7 +946,9 @@ def getTextprocessorByName(textprocessor_name, lang):
             #break #returns the first tp matching lang
             if "default" in tp and tp["default"] == True:
                 return textprocessor # returns the first 'default'.
-        #If no 'default', returns first tp matching lang 
+        #If no 'default', returns first tp matching lang
+        if len(tp_configs) == 0:
+            raise Exception(f"No text processor {textprocessor_name} for lang {lang}")
         return tp_configs[0]
     else:
         for tp in tp_configs:
