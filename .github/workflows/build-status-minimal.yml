@@ -89,26 +89,44 @@ jobs:
        ENGINE=sqlite
        bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $LEXSERVER_PORT &> ../pronlex.log &
 
-    - name: Set up wikispeech-tts-wrappers
+    - name: Basic setup for wikispeech-tts-wrappers
       run: |
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
-       cd wikispeech-tts-wrappers
        sudo apt install espeak-ng
+
+    - name: Set up matcha
+      run: |
+       cd wikispeech-tts-wrappers/matcha_server
        uv venv --python 3.10
        source .venv/bin/activate
-       
-       # fix for circular dependency error with torch versions
-       uv pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
-       uv pip install torchvision==0.17.2
-       
-       uv pip install -r textproc/requirements.txt
-       uv pip install -r piper_server/requirements.txt
-       uv pip install -r matcha_server/requirements.txt
+       uv pip install -r requirements.txt
        # workaround for pytorch
        sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
        # workarounds for matcha
        sed -i 's/MatchaTTS.load_from_checkpoint(checkpoint_path, map_location=device)/MatchaTTS.load_from_checkpoint(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/matcha/cli.py
        sed -i 's|\(plot_spectrogram_to_numpy.*\) f"{filename}.png")|\1 folder / f"{filename}.png")|' .venv/lib/python3.*/site-packages/matcha/cli.py
+
+    - name: Set up textproc
+      run: |
+       cd wikispeech-tts-wrappers/textproc
+       uv venv --python 3.10
+       source .venv/bin/activate
+       uv pip install -r requirements.txt
+
+    - name: Set up piper/matcha_server
+      run: |
+       cd wikispeech-tts-wrappers
+       uv venv --python 3.10
+       source .venv/bin/activate
+       uv pip install torch --index-url https://download.pytorch.org/whl/cpu
+       uv pip install -r requirements.txt
+       # workaround for pytorch
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
+       
+       # fix for circular dependency error with torch versions
+       #uv pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
+       # workaround for pytorch
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
       
     - name: Fetch models
       run: |
