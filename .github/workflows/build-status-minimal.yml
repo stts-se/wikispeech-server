@@ -180,7 +180,7 @@ jobs:
        echo "> cat matcha.log"
        cat matcha.log
  
-       echo "> cat wikispeec.log"
+       echo "> cat wikispeech.log"
        cat wikispeech.log
 
     - name: Ping servers
