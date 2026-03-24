@@ -89,7 +89,7 @@ jobs:
        ENGINE=sqlite
        bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $LEXSERVER_PORT &> ../pronlex.log &
 
-    - name: Basic setup for wikispeech-tts-wrappers
+    - name: Initial setup for wikispeech-tts-wrappers
       run: |
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        sudo apt install espeak-ng
@@ -146,27 +146,24 @@ jobs:
     - name: Start textproc server
       run: |
        # Start textproc
-       cd wikispeech-tts-wrappers
+       cd wikispeech-tts-wrappers/textproc
        source .venv/bin/activate
-       cd textproc
        uvicorn textproc_server:app --env-file config_sample.env --port $TEXTPROC_PORT &> ../../textproc.log &
        sleep 2
 
     - name: Start piper server
       run: |
        # Start piper
-       cd wikispeech-tts-wrappers
+       cd wikispeech-tts-wrappers/piper_server
        source .venv/bin/activate
-       cd piper_server
        uvicorn piper_server:app --env-file config_minimal.env --port $PIPER_PORT &> ../../piper.log & 
        sleep 2
 
     - name: Start matcha server
       run: |
        # Start matcha
-       cd wikispeech-tts-wrappers
+       cd wikispeech-tts-wrappers/matcha_server
        source .venv/bin/activate
-       cd matcha_server
        uvicorn matcha_server:app --env-file config_minimal.env --port $MATCHA_PORT &> ../../matcha.log &
        sleep 20
 
