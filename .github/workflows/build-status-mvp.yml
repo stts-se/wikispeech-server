@@ -1,0 +1,202 @@
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Build Status Minimal
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: Set up env
+      run: |
+       echo "LEXDATA_RELEASE=master" >> $GITHUB_ENV
+       echo "LEXSERVER_PORT=8787" >> $GITHUB_ENV
+       echo "TEXTPROC_PORT=8011" >> $GITHUB_ENV
+       echo "PIPER_PORT=8010" >> $GITHUB_ENV
+       echo "WIKISPEECH_PORT=10000" >> $GITHUB_ENV
+
+    - name: Install dependencies for wikispeech-server
+      run: |
+       curl -LsSf https://astral.sh/uv/install.sh | sh
+       sudo apt install opus-tools
+       uv venv
+       source .venv/bin/activate
+       uv pip install flake8 pytest
+       uv pip install -r requirements.txt
+       mkdir -p wikispeech_server/tmp
+
+    - name: Lint with flake8
+      run: |
+       source .venv/bin/activate
+       # stop the build if there are Python syntax errors or undefined names
+       flake8 . --bug-report --count --select=E9,F63,F7,F82 --show-source --statistics
+       # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+       flake8 . --bug-report --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --extend-ignore=E501,E266
+
+    #- name: Test with pytest
+    #  run: |
+    #   pytest
+    
+    - name: Set up symbolset/mapper + pronlex/lexserver
+      run: |
+       git clone https://github.com/stts-se/symbolset
+       git clone https://github.com/stts-se/pronlex
+       git clone https://github.com/stts-se/wikispeech-lexdata
+       
+       cd symbolset/server
+       bash setup.sh ../../wikispeech-lexdata ss_files
+
+       cd ../../pronlex
+       APPDIR=/tmp/appdir/sqlite
+       LOC=/tmp/appdir/sqlite
+       ENGINE=sqlite
+       bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
+       bash scripts/import.sh -e $ENGINE -f ../wikispeech-lexdata -a $APPDIR -r $LEXDATA_RELEASE -l $LOC
+
+    - name: Start symbolset/mapper server
+      run: |
+       # Start symbolset/mapper server
+       cd symbolset/server
+       go run *.go -ss_files ss_files &> ../../mapper.log &
+       
+    - name: Start pronlex/lexserver server
+      run: |
+       # Start pronlex/lexserver
+       cd pronlex
+       APPDIR=/tmp/appdir/sqlite
+       LOC=/tmp/appdir/sqlite
+       ENGINE=sqlite
+       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $LEXSERVER_PORT &> ../pronlex.log &
+
+    - name: Initial setup for wikispeech-tts-wrappers
+      run: |
+       git clone https://github.com/stts-se/wikispeech-tts-wrappers
+       sudo apt install espeak-ng
+
+    - name: Set up textproc
+      run: |
+       cd wikispeech-tts-wrappers/textproc
+       uv venv
+       source .venv/bin/activate
+       uv pip install -r requirements.txt
+
+    - name: Set up piper
+      run: |
+       cd wikispeech-tts-wrappers/piper_server
+       uv venv
+       source .venv/bin/activate
+       uv pip install torch --index-url https://download.pytorch.org/whl/cpu
+       # fix for circular dependency error with torch versions
+       #uv pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
+       uv pip install -r requirements.txt
+       # workaround for pytorch
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
+       
+      
+    - name: Download language models
+      run: |
+       source .venv/bin/activate
+       uv pip install gdown
+       mkdir -p $HOME/.local/share/deep_phonemizer
+       mkdir -p $HOME/.local/share/piper_tts
+
+       # Deep phonemizer for Swedish
+       gdown https://drive.google.com/uc?id=1H1BCPlOkKBfhz3wacvBDCv_9B8bmgPzA -O $HOME/.local/share/deep_phonemizer/dp_single_char_swe_sv.pt
+
+       # US English voices for Piper
+       gdown https://drive.google.com/uc?id=1F_tBp6MiExQ-yVKqYLmvR2u1v4RRb0WL -O $HOME/.local/share/piper_tts/en_US-ljspeech-high.onnx
+       gdown https://drive.google.com/uc?id=1nx1TVW1PdOe51p9IfA7fczqRP-mbFIC_ -O $HOME/.local/share/piper_tts/en_US-ljspeech-high.onnx.json
+       gdown https://drive.google.com/uc?id=1niTGWHPc_iQb1fz3Tdw057IqpUFBndpW -O $HOME/.local/share/piper_tts/en_US-bryce-medium.onnx
+       gdown https://drive.google.com/uc?id=1Z_-H_2z900qUz8qcgB73FPL2DcN80k-_ -O $HOME/.local/share/piper_tts/en_US-bryce-medium.onnx.json
+
+       # Swedish voices for Piper
+       gdown https://drive.google.com/uc?id=1ONhMrjIRCWI5eBObcWgECmMWR5UcOSVO -O $HOME/.local/share/piper_tts/sv_vc_male_mart2nik.onnx.json
+       gdown https://drive.google.com/uc?id=1dAGnXYv_20Ga-neVOA-EFYQth6rh-D0b -O $HOME/.local/share/piper_tts/sv_vc_male_mart2nik.onnx
+       gdown https://drive.google.com/uc?id=14d_f9NL2-rLnG8I8wvHF5UZvIyLt_5uj -O $HOME/.local/share/piper_tts/sv_vc_female_mart2han.onnx.json
+       gdown https://drive.google.com/uc?id=11RLjC2g1T6L7cIdqsnaDG21Ze72KveEB -O $HOME/.local/share/piper_tts/sv_vc_female_mart2han.onnx
+
+    - name: Start textproc server
+      run: |
+       # Start textproc
+       cd wikispeech-tts-wrappers/textproc
+       source .venv/bin/activate
+       uvicorn textproc_server:app --env-file config_mvp.env --port $TEXTPROC_PORT &> ../../textproc.log &
+       sleep 2
+
+    - name: Start piper server
+      run: |
+       # Start piper
+       cd wikispeech-tts-wrappers/piper_server
+       source .venv/bin/activate
+       uvicorn piper_server:app --env-file config_mvp.env --port $PIPER_PORT &> ../../piper.log & 
+       sleep 2
+
+    - name: Start wikispeech-server
+      run: |
+       # Start wikispeech-server
+       source .venv/bin/activate
+       sleep 20
+       python3 bin/wikispeech config_mvp.conf &> wikispeech.log &
+       sleep 2
+
+    - name: Log files
+      run: |
+       # Log files
+       echo "> cat mapper.log"
+       cat mapper.log
+ 
+       echo "> cat pronlex.log"
+       cat pronlex.log
+ 
+       echo "> cat textproc.log"
+       cat textproc.log
+ 
+       echo "> cat piper.log"
+       cat piper.log
+ 
+       echo "> cat wikispeech.log"
+       cat wikispeech.log
+
+    - name: Ping servers
+      run: |
+       # Ping servers
+
+       echo "> Ping symbolset/mapper"
+       curl -f http://localhost:8771/ping  # symbolset/mapper
+       echo ""
+
+       echo "> Ping pronlex/lexserver"
+       curl -f http://localhost:$LEXSERVER_PORT/ping  # pronlex/lexserver
+       echo ""
+
+       echo "> Ping textproc"
+       curl -f http://localhost:$TEXTPROC_PORT/ping  # textproc
+       echo ""
+
+       echo "> Ping piper"
+       curl -f http://localhost:$PIPER_PORT/ping  # piper
+       echo ""
+
+       echo "> Ping wikispeech-server"
+       curl -f http://localhost:$WIKISPEECH_PORT/ping # wikispeech-server
+       echo ""

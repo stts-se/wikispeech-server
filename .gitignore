@@ -5,7 +5,6 @@ wikispeech_server/tmp/*
 wikispeech_server/adapters/__pycache__/
 wikispeech_server/__pycache__/
 
-wikispeech_server/hanna*.conf
 wikispeech.log
 
 .build

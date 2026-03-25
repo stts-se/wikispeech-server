@@ -16,7 +16,7 @@ defaultsleep=20
 #defaultmatchaconfig=config_stts.env
 #defaultpiperconfig=config_sample.env
 #defaulttextprocconfig=config_sample.env
-#defaultwikispeechconfig=wikispeech_server/config-sample.conf
+#defaultwikispeechconfig=config-sample.conf
 defaultmatchaconfig=""
 defaultpiperconfig=""
 defaulttextprocconfig=""
@@ -39,9 +39,9 @@ printUsage() {
     echo "    -d lexserver appdir - location of the lexserver installation (default $defaultlexserverappdir)" >&2
     echo "    -l logdir - log files folder (default $defaultlogdir)" >&2
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
-    echo "    -m matchaconfig - matcha config file (optional)" >&2
-    echo "    -p piperconfig - piper config file (required)" >&2    
     echo "    -t textprocconfig - textproc config file (required)" >&2    
+    echo "    -p piperconfig - piper config file (required)" >&2    
+    echo "    -m matchaconfig - matcha config file (optional)" >&2
     echo "    -w wikispeechconfig - wikispeech config file (required)" >&2
     echo "    -T tail (follow) wikispeech log after startup" >&2
 }
@@ -177,7 +177,7 @@ cd $gitrepos/symbolset/server && ./server -ss_files $lexserverappdir/symbol_sets
 
 
 if [ -z $matchaconfig ]; then
-    echo "[$CMD] not starting matcha-tts (matchaconfig set)" >&2
+    echo "[$CMD] not starting matcha-tts (no matchaconfig set)" >&2
 else
     echo "[$CMD] starting matcha-tts using config file $matchaconfig" >&2
     cd $gitrepos/wikispeech-tts-wrappers/matcha_server
