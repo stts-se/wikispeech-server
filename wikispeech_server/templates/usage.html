@@ -18,20 +18,10 @@ USAGE: /?lang=LANG&input=TEXT
 Supported languages are: {{ languages }}
 <p/>
 <b>EXAMPLES</b><br/>
-US English default: <a href='{{ server }}?lang=en&input=A+test+with+u+s+english+default+voice'>{{ server }}?lang=en&input=A test with u s English default voice</a><br/>
-US English flite: <a href='{{ server }}?lang=en&input=A+test+with+u+s+english+flite+voice&voice=cmu-slt-flite'>{{ server }}?lang=en&input=A test with u s English flite voice</a><br/>
-Matcha LJSpeech (US English): <a href='{{ server }}?lang=en&input=A+test+with+matcha+l+j+speech&voice=en_us_ljspeech'>{{ server }}?lang=en&input=A test with matcha l j speech&voice=en_us_ljspeech</a><br/>
-Piper Bryce (US English): <a href='{{ server }}?lang=en&input=A+test+with+bryce+for+piper&voice=en_US-bryce-medium'>{{ server }}?lang=en&input=A test with bryce for piper&voice=en_US-bryce-medium</a><br/>
-Piper Arabic: <a href='{{ server }}?lang=ar&voice=ar_JO-kareem-medium&input=هذا صوت اصطناعي'>{{ server }}?lang=ar&voice=ar_JO-kareem-medium&input=هذا صوت اصطناعي</a><br/>
-
-<br/>
-
-<b>STTS EXAMPLES (requires installation of non-public domain voices)</b><br/>
-Swedish default voice: <a href='{{ server }}?lang=sv&input=Vi%20testar%20talsyntes'>{{ server }}?lang=sv&input=Vi%20testar%20talsyntes</a><br/>
-Swedish Matcha female voice: <a href='{{ server }}?lang=sv&input=Vi%20testar%20matcha%20talsyntes%20med%20Karl%20XII%20den%202%20april&voice=sv_se_nst_female1'>{{ server }}?lang=sv&input=Vi%20testar%20matcha%20talsyntes%20med%20Karl%20XII%20den%202%20april&voice=sv_se_nst_female1</a><br/>
-Swedish Matcha male voice: <a href='{{ server }}?lang=sv&input=Vi%20testar%20matcha%20talsynte&voice=sv_se_nst_male1'>{{ server }}?lang=sv&input=Vi%20testar%20matcha%20talsyntes&voice=sv_se_nst_male1</a><br/>
-Swedish Piper female voice: <a href='{{ server }}?lang=sv&input=Vi%20testar%20talsyntes%20med%20piper&voice=sv_se_nst_female1_p'>{{ server }}?lang=sv&input=Vi%20testar%20talsyntes%20med%20piper&voice=sv_se_nst_female1_p</a><br/>
-Swedish Piper male voice: <a href='{{ server }}?lang=sv&input=Vi%20testar%20talsyntes%20med%20pajper&voice=sv_se_nst_male1_p'>{{ server }}?lang=sv&input=Vi%20testar%20talsyntes%20med%20pajper&voice=sv_se_nst_male1_p</a><br/>
+US English Bryce: <a href='{{ server }}?lang=en&input=A+test+with+Bryce+for+u+s+english&voice=en_US-bryce-medium'>A test with Bryce for US English</a><br/>
+US English LJSpeech: <a href='{{ server }}?lang=en&input=A+test+with+l+j+speech+for+u+s+english&voice=en_US-ljspeech-high'>A test with LJSpeech for US English</a><br/>
+Swedish female (VC): <a href='{{ server }}?lang=sv&input=Ett+test+med+en+kvinnlig+röst&voice=sv_vc_female_mart2han_p'>Test med en kvinnlig röst</a><br/>
+Swedish male (VC): <a href='{{ server }}?lang=sv&input=Ett+test+med+en+manlig+röst&voice=sv_vc_male_mart2nik_p'>Test med en manlig röst</a><br/>
 
 <hr>
 Other things to try:
@@ -73,11 +63,11 @@ Tokenisation example:
 <br>
 <a href='{{ server }}textprocessing/?lang=en&input=A+test&textprocessor=basic_en&process=tokenise'>{{ server }}textprocessing/?lang=en&input=A test&textprocessor=basic_en&process=tokenise</a>
 
-<p/>
-Basic synthesis example:
-<br>
-<a href='{{ server }}?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite'>{{ server }}?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite</a>
-
+<!-- <p/>
+     Basic synthesis example:
+     <br>
+     <a href='{{ server }}?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite'>{{ server }}?lang=en&input=A+test&textprocessor=basic_en&voice=cmu-slt-flite</a>
+-->
 <hr>
 Other tests (experimental):
 <br>
