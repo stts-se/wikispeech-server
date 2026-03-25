@@ -39,7 +39,7 @@ printUsage() {
     echo "    -d lexserver appdir - location of the lexserver installation (default $defaultlexserverappdir)" >&2
     echo "    -l logdir - log files folder (default $defaultlogdir)" >&2
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
-    echo "    -m matchaconfig - matcha config file (required)" >&2
+    echo "    -m matchaconfig - matcha config file (optional)" >&2
     echo "    -p piperconfig - piper config file (required)" >&2    
     echo "    -t textprocconfig - textproc config file (required)" >&2    
     echo "    -w wikispeechconfig - wikispeech config file (required)" >&2
@@ -107,10 +107,10 @@ else
     getoptsError=1
 fi
 
-if [ -z $matchaconfig ]; then
-    echo "[$CMD] Missing required flag -m matchaconfig"
-    getoptsError=1
-fi
+# if [ -z $matchaconfig ]; then
+#     echo "[$CMD] Missing required flag -m matchaconfig"
+#     getoptsError=1
+# fi
 
 if [ -z $piperconfig ]; then
     echo "[$CMD] Missing required flag -p piperconfig"
@@ -175,17 +175,22 @@ if [ ! -d "$lexserverappdir/symbol_sets" ]; then
 fi
 cd $gitrepos/symbolset/server && ./server -ss_files $lexserverappdir/symbol_sets &> $logdir/mapper.log &
 
-echo "[$CMD] starting matcha tts using config file $matchaconfig" >&2
-cd $gitrepos/wikispeech-tts-wrappers/matcha_server
-source $PWD/.venv/bin/activate
-if [ ! -f $matchaconfig ]; then
-    echo "[$CMD] matchaconfig $matchaconfig not found in $PWD"
-    printUsage
-    exit 1
-fi
-uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &> $logdir/matcha.log &
 
-echo "[$CMD] starting piper tts using config file $piperconfig" >&2
+if [ -z $matchaconfig ]; then
+    echo "[$CMD] not starting matcha-tts (matchaconfig set)" >&2
+else
+    echo "[$CMD] starting matcha-tts using config file $matchaconfig" >&2
+    cd $gitrepos/wikispeech-tts-wrappers/matcha_server
+    source $PWD/.venv/bin/activate
+    if [ ! -f $matchaconfig ]; then
+	echo "[$CMD] matchaconfig $matchaconfig not found in $PWD"
+	printUsage
+	exit 1
+    fi
+    uvicorn matcha_server:app --env-file $matchaconfig --port 8009 &> $logdir/matcha.log &
+fi
+
+echo "[$CMD] starting piper-tts using config file $piperconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/piper_server
 source $PWD/.venv/bin/activate
 if [ ! -f $piperconfig ]; then
