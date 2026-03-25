@@ -32,8 +32,8 @@
 	    "skip_test": false
 	},
 	{
-            "lang":"ar",
-            "name":"ar_JO-kareem-medium",
+            "lang":"en",
+            "name":"en_US-ljspeech-high",
             "engine":"piper",
             "adapter":"adapters.piper_adapter",
 	    "skip_test": false
