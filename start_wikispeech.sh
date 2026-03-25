@@ -13,10 +13,14 @@ if [ -z $defaultgitrepos ]; then
 fi
 defaultlexserverappdir="$HOME/wikispeech/sqlite"
 defaultsleep=20
-defaultmatchaconfig=config_stts.env
-defaultpiperconfig=config_sample.env
-defaulttextprocconfig=config_sample.env
-defaultwikispeechconfig=wikispeech_server/config-sample.conf
+#defaultmatchaconfig=config_stts.env
+#defaultpiperconfig=config_sample.env
+#defaulttextprocconfig=config_sample.env
+#defaultwikispeechconfig=wikispeech_server/config-sample.conf
+defaultmatchaconfig=""
+defaultpiperconfig=""
+defaulttextprocconfig=""
+defaultwikispeechconfig=""
 
 doTail=0
 gitrepos=$defaultgitrepos
@@ -35,14 +39,16 @@ printUsage() {
     echo "    -d lexserver appdir - location of the lexserver installation (default $defaultlexserverappdir)" >&2
     echo "    -l logdir - log files folder (default $defaultlogdir)" >&2
     echo "    -s sleep - sleep seconds after starting sub-services before starting the main server (default $defaultsleep)" >&2
-    echo "    -m matcha - matcha config file (default $defaultmatchaconfig)" >&2
-    echo "    -p piper - piper config file (default $defaultpiperconfig)" >&2    
-    echo "    -t textproc - textproc config file (default $defaulttextprocconfig)" >&2    
-    echo "    -w wikispeech - wikispeech config file (default $defaultwikispeechconfig)" >&2
-    echo "    -T tail wikispeech log after startup" >&2
+    echo "    -m matchaconfig - matcha config file (required)" >&2
+    echo "    -p piperconfig - piper config file (required)" >&2    
+    echo "    -t textprocconfig - textproc config file (required)" >&2    
+    echo "    -w wikispeechconfig - wikispeech config file (required)" >&2
+    echo "    -T tail (follow) wikispeech log after startup" >&2
 }
 
-while getopts "htg:l:d:s:m:p:w:" opt; do
+getoptsError=0
+
+while getopts "hTg:l:d:s:m:p:t:w:" opt; do
     case $opt in
 	h) printUsage && exit 1;;
 	T) doTail=1;;
@@ -70,7 +76,7 @@ while getopts "htg:l:d:s:m:p:w:" opt; do
 	w)
 	    wikispeechconfig=$OPTARG
 	    ;;
-	\?) ERR=1 && echo "" >&2
+	\?) ERR=1 >&2 && getoptsError=1
     esac
 done
 
@@ -78,21 +84,50 @@ shift $(expr $OPTIND - 1 )
 
 if [ $# -ne 0 ]; then
     echo "[$CMD] Invalid option(s): $*" >&2
-    exit 1
+    getoptsError=1
 fi
 
-if [ $gitrepos ] && [ -d $gitrepos ]; then
+if [ -z $gitrepos ]; then
+    echo "[$CMD] Missing required setting -g gitrepos"
+    getoptsError=1  
+elif [ $gitrepos ] && [ -d $gitrepos ]; then
     echo -n ""
 else
     echo "[$CMD] No gitrepos folder found in default location: $gitrepos"
-    printUsage
-    exit 1
+    getoptsError=1
 fi
 
-if [ $lexserverappdir ] && [ -d $lexserverappdir ]; then
+if [ -z $gitrepos ]; then
+    echo "[$CMD] Missing required setting -l lexserverappdir"
+    getoptsError=1  
+elif [ $lexserverappdir ] && [ -d $lexserverappdir ]; then
     echo -n ""
 else
     echo "[$CMD] No lexserver appdir found in default location: $lexserverappdir"
+    getoptsError=1
+fi
+
+if [ -z $matchaconfig ]; then
+    echo "[$CMD] Missing required flag -m matchaconfig"
+    getoptsError=1
+fi
+
+if [ -z $piperconfig ]; then
+    echo "[$CMD] Missing required flag -p piperconfig"
+    getoptsError=1
+fi
+
+if [ -z $textprocconfig ]; then
+    echo "[$CMD] Missing required flag -t textprocconfig"
+    getoptsError=1
+fi
+
+if [ -z $wikispeechconfig ]; then
+    echo "[$CMD] Missing required flag -w wikispeechconfig"
+    getoptsError=1
+fi
+
+if [ $getoptsError -eq 1 ]; then
     printUsage
     exit 1
 fi
@@ -103,6 +138,10 @@ fi
 
 if [[ $piperconfig == *"/"* ]]; then
     piperconfig=`realpath $piperconfig`
+fi
+
+if [[ $textprocconfig == *"/"* ]]; then
+    textprocconfig=`realpath $textprocconfig`
 fi
 
 if [[ $wikispeechconfig == *"/"* ]]; then
