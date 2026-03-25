@@ -1,6 +1,7 @@
 # Server for wikispeech TTS
 
 [![Build Status](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml)
+[![Build Status](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-mvp.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-mvp.yml)
 
 ## Prerequisites:
 **1. Install [uv](https://docs.astral.sh/uv/getting-started/installation) (optional)**
