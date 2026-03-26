@@ -83,27 +83,27 @@ done
 shift $(expr $OPTIND - 1 )
 
 if [ $# -ne 0 ]; then
-    echo "[$CMD] Invalid option(s): $*" >&2
+    echo "[$CMD] ERROR Invalid option(s): $*" >&2
     getoptsError=1
 fi
 
 if [ -z $gitrepos ]; then
-    echo "[$CMD] Missing required setting -g gitrepos"
+    echo "[$CMD] ERROR Missing required setting -g gitrepos"
     getoptsError=1  
 elif [ $gitrepos ] && [ -d $gitrepos ]; then
     echo -n ""
 else
-    echo "[$CMD] No gitrepos folder found in default location: $gitrepos"
+    echo "[$CMD] ERROR No gitrepos folder found in default location: $gitrepos"
     getoptsError=1
 fi
 
 if [ -z $gitrepos ]; then
-    echo "[$CMD] Missing required setting -l lexserverappdir"
+    echo "[$CMD] ERROR Missing required setting -l lexserverappdir"
     getoptsError=1  
 elif [ $lexserverappdir ] && [ -d $lexserverappdir ]; then
     echo -n ""
 else
-    echo "[$CMD] No lexserver appdir found in default location: $lexserverappdir"
+    echo "[$CMD] ERROR No lexserver appdir found in default location: $lexserverappdir"
     getoptsError=1
 fi
 
@@ -113,17 +113,17 @@ fi
 # fi
 
 if [ -z $piperconfig ]; then
-    echo "[$CMD] Missing required flag -p piperconfig"
+    echo "[$CMD] ERROR Missing required flag -p piperconfig"
     getoptsError=1
 fi
 
 if [ -z $textprocconfig ]; then
-    echo "[$CMD] Missing required flag -t textprocconfig"
+    echo "[$CMD] ERROR Missing required flag -t textprocconfig"
     getoptsError=1
 fi
 
 if [ -z $wikispeechconfig ]; then
-    echo "[$CMD] Missing required flag -w wikispeechconfig"
+    echo "[$CMD] ERROR Missing required flag -w wikispeechconfig"
     getoptsError=1
 fi
 
@@ -132,9 +132,10 @@ if [ $getoptsError -eq 1 ]; then
     exit 1
 fi
 
-if [[ $matchaconfig == *"/"* ]]; then
-    matchaconfig=`realpath $matchaconfig`
-fi
+
+# if [[ $matchaconfig == *"/"* ]]; then
+#     matchaconfig=`realpath $matchaconfig`
+# fi
 
 if [[ $piperconfig == *"/"* ]]; then
     piperconfig=`realpath $piperconfig`
@@ -148,11 +149,17 @@ if [[ $wikispeechconfig == *"/"* ]]; then
     wikispeechconfig=`realpath $wikispeechconfig`
 fi
 
+if [ $getoptsError -eq 1 ]; then
+    printUsage
+    exit 1
+fi
+
+
 wikispeech=`ls -d $gitrepos/wikispeech*server 2> >(grep -v 'No such file' >&2) | head -1`
 if [ $wikispeech ] && [ -d $wikispeech ]; then
     echo -n ""
 else
-    echo "[$CMD] No wikispeech git folder found in default location: $gitrepos/wikispeech-server or $gitrepos/wikispeech_server"
+    echo "[$CMD] ERROR No wikispeech git folder found in default location: $gitrepos/wikispeech-server or $gitrepos/wikispeech_server"
     printUsage
     exit 1
 fi
@@ -169,7 +176,7 @@ cd $gitrepos/pronlex/ && nohup bash scripts/start_server.sh -e sqlite -a $lexser
 
 echo "[$CMD] starting symbolset mapper" >&2
 if [ ! -d "$lexserverappdir/symbol_sets" ]; then
-    echo "[$CMD] No symbolset dir found in lexserverappdir $lexserverappdir"
+    echo "[$CMD] ERROR No symbolset dir found in lexserverappdir $lexserverappdir"
     printUsage
     exit 1
 fi
@@ -183,7 +190,7 @@ else
     cd $gitrepos/wikispeech-tts-wrappers/matcha_server
     source $PWD/.venv/bin/activate
     if [ ! -f $matchaconfig ]; then
-	echo "[$CMD] matchaconfig $matchaconfig not found in $PWD"
+	echo "[$CMD] ERROR matchaconfig $matchaconfig not found in $PWD"
 	printUsage
 	exit 1
     fi
@@ -194,7 +201,7 @@ echo "[$CMD] starting piper-tts using config file $piperconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/piper_server
 source $PWD/.venv/bin/activate
 if [ ! -f $piperconfig ]; then
-    echo "[$CMD] piperconfig $piperconfig not found in $PWD"
+    echo "[$CMD] ERROR piperconfig $piperconfig not found in $PWD"
     printUsage
     exit 1
 fi
@@ -204,7 +211,7 @@ echo "[$CMD] starting textproc using config file $textprocconfig" >&2
 cd $gitrepos/wikispeech-tts-wrappers/textproc
 source $PWD/.venv/bin/activate
 if [ ! -f $textprocconfig ]; then
-    echo "[$CMD] textprocconfig $textprocconfig not found in $PWD"
+    echo "[$CMD] ERROR textprocconfig $textprocconfig not found in $PWD"
     printUsage
     exit 1
 fi
@@ -213,7 +220,13 @@ uvicorn textproc_server:app --env-file $textprocconfig --port 8011 &> $logdir/te
 # echo "[$CMD] TESTING -- not starting wikispeech" && exit 0
 
 echo "[$CMD] clearing wikispeech audio cache" >&2
-cd $wikispeech && bash clear_audio_cache.sh -q $wikispeechconfig || exit 1
+cd $wikispeech
+if [ ! -f $wikispeechconfig ]; then
+    echo "[$CMD] ERROR wikispeechconfig $wikispeechconfig not found in $PWD"
+    printUsage
+    exit 1
+fi
+bash clear_audio_cache.sh -q $wikispeechconfig || exit 1
 
 echo "[$CMD] waiting $sleep secs before starting main wikispeech server" >&2
 for i in `seq 1 $sleep`;
@@ -226,11 +239,6 @@ echo "" >&2
 echo "[$CMD] starting main wikispeech server using config file $wikispeechconfig" >&2
 cd $wikispeech
 source $PWD/.venv/bin/activate
-if [ ! -f $wikispeechconfig ]; then
-    echo "[$CMD] wikispeechconfig $wikispeechconfig not found in $PWD"
-    printUsage
-    exit 1
-fi
 nohup python3 bin/wikispeech $wikispeechconfig &> $logdir/wikispeech.log &
 
 echo ""

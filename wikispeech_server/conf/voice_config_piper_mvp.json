@@ -20,7 +20,20 @@
 		    "lexicon":"sv_se_braxen_lex:sv-se.braxen"
 		}
 	    ]
+	},
+	{
+	    "name":"piper_textproc_en",
+	    "lang":"en",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "en_1"
+		}
+	    ]
 	}
+
     ],
     
     "voice_configs": [

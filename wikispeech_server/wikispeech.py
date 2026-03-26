@@ -985,9 +985,10 @@ def getVoiceByName(voice_name, lang):
 
 def checkInputAndOutputTokens(input_string,output_token_list):
     msgs = []
+    #print("???", output_token_list)
     for token in output_token_list:
         log.debug(token)
-        if token["orth"] not in input_string:
+        if "orth" in token and token["orth"] not in input_string:
             msgs.append("output token \"%s\" not found in input string \"%s\"" % (token["orth"], input_string))
 
             
