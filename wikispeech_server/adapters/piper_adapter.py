@@ -59,6 +59,10 @@ def utt2piper(input,lang,voice_config):
                             "orth": w["orth"],
                             "id": wid
                         }
+                        if "prepunct" in w:
+                            token["prepunct"] = w["prepunct"]
+                        if "postpunct" in w:
+                            token["postpunct"] = w["postpunct"]
                         wid+=1
                         if "trans" in w:
                             inputTrans = w['trans']
@@ -76,6 +80,7 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     log.debug(f"piper_adapter input: {input}")
     url = piper_url + "/synthesize/"
     tokens = utt2piper(input,lang,voice_config)
+    log.debug(f"piper_adapter tokens to piper_server: {tokens}")
     if speaker_id is None:
         speaker_id = -1
     params = {
