@@ -752,9 +752,10 @@ def convertTokenTimingsToMilliseconds(tokens):
     for token in tokens:
         if "endtime" in token:
             token["endtime"] = int(token["endtime"]*1000)
-        for w in token["words"]:
-            if "endtime" in w:
-                w["endtime"] = int(w["endtime"]*1000)
+        if "words" in token:
+            for w in token["words"]:
+                if "endtime" in w:
+                    w["endtime"] = int(w["endtime"]*1000)
             
     return tokens
 

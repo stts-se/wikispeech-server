@@ -167,9 +167,9 @@ def piper2utt(input, tokens):
                 for t in phr["tokens"]:
                     token_count+=1
                     input_orth = t.get("input_orth","")
+                    words = []
                     res_t = {
-                        "orth": input_orth,
-                        "words": []
+                        "orth": input_orth
                     }
                     expanded = []
                     #tts_input = []
@@ -192,9 +192,12 @@ def piper2utt(input, tokens):
                             w.pop("end_time")
                             w.pop("start_time")
                             endtime=w["endtime"]
-                            res_t["words"].append(w)
+                            words.append(w)
                     res_t["endtime"]=endtime
-                    res_t["expanded"]=" ".join(expanded)
+                    expanded_s = " ".join(expanded)
+                    if expanded_s != input_orth:
+                        res_t["expanded"]=expanded_s
+                    res_t["words"] = words
                     #res_t["tts_input"]=tts_input
                     #res_t["tts_phonemes"]=" ".join(tts_phonemes)                              
                     res.append(res_t)
