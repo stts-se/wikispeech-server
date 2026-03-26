@@ -752,6 +752,10 @@ def convertTokenTimingsToMilliseconds(tokens):
     for token in tokens:
         if "endtime" in token:
             token["endtime"] = int(token["endtime"]*1000)
+        for w in token["words"]:
+            if "endtime" in w:
+                w["endtime"] = int(w["endtime"]*1000)
+            
     return tokens
 
 
@@ -985,9 +989,8 @@ def getVoiceByName(voice_name, lang):
 
 def checkInputAndOutputTokens(input_string,output_token_list):
     msgs = []
-    #print("???", output_token_list)
     for token in output_token_list:
-        log.debug(token)
+        #log.debug(token)
         if "orth" in token and token["orth"] not in input_string:
             msgs.append("output token \"%s\" not found in input string \"%s\"" % (token["orth"], input_string))
 

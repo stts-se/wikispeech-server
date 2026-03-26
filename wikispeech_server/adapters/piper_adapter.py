@@ -105,24 +105,122 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
 
     log.info("piper AUDIO_URL: %s" % audio_url)
 
-    tokens = []
-    for token in res["tokens"]:
-        if "end_time" in token:
-            token["endtime"] = token["end_time"]
-            token.pop("end_time")
-            token.pop("start_time")
-        #if "phonemes" in token:
-            #inputPhonemes = token["phonemes"]
-            #mapped, err = mapFromPiper(inputPhonemes, lang, voice_config)
-            #if err is None:
-            #    token["phonemes"] = mapped
-            #    if "input" in token and token["input"] == inputPhonemes:
-            #        token["input"] = mapped
-            #else:
-            #    token["error"] = err
-        tokens.append(token)
-
+    tokens = piper2utt(input, res["tokens"])
     return (audio_url, tokens)
+
+def piper2utt(input, tokens):
+    #print("??? piper2utt input", input)
+    #print("??? piper2utt tokens", tokens)
+
+    ### ORIGINAL INPUT
+    # [{'name': 'text1', 'paragraphs': [{'name': 'par1', 'sentences': [{'name': 'sent1', 'phrases': [{'input': 'Karl XII', 'name': 'phrase1', 'tokens': [
+    # {'name': 'token0', 'input_orth': 'Karl XII',
+    #  'words': [
+    #      {'orth': 'Karl', 'trans': '" k A: rl', 'g2p_method': 'lexicon', 'pos': 'PM NOM'},
+    #      {'orth': 'den', 'trans': '" d e n', 'g2p_method': 'lexicon', 'pos': 'DT UTR SIN DEF'},
+    #      {'orth': 'tolfte', 'trans': '"" t O l f . % t @', 'g2p_method': 'lexicon', 'pos': 'RO NOM'}
+    #  ]}]}]}]}]}
+
+    ### PIPER OUTPUT
+    #  "tokens": [
+    # {
+    #   "endtime": 394,
+    #   "g2p_method": "lexicon",
+    #   "input": "kˈⱭɭ",
+    #   "orth": "Karl",
+    #   "phonemes": "kˈⱭɭ"
+    # },
+    # {
+    #   "endtime": 638,
+    #   "g2p_method": "lexicon",
+    #   "input": "dˈen",
+    #   "orth": "den",
+    #   "phonemes": "dˈen"
+    # },
+    # {
+    #   "endtime": 1544,
+    #   "g2p_method": "lexicon",
+    #   "input": "t°olft`ə",
+    #   "orth": "tolfte",
+    #   "phonemes": "t°olft`ə"
+    # }
+    #],
+
+    ### EXPECTED OUTPUT
+    # "tokens": [
+    #     {
+    #         "endtime": 1305,
+    #         "orth": "Karl den tolfte"
+    #     },
+    #     {
+    #         "endtime": 1705,
+    #         "orth": "prickus"
+    #     }
+    #
+
+    res = []
+    global_wi = 0
+    token_count = 0
+    for p in input["paragraphs"]:
+        for s in p["sentences"]:
+            for phr in s["phrases"]:
+                for t in phr["tokens"]:
+                    token_count+=1
+                    input_orth = t.get("input_orth","")
+                    res_t = {
+                        "orth": input_orth,
+                        "words": []
+                    }
+                    expanded = []
+                    #tts_input = []
+                    #tts_phonemes = []
+                    end_time = None
+                    for w in t["words"]:
+                        global_wi+=1
+                        if len(tokens) > global_wi-1 and w["orth"] == tokens[global_wi-1]["orth"]:
+                            w = w | tokens[global_wi-1]
+                            # piper internal fields
+                            w["tts_input"] = w["input"]
+                            w.pop("input")
+                            w["tts_phonemes"] = w["phonemes"]
+                            w.pop("phonemes")
+                            #tts_input.append(w["tts_input"])
+                            #tts_phonemes.append(w["tts_phonemes"])
+                            expanded.append(w["orth"])
+                            # attribute names
+                            w["endtime"] = w["end_time"]
+                            w.pop("end_time")
+                            w.pop("start_time")
+                            endtime=w["endtime"]
+                            res_t["words"].append(w)
+                    res_t["endtime"]=endtime
+                    res_t["expanded"]=" ".join(expanded)
+                    #res_t["tts_input"]=tts_input
+                    #res_t["tts_phonemes"]=" ".join(tts_phonemes)                              
+                    res.append(res_t)
+
+    print("piper_adapter debug: token count: ", global_wi, len(tokens), token_count)
+        
+    return res
+    
+    # res = []
+    # for token in tokens:
+    #     if "end_time" in token:
+    #         token["endtime"] = token["end_time"]
+    #         token.pop("end_time")
+    #         token.pop("start_time")
+    #     #if "phonemes" in token:
+    #         #inputPhonemes = token["phonemes"]
+    #         #mapped, err = mapFromPiper(inputPhonemes, lang, voice_config)
+    #         #if err is None:
+    #         #    token["phonemes"] = mapped
+    #         #    if "input" in token and token["input"] == inputPhonemes:
+    #         #        token["input"] = mapped
+    #         #else:
+    #         #    token["error"] = err
+    #     res.append(token)
+    # return res
+
 
 def mapToPiper(trans,lang,voice):
     log.info("piper_adapter.mapToPiper( %s , %s , %s )" % (trans, lang, voice))
@@ -157,6 +255,7 @@ def mapToPiper(trans,lang,voice):
 
 
 def mapFromPiper(trans,lang,voice):
+            
     log.info("piper_adapter.mapFromPiper( %s , %s , %s )" % (trans, lang, voice))
 
     if "mapper" in voice:

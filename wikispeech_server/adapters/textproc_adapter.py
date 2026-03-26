@@ -56,7 +56,7 @@ def mapSSMLToTextprocOLD(ssml, lang, tp_config):
     #.+? means shortest match
     phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
     for element in phoneme_elements:
-        log.debug(element)
+        log.debug("element", element)
         
         trans = re.findall("ph=\"(.+)\">", element)[0]
         log.debug("trans: %s" % trans)
@@ -185,7 +185,7 @@ def mapFromTextprocUtt(obj):
             "sentences": [{
                 "name": "sent1",
                 "phrases": [{
-                    "input_orth": obj["input"],
+                    "input": obj["input"],
                     "name": "phrase1",
                     "tokens": tokens
                 }]
