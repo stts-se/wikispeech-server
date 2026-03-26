@@ -109,8 +109,8 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     return (audio_url, tokens)
 
 def piper2utt(input, tokens):
-    #print("??? piper2utt input", input)
-    #print("??? piper2utt tokens", tokens)
+    # print("??? piper2utt input", input)
+    # print("??? piper2utt tokens", tokens)
 
     ### ORIGINAL INPUT
     # [{'name': 'text1', 'paragraphs': [{'name': 'par1', 'sentences': [{'name': 'sent1', 'phrases': [{'input': 'Karl XII', 'name': 'phrase1', 'tokens': [
@@ -177,6 +177,8 @@ def piper2utt(input, tokens):
                     end_time = None
                     for w in t["words"]:
                         global_wi+=1
+                        #print("??? w", w)
+                        #print("??? from_tokens", tokens[global_wi-1])
                         if len(tokens) > global_wi-1 and w["orth"] == tokens[global_wi-1]["orth"]:
                             w = w | tokens[global_wi-1]
                             # piper internal fields
@@ -202,7 +204,7 @@ def piper2utt(input, tokens):
                     #res_t["tts_phonemes"]=" ".join(tts_phonemes)                              
                     res.append(res_t)
 
-    print("piper_adapter debug: token count: ", global_wi, len(tokens), token_count)
+    #print("piper_adapter debug: token count: ", global_wi, len(tokens), token_count)
         
     return res
     
