@@ -10,11 +10,13 @@ import wikispeech_server.log as log
 import wikispeech_server.config as config
 from wikispeech_server.voice import VoiceException
 
-textproc_url = config.config.get("Services", "textproc")
+textproc_url = None #config.config.get("Services", "textproc")
 
 from urllib.parse import quote
 
 def textproc(lang, cconfig, input, input_type="text"):
+    if textproc_url is None:
+        textproc_url = config.config.get("Services", "textproc")
     url = textproc_url + "/process_utt"
     log.info(f"textproc adapter input {cconfig} {input} / {input_type}")
     # tokens = utt2textproc(input,lang,voice_config)
@@ -32,7 +34,7 @@ def textproc(lang, cconfig, input, input_type="text"):
         requrl = f"{url}?input={input}&name={cconfig['name']}&input_type={input_type}"
         r = requests.get(requrl)
     elif input_type == "ssml":
-        input_converted = mapSSMLToTextproc(input, lang, cconfig)
+        input_converted = mapSSMLToTextproc(input, lang)
         log.debug(f"ssml input converted: {input_converted}")
         params = {
             "name": cconfig["name"],
@@ -68,7 +70,7 @@ def mapSSMLToTextprocOLD(ssml, lang, tp_config):
 
 
 xmlns_re = re.compile('xmlns="[^"]+"')
-def mapSSMLToTextproc(ssml_string, lang, tp_config):
+def mapSSMLToTextproc(ssml_string, lang):
     print("textproc_adapter SSML input", ssml_string)
     ssml_string = xmlns_re.sub("", ssml_string) 
     root = ET.fromstring(ssml_string)
