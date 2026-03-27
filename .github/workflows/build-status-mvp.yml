@@ -44,6 +44,7 @@ jobs:
        uv pip install flake8 pytest
        uv pip install -r requirements.txt
        mkdir -p wikispeech_server/tmp
+       pwd
 
     - name: Lint with flake8
       run: |
@@ -86,19 +87,20 @@ jobs:
 
     - name: Initial setup for wikispeech-tts-wrappers
       run: |
+       cd /
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        sudo apt install espeak-ng
 
     - name: Set up textproc
       run: |
-       cd wikispeech-tts-wrappers/textproc
+       cd /wikispeech-tts-wrappers/textproc
        uv venv
        source .venv/bin/activate
        uv pip install -r requirements.txt
 
     - name: Set up piper
       run: |
-       cd wikispeech-tts-wrappers/piper_server
+       cd /wikispeech-tts-wrappers/piper_server
        uv venv
        source .venv/bin/activate
        uv pip install torch --index-url https://download.pytorch.org/whl/cpu
@@ -106,8 +108,7 @@ jobs:
        #uv pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
        uv pip install -r requirements.txt
        # workaround for pytorch
-       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py
-       
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py       
       
     - name: Download language models
       run: |
@@ -134,7 +135,7 @@ jobs:
     - name: Start textproc server
       run: |
        # Start textproc
-       cd wikispeech-tts-wrappers/textproc
+       cd /wikispeech-tts-wrappers/textproc
        source .venv/bin/activate
        uvicorn textproc_server:app --env-file config_mvp.env --port $TEXTPROC_PORT &> ../../textproc.log &
        sleep 2
@@ -142,7 +143,7 @@ jobs:
     - name: Start piper server
       run: |
        # Start piper
-       cd wikispeech-tts-wrappers/piper_server
+       cd /wikispeech-tts-wrappers/piper_server
        source .venv/bin/activate
        uvicorn piper_server:app --env-file config_mvp.env --port $PIPER_PORT &> ../../piper.log & 
        sleep 2
