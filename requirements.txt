@@ -7,4 +7,3 @@ tzlocal
 
 # for testing
 pytest
-dotenv
