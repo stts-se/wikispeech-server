@@ -10,11 +10,12 @@ import wikispeech_server.log as log
 import wikispeech_server.config as config
 from wikispeech_server.voice import VoiceException
 
-textproc_url = None #config.config.get("Services", "textproc")
+textproc_url = None # config.config.get("Services", "textproc")
 
 from urllib.parse import quote
 
 def textproc(lang, cconfig, input, input_type="text"):
+    global textproc_url
     if textproc_url is None:
         textproc_url = config.config.get("Services", "textproc")
     url = textproc_url + "/process_utt"
