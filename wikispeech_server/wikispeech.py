@@ -224,7 +224,7 @@ def list_default_voices():
 #
 # POST: curl -d "lang=en" -d "input=test." http://localhost:10000/
 # GET:  curl "http://localhost:10000/?lang=en&input=test."
-# POST: curl -d "lang=en" -d "input=test." http://localhost:10000/wikispeech/
+# POST: curl -d "lang=en" -d "input=test." http://localhost:10000/wikispeech
 # GET:  curl "http://localhost:10000/wikispeech/?lang=en&input=test."
 
 
