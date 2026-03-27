@@ -34,6 +34,8 @@ jobs:
        echo "TEXTPROC_PORT=8011" >> $GITHUB_ENV
        echo "PIPER_PORT=8010" >> $GITHUB_ENV
        echo "WIKISPEECH_PORT=10000" >> $GITHUB_ENV
+       echo "GITROOT=$HOME/gitroot" >> $GITHUB_ENV
+       echo "LOGS=$HOME/logs" >> $GITHUB_ENV
 
     - name: Install dependencies for wikispeech-server
       run: |
@@ -44,7 +46,7 @@ jobs:
        uv pip install flake8 pytest
        uv pip install -r requirements.txt
        mkdir -p wikispeech_server/tmp
-       pwd
+       echo $GITROOT
 
     - name: Lint with flake8
       run: |
@@ -56,6 +58,7 @@ jobs:
     
     - name: Set up symbolset/mapper + pronlex/lexserver
       run: |
+       cd $GITROOT
        git clone https://github.com/stts-se/symbolset
        git clone https://github.com/stts-se/pronlex
        git clone https://github.com/stts-se/wikispeech-lexdata
@@ -73,34 +76,36 @@ jobs:
     - name: Start symbolset/mapper server
       run: |
        # Start symbolset/mapper server
+       cd $GITROOT
        cd symbolset/server
-       go run *.go -ss_files ss_files &> ../../mapper.log &
+       go run *.go -ss_files ss_files &> $LOGS/mapper.log &
        
     - name: Start pronlex/lexserver server
       run: |
        # Start pronlex/lexserver
+       cd $GITROOT
        cd pronlex
        APPDIR=/tmp/appdir/sqlite
        LOC=/tmp/appdir/sqlite
        ENGINE=sqlite
-       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $LEXSERVER_PORT &> ../pronlex.log &
+       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $LEXSERVER_PORT &> $LOGS/pronlex.log &
 
     - name: Initial setup for wikispeech-tts-wrappers
       run: |
-       cd /
+       cd $GITROOT
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
        sudo apt install espeak-ng
 
     - name: Set up textproc
       run: |
-       cd /wikispeech-tts-wrappers/textproc
+       cd $GITROOT/wikispeech-tts-wrappers/textproc
        uv venv
        source .venv/bin/activate
        uv pip install -r requirements.txt
 
     - name: Set up piper
       run: |
-       cd /wikispeech-tts-wrappers/piper_server
+       cd $GITROOT/wikispeech-tts-wrappers/piper_server
        uv venv
        source .venv/bin/activate
        uv pip install torch --index-url https://download.pytorch.org/whl/cpu
@@ -135,17 +140,17 @@ jobs:
     - name: Start textproc server
       run: |
        # Start textproc
-       cd /wikispeech-tts-wrappers/textproc
+       cd $GITROOT/wikispeech-tts-wrappers/textproc
        source .venv/bin/activate
-       uvicorn textproc_server:app --env-file config_mvp.env --port $TEXTPROC_PORT &> ../../textproc.log &
+       uvicorn textproc_server:app --env-file config_mvp.env --port $TEXTPROC_PORT &> $LOGS/textproc.log &
        sleep 2
 
     - name: Start piper server
       run: |
        # Start piper
-       cd /wikispeech-tts-wrappers/piper_server
+       cd $GITROOT/wikispeech-tts-wrappers/piper_server
        source .venv/bin/activate
-       uvicorn piper_server:app --env-file config_mvp.env --port $PIPER_PORT &> ../../piper.log & 
+       uvicorn piper_server:app --env-file config_mvp.env --port $PIPER_PORT &> $LOGS/piper.log & 
        sleep 2
 
     - name: Start wikispeech-server
@@ -153,26 +158,26 @@ jobs:
        # Start wikispeech-server
        source .venv/bin/activate
        sleep 20
-       python3 bin/wikispeech config_mvp.conf &> wikispeech.log &
+       python3 bin/wikispeech config_mvp.conf &> $LOGS/wikispeech.log &
        sleep 2
 
     - name: Log files
       run: |
        # Log files
        echo "> cat mapper.log"
-       cat mapper.log
+       cat $LOGS/mapper.log
  
        echo "> cat pronlex.log"
-       cat pronlex.log
+       cat $LOGS/pronlex.log
  
        echo "> cat textproc.log"
-       cat textproc.log
+       cat $LOGS/textproc.log
  
        echo "> cat piper.log"
-       cat piper.log
+       cat $LOGS/piper.log
  
        echo "> cat wikispeech.log"
-       cat wikispeech.log
+       cat $LOGS/wikispeech.log
 
     - name: Ping servers
       run: |
