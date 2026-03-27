@@ -2,6 +2,7 @@ import sys, requests, json, re
 import sys, os, re, io
 
 import xml.etree.ElementTree as ET
+from typing import Final
 
 if __name__ == "__main__":
     sys.path.append(".")
@@ -35,7 +36,7 @@ def textproc(lang, cconfig, input, input_type="text"):
         requrl = f"{url}?input={input}&name={cconfig['name']}&input_type={input_type}"
         r = requests.get(requrl)
     elif input_type == "ssml":
-        input_converted = mapSSMLToTextproc(input, lang)
+        input_converted = mapSSMLToTextproc(input)
         log.debug(f"ssml input converted: {input_converted}")
         params = {
             "name": cconfig["name"],
@@ -55,25 +56,11 @@ def textproc(lang, cconfig, input, input_type="text"):
     log.debug("textproc adapter output converted: %s" % json.dumps(res, indent=4))
     return res
 
-def mapSSMLToTextprocOLD(ssml, lang, tp_config):
-    #.+? means shortest match
-    phoneme_elements = re.findall("(<phoneme .+?\">)", ssml)
-    for element in phoneme_elements:
-        log.debug("element", element)
-        
-        trans = re.findall("ph=\"(.+)\">", element)[0]
-        log.debug("trans: %s" % trans)
-        trans = trans.replace("\"", "&quot;")
-        trans = trans.replace("<", "&lt;")
-        log.debug("trans(2): %s" % trans)
 
-        ssml = re.sub(trans, trans, ssml)
-
-
-xmlns_re = re.compile('xmlns="[^"]+"')
-def mapSSMLToTextproc(ssml_string, lang):
+XMLNS_RE: Final[re.Pattern] = re.compile('xmlns="[^"]+"')
+def mapSSMLToTextproc(ssml_string):
     print("textproc_adapter SSML input", ssml_string)
-    ssml_string = xmlns_re.sub("", ssml_string) 
+    ssml_string = XMLNS_RE.sub("", ssml_string) 
     root = ET.fromstring(ssml_string)
 
     def extract(node):
