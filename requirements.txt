@@ -4,3 +4,4 @@ flask
 flask_cors
 pytz
 tzlocal
+pytest
