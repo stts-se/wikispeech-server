@@ -37,7 +37,7 @@ jobs:
        echo "GITROOT=$HOME/gitroot" >> $GITHUB_ENV
        echo "LOGS=$HOME/logs" >> $GITHUB_ENV
 
-    - name: Install dependencies for wikispeech-server
+    - name: Install dependencies
       run: |
        curl -LsSf https://astral.sh/uv/install.sh | sh
        sudo apt install opus-tools
@@ -46,7 +46,8 @@ jobs:
        uv pip install flake8 pytest
        uv pip install -r requirements.txt
        mkdir -p wikispeech_server/tmp
-       echo $GITROOT
+       mkdir -p $GITROOT
+       mkdir -p $LOGS       
 
     - name: Lint with flake8
       run: |
