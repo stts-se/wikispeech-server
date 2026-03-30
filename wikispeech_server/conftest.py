@@ -4,7 +4,9 @@ import requests
 @pytest.fixture(scope="session")
 def client():
     session = requests.Session()
-    session.headers.update({"Content-Type": "application/json"})
+    # Don't set Content-Type here, since it messes up "data" content
+    # type used in POST tests
+    #session.headers.update({"Content-Type": "application/json"})
     return session
 
 @pytest.fixture(scope="session")

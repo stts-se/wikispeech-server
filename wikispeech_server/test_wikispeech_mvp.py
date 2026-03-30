@@ -155,3 +155,62 @@ def test_lang_IPA_deafult_voice(client, base_url):
     assert "name" in data["voice"]
     assert "skip_test" in data["voice"]
  
+
+# Same as above, but with voice specified
+def test_lang_IPA_voice(client, base_url):
+    response = client.get(f"{base_url}?lang=sv&voice=sv_vc_male_mart2nik_p&input=ˈɑ̀ː.pa&input_type=ipa")
+    assert response.status_code == 200
+    data = response.json()
+    assert "audio" in data
+    assert len(data["audio_data"]) > 1000
+    assert "adapter" in data["voice"]
+    assert "config_file" in data["voice"]
+    assert "engine" in data["voice"]    
+    assert "lang" in data["voice"]
+    assert "longname" in data["voice"]
+    assert "mapper" in data["voice"]
+    assert "name" in data["voice"]
+    assert "skip_test" in data["voice"]
+
+    
+# POSTing JSON request to the root URL doesn't currently work with JSON, must be "data"  
+def test_post_synthesis(client, base_url):
+    payload = {
+        "lang": "en",
+        "input": "test."
+    }
+    response = client.post(f"{base_url}/", data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "audio" in data
+    assert len(data["audio_data"]) > 1000
+    assert "adapter" in data["voice"]
+    assert "config_file" in data["voice"]
+    assert "engine" in data["voice"]    
+    assert "lang" in data["voice"]
+    assert "longname" in data["voice"]
+    #assert "mapper" in data["voice"]
+    assert "name" in data["voice"]
+    #assert "skip_test" in data["voice"]
+
+
+def test_post_synthesis_sv(client, base_url):
+    payload = {
+        "lang": "sv",
+        "input": "en häst betar.",
+        "voice": "sv_vc_male_mart2nik_p"
+    }
+    response = client.post(f"{base_url}/", data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "audio" in data
+    print("AUDIO", data["audio"])
+    assert len(data["audio_data"]) > 1000
+    assert "adapter" in data["voice"]
+    assert "config_file" in data["voice"]
+    assert "engine" in data["voice"]    
+    assert "lang" in data["voice"]
+    assert "longname" in data["voice"]
+    assert "mapper" in data["voice"]
+    assert "name" in data["voice"]
+    assert "skip_test" in data["voice"]
