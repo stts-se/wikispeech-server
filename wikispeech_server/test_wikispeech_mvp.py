@@ -87,6 +87,16 @@ def test_invalid_voice_name(client, base_url):
     response = client.get(f"{base_url}/?lang=sv&input=Vi%20testar%20matcha%20talsyntes&voice=NO_SUCH_VOICE_EXISTS&input_type=text")
     assert response.status_code == 200
     assert response.text.lower().startswith("error")
+
+
+def test_mapper(client, mapper_url):
+    response = client.get(f"{mapper_url}/mapper/map/sv-se_ws-sampa/ipa/p%20I%20N%20.%20%22%20v%20i%3A%20n")
+    assert response.status_code == 200
+    data = response.json()
+    assert "type" in data
+    assert "from" in data
+    assert "to" in data
+    assert data["to"] == "ipa"
     
 # lang and voice    
 def test_sv_vc_male_mart2nik_p(client, base_url):
@@ -215,6 +225,31 @@ def test_post_synthesis_sv(client, base_url):
     assert "skip_test" in data["voice"]
 
 
+def test_post_synthesis_sv_textproc(client, base_url):
+    payload = {
+        "lang": "sv",
+        "input": "Jag heter Karl XII",
+        "voice": "sv_vc_male_mart2nik_p"
+    }
+    response = client.post(f"{base_url}/", data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "audio" in data
+    assert len(data["audio_data"]) > 1000
+    assert "adapter" in data["voice"]
+    assert "config_file" in data["voice"]
+    assert "engine" in data["voice"]    
+    assert "lang" in data["voice"]
+    assert "longname" in data["voice"]
+    assert "mapper" in data["voice"]
+    assert "name" in data["voice"]
+    assert "skip_test" in data["voice"]
+    # Test sv textproc
+    assert "tokens" in data
+    xii = data["tokens"][2] #jag heter Karl XII <- [3]
+    assert xii["orth"] == "Karl XII"
+    assert xii["expanded"] == "Karl den tolfte"
+    
 def test_SSML_1(client, base_url):
     ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
     Det här är en enkel text utan uppmärkning. 
@@ -227,6 +262,22 @@ def test_SSML_1(client, base_url):
     response = client.post(f"{base_url}/", data=payload)
     assert response.status_code == 200
 
+
+@pytest.mark.skip(reason="working on it")        
+def test_SSML_1b(client, base_url):
+    ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
+    " Det här är en enkel text som börjar med citattecken. 
+</speak>"""
+    payload = {"lang": "sv",
+               "input": ssml,
+               "input_type": "ssml",
+               "voice": "sv_vc_male_mart2nik_p"}
+    
+    response = client.post(f"{base_url}/", data=payload)
+    assert response.status_code == 200
+    
+
+    
 @pytest.mark.skip(reason="working on it")    
 def test_SSML_2(client, base_url):
     ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
