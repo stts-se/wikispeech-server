@@ -12,3 +12,7 @@ def client():
 @pytest.fixture(scope="session")
 def base_url():
     return "http://localhost:10000"
+
+@pytest.fixture(scope="session")
+def mapper_url():
+    return "http://localhost:8771"
