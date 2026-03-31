@@ -9,13 +9,18 @@ import wikispeech_server.log as log
 import wikispeech_server.config as config
 from wikispeech_server.voice import VoiceException
 
-mapper_url = config.config.get("Services", "mapper")
-piper_url = config.config.get("Services", "piper")
+mapper_url = None # config.config.get("Services", "mapper")
+piper_url = None # config.config.get("Services", "piper")
 
 from urllib.parse import quote
 
 def testVoice(voice_config):
-    piper_url = config.config.get("Services", "piper")
+    global piper_url, mapper_url
+    if piper_url is None:
+        piper_url = config.config.get("Services", "piper")
+    if mapper_url is None:
+        mapper_url = config.config.get("Services", "mapper")
+
     url = piper_url + "/voices/"
     name = voice_config["name"]
 
@@ -77,6 +82,12 @@ def utt2piper(input,lang,voice_config):
     return chunks
 
 def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaking_rate=1.0):
+    global piper_url, mapper_url
+    if piper_url is None:
+        piper_url = config.config.get("Services", "piper")
+    if mapper_url is None:
+        mapper_url = config.config.get("Services", "mapper")
+
     log.debug(f"piper_adapter input: {input}")
     url = piper_url + "/synthesize/"
     tokens = utt2piper(input,lang,voice_config)
@@ -104,17 +115,18 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     audio_url = os.path.join(piper_url, "static", res["audio"])
 
     log.info("piper AUDIO_URL: %s" % audio_url)
+    log.debug(f"piper res: {res}")
 
     tokens = piper2utt(input, res["tokens"])
     return (audio_url, tokens)
 
 def piper2utt(input, tokens):
-    # print("??? piper2utt input", input)
-    # print("??? piper2utt tokens", tokens)
+    log.debug(f"??? piper2utt input\t{input}")
+    log.debug(f"??? piper2utt tokens\t{tokens}")
 
     ### ORIGINAL INPUT
     # [{'name': 'text1', 'paragraphs': [{'name': 'par1', 'sentences': [{'name': 'sent1', 'phrases': [{'input': 'Karl XII', 'name': 'phrase1', 'tokens': [
-    # {'name': 'token0', 'input_orth': 'Karl XII',
+    # {'name': 'token0', 'input': 'Karl XII',
     #  'words': [
     #      {'orth': 'Karl', 'trans': '" k A: rl', 'g2p_method': 'lexicon', 'pos': 'PM NOM'},
     #      {'orth': 'den', 'trans': '" d e n', 'g2p_method': 'lexicon', 'pos': 'DT UTR SIN DEF'},
@@ -164,7 +176,10 @@ def piper2utt(input, tokens):
     for p in input["paragraphs"]:
         for s in p["sentences"]:
             for phr in s["phrases"]:
+                print("piper_adapter ??? phrase", phr)
                 for t in phr["tokens"]:
+                    print("piper_adapter ??? token", t)
+                    print("piper_adapter ??? words", t["words"])
                     token_count+=1
                     input_orth = t.get("input_orth","")
                     words = []
@@ -177,8 +192,8 @@ def piper2utt(input, tokens):
                     end_time = None
                     for w in t["words"]:
                         global_wi+=1
-                        #print("??? w", w)
-                        #print("??? from_tokens", tokens[global_wi-1])
+                        print("piper_adapter ???XXX w", w)
+                        print("piper_adapter ???XXX from_tokens", tokens[global_wi-1])
                         if len(tokens) > global_wi-1 and w["orth"] == tokens[global_wi-1]["orth"]:
                             w = w | tokens[global_wi-1]
                             # piper internal fields
@@ -193,7 +208,8 @@ def piper2utt(input, tokens):
                             w["endtime"] = w["end_time"]
                             w.pop("end_time")
                             w.pop("start_time")
-                            endtime=w["endtime"]
+                            if "endtime" in w:
+                                endtime=w["endtime"]
                             words.append(w)
                     res_t["endtime"]=endtime
                     expanded_s = " ".join(expanded)
@@ -205,6 +221,7 @@ def piper2utt(input, tokens):
                     res.append(res_t)
 
     #print("piper_adapter debug: token count: ", global_wi, len(tokens), token_count)
+    log.debug(f"??? piper2utt res\t{res}")
         
     return res
     

@@ -263,7 +263,6 @@ def test_SSML_1(client, base_url):
     assert response.status_code == 200
 
 
-@pytest.mark.skip(reason="working on it")        
 def test_SSML_1b(client, base_url):
     ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
     " Det här är en enkel text som börjar med citattecken. 
@@ -278,7 +277,7 @@ def test_SSML_1b(client, base_url):
     
 
     
-@pytest.mark.skip(reason="working on it")    
+#@pytest.mark.skip(reason="working on it")    
 def test_SSML_2(client, base_url):
     ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
 "<phoneme ph="&quot; o: l">All</phoneme> Apologies" hamnade på plats sju över de <sub alias="tjugo">
@@ -296,3 +295,170 @@ firades</phoneme>
     
     response = client.post(f"{base_url}/", data=payload)
     assert response.status_code == 200
+
+#@pytest.mark.skip(reason="working on it")
+def test_SSML_textproc_1(client, base_url):
+    ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
+"<phoneme ph="&quot; o: l">All</phoneme> Apologies" hamnade på plats sju över de <sub alias="tjugo">
+20</sub>
+ mest spelade Nirvana-låtarna.</speak>"""
+    payload = {"lang": "sv",
+               "input": ssml,
+               "input_type": "ssml",
+               "voice": "sv_vc_male_mart2nik_p"}
+    
+    response = client.post(f"{base_url}/textprocessing", data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    tokens_got = data["paragraphs"][0]["sentences"][0]["phrases"][0]["tokens"]
+    tokens_exp = [{
+        "input_orth": "\"",
+        "name": "token0",
+        "words": [
+            {
+                "orth": "\""
+            }
+        ]
+    },
+    {
+        "input_orth": "All",
+        "mtu": True,
+        "name": "token1",
+        "words": [
+            {
+                "g2p_method": "ssml",
+                "orth": "All",
+                "trans": "\" o: l"
+            }
+        ]
+    },
+    {
+        "input_orth": "Apologies\"",
+        "name": "token2",
+        "words": [
+            {
+                "orth": "Apologies",
+                "postpunct": "\""
+            }
+        ]
+    },
+    {
+        "input_orth": "hamnade",
+        "name": "token3",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "hamnade",
+                "pos": "VB PRT AKT",
+                "trans": "\"\" h a m . % n a . d @"
+            }
+        ]
+    },
+    {
+        "input_orth": "p\u00e5",
+        "name": "token4",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "p\u00e5",
+                "pos": "AB",
+                "trans": "\" p o:"
+            }
+        ]
+    },
+    {
+        "input_orth": "plats",
+        "name": "token5",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "plats",
+                "pos": "NN UTR SIN IND GEN",
+                "trans": "\" p l a t s"
+            }
+        ]
+    },
+    {
+        "input_orth": "sju",
+        "name": "token6",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "sju",
+                "pos": "RG NOM",
+                "trans": "\" x }:"
+            }
+        ]
+    },
+    {
+        "input_orth": "\u00f6ver",
+        "name": "token7",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "\u00f6ver",
+                "pos": "AB",
+                "trans": "\" 2: . v @ r"
+            }
+        ]
+    },
+    {
+        "input_orth": "de",
+        "name": "token8",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "de",
+                "pos": "DT UTR/NEU PLU DEF",
+                "trans": "\" d O m"
+            }
+        ]
+    },
+    {
+        "input_orth": "20",
+        "name": "token9",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "tjugo",
+                "pos": "RG NOM",
+                "trans": "\"\" C }: . % g U"
+            }
+        ]
+    },
+    {
+        "input_orth": "mest",
+        "name": "token10",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "mest",
+                "pos": "AB",
+                "trans": "\" m e s t"
+            }
+        ]
+    },
+    {
+        "input_orth": "spelade",
+        "name": "token11",
+        "words": [
+            {
+                "g2p_method": "lexicon",
+                "orth": "spelade",
+                "pos": "PC PRF UTR/NEU PLU IND/DEF NOM",
+                "trans": "\"\" s p e: . % l a . d @"
+            }
+        ]
+    },
+    {
+        "input_orth": "Nirvana-l\u00e5tarna.",
+        "name": "token12",
+        "words": [
+            {
+                "orth": "Nirvana-l\u00e5tarna",
+                "postpunct": "."
+            }
+        ]
+    }
+    ]
+    assert tokens_got == tokens_exp
