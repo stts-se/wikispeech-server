@@ -5,7 +5,6 @@ sys.path.insert(0,".")
 import wikispeech_server.wikispeech as ws
 import wikispeech_server.config as config
 
-
 ws.log.log_level = config.config.get("Server","log_level")
 ws.log.logger = "stderr"
 if config.config.has_option("Server","logger"):
