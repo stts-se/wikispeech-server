@@ -173,7 +173,7 @@ def test_lang_IPA_voice(client, base_url):
     assert "skip_test" in data["voice"]
 
     
-# POSTing JSON request to the root URL doesn't currently work with JSON, must be "data"  
+# POSTing JSON request to the root URL, must be "data"  
 def test_post_synthesis(client, base_url):
     payload = {
         "lang": "en",
@@ -204,7 +204,6 @@ def test_post_synthesis_sv(client, base_url):
     assert response.status_code == 200
     data = response.json()
     assert "audio" in data
-    print("AUDIO", data["audio"])
     assert len(data["audio_data"]) > 1000
     assert "adapter" in data["voice"]
     assert "config_file" in data["voice"]
@@ -214,3 +213,22 @@ def test_post_synthesis_sv(client, base_url):
     assert "mapper" in data["voice"]
     assert "name" in data["voice"]
     assert "skip_test" in data["voice"]
+
+
+def test_SSML(client, base_url):
+    ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
+"<phoneme ph="&quot; o: l">All</phoneme> Apologies" hamnade på plats sju över de <sub alias="tjugo">
+20</sub>
+ mest spelade Nirvana-låtarna någonsin i Storbritannien, vilket var en lista framtagen av Phonographic Performance Limited för att hedra Cobains <sub alias="femtio">
+50</sub>-årsdag som <phoneme ph="f &quot;&quot; i: . r a . d e s">
+firades</phoneme>
+ den <sub alias="tjugonde februari tjugo hundra sjutton">
+20 februari 2017</sub>
+.</speak>"""
+    payload = {"lang": "sv",
+               "input": ssml,
+               "input_type": "ssml",
+               "voice": "sv_vc_male_mart2nik_p"}
+    
+    response = client.post(f"{base_url}/", data=payload)
+    assert response.status_code == 200
