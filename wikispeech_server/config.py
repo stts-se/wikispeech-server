@@ -8,20 +8,22 @@ print("\nCONFIG\n\nChecking for default and user config files..")
 user = getpass.getuser()
 hostname = os.uname()[1]
 
+
+print(f"Calling config.init with {sys.argv}", file=sys.stderr)
 if len(sys.argv) > 1:
     arg_config_file = sys.argv[1]
+    if arg_config_file.endswith(".conf"):        
+        if not os.path.isfile(arg_config_file):
+            print("ERROR: Provided config file %s not found" % arg_config_file)
+            sys.exit(1)
 
-    if not os.path.isfile(arg_config_file):
-        print("ERROR: Provided config file %s not found" % arg_config_file)
-        sys.exit(1)
-
-    print("Reading provided config file: %s" % arg_config_file)
-    config.read(arg_config_file)
+        print("Reading provided config file: %s" % arg_config_file)
+        config.read(arg_config_file)
 
 # else:
-    
+
 #     default_config_file = "wikispeech_server/default.conf"
-    
+
 #     if not os.path.isfile(default_config_file):
 #         print("ERROR: Default config file %s not found" % default_config_file)
 #         sys.exit(1)
