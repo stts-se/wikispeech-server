@@ -53,7 +53,7 @@
 	},
 	{
             "lang":"sv",
-            "name":"sv_vc_male_mart2nik_p",
+            "name":"sv_vc_m2m_p",
             "engine":"piper",
             "adapter":"adapters.piper_adapter",
 	    "skip_test": false,
@@ -64,7 +64,7 @@
 	},
 	{
             "lang":"sv",
-            "name":"sv_vc_female_mart2han_p",
+            "name":"sv_vc_m2f_p",
             "engine":"piper",
             "adapter":"adapters.piper_adapter",
 	    "skip_test": false,

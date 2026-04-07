@@ -99,8 +99,8 @@ def test_mapper(client, mapper_url):
     assert data["to"] == "ipa"
     
 # lang and voice    
-def test_sv_vc_male_mart2nik_p(client, base_url):
-    response = client.get(f"{base_url}/?lang=sv&input=Ett+test+med+en+manlig+r%C3%B6st&voice=sv_vc_male_mart2nik_p")
+def test_sv_vc_m2m_p(client, base_url):
+    response = client.get(f"{base_url}/?lang=sv&input=Ett+test+med+en+manlig+r%C3%B6st&voice=sv_vc_m2m_p")
     assert response.status_code == 200
     assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
     data = response.json()
@@ -124,8 +124,8 @@ def test_sv_vc_male_mart2nik_p(client, base_url):
 
     
 # lang and voice   
-def test_sv_vc_female_mart2han_p(client, base_url):
-    response = client.get(f"{base_url}/?lang=sv&input=Ett+test+med+en+kvinnlig+r%C3%B6st&voice=sv_vc_female_mart2han_p")
+def test_sv_vc_m2f_p(client, base_url):
+    response = client.get(f"{base_url}/?lang=sv&input=Ett+test+med+en+kvinnlig+r%C3%B6st&voice=sv_vc_m2f_p")
     assert response.status_code == 200
     assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
     data = response.json()
@@ -168,7 +168,7 @@ def test_lang_IPA_deafult_voice(client, base_url):
 
 # Same as above, but with voice specified
 def test_lang_IPA_voice(client, base_url):
-    response = client.get(f"{base_url}?lang=sv&voice=sv_vc_male_mart2nik_p&input=ˈɑ̀ː.pa&input_type=ipa")
+    response = client.get(f"{base_url}?lang=sv&voice=sv_vc_m2m_p&input=ˈɑ̀ː.pa&input_type=ipa")
     assert response.status_code == 200
     data = response.json()
     assert "audio" in data
@@ -208,7 +208,7 @@ def test_post_synthesis_sv(client, base_url):
     payload = {
         "lang": "sv",
         "input": "en häst betar.",
-        "voice": "sv_vc_male_mart2nik_p"
+        "voice": "sv_vc_m2m_p"
     }
     response = client.post(f"{base_url}/", data=payload)
     assert response.status_code == 200
@@ -229,7 +229,7 @@ def test_post_synthesis_sv_textproc(client, base_url):
     payload = {
         "lang": "sv",
         "input": "Jag heter Karl XII",
-        "voice": "sv_vc_male_mart2nik_p"
+        "voice": "sv_vc_m2m_p"
     }
     response = client.post(f"{base_url}/", data=payload)
     assert response.status_code == 200
@@ -257,7 +257,7 @@ def test_SSML_1(client, base_url):
     payload = {"lang": "sv",
                "input": ssml,
                "input_type": "ssml",
-               "voice": "sv_vc_male_mart2nik_p"}
+               "voice": "sv_vc_m2m_p"}
     
     response = client.post(f"{base_url}/", data=payload)
     assert response.status_code == 200
@@ -270,7 +270,7 @@ def test_SSML_1b(client, base_url):
     payload = {"lang": "sv",
                "input": ssml,
                "input_type": "ssml",
-               "voice": "sv_vc_male_mart2nik_p"}
+               "voice": "sv_vc_m2m_p"}
     
     response = client.post(f"{base_url}/", data=payload)
     assert response.status_code == 200
@@ -291,7 +291,7 @@ firades</phoneme>
     payload = {"lang": "sv",
                "input": ssml,
                "input_type": "ssml",
-               "voice": "sv_vc_male_mart2nik_p"}
+               "voice": "sv_vc_m2m_p"}
     
     response = client.post(f"{base_url}/", data=payload)
     assert response.status_code == 200
@@ -305,7 +305,7 @@ def test_SSML_textproc_1(client, base_url):
     payload = {"lang": "sv",
                "input": ssml,
                "input_type": "ssml",
-               "voice": "sv_vc_male_mart2nik_p"}
+               "voice": "sv_vc_m2m_p"}
     
     response = client.post(f"{base_url}/textprocessing", data=payload)
     assert response.status_code == 200
