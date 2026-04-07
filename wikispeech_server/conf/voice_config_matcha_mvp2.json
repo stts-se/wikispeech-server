@@ -1,0 +1,59 @@
+{
+    "textprocessor_configs": [
+	{
+	    "name":"matcha_textproc_sv",
+	    "lang":"sv",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "sv_se_1",
+		    "mapper": {
+			"from":"sv-se_ws-sampa",
+			"to":"sv-se_matcha_ipa_from_ws"
+		    }
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"sv_se_braxen_lex:sv-se.braxen"
+		}
+	    ]
+	}
+    ],
+    
+    "voice_configs": [
+	{
+            "lang":"en",
+            "name":"en_us_ljspeech",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_adapter",
+	    "default": true,
+	    "skip_test": false
+	},
+	{
+            "lang":"sv",
+            "name":"sv_vc_m2m",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_adapter",
+	    "skip_test": false,
+	    "mapper": {
+		"from":"sv-se_ws-sampa",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	},
+	{
+            "lang":"sv",
+            "name":"sv_vc_m2f",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_adapter",
+	    "skip_test": false,
+	    "default": true,
+	    "mapper": {
+		"from":"sv-se_ws-sampa",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	}
+    ]
+}
