@@ -176,7 +176,7 @@ jobs:
        cd $GITROOT/wikispeech-tts-wrappers/matcha_server
        source .venv/bin/activate
        uvicorn matcha_server:app --env-file config_mvp2.env --port $MATCHA_PORT &> $LOGS/matcha.log & 
-       sleep 2
+       sleep 10
 
     - name: Start wikispeech-server
       run: |
