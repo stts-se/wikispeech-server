@@ -131,6 +131,7 @@ jobs:
        uv pip install gdown
        mkdir -p $HOME/.local/share/deep_phonemizer
        mkdir -p $HOME/.local/share/piper_tts
+       mkdir -p $HOME/.local/share/matcha_tts
 
        # Deep phonemizer for Swedish
        gdown https://drive.google.com/uc?id=1H1BCPlOkKBfhz3wacvBDCv_9B8bmgPzA -O $HOME/.local/share/deep_phonemizer/dp_single_char_swe_sv.pt
