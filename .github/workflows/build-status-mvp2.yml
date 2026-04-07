@@ -33,6 +33,7 @@ jobs:
        echo "LEXSERVER_PORT=8787" >> $GITHUB_ENV
        echo "TEXTPROC_PORT=8011" >> $GITHUB_ENV
        echo "PIPER_PORT=8010" >> $GITHUB_ENV
+       echo "MATCHA_PORT=8009" >> $GITHUB_ENV       
        echo "WIKISPEECH_PORT=10000" >> $GITHUB_ENV
        echo "GITROOT=$HOME/gitroot" >> $GITHUB_ENV
        echo "LOGS=$HOME/logs" >> $GITHUB_ENV
