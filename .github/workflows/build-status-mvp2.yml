@@ -149,6 +149,11 @@ jobs:
        gdown https://drive.google.com/uc?id=14d_f9NL2-rLnG8I8wvHF5UZvIyLt_5uj -O $HOME/.local/share/piper_tts/sv_vc_female_mart2han.onnx.json
        gdown https://drive.google.com/uc?id=11RLjC2g1T6L7cIdqsnaDG21Ze72KveEB -O $HOME/.local/share/piper_tts/sv_vc_female_mart2han.onnx
 
+       # Base models for Matcha
+       gdown https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -O $HOME/.local/share/matcha_tts/hifigan_T2_v1
+       gdown https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000 -O $HOME/.local/share/matcha_tts/hifigan_univ_v1
+       gdown https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -O $HOME/.local/share/matcha_tts/matcha_ljspeech.ckpt
+
        # Swedish voices for Matcha
        gdown https://drive.google.com/uc?id=1LEJA3ESv5SRZ5mO1Cd3STY0Iga-WIoCT -O $HOME/.local/share/matcha_tts/sv_vc_female_mart2han.ckpt
        gdown https://drive.google.com/uc?id=1JJniKbVunr1iF4Qr6unr58OSt86rFASR -O $HOME/.local/share/matcha_tts/sv_vc_female_mart2han.json

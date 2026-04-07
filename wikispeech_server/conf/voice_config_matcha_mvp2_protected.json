@@ -45,6 +45,14 @@
 	    "skip_test": false
 	},
 	{
+            "lang":"en",
+            "name":"en_us_vctk",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_adapter",
+	    "default": false,
+	    "skip_test": false
+	},
+	{
             "lang":"sv",
             "name":"sv_se_nst_female1",
             "engine":"matcha",
