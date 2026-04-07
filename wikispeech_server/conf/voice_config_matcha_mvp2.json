@@ -20,6 +20,18 @@
 		    "lexicon":"sv_se_braxen_lex:sv-se.braxen"
 		}
 	    ]
+	},
+	{
+	    "name":"piper_textproc_en",
+	    "lang":"en",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "en_1"
+		}
+	    ]
 	}
     ],
     
@@ -29,7 +41,7 @@
             "name":"en_us_ljspeech",
             "engine":"matcha",
             "adapter":"adapters.matcha_adapter",
-	    "default": true,
+	    "default": false,
 	    "skip_test": false
 	},
 	{
@@ -49,7 +61,7 @@
             "engine":"matcha",
             "adapter":"adapters.matcha_adapter",
 	    "skip_test": false,
-	    "default": true,
+	    "default": false,
 	    "mapper": {
 		"from":"sv-se_ws-sampa",
 		"to":"sv-se_matcha_ipa_from_ws"

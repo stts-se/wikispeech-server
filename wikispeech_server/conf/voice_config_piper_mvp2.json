@@ -48,6 +48,7 @@
             "lang":"en",
             "name":"en_US-ljspeech-high",
             "engine":"piper",
+	    "default": true,
             "adapter":"adapters.piper_adapter",
 	    "skip_test": false
 	},

@@ -150,7 +150,7 @@ def test_sv_vc_m2f_p(client, base_url):
     
 
 #lang and IPA and default voice ?lang=sv&input=ˈhɛj&input_type=ipa
-def test_lang_IPA_deafult_voice(client, base_url):
+def test_lang_IPA_default_voice(client, base_url):
     response = client.get(f"{base_url}/?lang=sv&input=ˈhɛj&input_type=ipa")
     assert response.status_code == 200
     data = response.json()
