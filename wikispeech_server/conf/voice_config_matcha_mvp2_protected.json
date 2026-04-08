@@ -65,6 +65,17 @@
 	},
 	{
             "lang":"sv",
+            "name":"sv_se_nst_male1",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false,
+	    "mapper": {
+		"from":"sv-se_ws-sampa",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	},
+	{
+            "lang":"sv",
             "name":"sv_vc_m2m",
             "engine":"matcha",
             "adapter":"adapters.matcha_piper_adapter",
