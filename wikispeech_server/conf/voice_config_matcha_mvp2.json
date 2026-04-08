@@ -40,7 +40,7 @@
             "lang":"en",
             "name":"en_us_ljspeech",
             "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "default": false,
 	    "skip_test": false
 	},
@@ -48,7 +48,7 @@
             "lang":"sv",
             "name":"sv_vc_m2m",
             "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
 	    "mapper": {
 		"from":"sv-se_ws-sampa",
@@ -59,7 +59,7 @@
             "lang":"sv",
             "name":"sv_vc_m2f",
             "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
 	    "default": false,
 	    "mapper": {

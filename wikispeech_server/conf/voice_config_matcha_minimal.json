@@ -28,7 +28,7 @@
             "lang":"en",
             "name":"en_us_ljspeech",
             "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "default": true,
 	    "skip_test": false
 	},
@@ -36,7 +36,7 @@
             "lang":"en",
             "name":"en_us_vctk",
             "engine":"matcha",
-            "adapter":"adapters.matcha_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "default": true,
 	    "skip_test": false
 	}

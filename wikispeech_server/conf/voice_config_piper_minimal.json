@@ -28,14 +28,14 @@
             "lang":"en",
             "name":"en_US-bryce-medium",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false
 	},
 	{
             "lang":"ar",
             "name":"ar_JO-kareem-medium",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false
 	}
     ]

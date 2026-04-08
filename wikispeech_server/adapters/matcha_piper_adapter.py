@@ -9,38 +9,40 @@ import wikispeech_server.log as log
 import wikispeech_server.config as config
 from wikispeech_server.voice import VoiceException
 
-mapper_url = None # config.config.get("Services", "mapper")
-matcha_url = None # config.config.get("Services", "matcha")
+mapper_url = None
+engine_url = None
+py_name = "matcha_piper_adapter"
 
 from urllib.parse import quote
 
 def testVoice(voice_config):
-    global matcha_url, mapper_url
-    if matcha_url is None:
-        matcha_url = config.config.get("Services", "matcha")
+    engine = voice_config["engine"]
+    global engine_url, mapper_url
+    if engine_url is None:
+        engine_url = config.config.get("Services", engine)
     if mapper_url is None:
         mapper_url = config.config.get("Services", "mapper")
 
-    url = matcha_url + "/voices/"
+    url = engine_url + "/voices/"
     name = voice_config["name"]
 
     log.debug("Calling url: %s" % url)
     try:
         r = requests.get(url)
     except:
-        msg = "Matcha server not found at url %s" % (url)
+        msg = f"{engine} server not found at url %s" % (url)
         log.error(msg)
         raise VoiceException(msg)
     
     log.debug("Response:\n%s" % r.text)
     voicenames = getVoicenames(r)
-    log.debug("matcha voicenames: %s" % voicenames)
+    log.debug(f"{engine} voicenames: %s" % voicenames)
     if not name in voicenames:
-        msg = "Matcha voice %s not found at url %s" % (name, url)
+        msg = f"{engine} voice %s not found at url %s" % (name, url)
         log.error(msg)
         raise VoiceException(msg)
     else:
-        log.info("Matcha voice found at url %s" % url)
+        log.info(f"{engine} voice found at url %s" % url)
         
 
 def getVoicenames(response):
@@ -51,7 +53,7 @@ def getVoicenames(response):
     return names
 
 
-def utt2matcha(input,lang,voice_config):
+def utt2engine(input,lang,voice_config):
     chunks = []
     wid=0
     for p0 in input["paragraphs"]:
@@ -71,7 +73,7 @@ def utt2matcha(input,lang,voice_config):
                         wid+=1
                         if "trans" in w:
                             inputTrans = w['trans']
-                            trans = mapToMatcha(inputTrans,lang,voice_config)
+                            trans = mapToEngine(inputTrans,lang,voice_config)
                             token["phonemes"] = trans
                             if "g2p_method" in w:
                                 token["g2p_method"] = w["g2p_method"]
@@ -82,16 +84,17 @@ def utt2matcha(input,lang,voice_config):
     return chunks
 
 def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaking_rate=1.0):
-    global matcha_url, mapper_url
-    if matcha_url is None:
-        matcha_url = config.config.get("Services", "matcha")
+    engine = voice_config["engine"]
+    global engine_url, mapper_url
+    if engine_url is None:
+        engine_url = config.config.get("Services", engine)
     if mapper_url is None:
         mapper_url = config.config.get("Services", "mapper")
 
-    log.debug(f"matcha_adapter input: {input}")
-    url = matcha_url + "/synthesize/"
-    tokens = utt2matcha(input,lang,voice_config)
-    log.debug(f"matcha_adapter tokens to matcha_server: {tokens}")
+    log.debug(f"{py_name} input: {input}")
+    url = engine_url + "/synthesize/"
+    tokens = utt2engine(input,lang,voice_config)
+    log.debug(f"{py_name} tokens to {engine} server: {tokens}")
     if speaker_id is None:
         speaker_id = -1
     params = {
@@ -106,23 +109,23 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     r = requests.post(url, json=params)
     if not r.ok:
         from http.client import responses
-        raise Exception(f"Matcha request returned status code {r.status_code} {responses[r.status_code]}")
+        raise Exception(f"{engine} request returned status code {r.status_code} {responses[r.status_code]}")
     obj = r.json()
     if len(obj) != 1:
-        raise Exception(f"Expected one item back from matcha_tts, found {len(obj)}")
+        raise Exception(f"Expected one item back from {engine}_tts, found {len(obj)}")
     
     res = obj[0]
-    audio_url = os.path.join(matcha_url, "static", res["audio"])
+    audio_url = os.path.join(engine_url, "static", res["audio"])
 
-    log.info("matcha AUDIO_URL: %s" % audio_url)
-    log.debug(f"matcha res: {res}")
+    log.info(f"{engine} AUDIO_URL: %s" % audio_url)
+    log.debug(f"{engine} res: {res}")
 
-    tokens = matcha2utt(input, res["tokens"])
+    tokens = engine2utt(input, res["tokens"])
     return (audio_url, tokens)
 
-def matcha2utt(input, tokens):
-    log.debug(f"??? matcha2utt input\t{input}")
-    log.debug(f"??? matcha2utt tokens\t{tokens}")
+def engine2utt(input, tokens):
+    log.debug(f"??? engine2utt input\t{input}")
+    log.debug(f"??? engine2utt tokens\t{tokens}")
 
     ### ORIGINAL INPUT
     # [{'name': 'text1', 'paragraphs': [{'name': 'par1', 'sentences': [{'name': 'sent1', 'phrases': [{'input': 'Karl XII', 'name': 'phrase1', 'tokens': [
@@ -133,7 +136,7 @@ def matcha2utt(input, tokens):
     #      {'orth': 'tolfte', 'trans': '"" t O l f . % t @', 'g2p_method': 'lexicon', 'pos': 'RO NOM'}
     #  ]}]}]}]}]}
 
-    ### MATCHA OUTPUT
+    ### ENGINE OUTPUT
     #  "tokens": [
     # {
     #   "endtime": 394,
@@ -176,10 +179,7 @@ def matcha2utt(input, tokens):
     for p in input["paragraphs"]:
         for s in p["sentences"]:
             for phr in s["phrases"]:
-                print("matcha_adapter ??? phrase", phr)
                 for t in phr["tokens"]:
-                    print("matcha_adapter ??? token", t)
-                    print("matcha_adapter ??? words", t["words"])
                     token_count+=1
                     input_orth = t.get("input_orth","")
                     words = []
@@ -192,11 +192,9 @@ def matcha2utt(input, tokens):
                     end_time = None
                     for w in t["words"]:
                         global_wi+=1
-                        print("matcha_adapter ???XXX w", w)
-                        print("matcha_adapter ???XXX from_tokens", tokens[global_wi-1])
                         if len(tokens) > global_wi-1 and w["orth"] == tokens[global_wi-1]["orth"]:
                             w = w | tokens[global_wi-1]
-                            # matcha internal fields
+                            # engine internal fields
                             w["tts_input"] = w["input"]
                             w.pop("input")
                             w["tts_phonemes"] = w["phonemes"]
@@ -220,8 +218,8 @@ def matcha2utt(input, tokens):
                     #res_t["tts_phonemes"]=" ".join(tts_phonemes)                              
                     res.append(res_t)
 
-    #print("matcha_adapter debug: token count: ", global_wi, len(tokens), token_count)
-    log.debug(f"??? matcha2utt res\t{res}")
+    #print(f"{py_name} debug: token count: ", global_wi, len(tokens), token_count)
+    log.debug(f"??? engine2utt res\t{res}")
         
     return res
     
@@ -233,7 +231,7 @@ def matcha2utt(input, tokens):
     #         token.pop("start_time")
     #     #if "phonemes" in token:
     #         #inputPhonemes = token["phonemes"]
-    #         #mapped, err = mapFromMatcha(inputPhonemes, lang, voice_config)
+    #         #mapped, err = mapFromEngine(inputPhonemes, lang, voice_config)
     #         #if err is None:
     #         #    token["phonemes"] = mapped
     #         #    if "input" in token and token["input"] == inputPhonemes:
@@ -244,16 +242,16 @@ def matcha2utt(input, tokens):
     # return res
 
 
-def mapToMatcha(trans,lang,voice):
-    log.info("matcha_adapter.mapToMatcha( %s , %s , %s )" % (trans, lang, voice))
+def mapToEngine(trans,lang,voice):
+    log.info(f"{py_name}.mapToEngine( %s , %s , %s )" % (trans, lang, voice))
 
     if "mapper" in voice:
         #Bad names.. It should be perhaps "external" and "internal" instead of "from" and "to"
         to_symbol_set = voice["mapper"]["to"]
         from_symbol_set = voice["mapper"]["from"]
-        log.info("matcha_adapter.mapToMatcha %s -> %s" % (from_symbol_set, to_symbol_set))    
+        log.info(f"{py_name}.mapToEngine %s -> %s" % (from_symbol_set, to_symbol_set))    
     else:
-        log.info("No matcha mapper defined for language %s" % lang)
+        log.info("No mapper defined for language %s, engine %s" % (lang, voice.engine))
         return trans
 
     url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote(trans))
@@ -276,17 +274,17 @@ def mapToMatcha(trans,lang,voice):
     return new_trans
 
 
-def mapFromMatcha(trans,lang,voice):
+def mapFromEngine(trans,lang,voice):
             
-    log.info("matcha_adapter.mapFromMatcha( %s , %s , %s )" % (trans, lang, voice))
+    log.info(f"{py_name}.mapFromEngine( %s , %s , %s )" % (trans, lang, voice))
 
     if "mapper" in voice:
         #Bad names.. It should be perhaps "external" and "internal" instead of "from" and "to"
         to_symbol_set = voice["mapper"]["from"]
         from_symbol_set = voice["mapper"]["to"]
-        log.info("matcha_adapter.mapFromMatcha %s -> %s" % (from_symbol_set, to_symbol_set))    
+        log.info(f"{py_name}.mapFromEngine %s -> %s" % (from_symbol_set, to_symbol_set))    
     else:
-        log.info("No matcha mapper defined for language %s" % lang)
+        log.info("No mapper defined for language %s, engine %s" % (lang, voice.engine))
         return trans
 
     url = mapper_url+"/mapper/map/%s/%s/%s" % (from_symbol_set, to_symbol_set, quote(trans))

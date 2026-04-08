@@ -41,21 +41,21 @@
             "lang":"en",
             "name":"en_US-bryce-medium",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false
 	},
 	{
             "lang":"ar",
             "name":"ar_JO-kareem-medium",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false
 	},
 	{
             "lang":"sv",
             "name":"sv_se_nst_male1_p",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
 	    "mapper": {
 		"from":"sv-se_ws-sampa",
@@ -66,7 +66,7 @@
             "lang":"sv",
             "name":"sv_se_nst_female1_p",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
 	    "default": true,
 	    "mapper": {

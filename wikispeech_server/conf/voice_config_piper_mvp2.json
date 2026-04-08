@@ -41,7 +41,7 @@
             "lang":"en",
             "name":"en_US-bryce-medium",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false
 	},
 	{
@@ -49,14 +49,14 @@
             "name":"en_US-ljspeech-high",
             "engine":"piper",
 	    "default": true,
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false
 	},
 	{
             "lang":"sv",
             "name":"sv_vc_m2m_p",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
 	    "mapper": {
 		"from":"sv-se_ws-sampa",
@@ -67,7 +67,7 @@
             "lang":"sv",
             "name":"sv_vc_m2f_p",
             "engine":"piper",
-            "adapter":"adapters.piper_adapter",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
 	    "default": true,
 	    "mapper": {
