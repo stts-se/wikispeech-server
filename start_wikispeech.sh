@@ -1,4 +1,4 @@
-#!/bash
+
 
 set -e
 
@@ -129,9 +129,9 @@ if [ $getoptsError -eq 1 ]; then
 fi
 
 
-# if [[ $matchaconfig == *"/"* ]]; then
-#     matchaconfig=`realpath $matchaconfig`
-# fi
+if [[ $matchaconfig == *"/"* ]]; then
+    matchaconfig=`realpath $matchaconfig`
+fi
 
 if [[ $piperconfig == *"/"* ]]; then
     piperconfig=`realpath $piperconfig`
