@@ -118,7 +118,9 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     audio_url = os.path.join(engine_url, "static", res["audio"])
 
     log.info(f"{engine} AUDIO_URL: %s" % audio_url)
-    log.debug(f"{engine} res: {res}")
+    #log.debug(f"{engine} res: {res}")
+    log.debug(f"{engine} res: %s" % json.dumps(res, indent=4))
+
 
     tokens = engine2utt(input, res["tokens"])
     return (audio_url, tokens)
@@ -189,10 +191,13 @@ def engine2utt(input, tokens):
                     expanded = []
                     #tts_input = []
                     #tts_phonemes = []
-                    end_time = None
+                    endtime = None
                     for w in t["words"]:
+                        #print("???", w)
                         global_wi+=1
-                        if len(tokens) > global_wi-1 and w["orth"] == tokens[global_wi-1]["orth"]:
+                        #if len(tokens) > global_wi-1:
+                            #print("???", tokens[global_wi-1])
+                        if len(tokens) > global_wi-1 and "orth" in tokens[global_wi-1] and w["orth"] == tokens[global_wi-1]["orth"]:
                             w = w | tokens[global_wi-1]
                             # engine internal fields
                             w["tts_input"] = w["input"]
@@ -209,7 +214,8 @@ def engine2utt(input, tokens):
                             if "endtime" in w:
                                 endtime=w["endtime"]
                             words.append(w)
-                    res_t["endtime"]=endtime
+                    if endtime is not None:
+                        res_t["endtime"]=endtime
                     expanded_s = " ".join(expanded)
                     if expanded_s != input_orth:
                         res_t["expanded"]=expanded_s
