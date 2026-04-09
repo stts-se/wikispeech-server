@@ -97,6 +97,52 @@ def test_mapper(client, mapper_url):
     assert "from" in data
     assert "to" in data
     assert data["to"] == "ipa"
+
+
+def test_en_mixed_case(client, base_url):
+    payload = {
+        "lang": "en",
+        "voice": "en_US-bryce-medium",
+        "input": "MediaWiki"
+    }
+    response = client.post(f"{base_url}/", data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "audio" in data
+    assert len(data["audio_data"]) > 1000
+    assert "adapter" in data["voice"]
+    assert "config_file" in data["voice"]
+    assert "engine" in data["voice"]    
+    assert "lang" in data["voice"]
+    assert "longname" in data["voice"]
+    #assert "mapper" in data["voice"]
+    assert "name" in data["voice"]
+    #assert "skip_test" in data["voice"]
+    
+
+    
+def test_en_year(client, base_url):
+    payload = {
+        "lang": "en",
+        "voice": "en_US-bryce-medium",
+        "input": "1971"
+    }
+    response = client.post(f"{base_url}/", data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "audio" in data
+    assert len(data["audio_data"]) > 1000
+    assert "adapter" in data["voice"]
+    assert "config_file" in data["voice"]
+    assert "engine" in data["voice"]    
+    assert "lang" in data["voice"]
+    assert "longname" in data["voice"]
+    #assert "mapper" in data["voice"]
+    assert "name" in data["voice"]
+    #assert "skip_test" in data["voice"]
+    
+
+    
     
 # lang and voice    
 def test_sv_vc_m2m_p(client, base_url):
