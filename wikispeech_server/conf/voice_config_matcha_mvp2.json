@@ -41,6 +41,14 @@
             "name":"en_us_ljspeech",
             "engine":"matcha",
             "adapter":"adapters.matcha_piper_adapter",
+	    "default": true,
+	    "skip_test": false
+	},
+	{
+            "lang":"en",
+            "name":"en_us_vctk",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_piper_adapter",
 	    "default": false,
 	    "skip_test": false
 	},
@@ -61,7 +69,7 @@
             "engine":"matcha",
             "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
-	    "default": false,
+	    "default": true,
 	    "mapper": {
 		"from":"sv-se_ws-sampa",
 		"to":"sv-se_matcha_ipa_from_ws"
