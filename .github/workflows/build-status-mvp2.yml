@@ -150,16 +150,22 @@ jobs:
        gdown https://drive.google.com/uc?id=11RLjC2g1T6L7cIdqsnaDG21Ze72KveEB -O $HOME/.local/share/piper_tts/sv_vc_female_mart2han.onnx
 
        # Base models for Matcha
-       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 --output $HOME/.local/share/matcha_tts/hifigan_T2_v1
-       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000   --output $HOME/.local/share/matcha_tts/hifigan_univ_v1
-       gdown https://drive.google.com/uc?id=1TXq4_gEHvZlwxN4Z5Fzo4C6474Nb9iEa -O $HOME/.local/share/matcha_tts/matcha_ljspeech.ckpt
-       gdown https://drive.google.com/uc?id=19co5C25iGojvqhyjaQokj-4VoBSrUQl_ -O $HOME/.local/share/matcha_tts/matcha_vctk.ckpt
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -o $HOME/.local/share/matcha_tts/hifigan_T2_v1
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000   -o $HOME/.local/share/matcha_tts/hifigan_univ_v1
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o $HOME/.local/share/matcha_tts/matcha_ljspeech.ckpt
+       gdown https://drive.google.com/uc?id=1TXq4_gEHvZlwxN4Z5Fzo4C6474Nb9iEa -O $HOME/.local/share/matcha_tts/matcha_ljspeech.json
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o $HOME/.local/share/matcha_tts/matcha_vctk.ckpt
+       gdown https://drive.google.com/uc?id=19co5C25iGojvqhyjaQokj-4VoBSrUQl_-O $HOME/.local/share/matcha_tts/matcha_vctk.json
 
        # Swedish voices for Matcha
        gdown https://drive.google.com/uc?id=1LEJA3ESv5SRZ5mO1Cd3STY0Iga-WIoCT -O $HOME/.local/share/matcha_tts/sv_vc_female_mart2han.ckpt
        gdown https://drive.google.com/uc?id=1JJniKbVunr1iF4Qr6unr58OSt86rFASR -O $HOME/.local/share/matcha_tts/sv_vc_female_mart2han.json
        gdown https://drive.google.com/uc?id=1dXkPDgebUveDRK9OsCnGmhZaIVrY9aOm -O $HOME/.local/share/matcha_tts/sv_vc_male_mart2nik.ckpt
        gdown https://drive.google.com/uc?id=1-znBB5Bh08Rq0SEO5nZKmwE0xITdagYc -O $HOME/.local/share/matcha_tts/sv_vc_male_mart2nik.json
+
+       # Alignment patching
+       python3 -m piper.patch_voice_with_alignment $HOME/.local/share/matcha_tts/matcha_ljspeech.ckpt
+       python3 -m piper.patch_voice_with_alignment $HOME/.local/share/matcha_tts/matcha_vctk.ckpt       
 
     - name: Start textproc server
       run: |
@@ -245,27 +251,5 @@ jobs:
     - name: Run pytest
       run: |
        source .venv/bin/activate
-       ls -1 $HOME/.local/share/matcha_tts
-       pytest || cat $LOGS/matcha.log
-
-    - name: Log files after pytest
-      run: |
-       # Log files
-       echo "> cat mapper.log"
-       cat $LOGS/mapper.log
- 
-       echo "> cat pronlex.log"
-       cat $LOGS/pronlex.log
- 
-       echo "> cat textproc.log"
-       cat $LOGS/textproc.log
- 
-       echo "> cat piper.log"
-       cat $LOGS/piper.log
- 
-       echo "> cat matcha.log"
-       cat $LOGS/matcha.log
- 
-       echo "> cat wikispeech.log"
-       cat $LOGS/wikispeech.log
+       pytest
 
