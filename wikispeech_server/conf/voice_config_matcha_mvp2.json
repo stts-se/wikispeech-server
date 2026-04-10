@@ -10,8 +10,10 @@
 		    "call":"textproc",
 		    "name": "sv_se_1",
 		    "mapper": {
-			"from":"sv-se_braxen-sampa",
-			"to":"sv-se_ws-sampa"
+			"from":"sv-se_ws-sampa",
+			"to":"sv-se_matcha_ipa_from_ws"
+			".from":"sv-se_braxen-sampa",
+			".to":"sv-se_ws-sampa"
 		    }
 		},
 		{
