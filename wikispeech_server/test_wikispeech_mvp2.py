@@ -534,6 +534,11 @@ class TestMVP2:
                 ]
             }
         }
+        response = client.get(f"{base_url}/synthesis/voices")
+        assert response.status_code == 200
+        data = response.json()
+        print("VOICES", data)
+
         for lang in test_data:
             text = test_data[lang]["text"]
             for voice in test_data[lang]["voices"]:
