@@ -163,10 +163,6 @@ jobs:
        gdown https://drive.google.com/uc?id=1dXkPDgebUveDRK9OsCnGmhZaIVrY9aOm -O $HOME/.local/share/matcha_tts/sv_vc_male_mart2nik.ckpt
        gdown https://drive.google.com/uc?id=1-znBB5Bh08Rq0SEO5nZKmwE0xITdagYc -O $HOME/.local/share/matcha_tts/sv_vc_male_mart2nik.json
 
-       # Alignment patching
-       python3 -m piper.patch_voice_with_alignment $HOME/.local/share/matcha_tts/matcha_ljspeech.ckpt
-       python3 -m piper.patch_voice_with_alignment $HOME/.local/share/matcha_tts/matcha_vctk.ckpt       
-
     - name: Start textproc server
       run: |
        # Start textproc
