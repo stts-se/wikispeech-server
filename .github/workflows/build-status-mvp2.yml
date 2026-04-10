@@ -245,4 +245,27 @@ jobs:
     - name: Run pytest
       run: |
        source .venv/bin/activate
+       ls -1 $HOME/.local/share/matcha_tts
        pytest
+
+    - name: Log files after pytest
+      run: |
+       # Log files
+       echo "> cat mapper.log"
+       cat $LOGS/mapper.log
+ 
+       echo "> cat pronlex.log"
+       cat $LOGS/pronlex.log
+ 
+       echo "> cat textproc.log"
+       cat $LOGS/textproc.log
+ 
+       echo "> cat piper.log"
+       cat $LOGS/piper.log
+ 
+       echo "> cat matcha.log"
+       cat $LOGS/matcha.log
+ 
+       echo "> cat wikispeech.log"
+       cat $LOGS/wikispeech.log
+
