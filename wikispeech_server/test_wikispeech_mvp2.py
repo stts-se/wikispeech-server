@@ -519,9 +519,11 @@ class TestMVP2:
                 "text": "Hej, jag talar god svenska naturligtvis.",
                 "voices": [
                     # piper
-                    "sv_vc_m2m_p","sv_vc_m2f_p",
+                    "sv_vc_m2m_p",
+                    "sv_vc_m2f_p",
                     # matcha
-                    "sv_vc_m2m","sv_vc_m2f"
+                    "sv_vc_m2m","
+                    sv_vc_m2f"
                 ]
             },
             "en": {
@@ -530,9 +532,11 @@ class TestMVP2:
                     # flite
                     "cmu-slt-flite",
                     # piper
-                    "en_US-bryce-medium", "en_US-ljspeech-high",
+                    "en_US-bryce-medium",
+                    "en_US-ljspeech-high",
                     # matcha
-                    "en_us_ljspeech", "en_us_vctk"
+                    "en_us_vctk",
+                    "en_us_ljspeech"
                 ]
             }
         }
