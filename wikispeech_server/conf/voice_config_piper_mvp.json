@@ -10,7 +10,7 @@
 		    "call":"textproc",
 		    "name": "sv_se_1",
 		    "mapper": {
-			"from":"sv-se_ws-sampa",
+			"from":"sv-se_ws-sampa-braxen-braxen",
 			"to":"sv-se_matcha_ipa_from_ws"
 		    }
 		},
@@ -58,7 +58,7 @@
             "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
 	    "mapper": {
-		"from":"sv-se_ws-sampa",
+		"from":"sv-se_ws-sampa-braxen-braxen",
 		"to":"sv-se_matcha_ipa_from_ws"
 	    }
 	},
@@ -70,7 +70,7 @@
 	    "skip_test": false,
 	    "default": true,
 	    "mapper": {
-		"from":"sv-se_ws-sampa",
+		"from":"sv-se_ws-sampa-braxen-braxen",
 		"to":"sv-se_matcha_ipa_from_ws"
 	    }
 	}
