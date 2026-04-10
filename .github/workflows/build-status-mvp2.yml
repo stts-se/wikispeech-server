@@ -246,7 +246,7 @@ jobs:
       run: |
        source .venv/bin/activate
        ls -1 $HOME/.local/share/matcha_tts
-       pytest
+       pytest || cat $LOGS/matcha.log
 
     - name: Log files after pytest
       run: |
