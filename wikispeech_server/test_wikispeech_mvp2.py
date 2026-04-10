@@ -539,7 +539,7 @@ class TestMVP2:
         data = response.json()
         print("MVP2 voices:")
         for v in data:
-            print(f"-{v['engine'] v['name']}")
+            print(f"-{v['engine']} {v['name']}")
 
         for lang in test_data:
             text = test_data[lang]["text"]
