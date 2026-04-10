@@ -100,7 +100,45 @@ class TestMVP:
         assert "to" in data
         assert data["to"] == "ipa"
 
+    # curl 'http://localhost:10000/?lang=sv&input=dessutom&voice=sv_vc_m2f_p'
+    # https://github.com/stts-se/wikispeech-server/issues/33
+    def test_symbolset_mapping_error_1(self, client, base_url):
+        payload = {
+            "lang": "sv",
+            "voice": "sv_vc_m2f_p",
+            "input": "dessutom"
+        }
+        response = client.post(f"{base_url}/", data=payload)
+        assert response.status_code == 200
+        data = response.json()
+        assert "audio" in data
+        assert len(data["audio_data"]) > 1000
+        assert "adapter" in data["voice"]
+        assert "config_file" in data["voice"]
+        assert "engine" in data["voice"]    
+        assert "lang" in data["voice"]
+        assert "longname" in data["voice"]
 
+        
+    # https://github.com/stts-se/wikispeech-server/issues/33
+    def test_symbolset_mapping_error_2(self, client, base_url):
+        payload = {
+            "lang": "sv",
+            "voice": "sv_vc_m2f_p",
+            "input": "graphein"
+        }
+        response = client.post(f"{base_url}/", data=payload)
+        assert response.status_code == 200
+        data = response.json()
+        assert "audio" in data
+        assert len(data["audio_data"]) > 1000
+        assert "adapter" in data["voice"]
+        assert "config_file" in data["voice"]
+        assert "engine" in data["voice"]    
+        assert "lang" in data["voice"]
+        assert "longname" in data["voice"]
+
+        
     def test_en_mixed_case(self,client, base_url):
         payload = {
             "lang": "en",
