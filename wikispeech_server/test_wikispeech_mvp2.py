@@ -532,7 +532,7 @@ class TestMVP2:
                     # piper
                     "en_US-bryce-medium", "en_US-ljspeech-high",
                     # matcha
-                    "en_us_ljspeech" #, "en_us_vctk"
+                    "en_us_ljspeech", "en_us_vctk"
                 ]
             }
         }
