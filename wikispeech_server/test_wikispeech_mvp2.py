@@ -545,7 +545,7 @@ class TestMVP2:
                 url = f"{base_url}/?lang={lang}&input={text}&voice={voice}"
                 print(f"Testing {url}")
                 response = client.get(url)
-                assert response.status_code == 200
+                assert response.status_code == 200, f"Server returned: {response}"
                 assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
                 data = response.json()
                 assert "audio" in data
