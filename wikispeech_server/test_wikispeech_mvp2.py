@@ -136,6 +136,24 @@ class TestBasics:
         assert "lang" in data["voice"]
         assert "longname" in data["voice"]
 
+
+    def test_symbolset_mapping_error_1mb(self, client, base_url):
+        payload = {
+            "lang": "sv",
+            "voice": "sv_vc_m2f",
+            "input": "Ordet ortografi kommer av grekiska orthos 'rät, rätt' och graphein 'skriva'."
+        }
+        response = client.post(f"{base_url}/", data=payload)
+        assert response.status_code == 200
+        data = response.json()
+        assert "audio" in data
+        assert len(data["audio_data"]) > 1000
+        assert "adapter" in data["voice"]
+        assert "config_file" in data["voice"]
+        assert "engine" in data["voice"]    
+        assert "lang" in data["voice"]
+        assert "longname" in data["voice"]
+        
         
     # https://github.com/stts-se/wikispeech-server/issues/33
     def test_symbolset_mapping_error_2p(self, client, base_url):
