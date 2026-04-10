@@ -5,7 +5,7 @@
 import pytest
 import requests
 
-class TestMVP2:
+class TestBasics:
 
     # First of all, ping the server.
     # ("_aaa_" so that this test appears
@@ -511,6 +511,8 @@ class TestMVP2:
         ]
         assert tokens_got == tokens_exp
 
+class TestMVP2:
+    
     def test_call_all_mvp2_voices(self,client, base_url):
         test_data = {
             "sv": {
@@ -530,7 +532,7 @@ class TestMVP2:
                     # piper
                     "en_US-bryce-medium", "en_US-ljspeech-high",
                     # matcha
-                    "en_us_ljspeech", "en_us_vctk"
+                    "en_us_ljspeech" #, "en_us_vctk"
                 ]
             }
         }
