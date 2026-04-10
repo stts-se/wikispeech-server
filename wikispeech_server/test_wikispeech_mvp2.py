@@ -522,8 +522,8 @@ class TestMVP2:
                     "sv_vc_m2m_p",
                     "sv_vc_m2f_p",
                     # matcha
-                    "sv_vc_m2m","
-                    sv_vc_m2f"
+                    "sv_vc_m2m",
+                    "sv_vc_m2f"
                 ]
             },
             "en": {
