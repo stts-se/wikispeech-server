@@ -1,6 +1,6 @@
 # Server for wikispeech TTS
 
-[![Build Status](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml)
+<!-- [![Build Status](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-minimal.yml) -->
 [![MVP](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-mvp.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-mvp.yml)
 [![MVP2](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-mvp2.yml/badge.svg)](https://github.com/stts-se/wikispeech-server/actions/workflows/build-status-mvp2.yml)
 
