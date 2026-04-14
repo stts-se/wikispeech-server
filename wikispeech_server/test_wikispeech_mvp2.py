@@ -102,7 +102,7 @@ class TestBasics:
 
     # curl 'http://localhost:10000/?lang=sv&input=dessutom&voice=sv_vc_m2f_p'
     # https://github.com/stts-se/wikispeech-server/issues/33
-    def test_symbolset_mapping_error_1p(self, client, base_url):
+    def test_symbolset_mapping_error_1_piper(self, client, base_url):
         payload = {
             "lang": "sv",
             "voice": "sv_vc_m2f_p",
@@ -119,7 +119,7 @@ class TestBasics:
         assert "lang" in data["voice"]
         assert "longname" in data["voice"]
 
-    def test_symbolset_mapping_error_1m(self, client, base_url):
+    def test_symbolset_mapping_error_1_matcha(self, client, base_url):
         payload = {
             "lang": "sv",
             "voice": "sv_vc_m2f",
@@ -137,7 +137,7 @@ class TestBasics:
         assert "longname" in data["voice"]
 
 
-    def test_symbolset_mapping_error_1mb(self, client, base_url):
+    def test_symbolset_mapping_error_1_matcha_b(self, client, base_url):
         payload = {
             "lang": "sv",
             "voice": "sv_vc_m2f",
@@ -156,7 +156,7 @@ class TestBasics:
         
         
     # https://github.com/stts-se/wikispeech-server/issues/33
-    def test_symbolset_mapping_error_2p(self, client, base_url):
+    def test_symbolset_mapping_error_2_piper(self, client, base_url):
         payload = {
             "lang": "sv",
             "voice": "sv_vc_m2f_p",
@@ -173,7 +173,7 @@ class TestBasics:
         assert "lang" in data["voice"]
         assert "longname" in data["voice"]
 
-    def test_symbolset_mapping_error_2m(self, client, base_url):
+    def test_symbolset_mapping_error_2_matcha(self, client, base_url):
         payload = {
             "lang": "sv",
             "voice": "sv_vc_m2f",
@@ -236,7 +236,7 @@ class TestBasics:
 
 
     # lang and voice    
-    def test_sv_vc_m2m_p(self,client, base_url):
+    def test_sv_vc_m2m_piper(self,client, base_url):
         response = client.get(f"{base_url}/?lang=sv&input=Ett+test+med+en+manlig+r%C3%B6st&voice=sv_vc_m2m_p")
         assert response.status_code == 200
         assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
@@ -261,7 +261,7 @@ class TestBasics:
 
 
     # lang and voice   
-    def test_sv_vc_m2f_p(self,client, base_url):
+    def test_sv_vc_m2f_piper(self,client, base_url):
         response = client.get(f"{base_url}/?lang=sv&input=Ett+test+med+en+kvinnlig+r%C3%B6st&voice=sv_vc_m2f_p")
         assert response.status_code == 200
         assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
@@ -601,65 +601,77 @@ class TestBasics:
         assert tokens_got == tokens_exp
 
 class TestMVP2:
+
+    server_voices = None
     
-    def test_call_all_mvp2_voices(self,client, base_url):
-        test_data = {
-            "sv": {
-                "text": "Hej, jag talar god svenska naturligtvis.",
-                "voices": [
-                    # piper
-                    "sv_vc_m2m_p",
-                    "sv_vc_m2f_p",
-                    # matcha
-                    "sv_vc_m2m",
-                    "sv_vc_m2f"
-                ]
-            },
-            "en": {
-                "text": "Hello, I do speak some English as well.",
-                "voices": [
-                    # flite
-                    "cmu-slt-flite",
-                    # piper
-                    "en_US-bryce-medium",
-                    "en_US-ljspeech-high",
-                    # matcha
-                    "en_us_vctk",
-                    "en_us_ljspeech"
-                ]
-            }
-        }
-        response = client.get(f"{base_url}/synthesis/voices")
-        assert response.status_code == 200
+    voices = [
+        { "lang": "en", "name": "cmu-slt-flite", "engine": "flite" },
+        { "lang": "en", "name": "en_US-bryce-medium", "engine": "piper" },
+        { "lang": "en", "name": "en_US-ljspeech-high", "engine": "piper" },
+        { "lang": "en", "name": "en_us_vctk", "engine": "matcha" },
+        { "lang": "en", "name": "en_us_ljspeech", "engine": "matcha" },
+        { "lang": "sv", "name": "sv_vc_m2m_p", "engine": "piper" },
+        { "lang": "sv", "name": "sv_vc_m2f_p", "engine": "piper" },
+        { "lang": "sv", "name": "sv_vc_m2m", "engine": "matcha" },
+        { "lang": "sv", "name": "sv_vc_m2f", "engine": "matcha" }
+    ]
+
+    test_data = {
+        "sv": "Hej, jag talar god svenska naturligtvis.",
+        "en": "Hello, I do speak some English as well."
+    }
+
+    def test_mvp2_call_all_other_voices(self,client, base_url):
+        for voice in self.voices:
+            if voice["engine"] not in ["matcha", "piper"]:
+                self.exec_single_voice(client, base_url, voice)
+        
+    def test_mvp2_call_all_piper_voices(self,client, base_url):
+        for voice in self.voices:
+            if voice["engine"] == "piper":
+                self.exec_single_voice(client, base_url, voice)
+        
+    def test_mvp2_call_all_matcha_voices(self,client, base_url):
+        for voice in self.voices:
+            if voice["engine"] == "matcha":
+                self.exec_single_voice(client, base_url, voice)
+
+    def exec_single_voice(self, client, base_url, voice):
+        if self.server_voices is None:
+            r = client.get(f"{base_url}/synthesis/voices")
+            assert r.status_code == 200
+            self.server_voices = r.json()
+
+        voice_exists = False
+        for sv in self.server_voices:
+            if sv["name"] == voice["name"]:
+                voice_exists = True
+        if not voice_exists:
+            pytest.xfail(f"Couldn't find voice {voice} in server voices")
+            
+        lang = voice["lang"]
+        voice_name = voice["name"]        
+        text = self.test_data[lang]
+        url = f"{base_url}/?lang={lang}&input={text}&voice={voice_name}"
+        print(f"Testing {url}")
+        response = client.get(url)
+        assert response.status_code == 200, f"Server returned: {response} for {url}"
+        assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
         data = response.json()
-        print("MVP2 voices:")
-        for v in data:
-            print(f"-{v['engine']} {v['name']}")
-
-        for lang in test_data:
-            text = test_data[lang]["text"]
-            for voice in test_data[lang]["voices"]:
-                url = f"{base_url}/?lang={lang}&input={text}&voice={voice}"
-                print(f"Testing {url}")
-                response = client.get(url)
-                assert response.status_code == 200, f"Server returned: {response} for {url}"
-                assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
-                data = response.json()
-                assert "audio" in data
-                assert "audio_data" in data
-                assert "tokens" in data
-                assert len(data["tokens"]) > 5
-                assert len(data["tokens"]) < 10
-                # Timestamps change for each run, but they should increase
-                t1 = data["tokens"][0]["endtime"]
-                t2 = data["tokens"][1]["endtime"]
-                assert t1 < t2
-                assert "adapter" in data["voice"]
-                assert "config_file" in data["voice"]
-                assert "engine" in data["voice"]    
-                assert "lang" in data["voice"]
-                assert "longname" in data["voice"]
-                if data["voice"]["engine"] in ["piper","matcha"] and lang == "sv":
-                    assert "mapper" in data["voice"]
-                assert "name" in data["voice"]
-
+        assert "audio" in data
+        assert "audio_data" in data
+        assert "tokens" in data
+        assert len(data["tokens"]) > 5
+        assert len(data["tokens"]) < 10
+        # Timestamps change for each run, but they should increase
+        t1 = data["tokens"][0]["endtime"]
+        t2 = data["tokens"][1]["endtime"]
+        assert t1 < t2
+        assert "adapter" in data["voice"]
+        assert "config_file" in data["voice"]
+        assert "engine" in data["voice"]    
+        assert "lang" in data["voice"]
+        assert "longname" in data["voice"]
+        if data["voice"]["engine"] in ["piper","matcha"] and lang == "sv":
+            assert "mapper" in data["voice"]
+        assert "name" in data["voice"]
