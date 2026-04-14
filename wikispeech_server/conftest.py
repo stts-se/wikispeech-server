@@ -1,5 +1,6 @@
 import pytest
 import requests
+from pathlib import Path
 
 @pytest.fixture(scope="session")
 def client():
@@ -16,3 +17,7 @@ def base_url():
 @pytest.fixture(scope="session")
 def mapper_url():
     return "http://localhost:8771"
+
+@pytest.fixture
+def data_dir():
+    return Path(__file__).parent / "testdata"
