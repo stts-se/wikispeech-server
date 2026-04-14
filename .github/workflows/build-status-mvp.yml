@@ -204,4 +204,4 @@ jobs:
     - name: Run pytest
       run: |
        source .venv/bin/activate
-       pytest -k "not MVP2 and not article"
+       pytest -k "not MVP2"

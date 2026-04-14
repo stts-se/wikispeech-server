@@ -14,15 +14,16 @@ class TestArticleTextsMVP2Piper:
             pytest.exit(f"Server not reachable at {base_url}/ping, is it running?")
         except requests.exceptions.Timeout:
             pytest.exit(f"Server did not respond within 2 seconds")
-            
-    def test_first_line(self, client, base_url, data_dir):
-        with open(data_dir / "article_text_sv_medeltidens_mat.txt") as f:
+
+    def run_article(self, client, base_url, data_dir, lang, voice, article_filename):
+        with open(data_dir / article_filename) as f:
             lines = [line.rstrip() for line in f if line.strip() and not line.startswith("#")]
             assert len(lines) > 2
-            for l in lines: 
+            for i, l in enumerate(lines):
+                id = '{:0>3}'.format(i)
                 payload = {
-                    "lang": "sv",
-                    "voice": "sv_vc_m2f_p",
+                    "lang": lang,
+                    "voice": voice,
                     "input": l
                 }
                 response = client.post(f"{base_url}/", data=payload)
@@ -30,4 +31,10 @@ class TestArticleTextsMVP2Piper:
                 data = response.json()
                 assert "audio" in data
                 assert len(data["audio_data"]) > 1000
-                print(data["audio"], f"l")
+                print(id, data["audio"], l)
+            
+    def test_medeltidens_mat(self, client, base_url, data_dir):
+        self.run_article(client, base_url, data_dir, "sv", "sv_vc_m2f_p", "article_text_sv_medeltidens_mat.txt")
+
+    def test_nevermind(self, client, base_url, data_dir):
+        self.run_article(client, base_url, data_dir, "sv", "sv_vc_m2f_p", "article_text_sv_nevermind.txt")
