@@ -55,8 +55,8 @@ def getVoicenames(response):
 def utt2engine(input,lang,voice_config):
     chunks = []
     wid=0
-    # if "x" in f"{input}":
-    #     raise VoiceException(f"EasterEgg for 'x' in input text")
+    # if "taxi" in f"{input}":
+    #     raise VoiceException(f"EasterEgg for 'taxi' in input text")
     for p0 in input["paragraphs"]:
         for s in p0["sentences"]:
             for p in s["phrases"]:

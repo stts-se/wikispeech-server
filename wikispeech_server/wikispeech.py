@@ -342,14 +342,18 @@ def wikispeech():
         log.error(f"Got exception: {ex}")
         import traceback
         traceback.print_exc()
-        error = {
-            "error_code": 99,
-            "error_type": "InternalServerError",
-            "error_msg": "The server got an unknown error. See server logs for details.",
-            "request": f"{request}"
-        }
         res = {
-            "error": [error]
+            "error": [
+                {
+                    "component": "wikispeech",
+                    "error": {
+                        "error_code": 500,
+                        "error_type": "InternalServerError",
+                        "error_msg": "The server got an unknown error. See server logs for details.",
+                        "request": f"{request}"
+                    }
+                }
+            ]
         }
         return res
     
@@ -435,36 +439,57 @@ def textprocessing_options():
 
 @app.route('/textprocessing/', methods=["GET", "POST"])
 def textprocessing():
-    lang = getParam("lang")
-    textprocessor_name = getParam("textprocessor", "default_textprocessor")
-    input_type = getParam("input_type", "text")
-    output_type = getParam("output_type", "json")
-    input = getParam("input")
-    log.debug(f"textprocssing input: {lang} {textprocessor_name} {input_type} {input}")
+    try:
+        lang = getParam("lang")
+        textprocessor_name = getParam("textprocessor", "default_textprocessor")
+        input_type = getParam("input_type", "text")
+        output_type = getParam("output_type", "json")
+        input = getParam("input")
+        log.debug(f"textprocssing input: {lang} {textprocessor_name} {input_type} {input}")
 
-    if lang == None or input == None:
-        options = getTextprocessingOptions()
-        resp = make_response(json.dumps(options))
-        resp.headers["Content-type"] = "application/json"
-        resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
-        return resp
+        if lang == None or input == None:
+            options = getTextprocessingOptions()
+            resp = make_response(json.dumps(options))
+            resp.headers["Content-type"] = "application/json"
+            resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
+            return resp
 
-    
-    if input_type in ["text","ssml"]:
-        markup = textproc(lang,textprocessor_name, input, input_type=input_type)
-        #If "markup" is a string, just return it, it's an error message to the client.
-        #TODO nicer way to handle error messages
-        if type(markup) == type(""):
-            log.debug("RETURNING MESSAGE: %s" % markup)
-            return markup
-    else:
-        return "input_type %s not supported" % input_type
+        # if "taxi" in f"{input}":
+        #     raise Exception("HELLOOOO EASTER EGG")
 
-    if output_type == "json":
-        json_data = json.dumps(markup)
-        return Response(json_data, mimetype='application/json')
-    else:
-        return "output_type %s not supported" % output_type
+        if input_type in ["text","ssml"]:
+            markup = textproc(lang,textprocessor_name, input, input_type=input_type)
+            #If "markup" is a string, just return it, it's an error message to the client.
+            #TODO nicer way to handle error messages
+            if type(markup) == type(""):
+                log.debug("RETURNING MESSAGE: %s" % markup)
+                return markup
+        else:
+            return "input_type %s not supported" % input_type
+        
+        if output_type == "json":
+            json_data = json.dumps(markup)
+            return Response(json_data, mimetype='application/json')
+        else:
+            return "output_type %s not supported" % output_type
+    except Exception as ex:
+        log.error(f"Got exception: {ex}")
+        import traceback
+        traceback.print_exc()
+        res = {
+            "error": [
+                {
+                    "component": "textprocessing",
+                    "error": {
+                        "error_code": 500,
+                        "error_type": "InternalServerError",
+                        "error_msg": "The server got an unknown error. See server logs for details.",
+                        "request": f"{request}"
+                    }
+                }
+            ]
+        }
+        return res
 
 
 def textprocSupportedLanguages():
@@ -646,39 +671,57 @@ def synthesis_options():
 
 
 
-
 @app.route('/synthesis/', methods=["GET","POST"])
 def synthesis():
-    hostname = request.url_root
+    try:
+        hostname = request.url_root
 
-    lang = getParam("lang")
-    input = getParam("input")
-    voice_name = getParam("voice", "default_voice")
-    input_type = getParam("input_type", "markup")
-    output_type = getParam("output_type", "json")
-
-
-
-    if lang == None or input == None:
-        options = getSynthesisOptions()
-        resp = make_response(json.dumps(options))
-        resp.headers["Content-type"] = "application/json"
-        resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
-        return resp
+        lang = getParam("lang")
+        input = getParam("input")
+        voice_name = getParam("voice", "default_voice")
+        input_type = getParam("input_type", "markup")
+        output_type = getParam("output_type", "json")
 
 
-    if lang not in synthesisSupportedLanguages():
-        return "synthesis does not support language %s" % lang
 
-    input = json.loads(input)
-    result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname)
-    #If result is a string, it is an error message to the client.
-    #TODO nicer way of dealing with messages
-    if type(result) == type(""):
-        log.debug("RETURNING MESSAGE: %s" % result)
-        return result
-    json_data = json.dumps(result)
-    return Response(json_data, mimetype='application/json')
+        if lang == None or input == None:
+            options = getSynthesisOptions()
+            resp = make_response(json.dumps(options))
+            resp.headers["Content-type"] = "application/json"
+            resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
+            return resp
+
+
+        if lang not in synthesisSupportedLanguages():
+            return "synthesis does not support language %s" % lang
+
+        input = json.loads(input)
+        result = synthesise(lang,voice_name,input,input_type,output_type,hostname=hostname)
+        #If result is a string, it is an error message to the client.
+        #TODO nicer way of dealing with messages
+        if type(result) == type(""):
+            log.debug("RETURNING MESSAGE: %s" % result)
+            return result
+        json_data = json.dumps(result)
+        return Response(json_data, mimetype='application/json')
+    except Exception as ex:
+        log.error(f"Got exception: {ex}")
+        import traceback
+        traceback.print_exc()
+        res = {
+            "error": [
+                {
+                    "component": "synthesis",
+                    "error": {
+                        "error_code": 500,
+                        "error_type": "InternalServerError",
+                        "error_msg": "The server got an unknown error. See server logs for details.",
+                        "request": f"{request}"
+                    }
+                }
+            ]
+        }
+        return res
 
 
 def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/"):
