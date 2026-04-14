@@ -1,7 +1,6 @@
 import sys, requests, json, re
 import sys, os, re, io
 
-
 if __name__ == "__main__":
     sys.path.append(".")
 
@@ -56,6 +55,8 @@ def getVoicenames(response):
 def utt2engine(input,lang,voice_config):
     chunks = []
     wid=0
+    # if "x" in f"{input}":
+    #     raise VoiceException(f"EasterEgg for 'x' in input text")
     for p0 in input["paragraphs"]:
         for s in p0["sentences"]:
             for p in s["phrases"]:
@@ -73,15 +74,19 @@ def utt2engine(input,lang,voice_config):
                         wid+=1
                         if "trans" in w:
                             inputTrans = w['trans']
-                            trans = mapToEngine(inputTrans,lang,voice_config)
-                            token["phonemes"] = trans
+                            res, errs = mapSymbolSetToEngine(inputTrans,lang,voice_config)
+                            if not errs is None:
+                                for err in errs:
+                                    err["input"] = input
+                                return res, errs
+                            token["phonemes"] = res
                             if "g2p_method" in w:
                                 token["g2p_method"] = w["g2p_method"]
                         if "lang" in w:
                             token["lang"] = w["lang"]
                         chunk.append(token)
                 chunks.append(chunk)
-    return chunks
+    return chunks, None
 
 def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaking_rate=1.0):
     engine = voice_config["engine"]
@@ -93,7 +98,10 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
 
     log.debug(f"{py_name} input: {input}")
     url = engine_url + "/synthesize/"
-    tokens = utt2engine(input,lang,voice_config)
+    res, errs = utt2engine(input,lang,voice_config)
+    if not errs is None:
+        return "", res, errs
+    tokens = res
     log.debug(f"{py_name} tokens to {engine} server: {tokens}")
     if speaker_id is None:
         speaker_id = -1
@@ -123,7 +131,7 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
 
 
     tokens = engine2utt(input, res["tokens"])
-    return (audio_url, tokens)
+    return audio_url, tokens, None
 
 def engine2utt(input, tokens):
     #log.debug(f"??? engine2utt input\t{input}")
@@ -248,14 +256,14 @@ def engine2utt(input, tokens):
     # return res
 
 
-def mapToEngine(trans,lang,voice):
-    log.info(f"{py_name}.mapToEngine( %s , %s , %s )" % (trans, lang, voice))
+def mapSymbolSetToEngine(trans,lang,voice):
+    log.info(f"{py_name}.mapSymbolSetToEngine( %s , %s , %s )" % (trans, lang, voice))
 
     if "mapper" in voice:
         #Bad names.. It should be perhaps "external" and "internal" instead of "from" and "to"
         to_symbol_set = voice["mapper"]["to"]
         from_symbol_set = voice["mapper"]["from"]
-        log.info(f"{py_name}.mapToEngine %s -> %s" % (from_symbol_set, to_symbol_set))    
+        log.info(f"{py_name}.mapSymbolSetToEngine %s -> %s" % (from_symbol_set, to_symbol_set))    
     else:
         log.info("No mapper defined for language %s, engine %s" % (lang, voice.engine))
         return trans
@@ -271,13 +279,30 @@ def mapToEngine(trans,lang,voice):
     try:
         response_json = json.loads(response)
         log.debug("RESPONSE_JSON: %s" % response_json)
-        new_trans = response_json["result"]
-        new_trans = new_trans.replace(".","") # TODO should be added to map table, but it's not allowed atm jan 2026 /HL
+        if type(response_json) == list:
+            response_list = response_json
+        else:
+            response_list = [response_json]
+        errs = []
+        new_trans = ""
+        for item in response_list:
+            if item["type"] == "error":
+                err = {
+                    "error": item,
+                    "component": "mapper",
+                    "component_url": url
+                }
+                errs.append(err)
+            if item["type"] == "result":
+                new_trans = response_json["result"]
+                new_trans = new_trans.replace(".","") # TODO should be added to map table, but it's not allowed atm jan 2026 /HL
+                log.info("NEW TRANS: %s" % new_trans)
+        if len(errs) > 0:
+            return new_trans, errs
     except:
         log.error("unable to map %s, from %s to %s. response was %s" % (trans, from_symbol_set, to_symbol_set, response))
         raise
-    log.info("NEW TRANS: %s" % new_trans)
-    return new_trans
+    return new_trans, None
 
 
 def mapFromEngine(trans,lang,voice):

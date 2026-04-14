@@ -25,7 +25,6 @@ import base64
 
 from urllib.parse import quote
 
-
 ###
 #change from import to load json, to allow for different voice config files!
 from wikispeech_server.voice_config import textprocessor_configs, voice_configs
@@ -231,110 +230,129 @@ def list_default_voices():
 @app.route('/', methods=["GET", "POST"])
 @app.route('/wikispeech', methods=["GET", "POST"])
 def wikispeech():
-    global hostname
+    try:
+        global hostname
 
-    from urllib.parse import urlparse
-    parsed_uri = urlparse(request.url)
-    hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+        from urllib.parse import urlparse
+        parsed_uri = urlparse(request.url)
+        hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
 
-    # log.debug("request.url: %s" % hostname)
-    log.debug("request: %s" % request)
-    log.info("request.url: %s" % request.url)
-    log.debug("hostname: %s" % hostname)
-    if not hostname.endswith("/"):
-        hostname = hostname+"/"
-    if "wikispeech.morf.se" in hostname: ## HL 20171121: force https for wikispeech.morf.se
-        hostname = hostname.replace("http://","https://")
-    log.debug("hostname: %s" % hostname)
-        
-    lang = getParam("lang")
-    input = getParam("input")
-    input_type = getParam("input_type", "text")
-    output_type = getParam("output_type", "json")
+        # log.debug("request.url: %s" % hostname)
+        log.debug("request: %s" % request)
+        log.info("request.url: %s" % request.url)
+        log.debug("hostname: %s" % hostname)
+        if not hostname.endswith("/"):
+            hostname = hostname+"/"
+        if "wikispeech.morf.se" in hostname: ## HL 20171121: force https for wikispeech.morf.se
+            hostname = hostname.replace("http://","https://")
+        log.debug("hostname: %s" % hostname)
 
-
-
-
-    textprocessor_name = getParam("textprocessor", "default_textprocessor")
-    voice_name = getParam("voice", "default_voice")
+        lang = getParam("lang")
+        input = getParam("input")
+        input_type = getParam("input_type", "text")
+        output_type = getParam("output_type", "json")
 
 
 
-    log.debug("WIKISPEECH CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input))
 
-    supported_languages = getSupportedLanguages()
-
-    if not lang or not input:
-        return render_template("usage.html", server=hostname, languages=supported_languages)
-
-    if lang not in supported_languages:
-        return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
+        textprocessor_name = getParam("textprocessor", "default_textprocessor")
+        voice_name = getParam("voice", "default_voice")
 
 
-    if input == "TEST_EXAMPLE":
-        return json.dumps(getTestExample(lang))
+
+        log.debug("WIKISPEECH CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input))
+
+        supported_languages = getSupportedLanguages()
+
+        if not lang or not input:
+            return render_template("usage.html", server=hostname, languages=supported_languages)
+
+        if lang not in supported_languages:
+            return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
 
 
-    if input_type == "ipa":
-        if lang == "en":
-            xmllang = "en-US"
+        if input == "TEST_EXAMPLE":
+            return json.dumps(getTestExample(lang))
+
+
+        if input_type == "ipa":
+            if lang == "en":
+                xmllang = "en-US"
+            else:
+                xmllang = lang
+            input = input.replace("\"","&quot;")
+            input = """<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="%s">
+        <phoneme alphabet="ipa" ph="%s">%s</phoneme>
+    </speak>""" % (xmllang, input, "")
+            input_type = "ssml"
+
+
+        if input_type in ["text","ssml"]:
+            markup = textproc(lang, textprocessor_name, input, input_type=input_type)
+            if type(markup) == type(""):
+                log.debug("RETURNING MESSAGE: %s" % markup)
+                return markup
         else:
-            xmllang = lang
-        input = input.replace("\"","&quot;")
-        input = """<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="%s">
-    <phoneme alphabet="ipa" ph="%s">%s</phoneme>
-</speak>""" % (xmllang, input, "")
-        input_type = "ssml"
+            return "input_type %s not supported" % input_type
+
+        if output_type in ["json", "html"]:
+            result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname)
+            if "error" in result:
+                return result
+            if type(result) == type(""):
+                log.debug("RETURNING MESSAGE: %s" % result)
+                return result
+
+            #TODO
+            #The player being developed at wikimedia depends on the output matching input exactly
+            #phabricator T147547 
+            #Some special characters, like "—" (em-dash) aren't returned properly by the TTS-server. This breaks the token-to-HTML mapping, since it relies on finding the exact same strings in the HTML as the tokens orth values.
+            #Add a test for that here,
+            #And then require adapter components to conform to this?
+            #how, exactly ...
+            msg = checkInputAndOutputTokens(input,result["tokens"])
+            if msg:
+                result["message"] = msg
+
+            json_data = json.dumps(result)
+
+
+            if output_type == "json":
+                return Response(json_data, mimetype='application/json')
+
+            elif output_type == "html":
+                newtokens = []
+                starttime = 0
+                for token in result["tokens"]:
+                    token["starttime"] = starttime
+                    #T260293
+                    token["dur"] = token["endtime"]/1000-starttime
+                    #token["dur"] = token["endtime"]-starttime
+                    newtokens.append(token)
+                    starttime = token["endtime"]/1000
+                    #starttime = token["endtime"]
+
+                return render_template("output.html", audio_data=result["audio_data"], tokens=newtokens)
+
+
+        else:
+            return "output_type %s not supported" % output_type
+
+    except Exception as ex:
+        log.error(f"Got exception: {ex}")
+        import traceback
+        traceback.print_exc()
+        error = {
+            "error_code": 99,
+            "error_type": "InternalServerError",
+            "error_msg": "The server got an unknown error. See server logs for details.",
+            "request": f"{request}"
+        }
+        res = {
+            "error": [error]
+        }
+        return res
     
-
-    if input_type in ["text","ssml"]:
-        markup = textproc(lang, textprocessor_name, input, input_type=input_type)
-        if type(markup) == type(""):
-            log.debug("RETURNING MESSAGE: %s" % markup)
-            return markup
-    else:
-        return "input_type %s not supported" % input_type
-
-    if output_type in ["json", "html"]:
-        result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname)
-        if type(result) == type(""):
-            log.debug("RETURNING MESSAGE: %s" % result)
-            return result
-
-        #TODO
-        #The player being developed at wikimedia depends on the output matching input exactly
-        #phabricator T147547 
-        #Some special characters, like "—" (em-dash) aren't returned properly by the TTS-server. This breaks the token-to-HTML mapping, since it relies on finding the exact same strings in the HTML as the tokens orth values.
-        #Add a test for that here,
-        #And then require adapter components to conform to this?
-        #how, exactly ...
-        msg = checkInputAndOutputTokens(input,result["tokens"])
-        if msg:
-            result["message"] = msg
-
-        json_data = json.dumps(result)
-
-                
-        if output_type == "json":
-            return Response(json_data, mimetype='application/json')
-
-        elif output_type == "html":
-            newtokens = []
-            starttime = 0
-            for token in result["tokens"]:
-                token["starttime"] = starttime
-                #T260293
-                token["dur"] = token["endtime"]/1000-starttime
-                #token["dur"] = token["endtime"]-starttime
-                newtokens.append(token)
-                starttime = token["endtime"]/1000
-                #starttime = token["endtime"]
-            
-            return render_template("output.html", audio_data=result["audio_data"], tokens=newtokens)
-
-
-    else:
-        return "output_type %s not supported" % output_type
 
 
 
@@ -703,8 +721,8 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     method_name = "synthesise"
     process = getattr(mod, method_name)
     log.debug("PROCESS: %s" % process)
-    (audio_url_0, output_tokens) = process(lang, voice, input, hostname=hostname)
-
+    err = None
+    (audio_url_0, output_tokens, err) = process(lang, voice, input, hostname=hostname)      
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
@@ -716,26 +734,29 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
 
     #HB 200326 Easiest way right now: include base64 encoding in saveAndConvertAudio
 
-    audio_data = ""
-    if output_type != "test":
-        (audio_file, audio_data) = saveAndConvertAudio(audio_url_0)
+    audio_data = None
+    audio_url = None
+    audio_file = ""
+    if err is None:
+        if output_type != "test":
+            (audio_file, audio_data) = saveAndConvertAudio(audio_url_0)
 
-    audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
-    log.debug("audio_url: %s" % audio_url)
+        audio_url = "%s%s/%s" % (hostname, "audio", audio_file)
+        log.debug("audio_url: %s" % audio_url)
 
     #T260293 Convert seconds to milliseconds in tokens
     output_tokens = convertTokenTimingsToMilliseconds(output_tokens)
 
-
     #T257659 Add voice to output (voice contains language, name, and other info)
     data = {
         "voice":voice,
-        "audio": audio_url,
-        #"audio":audio_url, #The sound file is no longer returned, deleted after base64 encoding
-        "audio_data":audio_data,
-        "tokens":output_tokens
     }
-
+    if err is None:
+        data["audio"] = audio_url
+        data["audio_data"] = audio_data
+        data["tokens"] = output_tokens
+    else:
+        data["error"] = err
     
     return data
 

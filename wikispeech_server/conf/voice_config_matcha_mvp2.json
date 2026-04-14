@@ -3,7 +3,7 @@
 	{
 	    "name":"matcha_textproc_sv",
 	    "lang":"sv",
-	    "default": true,
+	    "default": false,
 	    "components":[
 		{
 		    "module":"adapters.textproc_adapter",
@@ -41,7 +41,7 @@
             "name":"en_us_ljspeech",
             "engine":"matcha",
             "adapter":"adapters.matcha_piper_adapter",
-	    "default": true,
+	    "default": false,
 	    "skip_test": false
 	},
 	{
@@ -69,7 +69,7 @@
             "engine":"matcha",
             "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
-	    "default": true,
+	    "default": false,
 	    "mapper": {
 		"from":"sv-se_ws-sampa-braxen",
 		"to":"sv-se_matcha_ipa_from_ws"

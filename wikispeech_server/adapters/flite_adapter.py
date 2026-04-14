@@ -111,7 +111,7 @@ def synthesise(lang, voice, input, hostname=None):
     log.debug("flite_adapter returning audio_url: %s" % audio_url) 
     
     #return audio_url and tokens
-    return (audio_url, words)
+    return (audio_url, words, None)
 
 
 def utt2ssml(utterance):
