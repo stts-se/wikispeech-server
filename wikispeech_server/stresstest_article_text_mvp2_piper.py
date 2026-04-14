@@ -1,6 +1,6 @@
 ## This tests a running server, using the config_mvp2.env et al. In other words, the Wikispeech server must be started before running these tests.
 
-# pytest test_article_text_mvp2_piper.py
+# pytest stresstest_article_text_mvp2_piper.py
 
 import pytest
 import requests
