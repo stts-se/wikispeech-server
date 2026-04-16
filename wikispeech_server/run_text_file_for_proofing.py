@@ -24,6 +24,33 @@ def ping_server(client, base_url):
         sys.exit(f"Server did not respond within 2 seconds")
         
 
+def render_g2p_table(rows):
+    if not rows:
+        return ""
+
+    table_rows = []
+
+    for orth, phonemes in rows:
+        table_rows.append(f"""
+        <tr>
+            <td>{html.escape(orth)}</td>
+            <td>{html.escape(phonemes)}</td>
+        </tr>
+        """)
+
+    return f"""
+    <div class="block">
+        
+        <table class="g2p-table">
+            <tr>
+                <th>Not in lexicon</th>
+                <th>Generated transcription</th>
+            </tr>
+            {"".join(table_rows)}
+        </table>
+    </div>
+    """
+        
 def render(items):
     blocks = []
 
@@ -38,8 +65,10 @@ def render(items):
 
             <div class="block"><b>Input:</b><br>{html.escape(it['orths'])}</div>
             <div class="block"><b>Normalized:</b><br>{html.escape(it['words'])}</div>
-            <div class="block"><b>Trans:</b><br>{html.escape(it['trans'])}</div>
-            <div class="block"><b>TTS:</b><br>{html.escape(it['tts'])}</div>
+            <div class="block"><b>After lexicon look up:</b><br>{html.escape(it['trans'])}</div>
+            <div class="block"><b>To synthesis:</b><br>{html.escape(it['tts'])}</div>
+
+            {render_g2p_table(it['g2p'])} 
         </div>
         """)
 
@@ -84,24 +113,33 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
             orths = []
             words = []
             trans = []
-            tts_input = []
-            for t in data["tokens"]: 
+            tts_phonemes = []
+            non_lex_phos = []
+            for t in data["tokens"]:
                 orth = t["orth"]
                 orths.append(orth)
                 for w in t["words"]:
+                    print("WORD:", w)
                     words.append(w["orth"])
                     if "trans" in w:
                         trans.append(w["trans"])
-                    if "tts_input" in w:
-                        tts_input.append(w["tts_input"])
-
+                    elif "tts_input" in w:
+                        trans.append(w["tts_input"])
+                    if "tts_phonemes" in w:
+                        tts_phonemes.append(w["tts_phonemes"])
+                    if "g2p_method" in w:
+                        if w["g2p_method"] != "lexicon":
+                            non_lex_phos.append((w["orth"], w["tts_phonemes"])) 
+                            #non_lex_phos.append(w["tts_phonemes"])
+                            
             items.append({
                 "id": id,
                 "audio": f"audio/{local_audio.name}",
                 "orths": " ".join(orths),
                 "words": " ".join(words),
                 "trans": " ".join(trans),
-                "tts": " ".join(tts_input),
+                "tts": " ".join(tts_phonemes),
+                "g2p": non_lex_phos
             })
 
             # # --- build one HTML "card" ---
@@ -117,7 +155,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
             #     <div class="block"><b>Input text:</b><br>{html.escape(' '.join(orths))}</div>
             #     <div class="block"><b>Normalised text:</b><br>{html.escape(' '.join(words))}</div>
             #     <div class="block"><b>Input transcription:</b><br>{html.escape(' '.join(trans))}</div>
-            #     <div class="block"><b>TTS transcription:</b><br>{html.escape(' '.join(tts_input))}</div>
+            #     <div class="block"><b>TTS transcription:</b><br>{html.escape(' '.join(tts_phonemes))}</div>
             # </div>
             # """
 
@@ -126,7 +164,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
             # print("input text:", orths)
             # print("normalised text:", words)
             # print("input transcription", trans)
-            # print("tts transcription", tts_input)
+            # print("tts transcription", tts_phonemes)
             # print()
             
     html_doc = f"""
@@ -151,6 +189,21 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     audio {{
     width: 100%;
     margin-top: 8px;
+    }}
+    .g2p-table {{
+    margin-top: 8px;
+    border-collapse: collapse;
+    width: 100%;
+    }}
+    .g2p-table th,
+    .g2p-table td {{
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    text-align: left;
+    vertical-align: top;
+    }}
+    .g2p-table th {{
+    background: #eee;
     }}
     </style>
     </head>
