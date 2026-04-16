@@ -119,7 +119,6 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
                 orth = t["orth"]
                 orths.append(orth)
                 for w in t["words"]:
-                    print("WORD:", w)
                     words.append(w["orth"])
                     if "trans" in w:
                         trans.append(w["trans"])
@@ -142,30 +141,6 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
                 "g2p": non_lex_phos
             })
 
-            # # --- build one HTML "card" ---
-            # item_html = f"""
-            # <div class="item">
-            #     <h3>{id}</h3>
-
-            #     <audio controls>
-            #         <source src="{Path(local_audio).name}" type="audio/ogg">
-            #         Your browser does not support audio.
-            #     </audio>
-
-            #     <div class="block"><b>Input text:</b><br>{html.escape(' '.join(orths))}</div>
-            #     <div class="block"><b>Normalised text:</b><br>{html.escape(' '.join(words))}</div>
-            #     <div class="block"><b>Input transcription:</b><br>{html.escape(' '.join(trans))}</div>
-            #     <div class="block"><b>TTS transcription:</b><br>{html.escape(' '.join(tts_phonemes))}</div>
-            # </div>
-            # """
-
-            # items_html.append(item_html)
-            # print("audio:", out / f"{id}_{f_base}.opus")
-            # print("input text:", orths)
-            # print("normalised text:", words)
-            # print("input transcription", trans)
-            # print("tts transcription", tts_phonemes)
-            # print()
             
     html_doc = f"""
     <html>
@@ -193,7 +168,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     .g2p-table {{
     margin-top: 8px;
     border-collapse: collapse;
-    width: 100%;
+    width: auto;
     }}
     .g2p-table th,
     .g2p-table td {{
@@ -201,9 +176,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     padding: 4px 8px;
     text-align: left;
     vertical-align: top;
-    }}
-    .g2p-table th {{
-    background: #eee;
+    white-space: nowrap;
     }}
     </style>
     </head>
@@ -214,52 +187,6 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     """
 
     (out / "index.html").write_text(html_doc, encoding="utf-8")
-    # # --- final HTML document ---
-    # html_doc = f"""
-    # <html>
-    # <head>
-    #     <meta charset="utf-8">
-    #     <style>
-    #         body {{
-    #             font-family: sans-serif;
-    #             margin: 20px;
-    #         }}
-    #         .item {{
-    #             border: 1px solid #ccc;
-    #             padding: 15px;
-    #             margin-bottom: 20px;
-    #         }}
-    #         .block {{
-    #             margin-top: 10px;
-    #             white-space: pre-wrap;
-    #             word-wrap: break-word;
-    #         }}
-    #         audio {{
-    #             margin-top: 10px;
-    #             width: 100%;
-    #         }}
-    #     </style>
-    # </head>
-    # <body>
-    #     {"".join(items_html)}
-    # </body>
-    # </html>
-    # """
-
-    # output_file = out / f"{f_base}.html"
-    # output_file.write_text(html_doc, encoding="utf-8")
-
-
-
-
-
-
-    
-def test_medeltidens_mat(self, client, base_url, data_dir):
-    self.run_article(client, base_url, data_dir, "sv", "sv_vc_m2f_p", "article_text_sv_medeltidens_mat.txt")
-            
-def test_nevermind(self, client, base_url, data_dir):
-    self.run_article(client, base_url, data_dir, "sv", "sv_vc_m2f_p", "article_text_sv_nevermind.txt")
 
 
 
