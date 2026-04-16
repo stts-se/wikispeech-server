@@ -1,5 +1,6 @@
 tmp/*
 wikispeech_server/tmp/*
+wikispeech_server/proofing/*
 *~
 
 wikispeech_server/adapters/__pycache__/
