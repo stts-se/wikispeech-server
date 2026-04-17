@@ -134,8 +134,8 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
     return audio_url, tokens, None
 
 def engine2utt(input, tokens):
-    #log.debug(f"??? engine2utt input\t{input}")
-    #log.debug(f"??? engine2utt tokens\t{tokens}")
+    log.debug(f"matcha_piper_adapter.engine2utt input\t{input}")
+    log.debug(f"matcha_piper_adapter.engine2utt tokens\t{tokens}")
 
     ### ORIGINAL INPUT
     # [{'name': 'text1', 'paragraphs': [{'name': 'par1', 'sentences': [{'name': 'sent1', 'phrases': [{'input': 'Karl XII', 'name': 'phrase1', 'tokens': [
@@ -233,7 +233,7 @@ def engine2utt(input, tokens):
                     res.append(res_t)
 
     #print(f"{py_name} debug: token count: ", global_wi, len(tokens), token_count)
-    #log.debug(f"??? engine2utt res\t{res}")
+    log.debug(f"matcha_piper_adapter.engine2utt res\t{res}")
         
     return res
     
