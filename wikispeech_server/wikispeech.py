@@ -140,8 +140,8 @@ def versionInfo():
                     
     else:
         res.append("Application name: wikispeech")
-        res.append("Build timestamp: n/a")
-        res.append("Built by: user")
+        # res.append("Build timestamp: n/a")
+        # res.append("Built by: user")
 
         try:
             commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
@@ -166,14 +166,14 @@ def versionInfo():
         log.info(f"LOGGING VERSION INFO {l}")
     res.append("Started: " + startedAt)
 
-    for component in ["textproc","matcha","piper","deep_phonemizer"]:
+    for component in ["textproc","matcha","piper","deep_phonemizer","lexicon","mapper"]:
         if config.config.has_option("Services", component):
             res.append("")
             url = config.config.get("Services", component)
             try:
-                url = f"{url}/version"
-                r = requests.get(url)
-                res.append(r.text)
+                r = requests.get(f"{url}/version")
+                res.append(r.text.strip())
+                res.append(f"URL: {url}")
             except Exception as e:
                 log.error(f"Failed to get version info for {component}: {e}")
                 raise e
@@ -182,14 +182,18 @@ def versionInfo():
 
 
 def genStartedAtString():
-    from time import strftime, gmtime
-    from tzlocal import get_localzone
-    local_tz = get_localzone()
-    now = datetime.datetime.now()
-    if local_tz != None:
-        now = now.replace(tzinfo=local_tz)
-    now = now.astimezone(pytz.utc)
-    return '{:%Y-%m-%d %H:%M:%S %Z}'.format(now)
+    try:
+        from time import strftime, gmtime
+        from tzlocal import get_localzone
+        local_tz = get_localzone()
+        now = datetime.datetime.now()
+        if local_tz != None:
+            now = now.replace(tzinfo=local_tz)
+            #now = now.astimezone(pytz.utc)
+        return '{:%Y-%m-%d %H:%M:%S %Z}'.format(now)
+    except Exception as e:
+        log.info(f"Couldn't retrieve start time: {e}")
+        return "unknown"
 
 #These are set when running the server
 startedAt = genStartedAtString()
