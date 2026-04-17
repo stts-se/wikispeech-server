@@ -108,6 +108,21 @@ def ping():
 
 @app.route('/version')
 def version():
+    # lazy loading voice configs
+    voiceConfigHeader = "== VOICE CONFIG =="
+    if not voiceConfigHeader in vInfo:
+        vInfo.append("")
+        vInfo.append(voiceConfigHeader)
+        for v in voices:
+            name = v.name
+            if v.isDefault():
+                name = f"{name}*"
+            if "config_file" in v.config:
+                config_file = v.config["config_file"]
+            else:
+                config_file = ""
+            vInfo.append("%-4s\t%-20s\t%-20s" % (v.lang, name, config_file))
+        vInfo.append("* = default voice")
     resp = make_response("\n".join(vInfo))
     resp.headers["Content-type"] = "text/plain"
     return resp
@@ -115,6 +130,7 @@ def version():
 def versionInfo():
     res = []
     buildInfoFile = "/wikispeech/wikispeech_server/build_info.txt"
+    res.append("=== APPLICATIONS ===")
     if os.path.isfile(buildInfoFile):
         with open(buildInfoFile) as fp:  
             lines = fp.readlines()
@@ -156,14 +172,11 @@ def versionInfo():
             url = config.config.get("Services", component)
             try:
                 url = f"{url}/version"
-                print("???", url)
                 r = requests.get(url)
                 res.append(r.text)
             except Exception as e:
                 log.error(f"Failed to get version info for {component}: {e}")
                 raise e
-    
-            #res.append(f"{component} {)
     return res
     
 
