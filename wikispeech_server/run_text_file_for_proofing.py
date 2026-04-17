@@ -187,6 +187,15 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     max-width: 100%;
     margin-top: 8px;
     }}
+    .toolbar {{
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background: white;
+    padding: 8px 0;
+    border-bottom: 1px solid #ccc;
+    }}
     .table-row {{
     display: flex;
     gap: 16px;
@@ -212,10 +221,10 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     </style>
     </head>
     <body>
-    <p>
+    <p><div class="toolbar">
     Autoscroll <input title="Autoscroll playing audio element into view" type="checkbox" name="autoscroll" id="autoscroll" value="autoscroll" checked> &nbsp;&nbsp;
     <button id="toggle" title="Press P to play/pause">Play All</button>
-    <button id="stop">Stop</button>
+    <button id="stop">Stop</button></div>
     </p>
     {render(items)}
     </body>
@@ -231,7 +240,7 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument("-l", "--language", default="sv")
-    parser.add_argument("-v", "--voice", default="sv_vc_m2m_p")
+    parser.add_argument("-v", "--voice", default="sv_vc_m2m")
     parser.add_argument("-o", "--output_dir", default="proofing")
     parser.add_argument("-u", "--url", default="http://localhost:10000")
     
