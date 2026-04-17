@@ -130,21 +130,40 @@ def versionInfo():
         try:
             commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
             branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("utf-8").strip()
-            logger.info(f"git branch {branch}")
-            logger.info(f"git commit {commit}")
+            log.info(f"git branch {branch}")
+            log.info(f"git commit {commit}")
+            commit = commit[0:7]
+            res.append( ("Commit %s on branch %s") % (commit, branch) )
             try:
                 tag = subprocess.check_output(["git","describe","--tags"]).decode("utf-8").strip()
-                logger.info(f"git tag {tag}")
+                log.info(f"git tag {tag}")
                 res.append( ("Release %s on branch %s") % (tag, branch) )
             except:
-                logger.warning("couldn't retrieve git tags: %s" % sys.exc_info()[1])
-                commit = commit[0:7]
-                res.append( ("Commit %s on branch %s") % (commit, branch) )
+                log.warning("couldn't retrieve git tags: %s" % sys.exc_info()[1])
+                #commit = commit[0:7]
+                #res.append( ("Commit %s on branch %s") % (commit, branch) )
         except:
             log.warning("couldn't retrieve git release info: %s" % sys.exc_info()[1])
             res.append("Release: unknown");
 
+    for l in res:
+        log.info(f"LOGGING VERSION INFO {l}")
     res.append("Started: " + startedAt)
+
+    for component in ["textproc","matcha","piper","deep_phonemizer"]:
+        if config.config.has_option("Services", component):
+            res.append("")
+            url = config.config.get("Services", component)
+            try:
+                url = f"{url}/version"
+                print("???", url)
+                r = requests.get(url)
+                res.append(r.text)
+            except Exception as e:
+                log.error(f"Failed to get version info for {component}: {e}")
+                raise e
+    
+            #res.append(f"{component} {)
     return res
     
 
@@ -454,7 +473,7 @@ def textprocessing():
             resp.headers["Allow"] = "OPTIONS, GET, POST, HEAD"
             return resp
 
-        # if "taxi" in f"{input}":
+        # if "taxa" in f"{input}":
         #     raise Exception("HELLOOOO EASTER EGG")
 
         if input_type in ["text","ssml"]:
