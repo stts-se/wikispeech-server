@@ -109,10 +109,11 @@ def ping():
 @app.route('/version')
 def version():
     # lazy loading voice configs
-    voiceConfigHeader = "== VOICE CONFIG =="
-    if not voiceConfigHeader in vInfo:
+    voiceInfoHeader = "== VOICE CONFIG =="
+    lexInfoHeader = "== LEXICON STATS =="
+    if not voiceInfoHeader in vInfo:
         vInfo.append("")
-        vInfo.append(voiceConfigHeader)
+        vInfo.append(voiceInfoHeader)
         for v in voices:
             name = v.name
             if v.isDefault():
@@ -123,10 +124,52 @@ def version():
                 config_file = ""
             vInfo.append("%-4s\t%-20s\t%-20s" % (v.lang, name, config_file))
         vInfo.append("* = default voice")
+        log.info("Generated voice info for /version")
+    if not lexInfoHeader in vInfo:
+        lexInfo = getLexInfo()
+        if len(lexInfo) > 0:
+            vInfo.append("")
+            vInfo.append(lexInfoHeader)
+            vInfo.extend(lexInfo)
+
     resp = make_response("\n".join(vInfo))
     resp.headers["Content-type"] = "text/plain"
     return resp
-    
+
+def getLexInfo():
+    lexInfo = []
+    root_url = config.config.get("Services", "lexicon")
+    list_url = f"{root_url}/lexicon/list"
+    try:
+        r0 = requests.get(list_url)
+        if r0.status_code == 200:
+            data = r0.json()
+            for l in data:
+                name = l["name"]
+                stats_url = f"{root_url}/lexicon/stats/{name}"
+                r = requests.get(stats_url)
+                data = r.json()
+                nEntries = data["entries"]
+                timestamps = []
+                for source in data["LatestUpdatesPerSource"]:
+                    for sourcename in data["LatestUpdatesPerSource"][source]:
+                        ts = data["LatestUpdatesPerSource"][source][sourcename]
+                        if not ts in timestamps:
+                            timestamps.append(ts)
+                timestamp = " ".join(timestamps)
+                lexInfo.append("%-30s\t%10d\t%-20s" % (name, nEntries, timestamp))
+        else:
+            log.error(f"Couldn't derive lexicon stats from {root_url}")
+            next
+    except Exception as e:
+        log.error(f"Couldn't derive lexicon stats from {root_url}: {e}")
+        raise e
+        next
+    if len(lexInfo) > 0:
+        lexInfo.insert(0,"%-30s\t%10s\t%-20s" % ("Lexicon", "# entries", "timestamp"))
+    log.info("Generated lexicon info for /version")
+    return lexInfo
+
 def versionInfo():
     res = []
     buildInfoFile = "/wikispeech/wikispeech_server/build_info.txt"
