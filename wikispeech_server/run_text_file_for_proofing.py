@@ -3,7 +3,7 @@
 # python run_text_file_for_proofing.py
 
 # python run_text_file_for_proofing.py testdata/article_text_sv_medeltidens_mat.txt
-# Point your browser to proofing/{text_name}.html
+# Point your browser to proofing/article_text_sv_medeltidens_mat.html
 
 import requests
 import argparse
