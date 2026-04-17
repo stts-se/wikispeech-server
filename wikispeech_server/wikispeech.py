@@ -70,6 +70,7 @@ else:
 app = Flask(__name__, static_url_path='')
 CORS(app)
 
+hostname = None
 
 
 
@@ -106,8 +107,14 @@ def ping():
 #
 # GET:  curl "http://localhost:10000/version"
 
+vInfo = []
+
 @app.route('/version')
 def version():
+    global vInfo
+
+    if len(vInfo) == 0:
+        vInfo = versionInfo()
     # lazy loading voice configs
     voiceInfoHeader = "== VOICE CONFIG =="
     lexInfoHeader = "== LEXICON STATS =="
@@ -211,10 +218,21 @@ def versionInfo():
             log.warning("couldn't retrieve git release info: %s" % sys.exc_info()[1])
             res.append("Release: unknown");
 
-    for l in res:
-        log.info(f"LOGGING VERSION INFO {l}")
     res.append("Started: " + startedAt)
 
+    global hostname
+    if hostname is None:
+        from urllib.parse import urlparse
+        parsed_uri = urlparse(request.url)
+        hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+        if not hostname.endswith("/"):
+            hostname = hostname+"/"
+
+    res.append(f"URL: {hostname.removesuffix('/')}")
+            
+    for l in res:
+        log.info(f"LOGGING VERSION INFO {l}")
+        
     for component in ["textproc","matcha","piper","deep_phonemizer","lexicon","mapper"]:
         if config.config.has_option("Services", component):
             res.append("")
@@ -244,9 +262,7 @@ def genStartedAtString():
         log.info(f"Couldn't retrieve start time: {e}")
         return "unknown"
 
-#These are set when running the server
 startedAt = genStartedAtString()
-vInfo = versionInfo()
 
 
 
@@ -318,18 +334,16 @@ def wikispeech():
     try:
         global hostname
 
-        from urllib.parse import urlparse
-        parsed_uri = urlparse(request.url)
-        hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+        if hostname is None:
+            from urllib.parse import urlparse
+            parsed_uri = urlparse(request.url)
+            hostname = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+            if not hostname.endswith("/"):
+                hostname = hostname+"/"
 
         # log.debug("request.url: %s" % hostname)
         log.debug("request: %s" % request)
         log.info("request.url: %s" % request.url)
-        log.debug("hostname: %s" % hostname)
-        if not hostname.endswith("/"):
-            hostname = hostname+"/"
-        if "wikispeech.morf.se" in hostname: ## HL 20171121: force https for wikispeech.morf.se
-            hostname = hostname.replace("http://","https://")
         log.debug("hostname: %s" % hostname)
 
         lang = getParam("lang")
