@@ -1,5 +1,11 @@
 const audios = Array.from(document.getElementsByTagName("audio"));
 
+document.addEventListener('keyup', (e) => {
+  if (e.keyCode === 80) { // p
+    document.getElementById("toggle").click();
+  }
+});
+
 let currentIndex = 0;
 let currentAudio = null;
 let isPlaying = false;
@@ -19,6 +25,8 @@ function playNext() {
   currentAudio.play().then(() => {
     isPlaying = true;
     toggleBtn.textContent = "Pause";
+    if (document.getElementById("autoscroll").checked)
+      currentAudio.scrollIntoView();
   }).catch(err => {
     console.warn("Playback failed:", err);
     currentIndex++;

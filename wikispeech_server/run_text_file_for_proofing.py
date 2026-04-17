@@ -213,7 +213,8 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     </head>
     <body>
     <p>
-    <button id="toggle">Play All</button>
+    Autoscroll <input title="Autoscroll playing audio element into view" type="checkbox" name="autoscroll" id="autoscroll" value="autoscroll" checked> &nbsp;&nbsp;
+    <button id="toggle" title="Press P to play/pause">Play All</button>
     <button id="stop">Stop</button>
     </p>
     {render(items)}
