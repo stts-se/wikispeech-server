@@ -3,7 +3,7 @@
 # python run_text_file_for_proofing.py
 
 # python run_text_file_for_proofing.py testdata/article_text_sv_medeltidens_mat.txt
-# Point your browser to proofing/index.html
+# Point your browser to proofing/{text_name}.html
 
 import requests
 import argparse
@@ -13,6 +13,7 @@ import shutil
 from pathlib import Path
 import json
 import html
+import os
 
 def ping_server(client, base_url):
     try:
@@ -78,6 +79,10 @@ def render(items):
         
 def run_article(client, base_url, lang, voice, file_path, output_dir):
     Path(output_dir).mkdir(exist_ok=True)
+
+    text_name = os.path.basename(file_path)
+    text_name = Path(text_name).stem
+    text_name_html = f"{text_name}.html"
     
     out = Path(output_dir)
     audio_dir = out / "audio"
@@ -199,9 +204,8 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     </html>
     """
 
-    (out / "index.html").write_text(html_doc, encoding="utf-8")
-
-
+    (out / text_name_html).write_text(html_doc, encoding="utf-8")
+    return text_name_html
 
 def main():
     parser = argparse.ArgumentParser()
@@ -209,6 +213,7 @@ def main():
     parser.add_argument("-l", "--language", default="sv")
     parser.add_argument("-v", "--voice", default="sv_vc_m2m_p")
     parser.add_argument("-o", "--output_dir", default="proofing")
+    parser.add_argument("-u", "--url", default="http://localhost:10000")
     
     # One or more file paths
     parser.add_argument("files", nargs="+")
@@ -221,13 +226,12 @@ def main():
     #print(args.files, file=sys.stderr)
 
     
-    base_url = "http://localhost:10000"
     session = requests.Session()
-    ping_server(session, base_url)
+    ping_server(session, args.url)
     # run_article(client, base_url, lang, voice, file_path, output_dir)
     for f in args.files:
-        run_article(session, base_url, args.language, args.voice, f, args.output_dir)
-    
+        output_html = run_article(session, args.url, args.language, args.voice, f, args.output_dir)
+        print(f"{f} -> {output_html}", file=sys.stderr)
  
     
     
