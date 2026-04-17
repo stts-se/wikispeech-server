@@ -25,7 +25,7 @@ def ping_server(client, base_url):
         sys.exit(f"Server did not respond within 2 seconds")
         
 
-def render_g2p_table(rows):
+def render_g2p_table(heading, rows):
     if not rows:
         return ""
 
@@ -44,7 +44,7 @@ def render_g2p_table(rows):
         
         <table class="g2p-table">
             <tr>
-                <th>Word</th>
+                <th>{heading}</th>
                 <th>Transcription</th>
             </tr>
             {"".join(table_rows)}
@@ -60,7 +60,7 @@ def render(items):
         <div class="item">
             <h3>{it['id']}</h3>
 
-            <audio controls>
+            <audio controls preload="metadata">
                 <source src="{it['audio']}" type="audio/ogg">
             </audio>
 
@@ -68,10 +68,10 @@ def render(items):
             <div class="block"><b>Normalized:</b><br>{html.escape(it['words'])}</div>
             <div class="block"><b>After lexicon look up:</b><br>{html.escape(it['trans'])}</div>
             <div class="block"><b>To synthesis:</b><br>{html.escape(it['tts'])}</div>
-            <br><b>In lexicon:</b>
-            {render_g2p_table(it['lex'])} 
-            <br><b>Not in lexicon:</b>
-            {render_g2p_table(it['g2p'])} 
+            <div class="table-row">
+               {render_g2p_table('In lexicon', it['lex'])} 
+               {render_g2p_table('Out of vocabular', it['g2p'])} 
+            </div>
         </div>
         """)
 
@@ -182,8 +182,19 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     margin-top: 8px;
     }}
     audio {{
-    width: 100%;
+    display: block;
+    width: 400px;
+    max-width: 100%;
     margin-top: 8px;
+    }}
+    .table-row {{
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    }}
+    .table-row > div {{
+    flex: 0 0 auto;
     }}
     .g2p-table {{
     margin-top: 8px;
