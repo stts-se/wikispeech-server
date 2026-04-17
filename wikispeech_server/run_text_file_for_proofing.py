@@ -43,8 +43,8 @@ def render_g2p_table(rows):
         
         <table class="g2p-table">
             <tr>
-                <th>Not in lexicon</th>
-                <th>Generated transcription</th>
+                <th>Word</th>
+                <th>Transcription</th>
             </tr>
             {"".join(table_rows)}
         </table>
@@ -67,7 +67,9 @@ def render(items):
             <div class="block"><b>Normalized:</b><br>{html.escape(it['words'])}</div>
             <div class="block"><b>After lexicon look up:</b><br>{html.escape(it['trans'])}</div>
             <div class="block"><b>To synthesis:</b><br>{html.escape(it['tts'])}</div>
-
+            <br><b>In lexicon:</b>
+            {render_g2p_table(it['lex'])} 
+            <br><b>Not in lexicon:</b>
             {render_g2p_table(it['g2p'])} 
         </div>
         """)
@@ -114,7 +116,10 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
             words = []
             trans = []
             tts_phonemes = []
+            in_lexicon = []
             non_lex_phos = []
+            seen_lex = set()
+            seen_g2p = set()
             for t in data["tokens"]:
                 orth = t["orth"]
                 orths.append(orth)
@@ -122,14 +127,21 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
                     words.append(w["orth"])
                     if "trans" in w:
                         trans.append(w["trans"])
+                        lex_item = (w["orth"], w["trans"])
+                        if lex_item not in seen_lex:
+                            seen_lex.add(lex_item)
+                            in_lexicon.append(lex_item)
                     elif "tts_input" in w:
                         trans.append(w["tts_input"])
                     if "tts_phonemes" in w:
                         tts_phonemes.append(w["tts_phonemes"])
                     if "g2p_method" in w:
                         if w["g2p_method"] != "lexicon":
-                            non_lex_phos.append((w["orth"], w["tts_phonemes"])) 
-                            #non_lex_phos.append(w["tts_phonemes"])
+                            item = (w["orth"], w["tts_phonemes"])
+                            if item not in seen_g2p:
+                                seen_g2p.add(item)    
+                                non_lex_phos.append(item) 
+                            
                             
             items.append({
                 "id": id,
@@ -138,6 +150,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
                 "words": " ".join(words),
                 "trans": " ".join(trans),
                 "tts": " ".join(tts_phonemes),
+                "lex": in_lexicon,
                 "g2p": non_lex_phos
             })
 
