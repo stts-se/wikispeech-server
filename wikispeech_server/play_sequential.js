@@ -5,7 +5,7 @@ let currentAudio = null;
 let isPlaying = false;
 
 const toggleBtn = document.getElementById("toggle");
-//const stopBtn = document.getElementById("stop");
+const stopBtn = document.getElementById("stop");
 
 function playNext() {
   if (currentIndex >= audios.length) {
@@ -49,14 +49,14 @@ toggleBtn.addEventListener("click", () => {
   }
 });
 
-// stopBtn.addEventListener("click", () => {
-//   if (currentAudio) {
-//     currentAudio.pause();
-//     currentAudio.currentTime = 0;
-//   }
+stopBtn.addEventListener("click", () => {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
 
-//   currentIndex = 0;
-//   currentAudio = null;
-//   isPlaying = false;
-//   toggleBtn.textContent = "Play";
-// });
+  currentIndex = 0;
+  currentAudio = null;
+  isPlaying = false;
+  toggleBtn.textContent = "Play";
+});

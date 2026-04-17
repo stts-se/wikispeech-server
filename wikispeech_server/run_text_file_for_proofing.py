@@ -203,7 +203,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     <body>
     <p>
     <button id="toggle">Play All</button>
-    <!--<button id="stop">Stop</button>-->
+    <button id="stop">Stop</button>
     </p>
     {render(items)}
     </body>
