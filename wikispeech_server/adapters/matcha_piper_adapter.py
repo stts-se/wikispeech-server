@@ -201,7 +201,7 @@ def engine2utt(input, tokens):
                     #tts_phonemes = []
                     endtime = None
                     for w in t["words"]:
-                        #print("???", w)
+                        #log.debug(f"??? w {w}")
                         global_wi+=1
                         #if len(tokens) > global_wi-1:
                             #print("???", tokens[global_wi-1])
