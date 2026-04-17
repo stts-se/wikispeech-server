@@ -1,0 +1,57 @@
+Huvudsida
+Senaste ändringarna
+Slumpsida
+Hjälp om MediaWiki
+Byt till gamla utseendet 
+Inledning
+Demo pages
+Demosidor
+Huvudsida
+Diskussion
+Läs
+Redigera
+Redigera wikitext
+Visa historik	
+Verktyg
+Radera
+Flytta
+Skrivskydda
+Lyssna inte
+Vad som länkar hit
+Relaterade ändringar
+Specialsidor
+Utskriftsvänlig version
+Permanent länk
+Sidinformation
+Inställningar
+Bidrag
+Logga ut
+Tabeller
+
+tabell:
+rubrik: Fastighet
+rubrik: Byggår
+rubrik: Arkitekt
+rubrik: Byggherre
+rubrik: Fastighetsägare 2025
+rubrik: Verksamhet 2025
+kolumn: Fastighet: Villa Geber
+kolumn: Byggår: 1913
+kolumn: Arkitekt: Ragnar Östberg
+kolumn: Byggherre: Philip Geber
+kolumn: Fastighetsägare 2025: Salvatore Grimaldi
+kolumn: Verksamhet 2025: privatbostad
+kolumn: Fastighet: Tryggerska villan
+kolumn: Byggår: 1914
+kolumn: Arkitekt: Ivar Tengbom
+kolumn: Byggherre: Ernst Trygger
+kolumn: Fastighetsägare 2025: Sveriges advokatsamfund
+kolumn: Verksamhet 2025: kontor
+kolumn: Fastighetsägare 2025: Sveriges advokatsamfund
+kolumn: Verksamhet 2025: kontor
+kolumn: Fastighet: Brittiska residenset
+kolumn: Byggår: 1915
+kolumn: Arkitekt: Richard Allison
+kolumn: Byggherre: brittiska staten
+kolumn: Fastighetsägare 2025: brittiska staten
+kolumn: Verksamhet 2025: ambassadörsbostad

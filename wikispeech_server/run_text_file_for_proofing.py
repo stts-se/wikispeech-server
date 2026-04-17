@@ -88,6 +88,10 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     audio_dir = out / "audio"
     audio_dir.mkdir(exist_ok=True)
 
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    js_file = "play_sequential.js"
+    shutil.copyfile(os.path.join(script_dir, js_file), os.path.join(output_dir, js_file))
+
     f_base = Path(file_path).stem
     items = []
     with open(file_path) as f:
@@ -176,8 +180,6 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     }}
     .block {{
     margin-top: 8px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
     }}
     audio {{
     width: 100%;
@@ -199,12 +201,18 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     </style>
     </head>
     <body>
+    <p>
+    <button id="toggle">Play All</button>
+    <!--<button id="stop">Stop</button>-->
+    </p>
     {render(items)}
     </body>
+    <script type="text/javascript" src="play_sequential.js"></script>
     </html>
     """
 
     (out / text_name_html).write_text(html_doc, encoding="utf-8")
+
     return text_name_html
 
 def main():
