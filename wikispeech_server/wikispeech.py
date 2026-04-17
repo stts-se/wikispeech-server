@@ -125,14 +125,16 @@ def version():
             vInfo.append("%-4s\t%-20s\t%-20s" % (v.lang, name, config_file))
         vInfo.append("* = default voice")
         log.info("Generated voice info for /version")
+    res = []
+    res.extend(vInfo)
     if not lexInfoHeader in vInfo:
         lexInfo = getLexInfo()
         if len(lexInfo) > 0:
-            vInfo.append("")
-            vInfo.append(lexInfoHeader)
-            vInfo.extend(lexInfo)
+            res.append("")
+            res.append(lexInfoHeader)
+            res.extend(lexInfo)
 
-    resp = make_response("\n".join(vInfo))
+    resp = make_response("\n".join(res))
     resp.headers["Content-type"] = "text/plain"
     return resp
 
@@ -151,12 +153,16 @@ def getLexInfo():
                 data = r.json()
                 nEntries = data["entries"]
                 timestamps = []
-                for source in data["LatestUpdatesPerSource"]:
-                    for sourcename in data["LatestUpdatesPerSource"][source]:
-                        ts = data["LatestUpdatesPerSource"][source][sourcename]
-                        if not ts in timestamps:
-                            timestamps.append(ts)
-                timestamp = " ".join(timestamps)
+                sources = data["LatestUpdatesPerSource"]["sources"]
+                log.info(f"Sources for {name}: {sources}")
+                for sourcename in sources:
+                    ts = sources[sourcename]
+                    if not ts in timestamps:
+                        timestamps.append(ts)
+                timestamp = None
+                if len(timestamps) > 0:
+                    timestamps.sort(reverse=True)
+                    timestamp = timestamps[0]
                 lexInfo.append("%-30s\t%10d\t%-20s" % (name, nEntries, timestamp))
         else:
             log.error(f"Couldn't derive lexicon stats from {root_url}")
@@ -166,7 +172,7 @@ def getLexInfo():
         raise e
         next
     if len(lexInfo) > 0:
-        lexInfo.insert(0,"%-30s\t%10s\t%-20s" % ("Lexicon", "# entries", "timestamp"))
+        lexInfo.insert(0,"%-30s\t%10s\t%-20s" % ("Lexicon", "# entries", "last updated"))
     log.info("Generated lexicon info for /version")
     return lexInfo
 
