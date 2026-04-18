@@ -617,8 +617,30 @@ class TestMVP2:
     ]
 
     test_data = {
-        "sv": "Hej, jag talar god svenska naturligtvis.",
-        "en": "Hello, I do speak some English as well."
+        "sv": [
+            {
+                "text": "Hej, jag talar god svenska naturligtvis.",
+                "min": 6,
+                "max": 6
+            },
+            {
+                "text": "Året var 2025.",
+                "min": 3,
+                "max": 3
+            }
+        ],
+        "en": [
+            {
+                "text": "Hello, I do speak some English as well.",
+                "min": 8,
+                "max": 8
+            },
+            {
+                "text": "It was the year 2025.",
+                "min": 5,
+                "max": 5
+            }
+        ]
     }
 
     def test_mvp2_call_all_other_voices(self,client, base_url):
@@ -651,27 +673,33 @@ class TestMVP2:
             
         lang = voice["lang"]
         voice_name = voice["name"]        
-        text = self.test_data[lang]
-        url = f"{base_url}/?lang={lang}&input={text}&voice={voice_name}"
-        print(f"Testing {url}")
-        response = client.get(url)
-        assert response.status_code == 200, f"Server returned: {response} for {url}"
-        assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
-        data = response.json()
-        assert "audio" in data
-        assert "audio_data" in data
-        assert "tokens" in data
-        assert len(data["tokens"]) > 5
-        assert len(data["tokens"]) < 10
-        # Timestamps change for each run, but they should increase
-        t1 = data["tokens"][0]["endtime"]
-        t2 = data["tokens"][1]["endtime"]
-        assert t1 < t2
-        assert "adapter" in data["voice"]
-        assert "config_file" in data["voice"]
-        assert "engine" in data["voice"]    
-        assert "lang" in data["voice"]
-        assert "longname" in data["voice"]
-        if data["voice"]["engine"] in ["piper","matcha"] and lang == "sv":
-            assert "mapper" in data["voice"]
-        assert "name" in data["voice"]
+        for item in self.test_data[lang]:
+            text = item["text"]
+            minWds = item["min"]
+            maxWds = item["max"]            
+            url = f"{base_url}/?lang={lang}&input={text}&voice={voice_name}"
+            print(f"Testing {url}")
+            response = client.get(url)
+            assert response.status_code == 200, f"Server returned: {response} for {url}"
+            assert not response.text.lower().startswith("error"), f"Server returned error: {response.text}"
+            data = response.json()
+            assert "audio" in data
+            assert "audio_data" in data
+            assert "tokens" in data
+            import json
+            #print("tokens", json.dumps(data["tokens"], indent=4))
+            assert len(data["tokens"]) >= minWds, json.dumps(data["tokens"], indent=4)
+            assert len(data["tokens"]) <= maxWds, json.dumps(data["tokens"], indent=4)
+            
+            # Timestamps change for each run, but they should increase
+            t1 = data["tokens"][0]["endtime"]
+            t2 = data["tokens"][1]["endtime"]
+            assert t1 < t2
+            assert "adapter" in data["voice"]
+            assert "config_file" in data["voice"]
+            assert "engine" in data["voice"]    
+            assert "lang" in data["voice"]
+            assert "longname" in data["voice"]
+            if data["voice"]["engine"] in ["piper","matcha"] and lang == "sv":
+                assert "mapper" in data["voice"]
+            assert "name" in data["voice"]
