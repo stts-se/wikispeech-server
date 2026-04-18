@@ -66,5 +66,5 @@ stopBtn.addEventListener("click", () => {
   currentIndex = 0;
   currentAudio = null;
   isPlaying = false;
-  toggleBtn.textContent = "Play";
+  toggleBtn.textContent = "Play All";
 });
