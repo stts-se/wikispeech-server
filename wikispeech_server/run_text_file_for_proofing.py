@@ -70,7 +70,7 @@ def render(items):
             <div class="block"><b>To synthesis:</b><br>{html.escape(it['tts'])}</div>
             <div class="table-row">
                {render_g2p_table('In lexicon', it['lex'])} 
-               {render_g2p_table('Out of vocabular', it['g2p'])} 
+               {render_g2p_table('Out of vocabulary', it['g2p'])} 
             </div>
         </div>
         """)
