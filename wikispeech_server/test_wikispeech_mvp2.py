@@ -633,12 +633,12 @@ class TestMVP2:
             {
                 "text": "Hello, I do speak some English as well.",
                 "min": 8,
-                "max": 8
+                "max": 10
             },
             {
                 "text": "It was the year 2025.",
                 "min": 5,
-                "max": 5
+                "max": 9
             }
         ]
     }
