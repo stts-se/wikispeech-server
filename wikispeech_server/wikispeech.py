@@ -115,25 +115,10 @@ def version():
 
     if len(vInfo) == 0:
         vInfo = versionInfo()
-    # lazy loading voice configs
-    voiceInfoHeader = "== VOICE CONFIG =="
-    lexInfoHeader = "== LEXICON STATS =="
-    if not voiceInfoHeader in vInfo:
-        vInfo.append("")
-        vInfo.append(voiceInfoHeader)
-        for v in voices:
-            name = v.name
-            if v.isDefault():
-                name = f"{name}*"
-            if "config_file" in v.config:
-                config_file = v.config["config_file"]
-            else:
-                config_file = ""
-            vInfo.append("%-4s\t%-20s\t%-20s" % (v.lang, name, config_file))
-        vInfo.append("* = default voice")
-        log.info("Generated voice info for /version")
     res = []
     res.extend(vInfo)
+    # lexicon stats are updated on each call to /version
+    lexInfoHeader = "== LEXICON STATS =="
     if not lexInfoHeader in vInfo:
         lexInfo = getLexInfo()
         if len(lexInfo) > 0:
@@ -141,6 +126,10 @@ def version():
             res.append(lexInfoHeader)
             res.extend(lexInfo)
 
+    for chunk in res:
+        for l in chunk.split("\n"):
+            log.info(f"LOGGING VERSION INFO {l}")
+        
     resp = make_response("\n".join(res))
     resp.headers["Content-type"] = "text/plain"
     return resp
@@ -161,7 +150,7 @@ def getLexInfo():
                 nEntries = data["entries"]
                 timestamps = []
                 sources = data["LatestUpdatesPerSource"]["sources"]
-                log.info(f"Sources for {name}: {sources}")
+                #log.info(f"Sources for {name}: {sources}")
                 for sourcename in sources:
                     ts = sources[sourcename]
                     if not ts in timestamps:
@@ -230,9 +219,6 @@ def versionInfo():
 
     res.append(f"URL: {hostname.removesuffix('/')}")
             
-    for l in res:
-        log.info(f"LOGGING VERSION INFO {l}")
-        
     for component in ["textproc","matcha","piper","deep_phonemizer","lexicon","mapper"]:
         if config.config.has_option("Services", component):
             res.append("")
@@ -244,6 +230,23 @@ def versionInfo():
             except Exception as e:
                 log.error(f"Failed to get version info for {component}: {e}")
                 raise e
+            
+    voiceInfoHeader = "== VOICE CONFIG =="
+    if not voiceInfoHeader in vInfo:
+        res.append("")
+        res.append(voiceInfoHeader)
+        for v in voices:
+            name = v.name
+            if v.isDefault():
+                name = f"{name}*"
+            if "config_file" in v.config:
+                config_file = v.config["config_file"]
+            else:
+                config_file = ""
+            res.append("%-4s\t%-20s\t%-20s" % (v.lang, name, config_file))
+        res.append("* = default voice")
+        log.info("Generated voice info for /version")
+
     return res
     
 
@@ -263,7 +266,7 @@ def genStartedAtString():
         return "unknown"
 
 startedAt = genStartedAtString()
-
+#vInfo = versionInfo()
 
 
 ################################################################
