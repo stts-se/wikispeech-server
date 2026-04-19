@@ -171,7 +171,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     <meta charset="utf-8">
     <style>
     #playing {{
-    background-color: yellow;
+    background-color: lightgray;
     }}
     body {{
     font-family: sans-serif;
