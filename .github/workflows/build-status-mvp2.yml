@@ -252,6 +252,10 @@ jobs:
        curl -f http://localhost:$WIKISPEECH_PORT/ping # wikispeech-server
        echo ""
 
+       echo "> Say hello to wikispeech-server"
+       curl -f http://localhost:$WIKISPEECH_PORT/version
+       echo ""
+
     - name: Run pytest
       run: |
        source .venv/bin/activate
