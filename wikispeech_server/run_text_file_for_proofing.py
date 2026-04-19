@@ -245,7 +245,7 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument("-l", "--language", default="sv")
-    parser.add_argument("-v", "--voice", default="sv_vc_m2m")
+    parser.add_argument("-v", "--voice", default="sv_vc_m2f")
     parser.add_argument("-o", "--output_dir", default="proofing")
     parser.add_argument("-u", "--url", default="http://localhost:10000")
     
