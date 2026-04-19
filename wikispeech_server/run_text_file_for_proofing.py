@@ -64,7 +64,7 @@ def render(items):
                 <source src="{it['audio']}" type="audio/ogg">
             </audio>
 
-            <div class="block"><b>Input:</b><br>{html.escape(it['orths'])}</div>
+            <div class="block text"><b>Input:</b><br>{html.escape(it['orths'])}</div>
             <div class="block"><b>Normalized:</b><br>{html.escape(it['words'])}</div>
             <div class="block"><b>After lexicon look up:</b><br>{html.escape(it['trans'])}</div>
             <div class="block"><b>To synthesis:</b><br>{html.escape(it['tts'])}</div>
@@ -165,10 +165,14 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
 
             
     html_doc = f"""
+    <!DOCTYPE html>
     <html>
     <head>
     <meta charset="utf-8">
     <style>
+    #playing {{
+    background-color: yellow;
+    }}
     body {{
     font-family: sans-serif;
     margin: 20px;
@@ -176,6 +180,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     .item {{
     border: 1px solid #ccc;
     padding: 12px;
+    padding-top: 16px;
     margin-bottom: 16px;
     }}
     .block {{
@@ -224,7 +229,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
     <p><div class="toolbar">
     Autoscroll <input title="Autoscroll playing audio element into view" type="checkbox" name="autoscroll" id="autoscroll" value="autoscroll" checked> &nbsp;&nbsp;
     <button id="toggle" title="Press P to play/pause">Play All</button>
-    <button id="stop">Stop</button></div>
+    <button id="stop">Stop/Reset</button></div>
     </p>
     {render(items)}
     </body>
