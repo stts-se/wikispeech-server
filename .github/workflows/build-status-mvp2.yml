@@ -117,10 +117,22 @@ jobs:
     - name: Set up matcha
       run: |
        cd $GITROOT/wikispeech-tts-wrappers/matcha_server
+
+       # Pre-packaged Matcha
+       # uv venv --python 3.10
+       # source .venv/bin/activate
+       # uv pip install -r requirements.txt
+       # uv pip install Matcha-TTS==0.0.7.2
+       # bash patch.sh
+
+       # Install Matcha from source
        uv venv
        source .venv/bin/activate
        uv pip install -r requirements.txt
+       git clone https://github.com/stts-se/Matcha-TTS $GITROOT/Matcha-TTS
+       uv pip install -e $GITROOT/Matcha-TTS
        bash patch.sh
+
       
     - name: Download language models
       run: |
