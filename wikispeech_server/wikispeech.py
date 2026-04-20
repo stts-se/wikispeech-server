@@ -146,26 +146,29 @@ def getLexInfo():
                 name = l["name"]
                 stats_url = f"{root_url}/lexicon/stats/{name}"
                 r = requests.get(stats_url)
-                data = r.json()
-                nEntries = data["entries"]
-                timestamps = []
-                sources = data["LatestUpdatesPerSource"]["sources"]
-                #log.info(f"Sources for {name}: {sources}")
-                for sourcename in sources:
-                    ts = sources[sourcename]
-                    if not ts in timestamps:
-                        timestamps.append(ts)
-                timestamp = None
-                if len(timestamps) > 0:
-                    timestamps.sort(reverse=True)
-                    timestamp = timestamps[0]
-                lexInfo.append("%-30s\t%10d\t%-20s" % (name, nEntries, timestamp))
+                if r.status_code == 200:
+                    data = r.json()
+                    nEntries = data["entries"]
+                    timestamps = []
+                    sources = data["LatestUpdatesPerSource"]["sources"]
+                    #log.info(f"Sources for {name}: {sources}")
+                    for sourcename in sources:
+                        ts = sources[sourcename]
+                        if not ts in timestamps:
+                            timestamps.append(ts)
+                    timestamp = None
+                    if len(timestamps) > 0:
+                        timestamps.sort(reverse=True)
+                        timestamp = timestamps[0]
+                    lexInfo.append("%-30s\t%10d\t%-20s" % (name, nEntries, timestamp))
+                else:
+                    log.error(f"Couldn't derive lexicon stats for lexicon {name}")
         else:
             log.error(f"Couldn't derive lexicon stats from {root_url}")
             next
     except Exception as e:
         log.error(f"Couldn't derive lexicon stats from {root_url}: {e}")
-        raise e
+        #raise e
         next
     if len(lexInfo) > 0:
         lexInfo.insert(0,"%-30s\t%10s\t%-20s" % ("Lexicon", "# entries", "last updated"))
@@ -353,6 +356,7 @@ def wikispeech():
         input = getParam("input")
         input_type = getParam("input_type", "text")
         output_type = getParam("output_type", "json")
+        speaking_rate = getParam("speaking_rate", 1.0)
 
 
 
@@ -398,7 +402,7 @@ def wikispeech():
             return "input_type %s not supported" % input_type
 
         if output_type in ["json", "html"]:
-            result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname)
+            result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname, speaking_rate=1.0)
             if "error" in result:
                 return result
             if type(result) == type(""):
@@ -826,8 +830,10 @@ def synthesis():
         return res
 
 
-def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/"):
+def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/",speaking_rate=1.0):
 
+    print("???", speaking_rate)
+    
     #TODO? Add a simple transcription input type?
     #if input_type not in ["markup","transcription"]:
     if input_type not in ["markup"]:
@@ -867,7 +873,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     process = getattr(mod, method_name)
     log.debug("PROCESS: %s" % process)
     err = None
-    (audio_url_0, output_tokens, err) = process(lang, voice, input, hostname=hostname)      
+    (audio_url_0, output_tokens, err) = process(lang, voice, input, hostname=hostname, speaking_rate=speaking_rate)      
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?
