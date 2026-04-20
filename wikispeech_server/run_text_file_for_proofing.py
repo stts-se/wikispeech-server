@@ -77,7 +77,7 @@ def render(items):
 
     return "\n".join(blocks)
         
-def run_article(client, base_url, lang, voice, file_path, output_dir):
+def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_experiment):
     Path(output_dir).mkdir(exist_ok=True)
 
     text_name = os.path.basename(file_path)
@@ -100,8 +100,9 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
             i+=1
             id = '{:0>3}'.format(i)
             l2 = l
-            l2 = l2.replace(",", " , ")
-            l2 = l2.replace(":", " : ")
+            if pausing_experiment:
+                l2 = l2.replace(",", " , ")
+                l2 = l2.replace(":", " : ")
             payload = {
                 "lang": lang,
                 "voice": voice,
@@ -251,6 +252,7 @@ def main():
     parser.add_argument("-v", "--voice", default="sv_vc_m2f")
     parser.add_argument("-o", "--output_dir", default="proofing")
     parser.add_argument("-u", "--url", default="http://localhost:10000")
+    parser.add_argument("-p", "--pausing-experiment", action='store_true', help="Treat comma and colon as separate pause tokens")
     
     # One or more file paths
     parser.add_argument("files", nargs="+")
@@ -267,7 +269,7 @@ def main():
     ping_server(session, args.url)
     # run_article(client, base_url, lang, voice, file_path, output_dir)
     for f in args.files:
-        output_html = run_article(session, args.url, args.language, args.voice, f, args.output_dir)
+        output_html = run_article(session, args.url, args.language, args.voice, f, args.output_dir, args.pausing_experiment)
         print(f"{f} -> {output_html}", file=sys.stderr)
  
     
