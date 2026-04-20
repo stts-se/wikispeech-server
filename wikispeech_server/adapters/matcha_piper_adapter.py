@@ -284,7 +284,7 @@ def mapSymbolSetToEngine(trans,lang,voice):
     #log.debug("RESPONSE: %s" % response)
     try:
         response_json = json.loads(response)
-        log.debug("RESPONSE_JSON: %s" % response_json)
+        log.debug(f"RESPONSE_JSON: {response_json}")
         if type(response_json) == list:
             response_list = response_json
         else:
