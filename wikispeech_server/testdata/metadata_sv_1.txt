@@ -27,6 +27,7 @@ Inställningar
 Bidrag
 Logga ut
 Tabeller
+Fotnot
 
 tabell:
 rubrik: Fastighet
