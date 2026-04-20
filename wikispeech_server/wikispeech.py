@@ -928,11 +928,11 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
                 "msg": "Synthesis cannot handle speaking_rate < 0.4: %f" % extra_params["speaking_rate"],
                 "values": [extra_params["speaking_rate"]]
                 })
-        if extra_params["speaking_rate"] > 1.5:
+        if extra_params["speaking_rate"] > 2.5:
             return error({
                 "component": "synthesise",
                 "error_type": "InvalidSpeakingRate",
-                "msg": "Synthesis cannot handle speaking_rate > 1.5: %f" % extra_params["speaking_rate"],
+                "msg": "Synthesis cannot handle speaking_rate > 2.5: %f" % extra_params["speaking_rate"],
                 "values": [extra_params["speaking_rate"]]
                 })
 

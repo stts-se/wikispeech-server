@@ -314,7 +314,7 @@ Rubrik: Kultur och utbildning
 
 Åland har ett flertal mångåriga kultur- och minnesinstitutioner, såsom Ålands museum, Ålands orgelfestival samt Ålands spelmansgille.
 
-Underribruk: Turism, nöjen och friluftsliv
+Underrubrik: Turism, nöjen och friluftsliv
 
 Båthamnen på Rödhamn utanför Mariehamn.
 
@@ -329,14 +329,14 @@ Kostnaden för att ta med bilen subventioneras av Landskapet Åland om man stann
 
 På somrarna anordnas Rockoff-festivalen, som besöks både av ålänningar och turister.
 
-Underribruk: Utbildning
+Underrubrik: Utbildning
 
 Utbildning på Åland liknar i stora drag utbildning i Finland och övriga Norden.
 Undervisningsspråket i samtliga skolor på Åland är svenska.
 Skolorna på Åland består av ett flertal lokala grundskolor, Ålands gymnasium (bestående av Lyceum och Yrkesgymnasium), Högskolan på Åland samt Ålands folkhögskola.
 Ålands sjöfartsutbildning är samlad inom Alandica Shipping Academy.
 
-Underribruk: Sport
+Underrubrik: Sport
 Åland Uniteds damer mot KMF i fotbolls-FM.
 
 Ålands Idrottsförbund är idrottens gemensamma paraplyorganisation som motsvarar Sveriges Riksidrottsförbund eller Finlands Idrott.
@@ -360,12 +360,12 @@ Janne Holmén, som blev europamästare i maraton 2002, är från Åland.
 Åland arrangerade de Internationella öspelen 1991 och 2009.
 Även världsmästerskapet i innebandy för damer 1997 spelades där.
 
-Underribruk: Litteratur
+Underrubrik: Litteratur
 
 De mest kända författarna på Åland är Anni Blomqvist, känd för sin femdelade serie Stormskärs Maja, Sally Salminen, vars mest kända verk är 1936 års roman Katrina, och Ulla-Lena Lundberg, som beskrivit sin födelseö Kökar.
 Alla dessa verk utspelar sig på Åland.
 
-Underribruk: Film
+Underrubrik: Film
 
 En historisk dramafilm från 2016, Djävulens jungfru, i regi av Saara Cantell, utspelar sig på 1600-talet på Åland under häxjakterna.
 Den vann priset för bästa utländska film vid Toronto Female Eye Film Festival 2017.

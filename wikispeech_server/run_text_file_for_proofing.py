@@ -99,10 +99,13 @@ def run_article(client, base_url, lang, voice, file_path, output_dir):
         for i, l in enumerate(lines):
             i+=1
             id = '{:0>3}'.format(i)
+            l2 = l
+            l2 = l2.replace(",", " , ")
+            l2 = l2.replace(":", " : ")
             payload = {
                 "lang": lang,
                 "voice": voice,
-                "input": l
+                "input": l2
             }
             response = client.post(f"{base_url}/", data=payload)
             #TODO Error handling

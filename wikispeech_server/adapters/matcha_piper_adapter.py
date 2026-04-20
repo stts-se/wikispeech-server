@@ -115,7 +115,10 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, extra_
     }
     if not extra_params is None:
         if "speaking_rate" in extra_params:
-            params["speaking_rate"] = extra_params["speaking_rate"] 
+            if engine == "piper":
+                params["length_scale"] = extra_params["speaking_rate"]
+            else:
+                params["speaking_rate"] = extra_params["speaking_rate"]
             
     r = requests.post(url, json=params)
     if not r.ok:
