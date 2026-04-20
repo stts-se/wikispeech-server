@@ -69,7 +69,7 @@
             "engine":"matcha",
             "adapter":"adapters.matcha_piper_adapter",
 	    "skip_test": false,
-	    "default": false,
+	    "default": true,
 	    "mapper": {
 		"from":"sv-se_ws-sampa-braxen",
 		"to":"sv-se_matcha_ipa_from_ws"
