@@ -88,7 +88,8 @@ class TestBasics:
     def test_invalid_voice_name(self,client, base_url):
         response = client.get(f"{base_url}/?lang=sv&input=Vi%20testar%20matcha%20talsyntes&voice=NO_SUCH_VOICE_EXISTS&input_type=text")
         assert response.status_code == 200
-        assert response.text.lower().startswith("error")
+        assert "error" in response.json()
+        #assert response.text.lower().startswith("error")
 
 
     def test_mapper(self,client, mapper_url):
@@ -601,6 +602,24 @@ class TestBasics:
         assert tokens_got == tokens_exp
 
 class TestMVP2:
+
+    def test_speaking_rate(self,client, base_url):
+        payload = {
+            "lang": "sv",
+            "input": "test",
+            "speaking_rate": 0.5
+        }
+        response = client.post(f"{base_url}/", data=payload)
+        assert response.status_code == 200
+        data = response.json()
+        assert "audio" in data
+        assert len(data["audio_data"]) > 1000
+        assert "adapter" in data["voice"]
+        assert "config_file" in data["voice"]
+        assert "engine" in data["voice"]    
+        assert "lang" in data["voice"]
+        assert "longname" in data["voice"]
+        assert "name" in data["voice"]
 
     server_voices = None
     

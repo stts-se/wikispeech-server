@@ -109,6 +109,33 @@ def ping():
 
 vInfo = []
 
+import hashlib
+
+def error_code(error_type: str) -> str:
+    h = hashlib.sha1(error_type.encode()).hexdigest()
+    return h[:6].upper()
+
+def error(e):
+    res = {
+        "error_type": e["error_type"],
+        "error_msg": e["msg"],
+    }
+    if "error_code" in e:
+        res["error_code"] = e["error_code"]
+    else:
+        res["error_code"] = error_code(e["error_type"])
+    if "request" in e:
+        res["request"]: e["request"]
+    if "values" in e and len(e["values"]) > 0:
+        res["values"] = e["values"]
+    return { "error": [{
+            "component": e["component"],
+            "error": res
+        }
+    ]}
+
+            
+
 @app.route('/version')
 def version():
     global vInfo
@@ -358,13 +385,8 @@ def wikispeech():
         output_type = getParam("output_type", "json")
         speaking_rate = getParam("speaking_rate", 1.0)
 
-
-
-
         textprocessor_name = getParam("textprocessor", "default_textprocessor")
         voice_name = getParam("voice", "default_voice")
-
-
 
         log.debug("WIKISPEECH CALL - LANG: %s, INPUT_TYPE: %s, OUTPUT_TYPE: %s, INPUT: %s" % (lang, input_type, output_type, input))
 
@@ -374,7 +396,13 @@ def wikispeech():
             return render_template("usage.html", server=hostname, languages=supported_languages)
 
         if lang not in supported_languages:
-            return "Language %s not supported. Supported languages are: %s" % (lang, supported_languages)
+            return error({
+                "component": "wikispeech",
+                "error_type": "UnsupportedLanguage",
+                "request": f"{request}",
+                "msg": "Language %s not supported. Supported languages are: %s" % (lang, supported_languages),
+                "values": [lang],
+            })
 
 
         if input == "TEST_EXAMPLE":
@@ -393,23 +421,51 @@ def wikispeech():
             input_type = "ssml"
 
 
-        if input_type in ["text","ssml"]:
+        supported_input_types = ["text","ssml"]
+        if input_type in supported_input_types:
             markup = textproc(lang, textprocessor_name, input, input_type=input_type)
             if type(markup) == type(""):
                 log.debug("RETURNING MESSAGE: %s" % markup)
+                return error({
+                    "component": "textproc",
+                    "error_type": "TextprocError",
+                    "request": f"{request}",
+                    "msg": markup
+                })
+            if "error" in markup:
+                if not "request" in markup:
+                    markup["request"] = f"{request}"
                 return markup
-        else:
-            return "input_type %s not supported" % input_type
 
-        if output_type in ["json", "html"]:
+        else:
+            return error({
+                "component": "wikispeech",
+                "error_type": "UnsupportedInputType",
+                "request": f"{request}",
+                "msg": "Input type % not supported. Supported input types: %s" % (input_type, supported_input_types),
+                "values": [input_type],
+            })
+
+
+        supported_output_types = ["json", "html"]
+        if output_type in supported_output_types:
             extra_params = {
-                "speaking_rate": speaking_rate
+                "speaking_rate": float(speaking_rate)
             }
             result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname, extra_params=extra_params)
-            if "error" in result:
-                return result
             if type(result) == type(""):
                 log.debug("RETURNING MESSAGE: %s" % result)
+                res = error({
+                    "component": "synthesise",
+                    "error_code": 499,
+                    "error_type": "SynthesisError",
+                    "error_msg": result,
+                    "request": f"{request}"
+                })
+                return res
+            if "error" in result:
+                if not "request" in result:
+                    result["request"] = f"{request}"
                 return result
 
             #TODO
@@ -445,7 +501,13 @@ def wikispeech():
 
 
         else:
-            return "output_type %s not supported" % output_type
+            return error({
+                "component": "wikispeech",
+                "error_type": "UnsupportedOutputType",
+                "request": f"{request}",
+                "msg": "Output type % not supported. Supported output types: %s" % (output_type, supported_output_types),
+                "values": [output_type],
+            })
 
     except Exception as ex:
         log.error(f"Got exception: {ex}")
@@ -616,7 +678,14 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
 
     if textprocessor == None:
         #example http://localhost/?lang=sv&input=test&textprocessor=undefined
-        return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
+        #return "ERROR: Textprocessor %s not defined for language %s" % (textprocessor_name, lang)
+        return error({
+            "component": "textprocessing",
+            "error_type": "UndefinedLanguage",
+            "msg": "No textprocessor is defined for language %s." % lang,
+            "values": [lang]
+        })
+
     log.debug("TEXTPROCESSOR: %s" % textprocessor)
 
     #HB 210128
@@ -625,7 +694,12 @@ def textproc(lang, textprocessor_name, text, input_type="text"):
         try:
             text = mapIpaInput(text, textprocessor)
         except ValueError as e:
-            return "ERROR: %s" % e
+            return error({
+            "component": "textprocessing",
+            "error_type": "SSMLValueError",
+            "error_msg": f"{e}",
+        })
+            #return "ERROR: %s" % e
 
     #Loop over the list of components, modifying the utt structure created by the first component
     for component in textprocessor["components"]:
@@ -838,15 +912,41 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     #TODO? Add a simple transcription input type?
     #if input_type not in ["markup","transcription"]:
     if input_type not in ["markup"]:
-        return "Synthesis cannot handle input_type %s" % input_type
+            return error({
+                "component": "synthesise",
+                "error_type": "UnsupportedInputType",
+                "msg": "Synthesis cannot handle input_type %s" % input_type,
+                "values": [input_type]
+            })
+
+
+    if not extra_params is None:
+        if extra_params["speaking_rate"] < 0.4:
+            return error({
+                "component": "synthesise",
+                "error_type": "InvalidSpeakingRate",
+                "msg": "Synthesis cannot handle speaking_rate < 0.4: %f" % extra_params["speaking_rate"],
+                "values": [extra_params["speaking_rate"]]
+                })
+        if extra_params["speaking_rate"] > 1.5:
+            return error({
+                "component": "synthesise",
+                "error_type": "InvalidSpeakingRate",
+                "msg": "Synthesis cannot handle speaking_rate > 1.5: %f" % extra_params["speaking_rate"],
+                "values": [extra_params["speaking_rate"]]
+                })
 
     ##if input_type == "transcription":
         
 
     voice = getVoiceByName(voice_name, lang)
     if voice == None:
-        return "ERROR: voice %s not defined for language %s." % (voice_name, lang)
-
+        return error({
+                "component": "synthesise",
+                "error_type": "UndefinedVoice",
+                "msg": "Voice %s not defined for language %s." % (voice_name, lang),
+                "values": [voice_name]
+        })
 
 
     #Import the defined module and function
@@ -1410,11 +1510,12 @@ def test_wikispeech():
         raise
 
     #TODO Better with exception than return value
-    if type(res) == type("") and res.startswith("No voice available"):
-        log.error("Failed to do wikispeech test")
-        log.error(res)
-        log.error("wikispeech test failure")
-        raise
+    if type(res) == type(""):
+        if res.startswith("No voice available"):
+            log.error("Failed to do wikispeech test")
+            log.error(res)
+            log.error("wikispeech test failure")
+            raise
         
     log.debug("%s --> %s" % (sent,res))
     log.debug("SUCCESS: wikispeech test")

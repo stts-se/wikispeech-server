@@ -88,7 +88,8 @@ class TestMVP:
     def test_invalid_voice_name(self,client, base_url):
         response = client.get(f"{base_url}/?lang=sv&input=Vi%20testar%20matcha%20talsyntes&voice=NO_SUCH_VOICE_EXISTS&input_type=text")
         assert response.status_code == 200
-        assert response.text.lower().startswith("error")
+        assert "error" in response.json()
+        #assert response.text.lower().startswith("error")
 
 
     def test_mapper(self,client, mapper_url):
