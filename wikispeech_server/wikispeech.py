@@ -402,7 +402,10 @@ def wikispeech():
             return "input_type %s not supported" % input_type
 
         if output_type in ["json", "html"]:
-            result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname, speaking_rate=1.0)
+            extra_params = {
+                "speaking_rate": speaking_rate
+            }
+            result = synthesise(lang, voice_name, markup,"markup",output_type, hostname=hostname, extra_params=extra_params)
             if "error" in result:
                 return result
             if type(result) == type(""):
@@ -830,10 +833,8 @@ def synthesis():
         return res
 
 
-def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/",speaking_rate=1.0):
+def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://localhost/",extra_params=None):
 
-    print("???", speaking_rate)
-    
     #TODO? Add a simple transcription input type?
     #if input_type not in ["markup","transcription"]:
     if input_type not in ["markup"]:
@@ -873,7 +874,7 @@ def synthesise(lang,voice_name,input,input_type,output_type,hostname="http://loc
     process = getattr(mod, method_name)
     log.debug("PROCESS: %s" % process)
     err = None
-    (audio_url_0, output_tokens, err) = process(lang, voice, input, hostname=hostname, speaking_rate=speaking_rate)      
+    (audio_url_0, output_tokens, err) = process(lang, voice, input, hostname=hostname, extra_params=extra_params)      
 
     #Get audio from synthesiser, convert to opus, save locally, return url
     #TODO return wav url also? Or client's choice?

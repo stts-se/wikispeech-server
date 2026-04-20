@@ -88,8 +88,8 @@ def utt2engine(input,lang,voice_config):
                 chunks.append(chunk)
     return chunks, None
 
-def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaking_rate=1.0):
-    log.debug(f"speaking_rate: {speaking_rate}")
+def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, extra_params=None):
+    log.debug(f"extra params: {extra_params}")
     engine = voice_config["engine"]
     global engine_url, mapper_url
     if engine_url is None:
@@ -110,10 +110,13 @@ def synthesise(lang, voice_config, input, hostname=None, speaker_id=None, speaki
         "voice":voice_config["name"],
         "input_type":"tokens",
         "input":tokens,
-        "speaking_rate": speaking_rate,
         "speaker_id": speaker_id,
         "return_type":"json",
     }
+    if not extra_params is None:
+        if "speaking_rate" in extra_params:
+            params["speaking_rate"] = extra_params["speaking_rate"] 
+            
     r = requests.post(url, json=params)
     if not r.ok:
         from http.client import responses
