@@ -1,0 +1,65 @@
+Titel: Demo Begripsamtest, sv
+
+Rubrik: Löpande text med bild
+
+Bildtext: En resande grupp äter en enkel gemensam måltid bestående av bröd och dryck från Livre du roi Modus et de la reine Ratio, 1300-tal.
+
+Forskning kring medeltidens mat försöker beskriva livsmedel, matlagningsmetoder och matvanor som förekom i europeiska samhällen under medeltiden, en period som sträcker sig från cirka år 400 e.Kr. till 1500 e.Kr.
+Under denna period etablerades många nya vanor inom kosthållning och matlagning över hela Europa och många av dessa blev en grund för de moderna europeiska köken.
+Transport och kommunikation var betydligt långsammare än idag, vilket omöjliggjorde eller fördyrade handel med flera typer av mat.
+De välbärgade kunde emellertid låta sina matvanor påverkas av importerade recept och råvaror, och successivt spred sig främmande kulturers matvanor även till de lägre klasserna.
+
+Rubrik: Måltider
+
+Bildtext: John, hertigen av Berry avnjuter en måltid.
+Hertigen sitter under en utsmyckad baldakin och är uppassad av ett flertal betjänter.
+På bordet, till vänster om hertigen, står ett utsmyckat saltkar i form av ett skepp, även kallad nef; från Très Riches Heures du Duc de Berry, ca 1410.
+
+Under medeltiden intogs vanligen två måltider per dag; middag någon gång mellan klockan 10.00 och 14.00 och kvällsmål sent på eftermiddagen eller kvällen.
+Systemet med två måltider förblev stabilt under senmedeltiden.
+Mellanmål var vanliga, men var också en fråga om social status eftersom de som inte behövde utföra kroppsarbete kunde avstå från dem.
+Frukost var något som adel, präster och medlemmar av religiösa ordnar undvek eftersom det ansågs syndigt att bryta nattens fasta för tidigt på dagen.
+Av praktiska skäl åt arbetsklassen ett morgonmål och det var även tolererat att barn, kvinnor och äldre gjorde det.
+Sena måltider (reresoper, av occitanska rèire-sopar "sent kvällsmål") med åtskilliga mängder alkohol ansågs osedliga.
+Dessa sena måltider blev ofta förknippade med syndiga förehavanden som hasardspel, grova skämt och oanständigt flörtande.
+Mindre mellanmål var vanliga (trots att även de ansågs opassande av den tidens moralister) och arbetare kunde få tillägg av sina arbetsgivare för att köpa en mindre matbit att äta på raster.
+
+Rubrik: Tabell
+
+Fastighet 	Byggår 	Arkitekt 	Byggherre 	Fastighetsägare 2025 	Verksamhet 2025
+Villa Geber 	1913 	Ragnar Östberg 	Philip Geber 	Salvatore Grimaldi 	privatbostad
+Tryggerska villan 	1914 	Ivar Tengbom 	Ernst Trygger 	Sveriges advokatsamfund 	kontor
+Brittiska residenset 	1915 	Richard Allison 	brittiska staten 	brittiska staten 	ambassadörsbostad
+Bünsowska villan 	1919 	Carl Westman 	Robert Bünsow 	saudiarabiska staten 	ambassad
+Tillbergska villan 	1919 	Ivar Tengbom 	Knut Tillberg 	sydkoreanska staten 	ambassad
+Villa Gumælius 	1924 	Erik Trana 	A. S:son Gumælius 	ungerska staten 	ambassad
+Villa Bonde 	1925 	Cyrillus Johansson 	Nils Gustaf Bonde 	turkiska staten 	ambassad
+
+Rubrik: Punktlista
+
+    Första punkten
+    Andra punkten
+    Tredje punkten
+
+Rubrik: Numrerad lista
+
+    1. Första punkten
+    2. Andra punkten
+    3. Tredje punkten
+
+Rubrik: Handlingslista
+
+    Frukt
+        Äpple
+        Päron
+    Grönsaker
+        Morot
+        Lök
+
+Rubrik: Källor
+
+Den här artikeln innehåller delvis bearbetade sammanfattningar från:
+
+    Länk: Medeltidens mat på Wikipedia, tillgänglig under licensen CC BY-SA 4.0.
+    Länk: Diplomatstaden på Wikipedia, tillgänglig under licensen CC BY-SA 4.0.
+
