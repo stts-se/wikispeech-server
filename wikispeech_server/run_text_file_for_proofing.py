@@ -113,7 +113,10 @@ def render(items):
         """)
 
     return "\n".join(blocks)
-        
+
+global_in_lexicon = {}
+global_out_of_vocabulary = {}
+
 def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_experiment):
     Path(output_dir).mkdir(exist_ok=True)
 
@@ -178,6 +181,8 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
                     if "trans" in w:
                         trans.append(w["trans"])
                         tr = w["trans"]
+                        # Add to global dict
+                        global_in_lexicon[(w["orth"].lower(), tr)] = None
                         if "tts_phonemes" in w:
                             # Tab delimit lexicon phonemes and tts phonemes
                             tr += "\t" + w["tts_phonemes"]
@@ -194,7 +199,10 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
                             item = (w["orth"], w["tts_phonemes"])
                             if item not in seen_g2p:
                                 seen_g2p.add(item)    
-                                non_lex_phos.append(item) 
+                                non_lex_phos.append(item)
+                                # Add to global dict
+                                global_out_of_vocabulary[item] = None
+
                             
                             
             items.append({
@@ -285,7 +293,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
     (out / text_name_html).write_text(html_doc, encoding="utf-8")
 
     #return os.path.realpath(__file__) / out/ text_name_html
-    return out/ text_name_html
+    return out / text_name_html
 
 def main():
     parser = argparse.ArgumentParser()
@@ -313,9 +321,31 @@ def main():
     for f in args.files:
         output_html = run_article(session, args.url, args.language, args.voice, f, args.output_dir, args.pausing_experiment)
         print(f"{f} -> {output_html}", file=sys.stderr)
- 
+
+    out = Path(args.output_dir)
+
+    in_lex_fn = "in_lexicon.tsv"
+    oov_fn = "out_of_vocabulary.tsv"
     
-    
+    # Clean up old lexicon files    
+    if os.path.exists(out / in_lex_fn):
+        os.remove(out / in_lex_fn)
+    if os.path.exists(out / oov_fn):
+        os.remove(out / oov_fn)
+
+
+    # Print latest lexicon files    
+    if global_in_lexicon:
+        with open(out / in_lex_fn, "w") as f:
+            for word, pronunciation in global_in_lexicon:
+                f.write(f"{word}\t{pronunciation}\n")
+        print(f"Words in lexicon  -> {out}/{in_lex_fn}", file=sys.stderr)
+    # Print latest lexicon files
+    if global_out_of_vocabulary:
+        with open(out / oov_fn, "w") as f:
+            for word, pronunciation in global_out_of_vocabulary:
+                f.write(f"{word}\t{pronunciation}\n")
+        print(f"Out of vocabulary -> {out}/{oov_fn}", file=sys.stderr)
     
 if __name__ == "__main__":
     main()
