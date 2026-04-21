@@ -4,7 +4,6 @@ Slumpsida
 Hjälp om MediaWiki
 Byt till gamla utseendet 
 Inledning
-Demo pages
 Demosidor
 Huvudsida
 Diskussion

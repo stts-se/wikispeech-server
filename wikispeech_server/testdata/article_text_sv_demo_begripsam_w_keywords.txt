@@ -1,17 +1,17 @@
-Demo Begripsamtest, sv
+Titel: Demo Begripsamtest, sv
 
-Löpande text med bild
+Rubrik: Löpande text med bild
 
-En resande grupp äter en enkel gemensam måltid bestående av bröd och dryck från Livre du roi Modus et de la reine Ratio, 1300-tal.
+Bildtext: En resande grupp äter en enkel gemensam måltid bestående av bröd och dryck från Livre du roi Modus et de la reine Ratio, 1300-tal.
 
 Forskning kring medeltidens mat försöker beskriva livsmedel, matlagningsmetoder och matvanor som förekom i europeiska samhällen under medeltiden, en period som sträcker sig från cirka år 400 e.Kr. till 1500 e.Kr.
 Under denna period etablerades många nya vanor inom kosthållning och matlagning över hela Europa och många av dessa blev en grund för de moderna europeiska köken.
 Transport och kommunikation var betydligt långsammare än idag, vilket omöjliggjorde eller fördyrade handel med flera typer av mat.
 De välbärgade kunde emellertid låta sina matvanor påverkas av importerade recept och råvaror, och successivt spred sig främmande kulturers matvanor även till de lägre klasserna.
 
-Måltider
+Rubrik: Måltider
 
-John, hertigen av Berry avnjuter en måltid.
+Bildtext: John, hertigen av Berry avnjuter en måltid.
 Hertigen sitter under en utsmyckad baldakin och är uppassad av ett flertal betjänter.
 På bordet, till vänster om hertigen, står ett utsmyckat saltkar i form av ett skepp, även kallad nef; från Très Riches Heures du Duc de Berry, ca 1410.
 
@@ -24,7 +24,7 @@ Sena måltider (reresoper, av occitanska rèire-sopar "sent kvällsmål") med å
 Dessa sena måltider blev ofta förknippade med syndiga förehavanden som hasardspel, grova skämt och oanständigt flörtande.
 Mindre mellanmål var vanliga (trots att även de ansågs opassande av den tidens moralister) och arbetare kunde få tillägg av sina arbetsgivare för att köpa en mindre matbit att äta på raster.
 
-Tabell
+Rubrik: Tabell
 
 Fastighet 	Byggår 	Arkitekt 	Byggherre 	Fastighetsägare 2025 	Verksamhet 2025
 Villa Geber 	1913 	Ragnar Östberg 	Philip Geber 	Salvatore Grimaldi 	privatbostad
@@ -35,19 +35,19 @@ Tillbergska villan 	1919 	Ivar Tengbom 	Knut Tillberg 	sydkoreanska staten 	amba
 Villa Gumælius 	1924 	Erik Trana 	A. S:son Gumælius 	ungerska staten 	ambassad
 Villa Bonde 	1925 	Cyrillus Johansson 	Nils Gustaf Bonde 	turkiska staten 	ambassad
 
-Punktlista
+Rubrik: Punktlista
 
     Första punkten
     Andra punkten
     Tredje punkten
 
-Numrerad lista
+Rubrik: Numrerad lista
 
     1. Första punkten
     2. Andra punkten
     3. Tredje punkten
 
-Handlingslista
+Rubrik: Handlingslista
 
     Frukt
         Äpple
@@ -56,7 +56,7 @@ Handlingslista
         Morot
         Lök
 
-Källor
+Rubrik: Källor
 
 Den här artikeln innehåller delvis bearbetade sammanfattningar från:
 
