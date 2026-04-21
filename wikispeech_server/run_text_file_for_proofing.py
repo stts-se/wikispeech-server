@@ -25,7 +25,43 @@ def ping_server(client, base_url):
         sys.exit(f"Server did not respond within 2 seconds")
         
 
-def render_g2p_table(heading, rows):
+def render_g2p_in_lex(rows):
+    if not rows:
+        return ""
+
+    table_rows = []
+
+    for orth, phonemes in rows:
+        phon1 = ""
+        phon2 = ""
+        fs = phonemes.split("\t")
+        phon1 = fs[0]
+        if len(fs) > 1:
+            phon2 = fs[1]
+        table_rows.append(f"""
+        <tr>
+            <td>{html.escape(orth)}</td>
+            <td>{html.escape(phon1)}</td>
+            <td>{html.escape(phon2)}</td>
+        </tr>
+        """)
+
+    return f"""
+    <div class="block">
+        
+        <table class="g2p-table">
+            <tr>
+                <th>In lexicon</th>
+                <th>Transcription</th>
+                <th>Converted</th>   
+            </tr>
+            {"".join(table_rows)}
+        </table>
+    </div>
+    """
+
+        
+def render_g2p_oov(rows):
     if not rows:
         return ""
 
@@ -44,14 +80,15 @@ def render_g2p_table(heading, rows):
         
         <table class="g2p-table">
             <tr>
-                <th>{heading}</th>
+                <th>Out of vocabulary</th>
                 <th>Transcription</th>
             </tr>
             {"".join(table_rows)}
         </table>
     </div>
     """
-        
+
+
 def render(items):
     blocks = []
 
@@ -69,8 +106,8 @@ def render(items):
             <div class="block"><b>After lexicon look up:</b><br>{html.escape(it['trans'])}</div>
             <div class="block"><b>To synthesis:</b><br>{html.escape(it['tts'])}</div>
             <div class="table-row">
-               {render_g2p_table('In lexicon', it['lex'])} 
-               {render_g2p_table('Out of vocabulary', it['g2p'])} 
+               {render_g2p_in_lex(it['lex'])} 
+               {render_g2p_oov(it['g2p'])} 
             </div>
         </div>
         """)
@@ -140,7 +177,11 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
                     words.append(w["orth"])
                     if "trans" in w:
                         trans.append(w["trans"])
-                        lex_item = (w["orth"], w["trans"])
+                        tr = w["trans"]
+                        if "tts_phonemes" in w:
+                            # Tab delimit lexicon phonemes and tts phonemes
+                            tr += "\t" + w["tts_phonemes"]
+                        lex_item = (w["orth"], tr)
                         if lex_item not in seen_lex:
                             seen_lex.add(lex_item)
                             in_lexicon.append(lex_item)
@@ -243,7 +284,8 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
 
     (out / text_name_html).write_text(html_doc, encoding="utf-8")
 
-    return text_name_html
+    #return os.path.realpath(__file__) / out/ text_name_html
+    return out/ text_name_html
 
 def main():
     parser = argparse.ArgumentParser()
