@@ -25,7 +25,43 @@ def ping_server(client, base_url):
         sys.exit(f"Server did not respond within 2 seconds")
         
 
-def render_g2p_table(heading, rows):
+def render_g2p_in_lex(rows):
+    if not rows:
+        return ""
+
+    table_rows = []
+
+    for orth, phonemes in rows:
+        phon1 = ""
+        phon2 = ""
+        fs = phonemes.split("\t")
+        phon1 = fs[0]
+        if len(fs) > 1:
+            phon2 = fs[1]
+        table_rows.append(f"""
+        <tr>
+            <td>{html.escape(orth)}</td>
+            <td>{html.escape(phon1)}</td>
+            <td>{html.escape(phon2)}</td>
+        </tr>
+        """)
+
+    return f"""
+    <div class="block">
+        
+        <table class="g2p-table">
+            <tr>
+                <th>In lexicon</th>
+                <th>Transcription</th>
+                <th>Converted</th>   
+            </tr>
+            {"".join(table_rows)}
+        </table>
+    </div>
+    """
+
+        
+def render_g2p_oov(rows):
     if not rows:
         return ""
 
@@ -44,14 +80,15 @@ def render_g2p_table(heading, rows):
         
         <table class="g2p-table">
             <tr>
-                <th>{heading}</th>
+                <th>Out of vocabulary</th>
                 <th>Transcription</th>
             </tr>
             {"".join(table_rows)}
         </table>
     </div>
     """
-        
+
+
 def render(items):
     blocks = []
 
@@ -69,14 +106,17 @@ def render(items):
             <div class="block"><b>After lexicon look up:</b><br>{html.escape(it['trans'])}</div>
             <div class="block"><b>To synthesis:</b><br>{html.escape(it['tts'])}</div>
             <div class="table-row">
-               {render_g2p_table('In lexicon', it['lex'])} 
-               {render_g2p_table('Out of vocabulary', it['g2p'])} 
+               {render_g2p_in_lex(it['lex'])} 
+               {render_g2p_oov(it['g2p'])} 
             </div>
         </div>
         """)
 
     return "\n".join(blocks)
-        
+
+global_in_lexicon = {}
+global_out_of_vocabulary = {}
+
 def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_experiment):
     Path(output_dir).mkdir(exist_ok=True)
 
@@ -140,7 +180,13 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
                     words.append(w["orth"])
                     if "trans" in w:
                         trans.append(w["trans"])
-                        lex_item = (w["orth"], w["trans"])
+                        tr = w["trans"]
+                        # Add to global dict
+                        global_in_lexicon[(w["orth"].lower(), tr)] = None
+                        if "tts_phonemes" in w:
+                            # Tab delimit lexicon phonemes and tts phonemes
+                            tr += "\t" + w["tts_phonemes"]
+                        lex_item = (w["orth"], tr)
                         if lex_item not in seen_lex:
                             seen_lex.add(lex_item)
                             in_lexicon.append(lex_item)
@@ -153,7 +199,10 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
                             item = (w["orth"], w["tts_phonemes"])
                             if item not in seen_g2p:
                                 seen_g2p.add(item)    
-                                non_lex_phos.append(item) 
+                                non_lex_phos.append(item)
+                                # Add to global dict
+                                global_out_of_vocabulary[item] = None
+
                             
                             
             items.append({
@@ -243,7 +292,8 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
 
     (out / text_name_html).write_text(html_doc, encoding="utf-8")
 
-    return text_name_html
+    #return os.path.realpath(__file__) / out/ text_name_html
+    return out / text_name_html
 
 def main():
     parser = argparse.ArgumentParser()
@@ -271,9 +321,31 @@ def main():
     for f in args.files:
         output_html = run_article(session, args.url, args.language, args.voice, f, args.output_dir, args.pausing_experiment)
         print(f"{f} -> {output_html}", file=sys.stderr)
- 
+
+    out = Path(args.output_dir)
+
+    in_lex_fn = "in_lexicon.tsv"
+    oov_fn = "out_of_vocabulary.tsv"
     
-    
+    # Clean up old lexicon files    
+    if os.path.exists(out / in_lex_fn):
+        os.remove(out / in_lex_fn)
+    if os.path.exists(out / oov_fn):
+        os.remove(out / oov_fn)
+
+
+    # Print latest lexicon files    
+    if global_in_lexicon:
+        with open(out / in_lex_fn, "w") as f:
+            for word, pronunciation in global_in_lexicon:
+                f.write(f"{word}\t{pronunciation}\n")
+        print(f"Words in lexicon  -> {out}/{in_lex_fn}", file=sys.stderr)
+    # Print latest lexicon files
+    if global_out_of_vocabulary:
+        with open(out / oov_fn, "w") as f:
+            for word, pronunciation in global_out_of_vocabulary:
+                f.write(f"{word}\t{pronunciation}\n")
+        print(f"Out of vocabulary -> {out}/{oov_fn}", file=sys.stderr)
     
 if __name__ == "__main__":
     main()
