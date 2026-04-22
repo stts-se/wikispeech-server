@@ -33,8 +33,15 @@ def textproc(lang, cconfig, input, input_type="text"):
                 }]
         }
         log.debug(f"text input converted: {params['input']}")
-        requrl = f"{url}?input={input}&name={cconfig['name']}&input_type={input_type}"
-        r = requests.get(requrl)
+        #requrl = f"{url}?input={input}&name={cconfig['name']}&input_type={input_type}"
+        params = {
+            "name": cconfig["name"],
+            "input_type": "tokens",
+            "input": [
+                {'text': input, 'type': 'text'}
+            ]
+        }
+        r = requests.post(url, json=params)
     elif input_type == "ssml":
         input_converted = mapSSMLToTextproc(input)
         log.debug(f"ssml input converted: {input_converted}")

@@ -603,6 +603,31 @@ class TestBasics:
 
 class TestMVP2:
 
+    def test_plus_in_input_m2f_matcha(self,client, base_url):
+        payload = {
+            "lang": "sv",
+            "voice": "sv_vc_m2f",
+            "input": "jag är väl 30+ år gammal",
+            "speaking_rate": 0.5
+        }
+        response = client.post(f"{base_url}/", data=payload)
+        assert response.status_code == 200
+        data = response.json()
+        contains_plus = False
+        for t in data["tokens"]:
+            for w in t["words"]:
+                if w["orth"] == "plus":
+                    contains_plus = True
+        assert contains_plus, f"Expected plus in word list, found: {data['tokens']}"
+        assert "audio" in data
+        assert len(data["audio_data"]) > 1000
+        assert "adapter" in data["voice"]
+        assert "config_file" in data["voice"]
+        assert "engine" in data["voice"]
+        assert "lang" in data["voice"]
+        assert "longname" in data["voice"]
+        assert "name" in data["voice"]
+
     def test_speaking_rate_m2f_matcha(self,client, base_url):
         payload = {
             "lang": "sv",
