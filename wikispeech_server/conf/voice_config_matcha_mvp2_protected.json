@@ -96,6 +96,30 @@
 		"from":"sv-se_ws-sampa-braxen",
 		"to":"sv-se_matcha_ipa_from_ws"
 	    }
+	},
+		{
+            "lang":"sv",
+            "name":"sv_vc_f2m",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false,
+	    "mapper": {
+		"from":"sv-se_ws-sampa-braxen",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	},
+	{
+            "lang":"sv",
+            "name":"sv_vc_f2f",
+            "engine":"matcha",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false,
+	    "default": true,
+	    "mapper": {
+		"from":"sv-se_ws-sampa-braxen",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
 	}
+
     ]
 }
