@@ -200,7 +200,7 @@ jobs:
        source .venv/bin/activate
        
        # Lexpatch
-       (cd lexpatches; uv pip install pydantic; update_pronlex.py lexicon_patch_file_mvp_2026.txt)
+       (cd lexpatches; uv pip install pydantic; python update_pronlex.py lexicon_patch_file_mvp_2026.txt)
 
        # Start wikispeech-server
        sleep 20
