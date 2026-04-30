@@ -197,6 +197,10 @@ jobs:
 
     - name: Start wikispeech-server
       run: |
+
+       # Lexpatch
+       (cd lexpatch; python update_pronlex.py lexicon_patch_file_mvp_2026.txt)
+
        # Start wikispeech-server
        source .venv/bin/activate
        sleep 20

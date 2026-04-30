@@ -117,7 +117,9 @@ def render(items):
 global_in_lexicon = {}
 global_out_of_vocabulary = {}
 
-def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_experiment):
+def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_experiment, speaking_rate):
+    voice_config = f"LANG: {lang}; VOICE: {voice}; SPEAKING RATE: {speaking_rate}"
+
     Path(output_dir).mkdir(exist_ok=True)
 
     text_name = os.path.basename(file_path)
@@ -148,6 +150,9 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
                 "voice": voice,
                 "input": l2
             }
+            if not speaking_rate is None:
+                payload["speaking_rate"] = speaking_rate
+            print(f"payload {payload}", file=sys.stderr)
             response = client.post(f"{base_url}/", data=payload)
             #TODO Error handling
             #print(response.status_code)
@@ -279,6 +284,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
     </style>
     </head>
     <body>
+    <p>{voice_config}</p>
     <p><div class="toolbar">
     Autoscroll <input title="Autoscroll playing audio element into view" type="checkbox" name="autoscroll" id="autoscroll" value="autoscroll" checked> &nbsp;&nbsp;
     <button id="toggle" title="Press P to play/pause">Play All</button>
@@ -303,6 +309,7 @@ def main():
     parser.add_argument("-o", "--output_dir", default="proofing")
     parser.add_argument("-u", "--url", default="http://localhost:10000")
     parser.add_argument("-p", "--pausing-experiment", action='store_true', help="Treat comma and colon as separate pause tokens")
+    parser.add_argument("-s", "--speaking-rate", type=float)
     
     # One or more file paths
     parser.add_argument("files", nargs="+")
@@ -319,7 +326,7 @@ def main():
     ping_server(session, args.url)
     # run_article(client, base_url, lang, voice, file_path, output_dir)
     for f in args.files:
-        output_html = run_article(session, args.url, args.language, args.voice, f, args.output_dir, args.pausing_experiment)
+        output_html = run_article(session, args.url, args.language, args.voice, f, args.output_dir, args.pausing_experiment, args.speaking_rate)
         print(f"{f} -> {output_html}", file=sys.stderr)
 
     out = Path(args.output_dir)

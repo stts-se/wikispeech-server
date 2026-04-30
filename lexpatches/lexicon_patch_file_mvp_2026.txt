@@ -1,0 +1,72 @@
+# ADD_ENTRY	<WORD>	<TRANS>	<LANG>	<STATUS>	<SOURCE>
+# DELETE	<WORD>	<TRANS>
+# SET_PREFERRED	<WORD>	<TRANS>
+
+# Updated trans /s/ => /rs/
+ADD_ENTRY	hasardspel	h a . "" s A: rd . % rs p e: l	sv-se	unverified	mvp2_2026
+
+ADD_ENTRY	arbetsklassen	"" a r . b e: t s . % k l a . s @ n	sv-se	unverified	mvp2_2026
+ADD_ENTRY	begripsamtest	b e . "" g r i: p . s a m . % t E s t	sv-se	unverified	mvp2_2026
+ADD_ENTRY	Bünsow	" b y: n . s O v	sv-se	unverified	mvp2_2026
+ADD_ENTRY	Bünsowska	" b y: n . s O v . s k a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	handlingslista	"" h a n d . l I N s . % l I . s t a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	heures	" 9: r	fr	unverified	mvp2_2026
+ADD_ENTRY	punktlista	"" p u0 N t . % l I . s t a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	ratio	" r A: t . s I . U	unk	unverified	mvp2_2026
+ADD_ENTRY	riches	" r I rs	fre	unverified	mvp2_2026
+ADD_ENTRY	S:son	" E s . s O n	sv-se	unverified	mvp2_2026
+ADD_ENTRY	Tillbergska	"" t I l . % b { r j . s k a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	Tryggerska	" t r Y . g @ rs . k a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	ambassadörsbostad	a m . b a . s a . "" d 9: rs . b u: . % s t A: d	sv-se	unverified	mvp2_2026
+ADD_ENTRY	femton-hundra	f E m . t O n . " h u0 n . d r a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	fjorton-hundra-tio	f j u: . rt O n . h u0 n . d r a . "" t i: . % U	sv-se	unverified	mvp2_2026
+ADD_ENTRY	fyra-hundra	f y: . r a . " h u0 n . d r a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	matlagningsmetoder	"" m A: t . l A: . g n I N s . m e . % t u: . d @ r	sv-se	unverified	mvp2_2026
+ADD_ENTRY	nef	" n E f	unk	unverified	mvp2_2026
+
+#ADD_ENTRY	a	" A:	sv-se	unverified	mvp2_2026
+#ADD_ENTRY	A	" A:	sv-se	unverified	mvp2_2026
+
+# DELETE	nitton-hundra-femton	n I . % t O n . h u0 n . d r a . "" f E m . % t O n
+# DELETE	nitton-hundra-fjorton	n I . % t O n . h u0 n . d r a . "" f j u: . % rt O n
+# DELETE	nitton-hundra-nitton	n I . % t O n . h u0 n . d r a . "" n I . % t O n
+# DELETE	nitton-hundra-tjugo-fem	n I . % t O n . h u0 n . d r a . C }: . g U . " f E m
+# DELETE	nitton-hundra-tjugo-fyra	n I . % t O n . h u0 n . d r a . C }: . g U . "" f y: . % r a
+# DELETE	nitton-hundra-tretton	n I . % t O n . h u0 n . d r a . "" t r E . % t O n
+
+#? DELETE	vilket	" v I l . k @ t
+ADD_ENTRY	vilket	"" v I l . k @ t	sv-se	unverified	mvp2_2026
+#? DELETE	flera	"" f l e: . % r a
+ADD_ENTRY	flera	" f l e: . % r a	sv-se	unverified	mvp2_2026
+#? DELETE	eftersom	" e f . t @ . rs O m
+ADD_ENTRY	eftersom	e f . t @ . " rs O m	sv-se	unverified	mvp2_2026
+
+
+ADD_ENTRY	nitton-hundra-femton	n I . t O n . h u0 n . d r a . "" f E m . % t O n	sv-se	unverified	mvp2_2026
+ADD_ENTRY	nitton-hundra-fjorton	n I . t O n . h u0 n . d r a . "" f j u: . % rt O n	sv-se	unverified	mvp2_2026
+ADD_ENTRY	nitton-hundra-nitton	n I . t O n . h u0 n . d r a . "" n I . % t O n	sv-se	unverified	mvp2_2026
+ADD_ENTRY	nitton-hundra-tjugo-fem	n I . t O n . h u0 n . d r a . C }: . g U . " f E m	sv-se	unverified	mvp2_2026
+ADD_ENTRY	nitton-hundra-tjugo-fyra	n I . t O n . h u0 n . d r a . C }: . g U . "" f y: . % r a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	nitton-hundra-tretton	n I . t O n . h u0 n . d r a . "" t r E . % t O n	sv-se	unverified	mvp2_2026
+ADD_ENTRY	nitton-hundra-fyrtio-sex	n I . t O n . h u0 n . d r a . f 9 . rt I . " s E k s	sv-se	unverified	mvp2_2026
+ADD_ENTRY	reresoper	r E . r E . s O . " p E r	fr	unverified	mvp2_2026
+ADD_ENTRY	rèire-sopar	r E j . r E . s O . " p a 	fr	unverified	mvp2_2026
+ADD_ENTRY	tretton-hundra	t r E . t O n . " h u0 n . d r a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	två-hundra	t v o: . " h u0 n . d r a	sv-se	unverified	mvp2_2026
+ADD_ENTRY	två-tusen-tjugo-fem	t v o: . t }: . s @ n . C }: . g U . " f E m	sv-se	unverified	mvp2_2026
+
+ADD_ENTRY	reine	" r E n	fr	unverified	mvp2_2026
+
+ADD_ENTRY	C-C	" s e: . " s e:	sv-se	unverified	mvp2_2026
+ADD_ENTRY	BY-	" b e: . " y:	sv-se	unverified	mvp2_2026
+ADD_ENTRY	S-A	" E s . " A:	sv-se	unverified	mvp2_2026
+
+SET_PREFERRED	men	" m E n
+SET_PREFERRED	a	" A:
+#SET_PREFERRED	A	" A:
+
+DELETE	ord	" u: r
+#DELETE	voapp	v o: . " a p
+
+#skip_this_line
+#RABBADABBA	dub	dub
