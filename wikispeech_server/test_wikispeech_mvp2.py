@@ -767,3 +767,16 @@ class TestMVP2:
             if data["voice"]["engine"] in ["piper","matcha"] and lang == "sv":
                 assert "mapper" in data["voice"]
             assert "name" in data["voice"]
+
+    def test_lexpatch(self, client, base_url):
+        url = f"{base_url}/lexserver/lexicon/lookup?lexicons=sv_se_braxen_lex%3Asv-se.braxen&words=matlagningsmetoder"
+        response = client.get(url)
+        assert response.status_code == 200, f"Server returned: {response} for {url}"
+        data = response.json()
+        assert len(data) == 1
+        assert data[0]["strn"] == "matlagningsmetoder"
+        transes = data[0]["transcriptions"]
+        assert len(transes ) == 1
+        trans = transes[0]
+        print(trans)
+        assert trans["sources"][0] == "mvp2_2026"
