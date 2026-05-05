@@ -200,7 +200,7 @@ jobs:
        source .venv/bin/activate
        
        # Lexpatch
-       (cd lexpatches; uv pip install pydantic; python update_pronlex.py lexicon_patch_file_mvp_2026.txt)
+       (cd lexpatches; python update_pronlex.py lexicon_patch_file_mvp_2026.txt; curl http://localhost:8787/lexicon/lookup?lexicons=sv_se_braxen_lex%3Asv-se.braxen&words=ord)
 
        # Start wikispeech-server
        sleep 20

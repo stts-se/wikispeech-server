@@ -5,3 +5,4 @@ flask_cors
 pytz
 tzlocal
 pytest
+pydantic # for lex-patching
