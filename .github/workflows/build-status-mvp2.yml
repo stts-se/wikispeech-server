@@ -4,9 +4,9 @@ name: MVP2
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "mvp_may_2026"]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "mvp_may_2026" ]
 
 permissions:
   contents: read
