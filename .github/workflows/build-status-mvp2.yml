@@ -29,7 +29,7 @@ jobs:
 
     - name: Set up env
       run: |
-       echo "LEXDATA_RELEASE=master" >> $GITHUB_ENV
+       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
        echo "LEXSERVER_PORT=8787" >> $GITHUB_ENV
        echo "TEXTPROC_PORT=8011" >> $GITHUB_ENV
        echo "PIPER_PORT=8010" >> $GITHUB_ENV
@@ -66,14 +66,16 @@ jobs:
        git clone https://github.com/stts-se/wikispeech-lexdata
        
        cd symbolset/server
+       git checkout $RELEASE || echo "No such release for symbolset. Using default branch."
        bash setup.sh ../../wikispeech-lexdata ss_files
 
        cd ../../pronlex
        APPDIR=/tmp/appdir/sqlite
        LOC=/tmp/appdir/sqlite
        ENGINE=sqlite
+       git checkout $RELEASE || echo "No such release for pronlex. Using default branch."
        bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
-       bash scripts/import.sh -e $ENGINE -f ../wikispeech-lexdata -a $APPDIR -r $LEXDATA_RELEASE -l $LOC
+       bash scripts/import.sh -e $ENGINE -f ../wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
 
     - name: Start symbolset/mapper server
       run: |
@@ -96,6 +98,8 @@ jobs:
       run: |
        cd $GITROOT
        git clone https://github.com/stts-se/wikispeech-tts-wrappers
+       cd wikispeech-tts-wrappers
+       git checkout $RELEASE || echo "No such release for wikispeech-tts-wrappers. Using default branch."
        sudo apt install espeak-ng
 
     - name: Set up textproc
@@ -130,6 +134,7 @@ jobs:
        source .venv/bin/activate
        uv pip install -r requirements.txt
        git clone https://github.com/stts-se/Matcha-TTS $GITROOT/Matcha-TTS_fork
+       git checkout $RELEASE || echo "No such release for Matcha-TTS_fork. Using default branch."
        uv pip install -e $GITROOT/Matcha-TTS_fork
        bash patch.sh
 
