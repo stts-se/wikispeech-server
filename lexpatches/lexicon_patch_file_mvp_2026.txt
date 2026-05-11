@@ -24,23 +24,12 @@ ADD_ENTRY	fyra-hundra	f y: . r a . " h u0 n . d r a	sv-se	unverified	mvp2_2026
 ADD_ENTRY	matlagningsmetoder	"" m A: t . l A: . g n I N s . m e . % t u: . d @ r	sv-se	unverified	mvp2_2026
 ADD_ENTRY	nef	" n E f	unk	unverified	mvp2_2026
 
-#ADD_ENTRY	a	" A:	sv-se	unverified	mvp2_2026
-#ADD_ENTRY	A	" A:	sv-se	unverified	mvp2_2026
-
-# DELETE	nitton-hundra-femton	n I . % t O n . h u0 n . d r a . "" f E m . % t O n
-# DELETE	nitton-hundra-fjorton	n I . % t O n . h u0 n . d r a . "" f j u: . % rt O n
-# DELETE	nitton-hundra-nitton	n I . % t O n . h u0 n . d r a . "" n I . % t O n
-# DELETE	nitton-hundra-tjugo-fem	n I . % t O n . h u0 n . d r a . C }: . g U . " f E m
-# DELETE	nitton-hundra-tjugo-fyra	n I . % t O n . h u0 n . d r a . C }: . g U . "" f y: . % r a
-# DELETE	nitton-hundra-tretton	n I . % t O n . h u0 n . d r a . "" t r E . % t O n
-
 #? DELETE	vilket	" v I l . k @ t
 ADD_ENTRY	vilket	"" v I l . k @ t	sv-se	unverified	mvp2_2026
 #? DELETE	flera	"" f l e: . % r a
 ADD_ENTRY	flera	" f l e: . % r a	sv-se	unverified	mvp2_2026
 #? DELETE	eftersom	" e f . t @ . rs O m
 ADD_ENTRY	eftersom	e f . t @ . " rs O m	sv-se	unverified	mvp2_2026
-
 
 ADD_ENTRY	nitton-hundra-femton	n I . t O n . h u0 n . d r a . "" f E m . % t O n	sv-se	unverified	mvp2_2026
 ADD_ENTRY	nitton-hundra-fjorton	n I . t O n . h u0 n . d r a . "" f j u: . % rt O n	sv-se	unverified	mvp2_2026
@@ -63,10 +52,6 @@ ADD_ENTRY	S-A	" E s . " A:	sv-se	unverified	mvp2_2026
 
 SET_PREFERRED	men	" m E n
 SET_PREFERRED	a	" A:
-#SET_PREFERRED	A	" A:
+SET_PREFERRED	hit	" h i: t
 
 DELETE	ord	" u: r
-#DELETE	voapp	v o: . " a p
-
-#skip_this_line
-#RABBADABBA	dub	dub
