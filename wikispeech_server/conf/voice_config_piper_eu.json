@@ -1,0 +1,107 @@
+{
+    "textprocessor_configs": [
+	{
+	    "name":"piper_textproc_sv",
+	    "lang":"sv",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "sv_se_1",
+		    "mapper": {
+			"from":"sv-se_ws-sampa-braxen",
+			"to":"sv-se_matcha_ipa_from_ws"
+		    }
+		},
+		{
+		    "module":"adapters.lexicon_client",
+		    "call":"lexLookup",
+		    "lexicon":"sv_se_braxen_lex:sv-se.braxen"
+		}
+	    ]
+	},
+	{
+	    "name":"piper_textproc_en",
+	    "lang":"en",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "en_1"
+		}
+	    ]
+	},
+	{
+	    "name":"piper_textproc_eu",
+	    "lang":"eu",
+	    "default": true,
+	    "components":[
+		{
+		    "module":"adapters.textproc_adapter",
+		    "call":"textproc",
+		    "name": "en_1"
+		}
+	    ]
+	}
+
+    ],
+    
+    "voice_configs": [
+	{
+            "lang":"en",
+            "name":"en_US-bryce-medium",
+            "engine":"piper",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false
+	},
+	{
+            "lang":"en",
+            "name":"en_US-ljspeech-high",
+            "engine":"piper",
+	    "default": false,
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false
+	},
+	{
+            "lang":"sv",
+            "name":"sv_vc_m2m_p",
+            "engine":"piper",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false,
+	    "mapper": {
+		"from":"sv-se_ws-sampa-braxen",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	},
+	{
+            "lang":"sv",
+            "name":"sv_vc_m2f_p",
+            "engine":"piper",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false,
+	    "default": false,
+	    "mapper": {
+		"from":"sv-se_ws-sampa-braxen",
+		"to":"sv-se_matcha_ipa_from_ws"
+	    }
+	},
+	{
+            "lang":"eu",
+            "name":"eu-antton-medium",
+	    "default": true,
+            "engine":"piper",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false
+	},
+	{
+            "lang":"eu",
+            "name":"eu-maider-medium",
+            "engine":"piper",
+            "adapter":"adapters.matcha_piper_adapter",
+	    "skip_test": false,
+	    "default": false
+	}
+    ]
+}
