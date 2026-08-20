@@ -118,7 +118,7 @@ global_in_lexicon = {}
 global_out_of_vocabulary = {}
 
 def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_experiment, speaking_rate):
-    voice_config = f"LANG: {lang}; VOICE: {voice}; SPEAKING RATE: {speaking_rate}"
+    voice_info = f"LANG: {lang}; VOICE: {voice}; SPEAKING RATE: {speaking_rate}"
 
     Path(output_dir).mkdir(exist_ok=True)
 
@@ -159,6 +159,11 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
             #print(response.text) # <- Downcase and look for error
             # response.text.lower().startswith("error")
             data = response.json()
+            engine = data["voice"]["engine"]
+            if not "ENGINE" in voice_info:
+                voice_info += f"; ENGINE: {engine}"
+            if "error" in data:
+                raise Exception(data)
             audio_uri = data["audio"]
             base = Path(urlparse(audio_uri).path).name
             audio_path = Path(__file__).parent / "tmp" / base
@@ -284,7 +289,7 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
     </style>
     </head>
     <body>
-    <p>{voice_config}</p>
+    <p>{voice_info}</p>
     <p><div class="toolbar">
     Autoscroll <input title="Autoscroll playing audio element into view" type="checkbox" name="autoscroll" id="autoscroll" value="autoscroll" checked> &nbsp;&nbsp;
     <button id="toggle" title="Press P to play/pause">Play All</button>
