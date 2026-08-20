@@ -159,11 +159,10 @@ def run_article(client, base_url, lang, voice, file_path, output_dir, pausing_ex
             #print(response.text) # <- Downcase and look for error
             # response.text.lower().startswith("error")
             data = response.json()
-            engine = data["voice"]["engine"]
-            if not "ENGINE" in voice_info:
-                voice_info += f"; ENGINE: {engine}"
             if "error" in data:
                 raise Exception(data)
+            if "engine" in data["voice"] and not "ENGINE" in voice_info:
+                voice_info += f"; ENGINE: {data['voice']}"
             audio_uri = data["audio"]
             base = Path(urlparse(audio_uri).path).name
             audio_path = Path(__file__).parent / "tmp" / base

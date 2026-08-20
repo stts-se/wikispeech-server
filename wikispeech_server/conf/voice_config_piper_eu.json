@@ -41,7 +41,7 @@
 		{
 		    "module":"adapters.textproc_adapter",
 		    "call":"textproc",
-		    "name": "en_1"
+		    "name": "eu_1"
 		}
 	    ]
 	}
