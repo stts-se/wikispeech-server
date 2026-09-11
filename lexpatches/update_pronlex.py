@@ -511,7 +511,7 @@ COMMANDS = {
     'SET_PREFERRED': set_preferred,
     'ADD_ENTRY': add_entry,
     'DELETE': delete,
-    #'UPDATE_TRANSCRIPTION': update_tramscription
+    #'UPDATE_TRANSCRIPTION': update_transcription
 }
 
 

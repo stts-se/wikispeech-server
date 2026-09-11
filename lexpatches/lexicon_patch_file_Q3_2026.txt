@@ -1,0 +1,31 @@
+# ADD_ENTRY	<WORD>	<TRANS>	<LANG>	<STATUS>	<SOURCE>
+# DELETE	<WORD>	<TRANS>
+# SET_PREFERRED	<WORD>	<TRANS>
+
+ADD_ENTRY	ISBN	i: . e s . "" b e: . % e n	sv-se	unverified	Q3_2026
+ADD_ENTRY	ISBN-numret	i: . e s . "" b e: . e n . % n u0 m . r e t	sv-se	unverified	Q3_2026
+ADD_ENTRY	ISBN-nummer	i: . e s . "" b e: . e n . % n u0 m . e r	sv-se	unverified	Q3_2026
+
+# ALPHABET
+ADD_ENTRY	b	" b e:	sv-se	unverified	Q3_2026
+#ADD_ENTRY	c	" s e:	sv-se	unverified	Q3_2026
+ADD_ENTRY	d	" d e:	sv-se	unverified	Q3_2026
+ADD_ENTRY	f	" e f	sv-se	unverified	Q3_2026
+ADD_ENTRY	g	" g e:	sv-se	unverified	Q3_2026
+ADD_ENTRY	h	" h o:	sv-se	unverified	Q3_2026
+ADD_ENTRY	j	" j i:	sv-se	unverified	Q3_2026
+ADD_ENTRY	k	" k o:	sv-se	unverified	Q3_2026
+ADD_ENTRY	l	" e l	sv-se	unverified	Q3_2026
+ADD_ENTRY	m	" e m	sv-se	unverified	Q3_2026
+ADD_ENTRY	n	" e n	sv-se	unverified	Q3_2026
+ADD_ENTRY	p	" p e:	sv-se	unverified	Q3_2026
+ADD_ENTRY	q	" k }:	sv-se	unverified	Q3_2026
+ADD_ENTRY	r	" e r	sv-se	unverified	Q3_2026
+ADD_ENTRY	s	" e s	sv-se	unverified	Q3_2026
+ADD_ENTRY	t	" t e:	sv-se	unverified	Q3_2026
+ADD_ENTRY	v	" v e:	sv-se	unverified	Q3_2026
+ADD_ENTRY	w	"" d u0 . b e l . % v e:	sv-se	unverified	Q3_2026
+ADD_ENTRY	x	" e k s	sv-se	unverified	Q3_2026
+ADD_ENTRY	z	"" s E: . t a	sv-se	unverified	Q3_2026
+
+
