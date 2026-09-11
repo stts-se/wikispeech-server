@@ -3,8 +3,11 @@
 # SET_PREFERRED	<WORD>	<TRANS>
 
 ADD_ENTRY	ISBN	i: . e s . "" b e: . % e n	sv-se	unverified	Q3_2026
-ADD_ENTRY	ISBN-numret	i: . e s . "" b e: . e n . % n u0 m . r e t	sv-se	unverified	Q3_2026
+ADD_ENTRY	I-S-B-N	i: . e s . "" b e: . % e n	sv-se	unverified	Q3_2026
 ADD_ENTRY	ISBN-nummer	i: . e s . "" b e: . e n . % n u0 m . e r	sv-se	unverified	Q3_2026
+ADD_ENTRY	I-S-B-N-nummer	i: . e s . "" b e: . e n . % n u0 m . e r	sv-se	unverified	Q3_2026
+ADD_ENTRY	ISBN-numret	i: . e s . "" b e: . e n . % n u0 m . r e t	sv-se	unverified	Q3_2026
+ADD_ENTRY	I-S-B-N-numret	i: . e s . "" b e: . e n . % n u0 m . r e t	sv-se	unverified	Q3_2026
 
 # ALPHABET
 ADD_ENTRY	b	" b e:	sv-se	unverified	Q3_2026
@@ -29,3 +32,4 @@ ADD_ENTRY	x	" e k s	sv-se	unverified	Q3_2026
 ADD_ENTRY	z	"" s E: . t a	sv-se	unverified	Q3_2026
 
 
+SET_PREFERRED	fint	" f i: n t

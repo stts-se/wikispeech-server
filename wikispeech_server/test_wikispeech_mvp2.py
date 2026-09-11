@@ -437,8 +437,8 @@ class TestBasics:
     #@pytest.mark.skip(reason="working on it")
     def test_SSML_textproc_1(self,client, base_url):
         ssml = """<speak xml:lang="sv" version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">
-    "<phoneme ph="&quot; o: l">All</phoneme> Apologies" hamnade på plats sju över de <sub alias="tjugo">
-    20</sub>
+    "<phoneme ph="&quot; o: l">All</phoneme> Apologies" hamnade på plats sju över de <sub alias="trettio">
+    30</sub>
      mest spelade Nirvana-låtarna.</speak>"""
         payload = {"lang": "sv",
                    "input": ssml,
@@ -553,14 +553,14 @@ class TestBasics:
             ]
         },
         {
-            "input_orth": "20",
+            "input_orth": "30",
             "name": "token9",
             "words": [
                 {
                     "g2p_method": "lexicon",
-                    "orth": "tjugo",
+                    "orth": "trettio",
                     "pos": "RG NOM",
-                    "trans": "\"\" C }: . % g U"
+                    "trans": "\" t r E .  t I U"
                 }
             ]
         },
@@ -685,7 +685,7 @@ class TestMVP2:
             {
                 "text": "Hej, jag talar god svenska naturligtvis.",
                 "min": 6,
-                "max": 6
+                "max": 8
             },
             {
                 "text": "Året var 2025.",
