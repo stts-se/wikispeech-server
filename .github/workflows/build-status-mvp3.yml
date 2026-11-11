@@ -1,0 +1,270 @@
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: MVP3
+
+on:
+  push:
+    branches: [ "master", "mvp_may_2026"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: Set up env
+      run: |
+       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+       echo "LEXSERVER_PORT=8787" >> $GITHUB_ENV
+       echo "TEXTPROC_PORT=8011" >> $GITHUB_ENV
+       echo "PIPER_PORT=8010" >> $GITHUB_ENV
+       echo "MATCHA_PORT=8009" >> $GITHUB_ENV       
+       echo "WIKISPEECH_PORT=10000" >> $GITHUB_ENV
+       echo "GITROOT=$HOME/gitroot" >> $GITHUB_ENV
+       echo "LOGS=$HOME/logs" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+       curl -LsSf https://astral.sh/uv/install.sh | sh
+       sudo apt install opus-tools
+       uv venv
+       source .venv/bin/activate
+       uv pip install flake8 pytest
+       uv pip install -r requirements.txt
+       mkdir -p wikispeech_server/tmp
+       mkdir -p $GITROOT
+       mkdir -p $LOGS       
+
+    - name: Lint with flake8
+      run: |
+       source .venv/bin/activate
+       # stop the build if there are Python syntax errors or undefined names
+       flake8 . --bug-report --count --select=E9,F63,F7,F82 --show-source --statistics
+       # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+       flake8 . --bug-report --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --extend-ignore=E501,E266
+    
+    - name: Set up symbolset/mapper + pronlex/lexserver
+      run: |
+       cd $GITROOT
+       git clone https://github.com/stts-se/symbolset
+       git clone https://github.com/stts-se/pronlex
+       git clone https://github.com/stts-se/wikispeech-lexdata
+       
+       cd symbolset/server
+       git checkout $RELEASE || echo "No such release for symbolset. Using default branch."
+       bash setup.sh ../../wikispeech-lexdata ss_files
+
+       cd ../../pronlex
+       APPDIR=/tmp/appdir/sqlite
+       LOC=/tmp/appdir/sqlite
+       ENGINE=sqlite
+       git checkout $RELEASE || echo "No such release for pronlex. Using default branch."
+       bash scripts/setup.sh -a $APPDIR -e $ENGINE -l $LOC
+       bash scripts/import.sh -e $ENGINE -f ../wikispeech-lexdata -a $APPDIR -r $RELEASE -l $LOC
+
+    - name: Start symbolset/mapper server
+      run: |
+       # Start symbolset/mapper server
+       cd $GITROOT
+       cd symbolset/server
+       go run *.go -ss_files ss_files &> $LOGS/mapper.log &
+       
+    - name: Start pronlex/lexserver server
+      run: |
+       # Start pronlex/lexserver
+       cd $GITROOT
+       cd pronlex
+       APPDIR=/tmp/appdir/sqlite
+       LOC=/tmp/appdir/sqlite
+       ENGINE=sqlite
+       bash scripts/start_server.sh -a $APPDIR -e $ENGINE -l $LOC -p $LEXSERVER_PORT &> $LOGS/pronlex.log &
+
+    - name: Initial setup for wikispeech-tts-wrappers
+      run: |
+       cd $GITROOT
+       git clone https://github.com/stts-se/wikispeech-tts-wrappers
+       cd wikispeech-tts-wrappers
+       git checkout $RELEASE || echo "No such release for wikispeech-tts-wrappers. Using default branch."
+       sudo apt install espeak-ng
+
+    - name: Set up textproc
+      run: |
+       cd $GITROOT/wikispeech-tts-wrappers/textproc
+       uv venv
+       source .venv/bin/activate
+       uv pip install -r requirements.txt
+
+    - name: Set up piper
+      run: |
+       cd $GITROOT/wikispeech-tts-wrappers/piper_server
+       uv venv
+       source .venv/bin/activate
+       uv pip install -r requirements.txt
+       # workaround for pytorch
+       sed -i 's/checkpoint = torch.load(checkpoint_path, map_location=device)/checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)/' .venv/lib/python3.*/site-packages/dp/model/model.py       
+      
+    - name: Set up matcha
+      run: |
+       cd $GITROOT/wikispeech-tts-wrappers/matcha_server
+
+       # Pre-packaged Matcha
+       # uv venv --python 3.10
+       # source .venv/bin/activate
+       # uv pip install -r requirements.txt
+       # uv pip install Matcha-TTS==0.0.7.2
+       # bash patch.sh
+
+       # Install Matcha from STTS fork
+       uv venv --python 3.13
+       source .venv/bin/activate
+       uv pip install -r requirements.txt
+       git clone https://github.com/stts-se/Matcha-TTS $GITROOT/Matcha-TTS_fork
+       git checkout $RELEASE || echo "No such release for Matcha-TTS_fork. Using default branch."
+       uv pip install -e $GITROOT/Matcha-TTS_fork
+       bash patch.sh
+
+      
+    - name: Download language models
+      run: |
+       source .venv/bin/activate
+       uv pip install gdown
+       mkdir -p $HOME/.local/share/deep_phonemizer
+       mkdir -p $HOME/.local/share/piper_tts
+       mkdir -p $HOME/.local/share/matcha_tts
+
+       # Deep phonemizer for Swedish
+       gdown https://drive.google.com/uc?id=1H1BCPlOkKBfhz3wacvBDCv_9B8bmgPzA -O $HOME/.local/share/deep_phonemizer/dp_single_char_swe_sv.pt
+
+       # US English voices for Piper
+       gdown https://drive.google.com/uc?id=1F_tBp6MiExQ-yVKqYLmvR2u1v4RRb0WL -O $HOME/.local/share/piper_tts/en_US-ljspeech-high.onnx
+       gdown https://drive.google.com/uc?id=1nx1TVW1PdOe51p9IfA7fczqRP-mbFIC_ -O $HOME/.local/share/piper_tts/en_US-ljspeech-high.onnx.json
+       gdown https://drive.google.com/uc?id=1niTGWHPc_iQb1fz3Tdw057IqpUFBndpW -O $HOME/.local/share/piper_tts/en_US-bryce-medium.onnx
+       gdown https://drive.google.com/uc?id=1Z_-H_2z900qUz8qcgB73FPL2DcN80k-_ -O $HOME/.local/share/piper_tts/en_US-bryce-medium.onnx.json
+
+       # Swedish voices for Piper
+       gdown https://drive.google.com/uc?id=1ONhMrjIRCWI5eBObcWgECmMWR5UcOSVO -O $HOME/.local/share/piper_tts/sv_vc_male_mart2nik.onnx.json
+       gdown https://drive.google.com/uc?id=1dAGnXYv_20Ga-neVOA-EFYQth6rh-D0b -O $HOME/.local/share/piper_tts/sv_vc_male_mart2nik.onnx
+       gdown https://drive.google.com/uc?id=14d_f9NL2-rLnG8I8wvHF5UZvIyLt_5uj -O $HOME/.local/share/piper_tts/sv_vc_female_mart2han.onnx.json
+       gdown https://drive.google.com/uc?id=11RLjC2g1T6L7cIdqsnaDG21Ze72KveEB -O $HOME/.local/share/piper_tts/sv_vc_female_mart2han.onnx
+
+       # Base models for Matcha
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/generator_v1 -o $HOME/.local/share/matcha_tts/hifigan_T2_v1
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/g_02500000   -o $HOME/.local/share/matcha_tts/hifigan_univ_v1
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_ljspeech.ckpt -o $HOME/.local/share/matcha_tts/matcha_ljspeech.ckpt
+       gdown https://drive.google.com/uc?id=1TXq4_gEHvZlwxN4Z5Fzo4C6474Nb9iEa -O $HOME/.local/share/matcha_tts/matcha_ljspeech.json
+       curl -L https://github.com/shivammehta25/Matcha-TTS-checkpoints/releases/download/v1.0/matcha_vctk.ckpt -o $HOME/.local/share/matcha_tts/matcha_vctk.ckpt
+       gdown https://drive.google.com/uc?id=19co5C25iGojvqhyjaQokj-4VoBSrUQl_ -O $HOME/.local/share/matcha_tts/matcha_vctk.json
+
+       # Swedish voices for Matcha
+       gdown https://drive.google.com/uc?id=1LEJA3ESv5SRZ5mO1Cd3STY0Iga-WIoCT -O $HOME/.local/share/matcha_tts/sv_vc_female_mart2han.ckpt
+       gdown https://drive.google.com/uc?id=1JJniKbVunr1iF4Qr6unr58OSt86rFASR -O $HOME/.local/share/matcha_tts/sv_vc_female_mart2han.json
+       gdown https://drive.google.com/uc?id=1dXkPDgebUveDRK9OsCnGmhZaIVrY9aOm -O $HOME/.local/share/matcha_tts/sv_vc_male_mart2nik.ckpt
+       gdown https://drive.google.com/uc?id=1-znBB5Bh08Rq0SEO5nZKmwE0xITdagYc -O $HOME/.local/share/matcha_tts/sv_vc_male_mart2nik.json
+
+    - name: Start textproc server
+      run: |
+       # Start textproc
+       cd $GITROOT/wikispeech-tts-wrappers/textproc
+       source .venv/bin/activate
+       uvicorn textproc_server:app --env-file config_mvp3.env --port $TEXTPROC_PORT &> $LOGS/textproc.log &
+       sleep 2
+
+    - name: Start piper server
+      run: |
+       # Start piper
+       cd $GITROOT/wikispeech-tts-wrappers/piper_server
+       source .venv/bin/activate
+       uvicorn piper_server:app --env-file config_mvp3.env --port $PIPER_PORT &> $LOGS/piper.log & 
+       sleep 2
+
+    - name: Start matcha server
+      run: |
+       # Start matcha
+       cd $GITROOT/wikispeech-tts-wrappers/matcha_server
+       source .venv/bin/activate
+       uvicorn matcha_server:app --env-file config_mvp3.env --port $MATCHA_PORT &> $LOGS/matcha.log & 
+       sleep 10
+
+    - name: Start wikispeech-server
+      run: |
+       source .venv/bin/activate
+       
+       # Lexpatch
+       (cd lexpatches; python update_pronlex.py lexicon_patch_file_mvp_2026.txt; curl "http://localhost:8787/lexicon/lookup?lexicons=sv_se_braxen_lex%3Asv-se.braxen&words=matlagningsmetoder")
+
+       # Start wikispeech-server
+       sleep 20
+       python3 bin/wikispeech config_mvp3.conf &> $LOGS/wikispeech.log &
+       sleep 2
+
+    - name: Log files
+      run: |
+       # Log files
+       echo "> cat mapper.log"
+       cat $LOGS/mapper.log
+ 
+       echo "> cat pronlex.log"
+       cat $LOGS/pronlex.log
+ 
+       echo "> cat textproc.log"
+       cat $LOGS/textproc.log
+ 
+       echo "> cat piper.log"
+       cat $LOGS/piper.log
+ 
+       echo "> cat matcha.log"
+       cat $LOGS/matcha.log
+ 
+       echo "> cat wikispeech.log"
+       cat $LOGS/wikispeech.log
+
+    - name: Ping servers
+      run: |
+       # Ping servers
+
+       echo "> Ping symbolset/mapper"
+       curl -f http://localhost:8771/ping  # symbolset/mapper
+       echo ""
+
+       echo "> Ping pronlex/lexserver"
+       curl -f http://localhost:$LEXSERVER_PORT/ping  # pronlex/lexserver
+       echo ""
+
+       echo "> Ping textproc"
+       curl -f http://localhost:$TEXTPROC_PORT/ping  # textproc
+       echo ""
+
+       echo "> Ping piper"
+       curl -f http://localhost:$PIPER_PORT/ping  # piper
+       echo ""
+
+       echo "> Ping matcha"
+       curl -f http://localhost:$MATCHA_PORT/ping  # matcha
+       echo ""
+
+       echo "> Ping wikispeech-server"
+       curl -f http://localhost:$WIKISPEECH_PORT/ping # wikispeech-server
+       echo ""
+
+       echo "> Say hello to wikispeech-server"
+       curl -f http://localhost:$WIKISPEECH_PORT/version
+       echo ""
+
+    - name: Run pytest
+      run: |
+       source .venv/bin/activate
+       pytest
+
